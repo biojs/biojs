@@ -43,13 +43,4 @@
     </pluginRepository>
   </pluginRepositories>
 
-<dependencies>
-    <dependency>
-      <groupId>org.prototypejs</groupId>
-      <artifactId>prototype</artifactId>
-      <version>1.5.1.1</version>
-      <type>javascript</type>
-    </dependency>
-  </dependencies>
-
 </project>
