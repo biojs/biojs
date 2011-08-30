@@ -1,0 +1,54 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+		<title>Untitled Document</title>
+		<script language="JavaScript" type="text/javascript" src="../jquery/jquery-1.4.2.min.js"></script>
+		<script language="JavaScript" type="text/javascript" src="../jquery/jquery-ui-1.8.2.custom.min.js"></script>
+		<script language="JavaScript" type="text/javascript" src="../jquery/jquery.dimensions.min.js"></script>
+		<script language="JavaScript" type="text/javascript" src="biojs.sequence.js"></script>
+		<script language="JavaScript" type="text/javascript">
+			$( function() {
+
+				// input data
+
+				var theSequence = 'MLPGLALLLLAAWTARALEVPTDGNAGLLAEPQIAMFCGRLNMHMNVQNGKWDSDPSGTKTCIDTKEGILQYCQEVYPELQITNVVEANQPVTIQNWCKRGRKQCKTHPHFVIPYRCLVGEFVSDALLVPDKCKFLHQERMDVCETHLHWHTVAKETCSEKSTNLHDYGMLLPCGIDKFRGVEFVCCPLAEESDNVDSADAEEDDSDVWWGGADTDYADGSEDKVVEVAEEEEVAEVEEEEADDDEDDEDGDEVEEEAEEPYEEATERTTSIATTTTTTTESVEEVVREVCSEQAETGPCRAMISRWYFDVTEGKCAPFFYGGCGGNRNNFDTEEYCMAVCGSAMSQSLLKTTQEPLARDPVKLPTTAASTPDAVDKYLETPGDENEHAHFQKAKERLEAKHRERMSQVMREWEEAERQAKNLPKADKKAVIQHFQEKVESLEQEAANERQQLVETHMARVEAMLNDRRRLALENYITALQAVPPRPRHVFNMLKKYVRAEQKDRQHTLKHFEHVRMVDPKKAAQIRSQVMTHLRVIYERMNQSLSLLYNVPAVAEEIQDEVDELLQKEQNYSDDVLANMISEPRISYGNDALMPSLTETKTTVELLPVNGEFSLDDLQPWHSFGADSVPANTENEVEPVDARPAADRGLTTRPGSGLTNIKTEEISEVKMDAEFRHDSGYEVHHQKLVFFAEDVGSNKGAIIGLMVGGVVIATVIVITLVMLKKKQYTSIHHGVVEVDAAVTPEERHLSKMQQNGYENPTYKFFEQMQN';
+				var listener1 = function(params) {
+					console.log(params);
+				};
+				
+				var listener2 = function(params) {
+					//alert("otro listener: "+params);
+					//Sequence.setFormat( 'fasta' );
+				};
+				
+				// sequence init
+				// - theSequence : text string 
+				// - id of target div 
+				Sequence.init( theSequence, '#experiment1' );
+				
+				// Events
+				Sequence.addListener('onSelectionChange', listener1);
+				Sequence.addListener('onSelectionChanged', listener2);
+				
+				// Methods
+				Sequence.setSelection(2, 30);
+				Sequence.highlight(20, 105);
+				Sequence.highlight(200, 350);
+				Sequence.setFormat( 'raw' );
+				//Sequence.unHighlightAll();
+				
+				Sequence.hideFormatSelector();
+				Sequence.showFormatSelector();
+
+				Sequence.hide();
+				Sequence.show();
+
+			});
+		</script>
+	
+	</head>
+	<body>
+		<div class="target" id="experiment1"></div>
+	</body>
+</html>
