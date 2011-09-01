@@ -6,8 +6,8 @@
 		<script language="JavaScript" type="text/javascript" src="jquery/jquery-1.4.2.min.js"></script>
 		<script language="JavaScript" type="text/javascript" src="jquery/jquery-ui-1.8.2.custom.min.js"></script>
 		<script language="JavaScript" type="text/javascript" src="jquery/jquery.dimensions.min.js"></script>
-		<script language="JavaScript" type="text/javascript" src="biojs.js"></script>
-		<script language="JavaScript" type="text/javascript" src="biojs.sequence.js"></script>
+		<script language="JavaScript" type="text/javascript" src="../biojs.js"></script>
+		<script language="JavaScript" type="text/javascript" src="../biojs.sequence.js"></script>
 		<script language="JavaScript" type="text/javascript">
 
 		$( function() {
@@ -25,7 +25,32 @@
 				// sequence init
 				// - theSequence : text string 
 				// - id of target div 
-				var miSequence = new Sequence( theSequence, '#experiment1' );
+				var miSequence = new Sequence( {
+					// The sequence to be displayed
+					sequence : theSequence,
+					
+					// Id of the destination DIV element
+					target : "#experiment1",
+					
+					// Format that sequence must be displayed
+					format : "FASTA",
+			
+					// Save the current selected region
+					selectionStart : 15,
+					selectionEnd : 30,
+			
+					// Multiple highlighted regions
+					// Syntax: [ { start: <startVal1>, end: <endVal1>}, ...,  { start: <startValN>, end: <endValN>} ]
+					highlights : [ { start: 50, end: 150}, { start: 2, end: 2} ],
+			
+					// Styles 
+					selectionColor : 'Yellow',
+					highlightFontColor : 'red',
+					defaultFontColor : 'black'
+					
+				} );
+				
+				
 				
 				console.log(miSequence);
 				
@@ -34,10 +59,10 @@
 				miSequence.addListener('onSelectionChanged', listener2);
 
 				// Methods
-				miSequence.setSelection(2, 30);
-				miSequence.highlight(20, 105);
+				miSequence.setSelection(19, 55);
+				//miSequence.highlight(20, 105);
 				miSequence.highlight(200, 350);
-				miSequence.setFormat( 'raw' );
+				//miSequence.setFormat( 'raw' );
 				//Sequence.unHighlightAll();
 				
 				miSequence.hideFormatSelector();

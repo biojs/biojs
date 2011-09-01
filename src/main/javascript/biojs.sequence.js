@@ -1,10 +1,44 @@
 
 var Sequence = Biojs.extend({
 
-	constructor: function( theSequence, targetDivId ) {
-		this._target = targetDivId;
-		this._sequence = theSequence;
+	constructor: function( options ) {
+		for ( var key in options  ) {
+			this.opt[key] = options[key];
+		}
 		this.init();
+	},
+	
+	// options 
+	opt : {
+		// The sequence to be displayed
+		sequence : "",
+		
+		// Id of the destination DIV element
+		target : "",
+		
+		// Format that sequence must be displayed
+		format : "FASTA",
+
+		// Save the current selected region
+		selectionStart : 0,
+		selectionEnd : 0,
+
+		// Multiple highlighted regions
+		// Syntax: [ { start: <startVal1>, end: <endVal1>}, ...,  { start: <startValN>, end: <endValN>} ]
+		highlights : [],
+
+		// Styles 
+		selectionColor : 'Yellow',
+		highlightFontColor : 'red',
+		highlightBackgroundColor : 'white',
+		defaultFontColor : 'black',
+		defaultBackgroundColor : 'white'
+	},
+	
+	// Events to be triggered 
+	eventTypes : {
+		onSelectionChanged : "onSelectionChanged",
+		onSelectionChange : "onSelectionChange"
 	},
 	
 	// Initialize the component
@@ -12,64 +46,47 @@ var Sequence = Biojs.extend({
 		var self = this;
 		
 		// Disable text selection
-		$(self._target).css({
+		$(self.opt.target).css({
                    '-moz-user-select':'none',
                    '-webkit-user-select':'none',
                    'user-select':'none'
         });
 
-		self._headerDiv = $('<div></div>').appendTo(self._target);
-		self._contentDiv = $('<div></div>').appendTo(self._target);
+		self._headerDiv = $('<div></div>').appendTo(self.opt.target);
+		self._contentDiv = $('<div></div>').appendTo(self.opt.target);
 		
 		self._headerDiv.append('Format: ');
 
-		var opt = $('<select> '+
+		var comboBox = $('<select> '+
 			'<option value="FASTA">FASTA</option>'+
 			'<option value="CODATA">CODATA</option>'+
 			'<option value="PRIDE">PRIDE</option>'+
 			'<option value="RAW">RAW</option></select>').appendTo(self._headerDiv);
 
-		$(opt).change(function(e) {
-			self._format = opt.val();
+		$(comboBox).change(function(e) {
+			self.opt.format = comboBox.val();
 			self._redraw();
 		});
-		self.setFormat(self._format);
-	},
-	
-	// The sequence to be displayed
-	_sequence : "",
-
-	style : {
-		selectionColor : 'Yellow',
-		highlightFontColor : 'red',
-		defaultFontColor : "black"
-	},
-	
-	eventTypes : {
-		onSelectionChanged : "onSelectionChanged",
-		onSelectionChange : "onSelectionChange"
+		
+		self._redraw();
+		
+		for ( var i in this.opt.highlights ) {
+			this.highlight( this.opt.highlights[i].start, this.opt.highlights[i].end );
+		}
+		
 	},
 
-	
-	// Format that sequence must be displayed
-	_format : 'FASTA',
-
-	// Keep track of selected region
-	_selectionStart : 0,
-	_selectionEnd : 0,
-
-	// Keep track of highlighted regions
-	_highlighted : [ ],
-
-	// html elements to draw into
+	// internal members
 	_headerDiv : null,
 	_contentDiv : null,
 	
+	// Methods
+	
 	setSelectionColor : function(color) {
-		if( typeof this.style.selectionColor != 'undefined' && typeof this.style.selectionColor != 'object') {
-			this.style.selectionColor = color;
-			if(this._selectionStart > 0 && this._selectionEnd > 0) {
-				this._setSelection(this._selectionStart, this._selectionEnd);
+		if( typeof this.opt.selectionColor != 'undefined' && typeof this.opt.selectionColor != 'object') {
+			this.opt.selectionColor = color;
+			if(this.opt.selectionStart > 0 && this.opt.selectionEnd > 0) {
+				this._setSelection(this.opt.selectionStart, this.opt.selectionEnd);
 			}
 		}
 	},
@@ -82,9 +99,9 @@ var Sequence = Biojs.extend({
 
 		}
 
-		if(start != this._selectionStart || end != this._selectionEnd) {
+		if(start != this.opt.selectionStart || end != this.opt.selectionEnd) {
 			this._setSelection(start, end);
-			this.raiseEvent('onSelectionChanged', {
+			this.raiseEvent(self.eventTypes.onSelectionChanged, {
 				start : start,
 				end : end
 			});
@@ -92,14 +109,12 @@ var Sequence = Biojs.extend({
 	},
 	
 	highlight : function (start, end) {
-		if (start < end) {
-			var spans = this._contentDiv.find('span');
-			for(var i = 1; i <= spans.length; i++) {
-				if( i >= start && i <= end) {
-					$(spans[i-1]).css("color", this.style.highlightFontColor);
-				} 
-			}
-			
+		var spans = this._contentDiv.find('span');
+		for(var i = 0; i < spans.length; i++) {
+			if(i + 1 >= start && i + 1 <= end) {
+				$(spans[i]).css("color", this.opt.highlightFontColor);
+				$(spans[i]).css("background-color", this.opt.highlightBackgroundColor);
+			} 
 		}
 	},
 	
@@ -108,33 +123,31 @@ var Sequence = Biojs.extend({
 			var spans = this._contentDiv.find('span');
 			for(var i = 1; i <= spans.length; i++) {
 				if( i >= start && i <= end) {
-					$(spans[i-1]).css("color", this.style.defaultFontColor);
+					$(spans[i-1]).css("color", this.opt.defaultFontColor);
+					$(spans[i]).css("background-color", this.opt.defaultBackgroundColor);
 				} 
 			}
-			
 		}
 	},
 	
 	unHighlightAll : function () {
 		var self = this;
 		self._contentDiv.find('span').each(function(){
-			$(this).css("color", self.style.defaultFontColor);
+			$(this).css("color", self.opt.defaultFontColor);
+			$(this).css("background-color", this.opt.defaultBackgroundColor);
 		});
 	},
 	
 	setFormat : function(format) {
-		if(this._format == format.toUpperCase()) {
-			; // do nothing
-		} else {
-			this._format = format.toUpperCase();
+		if ( this.opt.format != format.toUpperCase() ) {
+			this.opt.format = format.toUpperCase();
 			this._redraw();
 		}
 
-		// change option
 		var self = this;
-
+		// Changes the option in the combo box
 		this._headerDiv.find('option').each(function() {
-			if($(this).val() == self._format.toUpperCase()) {
+			if($(this).val() == self.opt.format.toUpperCase()) {
 				$(this).attr('selected', 'selected');
 			}
 		});
@@ -159,20 +172,20 @@ var Sequence = Biojs.extend({
 		this._contentDiv.show();
 	},
 	
-	
 	_setSelection : function(start, end) {
-		this._selectionStart = start;
-		this._selectionEnd = end;
+		this.opt.selectionStart = start;
+		this.opt.selectionEnd = end;
 
 		var spans = this._contentDiv.find('span');
 		for(var i = 0; i < spans.length; i++) {
 			if(i + 1 >= start && i + 1 <= end) {
-				$(spans[i]).css("background-color", this.style.selectionColor);
+				$(spans[i]).css("background-color", this.opt.selectionColor);
 			} else {
-				$(spans[i]).css("background-color", "white");
+				$(spans[i]).css("background-color", this.opt.defaultBackgroundColor);
 			}
 		}
 	},
+	
 	_redraw : function() {
 		var i = 0;	
 		var highlighted = [];
@@ -180,7 +193,7 @@ var Sequence = Biojs.extend({
 		
 		// Save the highlighted regions
 		this._contentDiv.find('span').each(function(){
-			if ( $(this).css("color") == self.style.highlightFontColor ) {
+			if ( $(this).css("color") == self.opt.highlightFontColor ) {
 				highlighted.push(i);	
 			}
 			i++;
@@ -191,30 +204,29 @@ var Sequence = Biojs.extend({
 		
 		// Rebuild the spans of the sequence 
 		// according to format
-		if(this._format == 'RAW') {
+		if(this.opt.format == 'RAW') {
 			this._drawRaw();
-		} else if(this._format == 'CODATA') {
+		} else if(this.opt.format == 'CODATA') {
 			this._drawCodata();
-		} else if (this._format == 'FASTA'){
+		} else if (this.opt.format == 'FASTA'){
 			this._drawFasta();
 		} else {
-			this._format = 'PRIDE';
+			this.opt.format = 'PRIDE';
 			this._drawPride();
 		}
-		this._setSelection(this._selectionStart, this._selectionEnd);
+		this._setSelection(this.opt.selectionStart, this.opt.selectionEnd);
 		
 		// Restore the highlighted regions
 		var spans = this._contentDiv.find('span');
 		for(var i = 0; i < highlighted.length; i++) {
-			$( spans[ highlighted[i] ]).css("color", this.style.highlightFontColor);
+			$( spans[ highlighted[i] ]).css("color", this.opt.highlightFontColor);
 		}
-		
-		
+
 		this._addSpanEvents();
 	},
 	
 	_drawFasta : function() {
-		var a = this._sequence.toUpperCase().split('');
+		var a = this.opt.sequence.toUpperCase().split('');
 		var pre = $('<pre></pre>').appendTo(this._contentDiv);
 
 		var i = 1;
@@ -232,7 +244,7 @@ var Sequence = Biojs.extend({
 	},
 	
 	_drawCodata : function() {
-		var a = this._sequence.toUpperCase().split('');
+		var a = this.opt.sequence.toUpperCase().split('');
 		var pre = $('<pre></pre>').appendTo(this._contentDiv);
 
 		var i = 0;
@@ -263,7 +275,7 @@ var Sequence = Biojs.extend({
 	},
 	
 	_drawRaw : function() {
-		var a = this._sequence.toLowerCase().split('');
+		var a = this.opt.sequence.toLowerCase().split('');
 		var i = 0;
 		var arr = [];
 		var pre = $('<pre></pre>').appendTo(this._contentDiv);
@@ -280,7 +292,7 @@ var Sequence = Biojs.extend({
 	},
 	
 	_drawPride : function() {
-		var a = this._sequence.toUpperCase().split('');
+		var a = this.opt.sequence.toUpperCase().split('');
 		var pre = $('<pre></pre>').appendTo(this._contentDiv);
 		var str = '';
 		var i = 1;
@@ -355,9 +367,9 @@ var Sequence = Biojs.extend({
 					}
 					
 					// Selection is happening, raise an event
-					self.raiseEvent('onSelectionChange', {
-						start : self._selectionStart,
-						end : self._selectionEnd
+					self.raiseEvent(self.eventTypes.onSelectionChange, {
+						start : self.opt.selectionStart,
+						end : self.opt.selectionEnd
 					});
 					
 				} 
@@ -366,21 +378,21 @@ var Sequence = Biojs.extend({
 			$currentSpan.mouseup(function() {
 				isMouseDown = false;
 				// Selection is done, raise an event
-				self.raiseEvent('onSelectionChanged', {
-					start : self._selectionStart,
-					end : self._selectionEnd
+				self.raiseEvent(self.eventTypes.onSelectionChange, {
+					start : self.opt.selectionStart,
+					end : self.opt.selectionEnd
 				});
 			});
 			
 			$currentSpan.mouseout(function() {
-				$('div'+this._target+' > div#tooltip').remove();
+				$('div'+self.opt.target+' > div#tooltip').remove();
 			});
 			
 			$currentSpan.mouseover(function(e) {
          		var tip;
          		
          		if (isMouseDown) {
-         			tip = "selected: [" + self._selectionStart +", " + self._selectionEnd + "]";	
+         			tip = "selected: [" + self.opt.selectionStart +", " + self.opt.selectionEnd + "]";	
          		} else {
          			tip = "position: " + currentPos;
          		}
@@ -425,10 +437,10 @@ var Sequence = Biojs.extend({
 	},
 	
 	_showToolTip : function ( posX, posY, message ) {
-		$('div'+this._target+' > div#tooltip').remove();
-		$('<div id="tooltip">'+ message +'</div>').appendTo(this._target);
-		$('div'+this._target+' > div#tooltip').css('top', posX );
-        $('div'+this._target+' > div#tooltip').css('left', posY );
+		$('div'+this.opt.target+' > div#tooltip').remove();
+		$('<div id="tooltip">'+ message +'</div>').appendTo(this.opt.target);
+		$('div'+this.opt.target+' > div#tooltip').css('top', posX );
+        $('div'+this.opt.target+' > div#tooltip').css('left', posY );
 	}
   
   
