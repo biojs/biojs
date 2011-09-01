@@ -101,7 +101,7 @@ var Sequence = Biojs.extend({
 
 		if(start != this.opt.selectionStart || end != this.opt.selectionEnd) {
 			this._setSelection(start, end);
-			this.raiseEvent(self.eventTypes.onSelectionChanged, {
+			this.raiseEvent(this.eventTypes.onSelectionChanged, {
 				start : start,
 				end : end
 			});
@@ -378,7 +378,7 @@ var Sequence = Biojs.extend({
 			$currentSpan.mouseup(function() {
 				isMouseDown = false;
 				// Selection is done, raise an event
-				self.raiseEvent(self.eventTypes.onSelectionChange, {
+				self.raiseEvent(self.eventTypes.onSelectionChanged, {
 					start : self.opt.selectionStart,
 					end : self.opt.selectionEnd
 				});
@@ -442,7 +442,6 @@ var Sequence = Biojs.extend({
 		$('div'+this.opt.target+' > div#tooltip').css('top', posX );
         $('div'+this.opt.target+' > div#tooltip').css('left', posY );
 	}
-  
   
 });
 

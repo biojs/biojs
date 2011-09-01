@@ -19,7 +19,7 @@
 				
 				var listener2 = function(params) {
 					//alert("otro listener: "+params);
-					//Sequence.setFormat( 'fasta' );
+					console.log(params);
 				};
 				
 				// sequence init
@@ -49,10 +49,6 @@
 					defaultFontColor : 'black'
 					
 				} );
-				
-				
-				
-				console.log(miSequence);
 				
 				// Events
 				miSequence.addListener('onSelectionChange', listener1);
