@@ -133,10 +133,12 @@ Biojs.prototype = {
 	// Trigger the registered functions under an event type
 	// 
 	raiseEvent : function(eventType, params) {
+		var eventObject = { type: eventType, source: this, data: params };
+		
 		for(var key in this._listeners ) {
 			if ( eventType == this._listeners[key].eventType ) {
 				for(var j in this._listeners[key].actionsPerformed ) {
-					this._listeners[key].actionsPerformed[j](params);
+					this._listeners[key].actionsPerformed[j](eventObject);
 				}
 				return;
 			}
