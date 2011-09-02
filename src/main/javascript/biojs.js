@@ -1,7 +1,26 @@
 
-
 var Biojs = function() {
 	// dummy
+};
+
+var EventHandler = function(eventType) {
+	this.eventType = eventType;
+	this.listeners = [];
+};
+
+EventHandler.prototype = {
+
+	addListener : function ( actionPerformed ) {
+		if ( (typeof actionPerformed) == "function" ) {
+			this.listeners.push(actionPerformed);
+		}
+	},
+	
+	triggerEvent : function( eventObject ) {
+		for ( var i in this.listeners ) {
+			this.listeners[i](eventObject);
+		}
+	}
 };
 
 Biojs.extend = function(_instance, _static) { // subclass
@@ -103,59 +122,61 @@ Biojs.prototype = {
 	
 	
 	// Register a function under an event type
-	// in order to execute it whenever the event is raised
+	// in order to execute it whenever the event is triggered
 	addListener: function(eventType, actionPerformed) {
 		
-		// register the listener in this._listeners under eventType  
-		for(var key in this._listeners) {
-			if ( eventType == this._listeners[key].eventType ) {
-				this._listeners[key].actionsPerformed.push(actionPerformed);
+		// register the listener in this._eventHandlers for the eventType  
+		for(var key in this._eventHandlers) {
+			if ( eventType == this._eventHandlers[key].eventType ) {
+				this._eventHandlers[key].addListener( actionPerformed );
 				return;
 			}
 		}
 		
-		// EventType does not exist in this._listeners 
-		if ( typeof this.eventTypes == "object" ) {
-			// Check if EventType exists (in the subclass) in eventTypes 
-			for ( var key in this.eventTypes ) {
-				// Register the new EventType
-				if ( this.eventTypes[key] == eventType ) {
-					var newSize = this._listeners.push( { eventType: eventType, actionsPerformed : [] } );
-					this._listeners[newSize-1].actionsPerformed.push(actionPerformed);
-					return;
+		if ( typeof eventHandlersRegistered != "boolean" ) {
+			// EventHandler does not exist in this._eventHandlers
+			// Because the event handlers are not initialized yet
+			if ( typeof this.eventTypes == "object" ) {
+				// Create an event handler for each eventType in eventTypes
+				for ( var key in this.eventTypes ) {
+					this._eventHandlers.push( new EventHandler( this.eventTypes[key] ) );
 				}
+			} else {
+				console.error("EventTypes must be a valid object containing the name of the events");
 			}
-		} 
-		
-		console.log("The EventType '" + eventType + "' does not exist");
+			eventHandlersRegistered = true;
+			this.addListener( eventType, actionPerformed );
+			
+		} else {
+			console.log("The EventType '" + eventType + "' does not exist");
+		}
 	},
 	
 	// Trigger the registered functions under an event type
 	// 
 	raiseEvent : function(eventType, params) {
-		var eventObject = { type: eventType, source: this, data: params };
-
-		for(var key in this._listeners ) {
-			if ( eventType == this._listeners[key].eventType ) {
-				for(var j in this._listeners[key].actionsPerformed ) {
-					this._listeners[key].actionsPerformed[j](eventObject);
-				}
+		for(var key in this._eventHandlers ) {
+			if ( eventType == this._eventHandlers[key].eventType ) {
+				this._eventHandlers[key].triggerEvent( new Event ( eventType, params, this ) );
 				return;
 			}
 		}
 	},
 	
-	// Id of the DIV element
-	// in order to append other elements into
-	_target : "",
+	setOptions : function (options) {
+		if ( this.opt instanceof Object )
+		{
+			for ( var key in options ) {
+				this.opt[key] = options[key];
+			}
+		} else {
+			console.error("opt object is not defined in the subclass of Biojs");
+		}
+	},
 	
-	// Contains the _listeners (functions) for each event type 
-	// The subclass must contain a member named eventTypes
-	// i.e.: yoursubclass.eventTypes = { event1: "event1", event2: "event2" }
-	_listeners : [{
-		eventType : 'onClick',
-		actionsPerformed : [ ]
-	}],
+	// Contains the functions to be executed for each event type
+	_eventHandlers : [ new EventHandler("onClick") ]
+	
 };
 
 // initialize
@@ -195,5 +216,13 @@ Biojs = Biojs.extend({
 });
 
 
-
+var Event = function ( type, data, source ) {
+	this.source = source;
+	this.type = type;
+	
+	for ( var key in data ) {
+		this[key] = data[key];
+	}
+	
+};
 

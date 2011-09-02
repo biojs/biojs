@@ -1,10 +1,8 @@
 
 var Sequence = Biojs.extend({
-
-	constructor: function( options ) {
-		for ( var key in options  ) {
-			this.opt[key] = options[key];
-		}
+	
+	constructor: function (options) {
+		this.setOptions(options);
 		this.init();
 	},
 	
@@ -441,8 +439,9 @@ var Sequence = Biojs.extend({
 		$('<div id="tooltip">'+ message +'</div>').appendTo(this.opt.target);
 		$('div'+this.opt.target+' > div#tooltip').css('top', posX );
         $('div'+this.opt.target+' > div#tooltip').css('left', posY );
-	}
-  
+	},
+
+	
 });
 
 
