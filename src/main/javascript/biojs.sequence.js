@@ -1,5 +1,5 @@
 
-var Sequence = Biojs.extend({
+Biojs.Sequence = Biojs.extend({
 	
 	constructor: function (options) {
 		this.setOptions(options);
@@ -11,6 +11,8 @@ var Sequence = Biojs.extend({
 		// The sequence to be displayed
 		sequence : "",
 		
+		id : "",
+		
 		// Id of the destination DIV element
 		target : "",
 		
@@ -20,6 +22,9 @@ var Sequence = Biojs.extend({
 		// Save the current selected region
 		selectionStart : 0,
 		selectionEnd : 0,
+		
+		numCols : 40,
+		numColsForSpace : 10,
 
 		// Multiple highlighted regions
 		// Syntax: [ { start: <startVal1>, end: <endVal1>}, ...,  { start: <startValN>, end: <endValN>} ]
@@ -151,12 +156,24 @@ var Sequence = Biojs.extend({
 		});
 	},
 	
+	setNumCols : function(numCols) {
+		this.opt.numCols = numCols;
+		this._redraw();
+	},
 	
-	showFormatSelector : function (){
+	formatSelectorVisible : function (visible){
+		if (visible) {
+			this._headerDiv.show();
+		} else {
+			this._headerDiv.hide();
+		}
+	},
+	
+	showFormatSelector : function() {
 		this._headerDiv.show();
 	},
 	
-	hideFormatSelector : function (){
+	hideFormatSelector : function() {
 		this._headerDiv.hide();
 	},
 	
@@ -229,10 +246,10 @@ var Sequence = Biojs.extend({
 
 		var i = 1;
 		var arr = [];
-		arr[0] = '>' + this._sequenceId + ' ' + a.length + ' bp<br/>';
+		arr[0] = '>' + this.opt.id + ' ' + a.length + ' bp<br/>';
 		while(i <= a.length) {
-			if(i % 60 == 0) {
-				arr[i] = '<br/><span>' + a[i-1] + '</span>';
+			if(i % this.opt.numCols == 0) {
+				arr[i] = '<span>' + a[i-1] + '</span><br/>';
 			} else {
 				arr[i] = '<span>' + a[i-1] + '</span>';
 			}
@@ -246,10 +263,10 @@ var Sequence = Biojs.extend({
 		var pre = $('<pre></pre>').appendTo(this._contentDiv);
 
 		var i = 0;
-		var str = 'ENTRY           ' + this._sequenceId + '<br/>';
+		var str = 'ENTRY           ' + this.opt.id + '<br/>';
 		str += 'SEQUENCE<br/>';
 		str += '        ';
-		for(var x = 1; x < 31; x++) {
+		for(var x = 1; x < this.opt.numCols; x++) {
 			if(x % 5 == 0) {
 				str += x;
 				if(x == 5) {
@@ -260,7 +277,7 @@ var Sequence = Biojs.extend({
 			}
 		}
 		while(i < a.length) {
-			if(i % 30 == 0) {
+			if(i % this.opt.numCols == 0) {
 				str += '<br/>';	
 				str += this._formatIndex(i+1, 7, ' ');
 				str += ' ';
@@ -279,7 +296,7 @@ var Sequence = Biojs.extend({
 		var pre = $('<pre></pre>').appendTo(this._contentDiv);
 		while(i < a.length) {
 
-			if(((i + 1) % 80) == 0) {
+			if(((i + 1) % this.opt.numCols) == 0) {
 				arr[i] = '<span>' + a[i] + '</span><br/>';
 			} else {
 				arr[i] = '<span>' + a[i] + '</span>';
@@ -294,6 +311,7 @@ var Sequence = Biojs.extend({
 		var pre = $('<pre></pre>').appendTo(this._contentDiv);
 		var str = '';
 		var i = 1;
+		var spaceCount = 1;
 		
 		str += this._formatIndex(i, 4, '0');
 		str += '  ';
@@ -301,19 +319,21 @@ var Sequence = Biojs.extend({
 		
 		while(i < a.length) {
 			
-			if(i % 80 == 0) {
+			if(i % this.opt.numCols == 0) {
 				str += '  ';	
 				str += this._formatIndex(i, 4, '0');				
 				str += '<br/>';
 				str += this._formatIndex(i+1, 4, '0');
 				str += '  ';
+				spaceCount = 0;
 				
-			} else if ( i % 10 == 0 ) {
+			} else if ( spaceCount % this.opt.numColsForSpace == 0 ) {
 				str += ' ';
 			}
 
 			str += '<span>' + a[i] + '</span>';
 			i++;
+			spaceCount++;
 		}
 		str += '<br/>'
 		pre.html(str);
@@ -439,7 +459,7 @@ var Sequence = Biojs.extend({
 		$('<div id="tooltip">'+ message +'</div>').appendTo(this.opt.target);
 		$('div'+this.opt.target+' > div#tooltip').css('top', posX );
         $('div'+this.opt.target+' > div#tooltip').css('left', posY );
-	},
+	}
 
 	
 });

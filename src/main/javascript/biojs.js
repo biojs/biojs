@@ -1,3 +1,12 @@
+/*
+	Biojs.js, version 1.0
+	Copyright 2011, John Gomez
+	License: http://www.opensource.org/licenses/mit-license.php
+	
+	This is an extended version of Base.js from http://dean.edwards.name/base/Base.js
+	It was adjusted to support events handling in order to make a base line for the Biojs Library
+	
+*/
 
 var Biojs = function() {
 	// dummy
@@ -120,9 +129,12 @@ Biojs.prototype = {
 		return this;
 	},
 	
-	
+	//
 	// Register a function under an event type
 	// in order to execute it whenever the event is triggered
+	// 	eventType -> [string] the event to be listened 
+	// 	actionPerformed -> [function] the action to be executed
+	// 
 	addListener: function(eventType, actionPerformed) {
 		
 		// register the listener in this._eventHandlers for the eventType  
@@ -141,19 +153,17 @@ Biojs.prototype = {
 				for ( var key in this.eventTypes ) {
 					this._eventHandlers.push( new EventHandler( this.eventTypes[key] ) );
 				}
-			} else {
-				console.error("EventTypes must be a valid object containing the name of the events");
-			}
+			} 
 			eventHandlersRegistered = true;
 			this.addListener( eventType, actionPerformed );
 			
-		} else {
-			console.log("The EventType '" + eventType + "' does not exist");
-		}
+		} 
 	},
-	
+	//
 	// Trigger the registered functions under an event type
-	// 
+	// 	eventType -> [string] the event to be raised
+	//  params -> values to be included into Event object 
+	//
 	raiseEvent : function(eventType, params) {
 		for(var key in this._eventHandlers ) {
 			if ( eventType == this._eventHandlers[key].eventType ) {
@@ -163,18 +173,35 @@ Biojs.prototype = {
 		}
 	},
 	
+	
+	//
+	// Save the option values to be applied to this component
+	// 	options -> [Object] containing the values
+	//	
 	setOptions : function (options) {
 		if ( this.opt instanceof Object )
 		{
 			for ( var key in options ) {
 				this.opt[key] = options[key];
 			}
-		} else {
-			console.error("opt object is not defined in the subclass of Biojs");
-		}
+		} 
 	},
 	
-	// Contains the functions to be executed for each event type
+	// 
+	// Connect this component with another by means listening its events
+	// 	source -> [BioJs] the another component 
+	// 	eventType -> [string] the event to be listened 
+	// 	callbackFunction -> [function] the action to be executed
+	//
+	listen: function ( source, eventType, callbackFunction ) {		
+		if ( source instanceof Biojs ){
+			if ( typeof callbackFunction == "function" ) {
+				source.addListener(eventType, callbackFunction);
+			} 
+		} 
+	},
+	
+	// Internal array containing the Event Handlers
 	_eventHandlers : [ new EventHandler("onClick") ]
 	
 };
