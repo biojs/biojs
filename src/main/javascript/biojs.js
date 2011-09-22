@@ -3,7 +3,7 @@
 	Copyright 2011, John Gomez
 	License: http://www.opensource.org/licenses/mit-license.php
 	
-	This is an extended version of Base.js from http://dean.edwards.name/base/Base.js
+	This is an modified and extended version of Base.js from http://dean.edwards.name/base/Base.js
 	It was adjusted to support events handling in order to make a base line for the Biojs Library
 	
 */
@@ -12,23 +12,29 @@ var Biojs = function() {
 	// dummy
 };
 
-var EventHandler = function(eventType) {
+Biojs.EventHandler = function(eventType) {
 	this.eventType = eventType;
 	this.listeners = [];
-};
 
-EventHandler.prototype = {
-
-	addListener : function ( actionPerformed ) {
+	this.addListener = function ( actionPerformed ) {
 		if ( (typeof actionPerformed) == "function" ) {
 			this.listeners.push(actionPerformed);
 		}
-	},
+	};
 	
-	triggerEvent : function( eventObject ) {
+	this.triggerEvent = function( eventObject ) {
 		for ( var i in this.listeners ) {
 			this.listeners[i](eventObject);
 		}
+	}
+};
+
+Biojs.Event = function ( type, data, source ) {
+	this.source = source;
+	this.type = type;
+	
+	for ( var key in data ) {
+		this[key] = data[key];
 	}
 };
 
@@ -151,7 +157,7 @@ Biojs.prototype = {
 			if ( typeof this.eventTypes == "object" ) {
 				// Create an event handler for each eventType in eventTypes
 				for ( var key in this.eventTypes ) {
-					this._eventHandlers.push( new EventHandler( this.eventTypes[key] ) );
+					this._eventHandlers.push( new Biojs.EventHandler( this.eventTypes[key] ) );
 				}
 			} 
 			eventHandlersRegistered = true;
@@ -167,7 +173,7 @@ Biojs.prototype = {
 	raiseEvent : function(eventType, params) {
 		for(var key in this._eventHandlers ) {
 			if ( eventType == this._eventHandlers[key].eventType ) {
-				this._eventHandlers[key].triggerEvent( new Event ( eventType, params, this ) );
+				this._eventHandlers[key].triggerEvent( new Biojs.Event ( eventType, params, this ) );
 				return;
 			}
 		}
@@ -202,7 +208,7 @@ Biojs.prototype = {
 	},
 	
 	// Internal array containing the Event Handlers
-	_eventHandlers : [ new EventHandler("onClick") ]
+	_eventHandlers : [ new Biojs.EventHandler("onClick") ]
 	
 };
 
@@ -239,17 +245,13 @@ Biojs = Biojs.extend({
 		
 		toString: function() {
 			return String(this.valueOf());
-		}		
+		},
+		
+		EventHandler: Biojs.EventHandler,
+		
+		Event: Biojs.Event
+		
+
 });
 
-
-var Event = function ( type, data, source ) {
-	this.source = source;
-	this.type = type;
-	
-	for ( var key in data ) {
-		this[key] = data[key];
-	}
-	
-};
 
