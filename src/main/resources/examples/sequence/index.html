@@ -1,0 +1,127 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+
+<head>
+  <title>tree_tops_2 template</title>
+  <meta http-equiv="content-type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" type="text/css" href="../style/style.css" />
+  
+	<script language="JavaScript" type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+	<script language="JavaScript" type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
+	<script language="JavaScript" type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery.dimensions.min.js"></script>
+	<script language="JavaScript" type="text/javascript" src="../../biojs.js"></script>
+	<script language="JavaScript" type="text/javascript" src="../../biojs.sequence.js"></script>
+	<script language="JavaScript" type="text/javascript">		
+		window.onload = function() {
+			
+				var listener1 = function(eventObj) {
+					$("#event2").children().remove();
+					$("#event1").children().remove();
+					$("#event1").append('<div class="event">start: '+eventObj.start+'<br\/>end: '+ eventObj.end+'<\/div>');
+				};
+				
+				var listener2 = function(eventObj) {
+					$("#event1").children().remove();
+					$("#event2").children().remove();
+					$("#event2").append("<div class='event'>start: "+eventObj.start+"<br/>end: "+ eventObj.end+"</div>");
+				};
+			
+				// input data
+				var theSequence = 'mlpglallllaawtaralevptdgnagllaepqiamfcgrlnmhmnvqngkwdsdpsgtktcidtkegilqycqevypelqitnvveanqpvtiqnwckrgrkqckthphfvipyrclvgefvsdallvpdkckflhqermdvcethlhwhtvaketcsekstnlhdygmllpcgidkfrgvefvccplaeesdnvdsadaeeddsdvwwggadtdyadgsedkvvevaeeeevaeveeeeadddeddedgdeveeeaeepyeeaterttsiatttttttesveevvrevcseqaetgpcramisrwyfdvtegkcapffyggcggnrnnfdteeycmavcgsamsqsllkttqeplardpvklpttaastpdavdkyletpgdenehahfqkakerleakhrermsqvmreweeaerqaknlpkadkkaviqhfqekvesleqeaanerqqlvethmarveamlndrrrlalenyitalqavpprprhvfnmlkkyvraeqkdrqhtlkhfehvrmvdpkkaaqirsqvmthlrviyermnqslsllynvpavaeeiqdevdellqkeqnysddvlanmiseprisygndalmpsltetkttvellpvngefslddlqpwhsfgadsvpantenevepvdarpaadrglttrpgsgltnikteeisevkmdaefrhdsgyevhhqklvffaedvgsnkgaiiglmvggvviatvivitlvmlkkkqytsihhgvvevdaavtpeerhlskmqqngyenptykffeqmqn';
+				
+				var mySequence = new Biojs.Sequence( {
+					sequence : theSequence,
+					target : "#component",
+					format : 'CODATA',
+					id : 'P918283'	
+				} );	
+				
+				// Events
+				mySequence.addListener('onSelectionChange', listener1);
+				mySequence.addListener('onSelectionChanged', listener2);
+				
+				mySequence.hideFormatSelector();
+
+				$("#fasta").click( function() {  mySequence.setFormat("FASTA") } );
+				$("#selectorshow").click( function() { mySequence.showFormatSelector() } );
+				$("#selectorhide").click( function() { mySequence.hideFormatSelector() } );
+				$("#highlight").click( function() { mySequence.highlight(40, 150) } );
+				$("#unhighlight").click( function() { mySequence.unHighlight(40, 150) } );
+				$("#selection").click( function() { mySequence.setSelection(100,200) } );
+				$("#numcols").click( function() { mySequence.setNumCols(60) } );	
+	
+				$("#src").hide();
+				$("#showsrc").click( function() { 
+					$("#src").toggle();
+				}); 
+	
+		};	
+	</script>
+  
+</head>
+
+<body>
+  <div id="main">
+    <div id="header">
+      <div id="logo">
+        <h1>Bio<span class="alternate_colour">Js</span> Sequence</h1>
+      </div>
+      <div id="menubar">
+        <ul id="menu">
+          <!-- put class="tab_selected" in the li tag for the selected page - to highlight which page you're on -->
+          <li class="tab_selected"><a href="index.html">Overview</a></li>
+          <li><a href="options.html">Options</a></li>
+          <li><a href="events.html">Events</a></li>
+          <li><a href="methods.html">Methods</a></li>
+        </ul>
+      </div>
+    </div>
+    <div id="site_content">
+    	
+      <div class="sidebar">
+        <!-- insert your sidebar items here -->
+        <h1>Methods</h1>
+        <ul>
+          <li><a id="fasta" href="#">setFormat("fasta")</a></li>
+          <li><a id="selectorshow" href="#">showFormatSelector()</a></li>
+          <li><a id="selectorhide" href="#">hideFormatSelector()</a></li>
+          <li><a id="highlight" href="#">highlight(40, 150)</a></li>
+          <li><a id="unhighlight" href="#">unHighlight(40, 150)</a></li>
+          <li><a id="selection" href="#">setSelection(100,200)</a></li>
+          <li><a id="numcols" href="#">setNumCols(60)</a></li>
+        </ul>
+        <h1>Events</h1>
+        <ul>
+          <li><a href="#">onSelectionChange</a><div id="event1"/></li>
+          <li><a href="#">onSelectionChanged</a><div id="event2"/></li>
+        </ul>
+      </div>
+      
+      <div id="content">
+      	<div id="component"></div>
+      	<br/>
+      	<div id="showsrc">View source</div>
+  		<div id="src" class="codeblock">
+  			<code>
+			var theSequence = 'mlpglallllaawtaralevptdgnagllaepqiamfcgrlnmhmnvqngkwdsdpsgtktcidtkegilqycqevypelqitnvveanqpvtiqnwckrgrkqckthphfvipyrclvgefvsdallvpdkckflhqermdvcethlhwhtvaketcsekstnlhdygmllpcgidkfrgvefvccplaeesdnvdsadaeeddsdvwwggadtdyadgsedkvvevaeeeevaeveeeeadddeddedgdeveeeaeepyeeaterttsiatttttttesveevvrevcseqaetgpcramisrwyfdvtegkcapffyggcggnrnnfdteeycmavcgsamsqsllkttqeplardpvklpttaastpdavdkyletpgdenehahfqkakerleakhrermsqvmreweeaerqaknlpkadkkaviqhfqekvesleqeaanerqqlvethmarveamlndrrrlalenyitalqavpprprhvfnmlkkyvraeqkdrqhtlkhfehvrmvdpkkaaqirsqvmthlrviyermnqslsllynvpavaeeiqdevdellqkeqnysddvlanmiseprisygndalmpsltetkttvellpvngefslddlqpwhsfgadsvpantenevepvdarpaadrglttrpgsgltnikteeisevkmdaefrhdsgyevhhqklvffaedvgsnkgaiiglmvggvviatvivitlvmlkkkqytsihhgvvevdaavtpeerhlskmqqngyenptykffeqmqn';
+			<br/>				
+			var mySequence = new Biojs.Sequence( {
+			<br/>
+			&nbsp;&nbsp;&nbsp;sequence : theSequence,
+			<br/>
+			&nbsp;&nbsp;&nbsp;target : "#component",
+			<br/>
+			&nbsp;&nbsp;&nbsp;format : 'CODATA',
+			<br/>
+			&nbsp;&nbsp;&nbsp;id : 'P918283'
+			<br/>	
+			});
+			</code>
+  		</div>
+      </div>
+    
+    </div>
+    <div id="footer">Copyright &copy; <a href="http://www.ebi.ac.uk">EBI-EMBL</a>. All Rights Reserved. | <a href="http://validator.w3.org/check?uri=referer">XHTML</a> | <a href="http://jigsaw.w3.org/css-validator/check/referer">CSS</a></div>
+  </div>
+<div style="text-align: center; font-size: 0.75em;">Design downloaded from <a href="http://www.freewebtemplates.com/">free website templates</a>.</div></body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+
+<head>
+  <title>BioJs Sequence events</title>
+  <meta name="description" content="website description" />
+  <meta name="keywords" content="website keywords, website keywords" />
+  <meta http-equiv="content-type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" type="text/css" href="../style/style.css" />
+  <link type="text/css" href="../style/pepper-grinder/jquery-ui-1.8.16.custom.css" rel="stylesheet" />
+  <script language="JavaScript" type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+  <script language="JavaScript" type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
+  <script language="JavaScript" type="text/javascript">
+  	$(function() {
+		$(".accordion").accordion({ header: "h3" });
+	});
+  </script>
+</head>
+
+<body>
+  <div id="main">
+    <div id="links"></div>
+    <div id="header">
+      <div id="logo">
+        <h1>Bio<span class="alternate_colour">Js</span> Sequence</h1>
+      </div>
+      <div id="menubar">
+        <ul id="menu">
+          <!-- put class="tab_selected" in the li tag for the selected page - to highlight which page you're on -->
+          <li><a href="index.html">Overview</a></li>
+          <li><a href="options.html">Options</a></li>
+          <li class="tab_selected"><a href="events.html">Events</a></li>
+          <li><a href="methods.html">Methods</a></li>        
+       	</ul>
+      </div>
+    </div>
+    <div id="site_content">
+    	
+      <div id="content">   	
+    	<div class="accordion">
+    		<div>
+    			<h3><a href="#">onSelectionChange</a></h3>
+    			<div>This event must be raised whenever the user drag the mouse over a char of the sequence.</div>
+    		</div>
+    		<div>
+    			<h3><a href="#">onSelectionChanged</a> </h3>
+    			<div>This event must be raised whenever the user clicks, drags and releases the mouse within the sequence.</div>
+    		</div>
+    	</div>
+      </div>
+      
+
+    <div id="site_content_bottom"></div>
+    </div>
+    <div id="footer">Copyright &copy; Company Name. All Rights Reserved. | <a href="http://validator.w3.org/check?uri=referer">XHTML</a> | <a href="http://jigsaw.w3.org/css-validator/check/referer">CSS</a> | <a href="http://www.dcarter.co.uk">design by dcarter</a></div>
+  </div>
+<div style="text-align: center; font-size: 0.75em;">Design downloaded from <a href="http://www.freewebtemplates.com/">free website templates</a>.</div></body>
+</html>
