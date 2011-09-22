@@ -53,6 +53,23 @@
 				$("#showsrc").click( function() { 
 					$("#src").toggle();
 				}); 
+				
+				// Another sequence
+				var anotherSequence = new Biojs.Sequence( {
+					sequence : theSequence,
+					target : "#component2",
+					format : 'PRIDE',
+					id : 'P99999'	
+				} );
+				
+				anotherSequence.listen(
+					mySequence,
+					"onSelectionChange",
+					function( eventObj ) {
+						console.log(this);
+					}
+				);
+				
 	
 		};	
 	</script>
@@ -104,6 +121,7 @@
       
       <div id="content">
       	<div id="component"></div>
+      	<div id="component2"></div>
       	<br/>
       	<div id="showsrc">View source</div>
   		<div id="src" class="codeblock">
