@@ -22,7 +22,7 @@ h1, h2, h3, h4, h5, h6
 h1, h4
 { font: normal 175% "century gothic", arial;
   margin: 0 0 15px 0;
-  padding: 15px 20px 5px 0;
+  padding: 15px 15px 5px 0;
   color: #444;}
 
 h2, h5
@@ -98,12 +98,12 @@ a:hover
   margin-right: auto;}
 
 #header
-{ background: url(back.png) repeat-x;}
+{ background: url(back2.png) repeat-x;}
 
 #logo
 { width: 870px;
   position: relative;
-  height: 107px;}
+  height: 88px;}
 
 #logo #logo_text 
 { position: absolute; 
