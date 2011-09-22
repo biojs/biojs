@@ -147,7 +147,7 @@ Biojs.prototype = {
 		for(var key in this._eventHandlers) {
 			if ( eventType == this._eventHandlers[key].eventType ) {
 				this._eventHandlers[key].addListener( actionPerformed );
-				this[eventType+(listeners++)] = actionPerformed;
+				this[eventType+(this.listeners++)] = actionPerformed;
 				return;
 			}
 		}
@@ -210,7 +210,7 @@ Biojs.prototype = {
 	// Internal array containing the Event Handlers
 	_eventHandlers : [ new Biojs.EventHandler("onClick") ],
 	
-	listeners=0;
+	listeners: 0
 	
 };
 
