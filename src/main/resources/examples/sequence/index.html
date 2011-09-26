@@ -38,6 +38,7 @@
 				// Events
 				mySequence.addListener('onSelectionChange', listener1);
 				mySequence.addListener('onSelectionChanged', listener2);
+			
 				
 				mySequence.hideFormatSelector();
 
@@ -54,21 +55,22 @@
 					$("#src").toggle();
 				}); 
 				
-				// Another sequence
-				var anotherSequence = new Biojs.Sequence( {
-					sequence : theSequence,
-					target : "#component2",
-					format : 'PRIDE',
-					id : 'P99999'	
-				} );
-				
-				anotherSequence.listen(
-					mySequence,
-					"onSelectionChange",
-					function( eventObj ) {
-						console.log(this);
-					}
-				);
+				// // Another sequence
+				// var anotherSequence = new Biojs.Sequence( {
+					// sequence : theSequence,
+					// target : "#component2",
+					// format : 'PRIDE',
+					// id : 'P99999'	
+				// } );
+// 				
+				// anotherSequence.listen(
+					// mySequence,
+					// "onSelectionChange",
+					// function( eventObj ) {
+						// anotherSequence.setSelection(eventObj.start, eventObj.end);
+// 						
+					// }
+				// );
 				
 	
 		};	

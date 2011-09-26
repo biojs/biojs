@@ -2,7 +2,6 @@
 Biojs.Sequence = Biojs.extend({
 	
 	constructor: function (options) {
-		this.setOptions(options);
 		this.init();
 	},
 	
@@ -39,10 +38,10 @@ Biojs.Sequence = Biojs.extend({
 	},
 	
 	// Events to be triggered 
-	eventTypes : {
-		onSelectionChanged : "onSelectionChanged",
-		onSelectionChange : "onSelectionChange"
-	},
+	eventTypes : [
+		"onSelectionChanged",
+		"onSelectionChange"
+	],
 	
 	// Initialize the component
 	init : function() {
@@ -104,7 +103,7 @@ Biojs.Sequence = Biojs.extend({
 
 		if(start != this.opt.selectionStart || end != this.opt.selectionEnd) {
 			this._setSelection(start, end);
-			this.raiseEvent(this.eventTypes.onSelectionChanged, {
+			this.raiseEvent('onSelectionChanged', {
 				start : start,
 				end : end
 			});
@@ -188,15 +187,17 @@ Biojs.Sequence = Biojs.extend({
 	},
 	
 	_setSelection : function(start, end) {
-		this.opt.selectionStart = start;
-		this.opt.selectionEnd = end;
+		var self = this;
+		
+		self.opt.selectionStart = start;
+		self.opt.selectionEnd = end;
 
 		var spans = this._contentDiv.find('span');
 		for(var i = 0; i < spans.length; i++) {
 			if(i + 1 >= start && i + 1 <= end) {
-				$(spans[i]).css("background-color", this.opt.selectionColor);
+				$(spans[i]).css("background-color", self.opt.selectionColor);
 			} else {
-				$(spans[i]).css("background-color", this.opt.defaultBackgroundColor);
+				$(spans[i]).css("background-color", self.opt.defaultBackgroundColor);
 			}
 		}
 	},
@@ -385,7 +386,7 @@ Biojs.Sequence = Biojs.extend({
 					}
 					
 					// Selection is happening, raise an event
-					self.raiseEvent(self.eventTypes.onSelectionChange, {
+					self.raiseEvent('onSelectionChange', {
 						start : self.opt.selectionStart,
 						end : self.opt.selectionEnd
 					});
@@ -396,7 +397,7 @@ Biojs.Sequence = Biojs.extend({
 			$currentSpan.mouseup(function() {
 				isMouseDown = false;
 				// Selection is done, raise an event
-				self.raiseEvent(self.eventTypes.onSelectionChanged, {
+				self.raiseEvent('onSelectionChanged', {
 					start : self.opt.selectionStart,
 					end : self.opt.selectionEnd
 				});
@@ -460,8 +461,6 @@ Biojs.Sequence = Biojs.extend({
 		$('div'+this.opt.target+' > div#tooltip').css('top', posX );
         $('div'+this.opt.target+' > div#tooltip').css('left', posY );
 	}
-
-	
 });
 
 

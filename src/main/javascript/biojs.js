@@ -38,6 +38,20 @@ Biojs.Event = function ( type, data, source ) {
 	}
 };
 
+Biojs.Utils = {
+	clone : function(obj) {
+	  var newObj = (obj instanceof Array) ? [] : {};
+	  for (i in obj) {
+	    if (obj[i] && typeof obj[i] == "object") {
+	    	newObj[i] = Biojs.Utils.clone(obj[i]);
+	    } else {
+	    	newObj[i] = obj[i]
+	    }
+	  } 
+	  return newObj;
+	}	
+};
+
 Biojs.extend = function(_instance, _static) { // subclass
 	var extend = Biojs.prototype.extend;
 	
@@ -55,10 +69,15 @@ Biojs.extend = function(_instance, _static) { // subclass
 	var constructor = proto.constructor;
 	var klass = proto.constructor = function() {
 		if (!Biojs._prototyping) {
+			
 			if (this._constructing || this.constructor == klass) { // instantiation
-				this._constructing = true;
-				constructor.apply(this, arguments);
-				delete this._constructing;
+				//this._constructing = true;
+				var clone = Biojs.Utils.clone(this);
+				clone.setOptions(arguments[0]);
+				constructor.apply(clone, arguments);
+				//delete this._constructing;
+				return clone;
+				
 			} else if (arguments[0] != null) { // casting
 				return (arguments[0].extend || extend).call(arguments[0], proto);
 			}
@@ -71,11 +90,11 @@ Biojs.extend = function(_instance, _static) { // subclass
 	klass.forEach = this.forEach;
 	klass.implement = this.implement;
 	klass.prototype = proto;
-	klass.toString = this.toString;
 	klass.valueOf = function(type) {
 		//return (type == "object") ? klass : constructor; //-dean
 		return (type == "object") ? klass : constructor.valueOf();
 	};
+	klass.toString = this.toString;
 	extend.call(klass, _static);
 	
 	// class initialization
@@ -130,8 +149,9 @@ Biojs.prototype = {
 			// copy each of the source object's properties to this object
 			for (var key in source) {
 				if (!proto[key]) extend.call(this, key, source[key]);
-			}
+			}	
 		}
+		
 		return this;
 	},
 	
@@ -143,17 +163,9 @@ Biojs.prototype = {
 	// 
 	addListener: function(eventType, actionPerformed) {
 		
-		// register the listener in this._eventHandlers for the eventType  
-		for(var key in this._eventHandlers) {
-			if ( eventType == this._eventHandlers[key].eventType ) {
-				this._eventHandlers[key].addListener( actionPerformed );
-				this[eventType+(this.listeners++)] = actionPerformed;
-				return;
-			}
-		}
-		
-		if ( typeof eventHandlersRegistered != "boolean" ) {
+		if ( !this.eventHandlersRegistered ) {
 			// EventHandler does not exist in this._eventHandlers
+			this._eventHandlers = [];
 			// Because the event handlers are not initialized yet
 			if ( typeof this.eventTypes == "object" ) {
 				// Create an event handler for each eventType in eventTypes
@@ -161,8 +173,16 @@ Biojs.prototype = {
 					this._eventHandlers.push( new Biojs.EventHandler( this.eventTypes[key] ) );
 				}
 			} 
-			eventHandlersRegistered = true;
+			this.eventHandlersRegistered = true;
 			this.addListener( eventType, actionPerformed );
+		}
+		
+		// register the listener in this._eventHandlers for the eventType  
+		for(var key in this._eventHandlers) {
+			if ( eventType == this._eventHandlers[key].eventType ) {
+				this._eventHandlers[key].addListener( actionPerformed );
+				return;
+			}
 		} 
 	},
 	//
@@ -205,12 +225,7 @@ Biojs.prototype = {
 				source.addListener(eventType, callbackFunction);
 			} 
 		} 
-	},
-	
-	// Internal array containing the Event Handlers
-	_eventHandlers : [ new Biojs.EventHandler("onClick") ],
-	
-	listeners: 0
+	}
 	
 };
 
@@ -251,7 +266,9 @@ Biojs = Biojs.extend({
 		
 		EventHandler: Biojs.EventHandler,
 		
-		Event: Biojs.Event
+		Event: Biojs.Event,
+		
+		Utils: Biojs.Utils
 		
 
 });
