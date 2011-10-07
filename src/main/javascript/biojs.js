@@ -276,16 +276,22 @@ Biojs.prototype =
 		// Supposed that this._eventHandlers does not exist.
 		this._eventHandlers = [];
 		// Because the event handlers are not initialized yet
+		
+		var alias = function (handler) {
+			return function (actionPerformed) {
+				handler.listeners.push(actionPerformed);
+			} 
+		};
+		
 		if ( typeof eventTypes == "object" ) {
 			// Create an event handler for each eventType in eventTypes
-			for ( var i in eventTypes ) {
+			for ( var i=0; i < eventTypes.length; i++ ) {
 				var handler = new Biojs.EventHandler( eventTypes[i] );
 				this._eventHandlers.push( handler );
 				// Creates the alias this.<eventType> (<actionPerformed>)
 				// as alternative to be used instead of this.addistener(<eventType>, <actionPerformed>)
-				this[ eventTypes[i] ] = function(actionPerformed) {
-					handler.addListener(actionPerformed);
-				};
+				
+				this[ eventTypes[i] ] = new alias(handler);
 			}
 		} 
 	}, 

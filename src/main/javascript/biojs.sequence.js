@@ -414,7 +414,7 @@ Biojs.Sequence = Biojs.extend(
 		}
 		
 		// add tool tips and background' coloring effect
-		$('div#'+this.opt.target).find('.annotation').each(function(){
+		$(this._contentDiv).find('.annotation').each(function(){
 			self._addToolTip($(this), function(a) {
 				var annotation = self.opt.annotations[a.attr("id")];
 				return annotation.name + "<br/>" + ((annotation.html)? annotation.html : '');
@@ -454,25 +454,22 @@ Biojs.Sequence = Biojs.extend(
 				region = annotation.regions[r];
 				
 				spaceAfter = '';
-				
-				//if ( (endPos-pos) > 1 ) {
-					spaceAfter += (pos % opt.numColsForSpace == 0 )? ' ' : '';
-					spaceAfter += spaceBetweenChars;
-				//}
+				spaceAfter += (pos % opt.numColsForSpace == 0 )? ' ' : '';
+				spaceAfter += spaceBetweenChars;
 				
 				color = ((region.color)? region.color : defaultColor);
-				klass = 'annotation '+id;
+				data = 'class="annotation '+id+'" id="'+id+'" color="'+color+'" pos="'+pos+'"';
 				
 				if ( pos == region.start ) {
-					row[pos] = '<span style="'+styleBegin+color+'" class="'+klass+'" id="'+id+'" color="'+color+'" pos="'+pos+'"> ';
+					row[pos] = '<span style="'+styleBegin+color+'" '+data+'> ';
 					row[pos] += spaceAfter;
 					row[pos] += '</span>';
 				} else if ( pos == region.end ) {
-					row[pos] = '<span style="'+styleEnd+color+' " class="'+klass+'" id="'+id+'" color="'+color+'" pos="'+pos+'"> ';
+					row[pos] = '<span style="'+styleEnd+color+' " '+data+'> ';
 					//row[pos] += spaceAfter;
 					row[pos] += '</span>';
 				} else if ( pos > region.start && pos < region.end ) {
-					row[pos] = '<span style="'+styleOn+color+'" class="'+klass+'" id="'+id+'" color="'+color+'" pos="'+pos+'"> ';
+					row[pos] = '<span style="'+styleOn+color+'" '+data+'> ';
 					row[pos] += spaceAfter;
 					row[pos] += '</span>';
 				} else if (!row[pos]) {
@@ -604,28 +601,23 @@ Biojs.Sequence = Biojs.extend(
 	
 	_addSpanEvents : function() {
 		var self = this;
-		var spans = this._contentDiv.find('.sequence');
 		var isMouseDown = false;
-		var dragRight = true;
-		var currentPos = parseInt($(this).data('selection'));
-		
-		for(var i = 0; i < spans.length; i++) {
-			var $currentSpan = $(spans[i]);
+		var currentPos;
 
-			$currentSpan.data('selection', i + 1);
-
+		self._contentDiv.find('.sequence').each( function () {	
+			
 			// Register the starting position
-			$currentSpan.mousedown(function() {
-				currentPos = parseInt($(this).data('selection'));
+			$(this).mousedown(function() {
+				currentPos = parseInt($(this).attr('id'));
 				clickPos = currentPos;
 				self._setSelection(clickPos,currentPos);
 				isMouseDown = true;
-			});
 			
-			// Update selection
-			// Show tooltip containing the position
-			$currentSpan.mouseover(function(e) {
-				currentPos = parseInt($(this).data('selection'));
+			}).mouseover(function() {
+				// Update selection
+				// Show tooltip containing the position
+				
+				currentPos = parseInt($(this).attr('id'));
 				
 				if(isMouseDown) {
 					if( currentPos > clickPos ) {
@@ -639,7 +631,6 @@ Biojs.Sequence = Biojs.extend(
 						start : self.opt.selectionStart,
 						end : self.opt.selectionEnd
 					});
-					
 				} 
 				
 			}).mouseup(function() {
@@ -651,14 +642,14 @@ Biojs.Sequence = Biojs.extend(
 				});
 			});
 			
-			this._addToolTip($currentSpan, function(e) {
+			self._addToolTip($(this), function(e) {
 				if (isMouseDown) {
 	     			return "selected: [" + self.opt.selectionStart +", " + self.opt.selectionEnd + "]";	
 	     		} else {
 	     			return "position: " + currentPos;
 	     		}
 			});
-		}
+		});
 	},
 	
 	_addToolTip : function ( target, msgFunction ) {
