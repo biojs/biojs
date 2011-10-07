@@ -1,33 +1,62 @@
+/** 
+ * Sequence component 
+ * 
+ * @class
+ * @extends Biojs
+ * @requires <a href='http://blog.jquery.com/2011/09/12/jquery-1-6-4-released/'>jQuery Core 1.6.4</a>
+ * @requires <a href='http://jqueryui.com/download'>jQuery UI 1.8.16</a>
+ * 
+ * @author <a href="mailto:johncar@gmail.com">John Gomez</a>, based on the code made 
+ * by <a href="mailto:secevalliv@gmail.com">Jose Villaveces</a>
+ * 
+ * @param {Object} options An object with the options for Sequence component.
+ * @option {string} target Identifier of the DIV tag where the component should be displayed.
+ * @option {string} sequence The sequence to be displayed.
+ * @option {int} id (optional) Sequence identifier if apply.
+ * @option {int} format (optional) The display format for the sequence representation.
+ * @option {Object[]} highlights (Optional) For highlighting multiple regions. Syntax: [ { start: &lt;startVal1&gt;, end: &lt;endVal1&gt;}, ...,  { start: &lt;startValN&gt;, end: &lt;endValN&gt;} ]
+ */
 
-Biojs.Sequence = Biojs.extend({
-	
+Biojs.Sequence = Biojs.extend(
+/** @lends Biojs.Sequence# */
+{	
 	constructor: function (options) {
 		this.init();
 	},
 	
-	// options 
+   /** 
+    * Default options (and its values) for the Protein3D component. 
+    * @name Biojs.Sequence-opt
+    * @type Object
+    */
 	opt : {
-		// The sequence to be displayed
 		sequence : "",
-		
 		id : "",
-		
-		// Id of the destination DIV element
 		target : "",
-		
-		// Format that sequence must be displayed
 		format : "FASTA",
-
-		// Save the current selected region
 		selectionStart : 0,
 		selectionEnd : 0,
-		
 		numCols : 40,
 		numColsForSpace : 10,
-
-		// Multiple highlighted regions
-		// Syntax: [ { start: <startVal1>, end: <endVal1>}, ...,  { start: <startValN>, end: <endValN>} ]
 		highlights : [],
+		
+		
+//		[ 
+//		  {
+//			  name:"UNIPROT", html:"<br> Example of HTML <ul><li>Example 1</li><li>Example 2</li></ul>", color:"green", 
+//			  regions: [{start: 11, end: 120},
+//			            {start: 140, end:147, color: "#FFA010"}, 
+//			            {start: 148, end:150, color: "red"}, 
+//			            {start: 151, end:165}
+//			  ] 
+//		  },
+//         {
+//			  name:"CATH", color:"#F0F020", html: "<br>Using color code #F0F020 ", 
+//       	  regions: [{start: 20, end: 200}]
+//		  }
+//		],
+		annotations: [],
+		
 
 		// Styles 
 		selectionColor : 'Yellow',
@@ -37,10 +66,81 @@ Biojs.Sequence = Biojs.extend({
 		defaultBackgroundColor : 'white'
 	},
 	
-	// Events to be triggered 
 	eventTypes : [
+		/**
+		 * @name Biojs.Sequence#onSelectionChanged
+		 * @event
+		 * @param {function} actionPerformed An function which receives an {@link Biojs.Event} object as argument.
+		 * @eventData {Object} source The component which did triggered the event.
+		 * @eventData {string} type The name of the event.
+		 * @eventData {int} start A number indicating the start of the selection.
+		 * @eventData {int} end A number indicating the ending of selection.
+		 * @example 
+		 * mySequence.onSelectionChanged(
+		 *    function( objEvent ) {
+		 *       alert("Selected: " + objEvent.start + ", " + objEvent.end );
+		 *    }
+		 * ); 
+		 * 
+		 * // Alternative:
+		 * mySequence.addListener("onSelectionChanged",
+		 *    function( objEvent ) {
+		 *       alert("Selected: " + objEvent.start + ", " + objEvent.end );
+		 *    }
+		 * );
+		 * 
+		 * */
 		"onSelectionChanged",
-		"onSelectionChange"
+		
+		/**
+		 * @name Biojs.Sequence#onSelectionChange
+		 * @event
+		 * @param {function} actionPerformed An function which receives an {@link Biojs.Event} object as argument.
+		 * @eventData {Object} source The component which did triggered the event.
+		 * @eventData {string} type The name of the event.
+		 * @eventData {int} start A number indicating the start of the selection.
+		 * @eventData {int} end A number indicating the ending of selection.
+		 * @example 
+		 * mySequence.onSelectionChange(
+		 *    function( objEvent ) {
+		 *       alert("Selection in progress: " + objEvent.start + ", " + objEvent.end );
+		 *    }
+		 * );  
+		 * 
+		 * // Alternative:
+		 * mySequence.addListener("onSelectionChange",
+		 *    function( objEvent ) {
+		 *       alert("Selection in progress: " + objEvent.start + ", " + objEvent.end );
+		 *    }
+		 * );
+		 * 
+		 * */
+		"onSelectionChange",
+		
+		/**
+		 * @name Biojs.Sequence#onAnnotationClicked
+		 * @event
+		 * @param {function} actionPerformed An function which receives an {@link Biojs.Event} object as argument.
+		 * @eventData {Object} source The component which did triggered the event.
+		 * @eventData {string} type The name of the event.
+		 * @eventData {string} name The name of the selected annotation.
+		 * @eventData {int} pos A number indicating the position of the selected amino acid.
+		 * @example 
+		 * mySequence.onAnnotationClicked(
+		 *    function( objEvent ) {
+		 *       alert("Clicked " + objEvent.name + " on position " + objEvent.pos );
+		 *    }
+		 * );  
+		 * 
+		 * // Alternative:
+		 * mySequence.addListener("onAnnotationClicked",
+		 *    function( objEvent ) {
+		 *       alert("Clicked " + objEvent.name + " on position " + objEvent.pos );
+		 *    }
+		 * );
+		 * 
+		 * */
+		"onAnnotationClicked"
 	],
 	
 	// Initialize the component
@@ -70,12 +170,11 @@ Biojs.Sequence = Biojs.extend({
 			self._redraw();
 		});
 		
-		self._redraw();
-		
-		for ( var i in this.opt.highlights ) {
-			this.highlight( this.opt.highlights[i].start, this.opt.highlights[i].end );
+		for (var i in this.opt.highlights){
+			this.highlight(this.opt.highlights[i].start, this.opt.highlights[i].end);
 		}
 		
+		self._redraw();
 	},
 
 	// internal members
@@ -111,32 +210,26 @@ Biojs.Sequence = Biojs.extend({
 	},
 	
 	highlight : function (start, end) {
-		var spans = this._contentDiv.find('span');
-		for(var i = 0; i < spans.length; i++) {
-			if(i + 1 >= start && i + 1 <= end) {
-				$(spans[i]).css("color", this.opt.highlightFontColor);
-				$(spans[i]).css("background-color", this.opt.highlightBackgroundColor);
-			} 
-		}
-	},
-	
-	unHighlight : function (start, end) {
-		if (start < end) {
-			var spans = this._contentDiv.find('span');
-			for(var i = 1; i <= spans.length; i++) {
-				if( i >= start && i <= end) {
-					$(spans[i-1]).css("color", this.opt.defaultFontColor);
-					$(spans[i]).css("background-color", this.opt.defaultBackgroundColor);
-				} 
+		if ( start <= end ) {
+			for ( var i=start; i <= end; i++ ){
+				this._contentDiv.find('.sequence#'+i)
+					.css("color", this.opt.highlightFontColor)
+					.addClass("highlighted");
 			}
 		}
 	},
 	
+	unHighlight : function (start, end) {	
+		for( var i=start; i <= end; i++ ) {
+			this._contentDiv.find('span.sequence.highlighted#'+i)
+				.removeClass("highlighted")
+				.css("color", this.opt.defaultFontColor);
+		}
+	},
+	
 	unHighlightAll : function () {
-		var self = this;
-		self._contentDiv.find('span').each(function(){
-			$(this).css("color", self.opt.defaultFontColor);
-			$(this).css("background-color", this.opt.defaultBackgroundColor);
+		this._contentDiv.find('span.sequence.highlighted').each( function() {
+			$(this).removeClass("highlighted").css("color", this.opt.defaultFontColor);
 		});
 	},
 	
@@ -192,7 +285,7 @@ Biojs.Sequence = Biojs.extend({
 		self.opt.selectionStart = start;
 		self.opt.selectionEnd = end;
 
-		var spans = this._contentDiv.find('span');
+		var spans = this._contentDiv.find('.sequence');
 		for(var i = 0; i < spans.length; i++) {
 			if(i + 1 >= start && i + 1 <= end) {
 				$(spans[i]).css("background-color", self.opt.selectionColor);
@@ -204,15 +297,11 @@ Biojs.Sequence = Biojs.extend({
 	
 	_redraw : function() {
 		var i = 0;	
-		var highlighted = [];
 		var self = this;
-		
-		// Save the highlighted regions
-		this._contentDiv.find('span').each(function(){
-			if ( $(this).css("color") == self.opt.highlightFontColor ) {
-				highlighted.push(i);	
-			}
-			i++;
+		var highlighted = [];
+
+		this._contentDiv.find('.sequence.highlighted').each( function(){
+			highlighted.push($(this).attr("id"));
 		});
 		
 		// Reset the content
@@ -233,129 +322,289 @@ Biojs.Sequence = Biojs.extend({
 		this._setSelection(this.opt.selectionStart, this.opt.selectionEnd);
 		
 		// Restore the highlighted regions
-		var spans = this._contentDiv.find('span');
-		for(var i = 0; i < highlighted.length; i++) {
-			$( spans[ highlighted[i] ]).css("color", this.opt.highlightFontColor);
+		for ( var i in highlighted ) {
+			this._contentDiv.find('.sequence#'+highlighted[i]).each( function(){
+				$(this).css("color", self.opt.highlightFontColor).addClass("highlighted");
+			});	
 		}
 
 		this._addSpanEvents();
 	},
 	
 	_drawFasta : function() {
+		var self = this;
 		var a = this.opt.sequence.toUpperCase().split('');
 		var pre = $('<pre></pre>').appendTo(this._contentDiv);
 
 		var i = 1;
 		var arr = [];
-		arr[0] = '>' + this.opt.id + ' ' + a.length + ' bp<br/>';
-		while(i <= a.length) {
-			if(i % this.opt.numCols == 0) {
-				arr[i] = '<span>' + a[i-1] + '</span><br/>';
-			} else {
-				arr[i] = '<span>' + a[i-1] + '</span>';
-			}
-			i++;
-		}
-		pre.html(arr.join(''));
+	    var str = '>' + this.opt.id + ' ' + a.length + ' bp<br/>';
+		
+	    this.opt.numLeft = false;
+	    this.opt.numRight = false;
+	    this.opt.numTop = false;
+	    
+		str += this._drawSequence(a, this.opt);
+		pre.html(str);
+		
+		this._drawAnnotations(this.opt);
 	},
 	
 	_drawCodata : function() {
+		
+		var self = this;
 		var a = this.opt.sequence.toUpperCase().split('');
 		var pre = $('<pre></pre>').appendTo(this._contentDiv);
 
 		var i = 0;
 		var str = 'ENTRY           ' + this.opt.id + '<br/>';
 		str += 'SEQUENCE<br/>';
-		str += '        ';
-		for(var x = 1; x < this.opt.numCols; x++) {
-			if(x % 5 == 0) {
-				str += x;
-				if(x == 5) {
-					str += ' ';
-				}				
-			} else {
-				str += '  ';
-			}
-		}
-		while(i < a.length) {
-			if(i % this.opt.numCols == 0) {
-				str += '<br/>';	
-				str += this._formatIndex(i+1, 7, ' ');
-				str += ' ';
-			}
-			str += '<span>' + a[i] + ' </span>';
-			i++;
-		}
+		
+		var opt = {
+				numLeft: true,
+				numLeftSize: 7,
+				numLeftPad:' ',
+				numTop: true,
+				numTopEach: 5,
+				numCols: self.opt.numCols,
+			    numColsForSpace: 0,
+			    spaceBetweenChars: true
+		};
+		
+		str += this._drawSequence(a, opt);
+
 		str += '<br/>///'
 		pre.html(str);
+		
+		this._drawAnnotations(opt);
 	},
 	
+    _drawAnnotations: function(opt){ 
+    	
+    	var self = this;
+    	var a = this.opt.sequence.toLowerCase().split('');    	
+    	var annotations = this.opt.annotations;
+    	var leftSpaces = '';
+    	var row = '';
+    	var annot = '';
+    	
+    	// Index at the left?
+		if (opt.numLeft) {
+			leftSpaces += this._formatIndex(' ', opt.numLeftSize+2, ' ');
+		}
+
+		for ( var i = 0; i < a.length; i += opt.numCols ){
+			row = '';
+			for ( var key in annotations ){
+				annotations[key].id = key;
+				annot = this._getHTMLRowAnnot(i+1, annotations[key], opt);				
+				if (annot.length > 0) {
+					row += '<br/>';
+					row += leftSpaces;
+					row += annot;
+					row += '<br/>';
+				} 
+			}
+			
+			if ( opt.numRight ) {
+				$(row).insertAfter('div'+self.opt.target+' > div > pre > span#numRight'+ (i+opt.numCols) );
+			} else {
+				$(row).insertAfter('div'+self.opt.target+' > div > pre > span#'+ (i+opt.numCols) );
+			}
+		}
+		
+		// add tool tips and background' coloring effect
+		$('div#'+this.opt.target).find('.annotation').each(function(){
+			self._addToolTip($(this), function(a) {
+				var annotation = self.opt.annotations[a.attr("id")];
+				return annotation.name + "<br/>" + ((annotation.html)? annotation.html : '');
+			});
+			
+			$(this).mouseover(function(eventObj) {
+				$('.annotation.'+$(eventObj.srcElement).attr("id")).each(function(){
+					$(this).css("background-color", $(this).attr("color") );
+				});
+		    }).mouseout(function() {
+		    	$('.annotation').css("background-color", "white"); 
+		    }).click(function(e) {
+		    	var a = self.opt.annotations[$(e.srcElement).attr("id")];
+		    	self.raiseEvent('onAnnotationClicked', {
+		    		name: a.name,
+		    		pos: $(e.srcElement).attr("pos")
+		    	});
+		    });
+			
+		});
+
+    },
+    
+    _getHTMLRowAnnot : function (currentPos, annotation, opt) {
+    	var styleBegin = 'border-left:1px solid; border-bottom:1px solid; border-color:';
+    	var styleOn = 'border-bottom:1px solid; border-color:';
+    	var styleEnd = 'border-bottom:1px solid; border-right:1px solid; border-color:';
+    	
+    	var row = [];
+    	var endPos = (currentPos + opt.numCols);
+    	var spaceBetweenChars = (opt.spaceBetweenChars)? ' ' : '';    	
+    	var defaultColor = annotation.color;
+    	var id = annotation.id;
+    	for ( var pos=currentPos; pos < endPos ; pos++ ) {
+			// regions
+			for ( var r in annotation.regions ) {
+				region = annotation.regions[r];
+				
+				spaceAfter = '';
+				
+				//if ( (endPos-pos) > 1 ) {
+					spaceAfter += (pos % opt.numColsForSpace == 0 )? ' ' : '';
+					spaceAfter += spaceBetweenChars;
+				//}
+				
+				color = ((region.color)? region.color : defaultColor);
+				klass = 'annotation '+id;
+				
+				if ( pos == region.start ) {
+					row[pos] = '<span style="'+styleBegin+color+'" class="'+klass+'" id="'+id+'" color="'+color+'" pos="'+pos+'"> ';
+					row[pos] += spaceAfter;
+					row[pos] += '</span>';
+				} else if ( pos == region.end ) {
+					row[pos] = '<span style="'+styleEnd+color+' " class="'+klass+'" id="'+id+'" color="'+color+'" pos="'+pos+'"> ';
+					//row[pos] += spaceAfter;
+					row[pos] += '</span>';
+				} else if ( pos > region.start && pos < region.end ) {
+					row[pos] = '<span style="'+styleOn+color+'" class="'+klass+'" id="'+id+'" color="'+color+'" pos="'+pos+'"> ';
+					row[pos] += spaceAfter;
+					row[pos] += '</span>';
+				} else if (!row[pos]) {
+					row[pos] = ' ';
+					row[pos] += spaceAfter;
+				}
+			}
+		}
+
+       	var str = row.join("");
+    	
+    	return ( str.indexOf("span") == -1 )? "" : str;
+    },
+	
 	_drawRaw : function() {
+		var self = this;
 		var a = this.opt.sequence.toLowerCase().split('');
 		var i = 0;
 		var arr = [];
 		var pre = $('<pre></pre>').appendTo(this._contentDiv);
-		while(i < a.length) {
 
-			if(((i + 1) % this.opt.numCols) == 0) {
-				arr[i] = '<span>' + a[i] + '</span><br/>';
-			} else {
-				arr[i] = '<span>' + a[i] + '</span>';
-			}
-			i++;
-		}
-		pre.html(arr.join(''));
+		var opt = {
+			numCols: self.opt.numCols
+		};
+		
+		pre.html(
+			this._drawSequence(a, opt)
+		);
+		
+		this._drawAnnotations(opt);
 	},
 	
 	_drawPride : function() {
+		var self = this;
 		var a = this.opt.sequence.toUpperCase().split('');
 		var pre = $('<pre></pre>').appendTo(this._contentDiv);
-		var str = '';
-		var i = 1;
-		var spaceCount = 1;
+	
+		opt = {
+			numLeft: true,
+			numLeftSize: 5,
+			numLeftPad:'0',
+			numRight: true,
+			numRightSize: 5,
+			numRightPad: '0',
+			numCols: self.opt.numCols,
+		    numColsForSpace: self.opt.numColsForSpace
+		};
 		
-		str += this._formatIndex(i, 4, '0');
-		str += '  ';
-		str += '<span>' + a[0] + '</span>';
+		pre.html(
+			this._drawSequence(a, opt)
+		);
 		
-		while(i < a.length) {
-			
-			if(i % this.opt.numCols == 0) {
-				str += '  ';	
-				str += this._formatIndex(i, 4, '0');				
-				str += '<br/>';
-				str += this._formatIndex(i+1, 4, '0');
-				str += '  ';
-				spaceCount = 0;
-				
-			} else if ( spaceCount % this.opt.numColsForSpace == 0 ) {
-				str += ' ';
-			}
-
-			str += '<span>' + a[i] + '</span>';
-			i++;
-			spaceCount++;
-		}
-		str += '<br/>'
-		pre.html(str);
+		this._drawAnnotations(opt);
 	},
 	
-	_formatIndex : function(number,size,fillingChar) {
+	_drawSequence : function(a, opt) {
+		var str = '';
+		// Index at top?
+		if( opt.numTop )
+		{
+			var size = (opt.spaceBetweenChars)? opt.numTopEach*2: opt.numTopEach;
+			
+			if (opt.numLeft) {
+				str += this._formatIndex(' ', opt.numLeftSize, ' ');
+			}
+			
+			str += this._formatIndex(' ', size, ' ');
+			
+			for(var x = opt.numTopEach; x < opt.numCols; x += opt.numTopEach) {
+				str += this._formatIndex(x, size, ' ', true);
+			}
+			str += '<br/>'
+		}
+		
+		
+		// Index at the left?
+		if (opt.numLeft) {
+			str += this._formatIndex(1, opt.numLeftSize, opt.numLeftPad);
+			str += '  ';
+		}
+
+		for (var i=1; i <= a.length; i++) {
+			if( i % opt.numCols == 0) {	
+				str += '<span class="sequence" id="'+i+'">' + a[i-1] + '</span>';
+				
+				if (opt.numRight) {
+					str += '  ';
+					str += '<span id="numRight'+i+'">'
+					str += this._formatIndex(i, opt.numRightSize, opt.numRightPad);	
+					str += '</span>';
+				}
+				
+				str += '<br/>';
+				
+				if (opt.numLeft) {
+					str += this._formatIndex(i+1, opt.numLeftSize, opt.numLeftPad);
+					str += '  ';
+				}
+				
+			} else {
+				str += '<span class="sequence" id="'+i+'">' + a[i-1];
+				str += (i % opt.numColsForSpace == 0)? ' ' : '';
+				str += (opt.spaceBetweenChars)? ' ' : '';
+				str += '</span>';
+			}
+		}
+		
+		str += '<br/>'	
+		return str;
+	},
+	
+	
+	_formatIndex : function( number, size, fillingChar, alignLeft) {
 		var str = number.toString();
+		var filling = '';
 		var padding = size - str.length;	
 		if ( padding > 0 ) {
-			str = '';
 			while ( padding-- > 0 ) {
-				str += fillingChar;
+				filling += fillingChar;
 			}
-			str += number;
+			if (alignLeft){
+				str = number+filling;
+			} else {
+				str = filling+number;
+			}
 		}
 		return str;
 	},
 	
 	_addSpanEvents : function() {
 		var self = this;
-		var spans = this._contentDiv.find('span');
+		var spans = this._contentDiv.find('.sequence');
 		var isMouseDown = false;
 		var dragRight = true;
 		var currentPos = parseInt($(this).data('selection'));
@@ -392,9 +641,8 @@ Biojs.Sequence = Biojs.extend({
 					});
 					
 				} 
-			});
-			
-			$currentSpan.mouseup(function() {
+				
+			}).mouseup(function() {
 				isMouseDown = false;
 				// Selection is done, raise an event
 				self.raiseEvent('onSelectionChanged', {
@@ -403,64 +651,102 @@ Biojs.Sequence = Biojs.extend({
 				});
 			});
 			
-			$currentSpan.mouseout(function() {
-				$('div'+self.opt.target+' > div#tooltip').remove();
+			this._addToolTip($currentSpan, function(e) {
+				if (isMouseDown) {
+	     			return "selected: [" + self.opt.selectionStart +", " + self.opt.selectionEnd + "]";	
+	     		} else {
+	     			return "position: " + currentPos;
+	     		}
 			});
-			
-			$currentSpan.mouseover(function(e) {
-         		var tip;
-         		
-         		if (isMouseDown) {
-         			tip = "selected: [" + self.opt.selectionStart +", " + self.opt.selectionEnd + "]";	
-         		} else {
-         			tip = "position: " + currentPos;
-         		}
-		         
-		        //Append the tooltip template and its value
-		        $(this).append('<div id="tooltip"><div class="tipHeader"></div><div class="tipBody">' + tip + '</div><div class="tipFooter"></div></div>');     
-		         
-		        //Set the X and Y axis of the tooltip
-		        $('#tooltip').css('top', e.pageY + 10 );
-		        $('#tooltip').css('left', e.pageX + 20 );
-		        
-		        // Style values 
-		        // Would be nice to have it in a css file 
-		        $('#tooltip').css('position', "absolute" );
-		        $('#tooltip').css('z-index', "9999" );
-		        $('#tooltip').css('color', "#fff" );
-		        $('#tooltip').css('font-size', "10px" );
-		        $('#tooltip').css('width', "150px" );
-		        
-		        $('.tipHeader').css('background-color', "#000");
-		        $('.tipHeader').css('height', "8px"); 
-		        //$('.tipHeader').css('background', "images/tipHeader.gif");  
-				
-				$('.tipBody').css('background-color', "#000");
-				$('.tipBody').css('padding', "3px 3px 3px 10px")
-
-				$('.tipFooter').css('background-color', "#000");
-		        $('.tipFooter').css('height', "8px"); 
-		        //$('.tipFooter').css('background', "images/tipHeader.gif no-repeat");  
-		         
-		        //Show the tooltip with faceIn effect
-		        $('#tooltip').fadeIn('500');
-		        $('#tooltip').fadeTo('10',0.8);
-		        
-		        $(this).css('cursor', "pointer");
-		         
-		    }).mouseout(function() {
-		        //Remove the appended tooltip template
-		        $(this).children('div#tooltip').remove();	         
-		    });
 		}
 	},
 	
-	_showToolTip : function ( posX, posY, message ) {
-		$('div'+this.opt.target+' > div#tooltip').remove();
-		$('<div id="tooltip">'+ message +'</div>').appendTo(this.opt.target);
-		$('div'+this.opt.target+' > div#tooltip').css('top', posX );
-        $('div'+this.opt.target+' > div#tooltip').css('left', posY );
+	_addToolTip : function ( target, msgFunction ) {
+		$(target).mouseover(function(e) {
+     		var tip = msgFunction( $(this) );
+	         
+	        //Append the tooltip template and its value
+	        $(this).append('<div id="tooltip"><div class="tipHeader"></div><div class="tipBody">' + tip + '</div><div class="tipFooter"></div></div>');     
+	         
+	        //Set the X and Y axis of the tooltip
+	        $('#tooltip').css('top', e.pageY + 10 );
+	        $('#tooltip').css('left', e.pageX + 20 );
+	        
+	        // Style values 
+	        // Would be nice to have it in a css file 
+	        $('#tooltip').css('position', "absolute" );
+	        $('#tooltip').css('z-index', "9999" );
+	        $('#tooltip').css('color', "#fff" );
+	        $('#tooltip').css('font-size', "10px" );
+	        $('#tooltip').css('width', "auto" );
+	        
+	        $('.tipHeader').css('background-color', "#000");
+	        $('.tipHeader').css('height', "8px"); 
+	        //$('.tipHeader').css('background', "images/tipHeader.gif");  
+			
+			$('.tipBody').css('background-color', "#000");
+			$('.tipBody').css('padding', "3px 10px 3px 10px")
+
+			$('.tipFooter').css('background-color', "#000");
+	        $('.tipFooter').css('height', "8px"); 
+	        //$('.tipFooter').css('background', "images/tipHeader.gif no-repeat");  
+	         
+	        //Show the tooltip with faceIn effect
+	        $('#tooltip').fadeIn('500');
+	        $('#tooltip').fadeTo('10',0.8);
+	        
+	        $(this).css('cursor', "pointer");
+	         
+	    }).mouseout(function() {
+	        //Remove the appended tooltip template
+	        $(this).children('div#tooltip').remove();	         
+	    });
+	},
+	
+   /**
+    * Annotate a set of intervals provided in the argument.
+    * 
+    * @example 
+    * // One simple annotation for region from 20 to 200.
+    * myInstance.setAnnotation({
+	*    name:"CATH", 
+	*    color:"#F0F020", 
+	*    html: "<br>Using color code #F0F020 ", 
+    *    regions: [{start: 20, end: 200}]
+	* }); 
+    * 
+    * @example
+    * // Annotations using regions with different colors.
+    * myInstance.setAnnotation({
+	*    name:"UNIPROT", 
+	*    html:"&lt;br&gt; Example of HTML &lt;ul&gt;&lt;li&gt;Example 1&lt;/li&gt;&lt;li&gt;Example 2&lt;/li&gt;&lt;/ul&gt;", 
+	*    color:"green", 
+	*    regions: [
+	*       {start: 11, end: 120},
+	*       {start: 140, end:147, color: "#FFA010"}, 
+	*       {start: 148, end:150, color: "red"}, 
+	*       {start: 151, end:165}]
+	* });
+	* 
+    * 
+    * @param {Object} annotation The intervals belonging to the same annotation. 
+    * Syntax: { name: &lt;value&gt;, color: &lt;HTMLColorCode&gt;, html: &lt;HTMLString&gt;, regions: [{ start: &lt;startVal1&gt;, end: &lt;endVal1&gt;}, ...,  { start: &lt;startValN&gt;, end: &lt;endValN&gt;}] }
+    */
+	setAnnotation: function ( annotation ) {
+		annotations.push(annotation);
+	},
+	
+	removeAnnotation: function ( name ) {
+		for (var i=0; i < this.opt.annotations.length ; i++ ){
+			if(name == annotation.name){
+				annotations.remove(i);
+				return;
+			}
+		}
 	}
+	
+	
+	
 });
 
 

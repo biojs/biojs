@@ -25,6 +25,11 @@
 					$("#event2").append("<div class='event'>start: "+eventObj.start+"<br/>end: "+ eventObj.end+"</div>");
 				};
 			
+				var listener3 = function(eventObj) {
+					$("#event3").children().remove();
+					$("#event3").append("<div class='event'>Clicked "+eventObj.name+"<br/>on position "+ eventObj.pos+"</div>");
+				};
+			
 				// input data
 				var theSequence = 'mlpglallllaawtaralevptdgnagllaepqiamfcgrlnmhmnvqngkwdsdpsgtktcidtkegilqycqevypelqitnvveanqpvtiqnwckrgrkqckthphfvipyrclvgefvsdallvpdkckflhqermdvcethlhwhtvaketcsekstnlhdygmllpcgidkfrgvefvccplaeesdnvdsadaeeddsdvwwggadtdyadgsedkvvevaeeeevaeveeeeadddeddedgdeveeeaeepyeeaterttsiatttttttesveevvrevcseqaetgpcramisrwyfdvtegkcapffyggcggnrnnfdteeycmavcgsamsqsllkttqeplardpvklpttaastpdavdkyletpgdenehahfqkakerleakhrermsqvmreweeaerqaknlpkadkkaviqhfqekvesleqeaanerqqlvethmarveamlndrrrlalenyitalqavpprprhvfnmlkkyvraeqkdrqhtlkhfehvrmvdpkkaaqirsqvmthlrviyermnqslsllynvpavaeeiqdevdellqkeqnysddvlanmiseprisygndalmpsltetkttvellpvngefslddlqpwhsfgadsvpantenevepvdarpaadrglttrpgsgltnikteeisevkmdaefrhdsgyevhhqklvffaedvgsnkgaiiglmvggvviatvivitlvmlkkkqytsihhgvvevdaavtpeerhlskmqqngyenptykffeqmqn';
 				
@@ -32,13 +37,27 @@
 					sequence : theSequence,
 					target : "#component",
 					format : 'CODATA',
-					id : 'P918283'	
-				} );	
+					id : 'P918283',
+					annotations: [{
+						name:"UNIPROT", 
+						html:"<br> Example of HTML <ul><li>Example 1</li><li>Example 2</li></ul>", 
+						color:"green", 
+				  		regions: [{start: 11, end: 120},
+				                  {start: 140, end:147, color: "#FFA010"}, 
+				        	      {start: 148, end:150, color: "red"}, 
+				                  {start: 151, end:165}] 
+				  	},{
+					  name:"CATH", 
+					  color:"#F0F020", 
+					  html: "<br>Using color code #F0F020 ", 
+		        	  regions: [{start: 20, end: 200}]
+					}]	
+				});	
 				
 				// Events
-				mySequence.addListener('onSelectionChange', listener1);
+				mySequence.onSelectionChange(listener1);
 				mySequence.addListener('onSelectionChanged', listener2);
-			
+				mySequence.onAnnotationClicked(listener3);
 				
 				mySequence.hideFormatSelector();
 
@@ -48,30 +67,20 @@
 				$("#highlight").click( function() { mySequence.highlight(40, 150) } );
 				$("#unhighlight").click( function() { mySequence.unHighlight(40, 150) } );
 				$("#selection").click( function() { mySequence.setSelection(100,200) } );
-				$("#numcols").click( function() { mySequence.setNumCols(60) } );	
+				$("#numcols").click( function() { mySequence.setNumCols(70) } );	
 	
 				$("#src").hide();
 				$("#showsrc").click( function() { 
 					$("#src").toggle();
 				}); 
-				
-				// // Another sequence
-				// var anotherSequence = new Biojs.Sequence( {
-					// sequence : theSequence,
-					// target : "#component2",
-					// format : 'PRIDE',
-					// id : 'P99999'	
-				// } );
-// 				
-				// anotherSequence.listen(
-					// mySequence,
-					// "onSelectionChange",
-					// function( eventObj ) {
-						// anotherSequence.setSelection(eventObj.start, eventObj.end);
-// 						
-					// }
-				// );
-				
+	
+	
+				// Annotations 
+				var annotation = {
+					  name:"CATH", color:"#F0F020", html: "<br>Using color code #F0F020 ", 
+		        	  regions: [{start: 20, end: 200}]
+				};
+	
 	
 		};	
 	</script>
@@ -112,12 +121,13 @@
           <li><a id="highlight" href="#">highlight(40, 150)</a></li>
           <li><a id="unhighlight" href="#">unHighlight(40, 150)</a></li>
           <li><a id="selection" href="#">setSelection(100,200)</a></li>
-          <li><a id="numcols" href="#">setNumCols(60)</a></li>
+          <li><a id="numcols" href="#">setNumCols(70)</a></li>
         </ul>
         <h2>Events</h2>
         <ul>
           <li><a href="#">onSelectionChange</a><div id="event1"/></li>
           <li><a href="#">onSelectionChanged</a><div id="event2"/></li>
+          <li><a href="#">onAnnotationClicked</a><div id="event3"/></li>
         </ul>
       </div>
       
