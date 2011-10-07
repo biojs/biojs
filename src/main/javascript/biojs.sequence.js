@@ -155,7 +155,7 @@ Biojs.Sequence = Biojs.extend(
         });
 
 		self._headerDiv = $('<div></div>').appendTo(self.opt.target);
-		self._contentDiv = $('<div></div>').appendTo(self.opt.target);
+		self._contentDiv = $('<div style="white-space:pre-wrap"></div>').appendTo(self.opt.target);
 		
 		self._headerDiv.append('Format: ');
 
