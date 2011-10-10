@@ -39,25 +39,8 @@ Biojs.Sequence = Biojs.extend(
 		numCols : 40,
 		numColsForSpace : 10,
 		highlights : [],
-		
-		
-//		[ 
-//		  {
-//			  name:"UNIPROT", html:"<br> Example of HTML <ul><li>Example 1</li><li>Example 2</li></ul>", color:"green", 
-//			  regions: [{start: 11, end: 120},
-//			            {start: 140, end:147, color: "#FFA010"}, 
-//			            {start: 148, end:150, color: "red"}, 
-//			            {start: 151, end:165}
-//			  ] 
-//		  },
-//         {
-//			  name:"CATH", color:"#F0F020", html: "<br>Using color code #F0F020 ", 
-//       	  regions: [{start: 20, end: 200}]
-//		  }
-//		],
 		annotations: [],
 		
-
 		// Styles 
 		selectionColor : 'Yellow',
 		highlightFontColor : 'red',
@@ -155,7 +138,7 @@ Biojs.Sequence = Biojs.extend(
         });
 
 		self._headerDiv = $('<div></div>').appendTo(self.opt.target);
-		self._contentDiv = $('<div style="white-space:pre-wrap"></div>').appendTo(self.opt.target);
+		self._contentDiv = $('<div></div>').appendTo(self.opt.target);
 		
 		self._headerDiv.append('Format: ');
 
@@ -183,15 +166,16 @@ Biojs.Sequence = Biojs.extend(
 	
 	// Methods
 	
-	setSelectionColor : function(color) {
-		if( typeof this.opt.selectionColor != 'undefined' && typeof this.opt.selectionColor != 'object') {
-			this.opt.selectionColor = color;
-			if(this.opt.selectionStart > 0 && this.opt.selectionEnd > 0) {
-				this._setSelection(this.opt.selectionStart, this.opt.selectionEnd);
-			}
-		}
-	},
-	
+	/**
+    * Set the current selection in the sequence causing the event {@link Biojs.Sequence#onSelectionChanged}
+    *
+    * @example
+    * // set selection from the position 100 to 150 
+    * myInstance.selectSelection(100, 150);
+    * 
+    * @param {int} start The starting character of the selection.
+    * @param {int} end The ending character of the selection
+    */
 	setSelection : function(start, end) {
 		if(start > end) {
 			var aux = end;
@@ -209,6 +193,16 @@ Biojs.Sequence = Biojs.extend(
 		}
 	},
 	
+	/**
+    * Highlights a region using the font color defined in {Biojs.Protein3D#highlightFontColor} by default is red.
+    *
+    * @example
+    * // highlight the characters within the position 100 to 150, included.
+    * myInstance.highlight(100, 150);
+    * 
+    * @param {int} start The starting character of the highlighting.
+    * @param {int} end The ending character of the highlighting
+    */
 	highlight : function (start, end) {
 		if ( start <= end ) {
 			for ( var i=start; i <= end; i++ ){
@@ -219,6 +213,16 @@ Biojs.Sequence = Biojs.extend(
 		}
 	},
 	
+	/**
+    * Clear a highlighted region using.
+    *
+    * @example
+    * // Clear the highlighted characters within the position 100 to 150, included.
+    * myInstance.unHighlight(100, 150);
+    * 
+    * @param {int} start The starting character.
+    * @param {int} end The ending character.
+    */
 	unHighlight : function (start, end) {	
 		for( var i=start; i <= end; i++ ) {
 			this._contentDiv.find('span.sequence.highlighted#'+i)
@@ -227,12 +231,25 @@ Biojs.Sequence = Biojs.extend(
 		}
 	},
 	
+	/**
+    * Clear the highlights of whole sequence.
+    *
+    */
 	unHighlightAll : function () {
 		this._contentDiv.find('span.sequence.highlighted').each( function() {
 			$(this).removeClass("highlighted").css("color", this.opt.defaultFontColor);
 		});
 	},
 	
+	/**
+    * Changes the current displaying format of the sequence.
+    *
+    * @example
+    * // Set format to 'FASTA'.
+    * myInstance.setFormat('FASTA');
+    * 
+    * @param {string} format The format for the sequence to be displayed.
+    */
 	setFormat : function(format) {
 		if ( this.opt.format != format.toUpperCase() ) {
 			this.opt.format = format.toUpperCase();
@@ -248,11 +265,29 @@ Biojs.Sequence = Biojs.extend(
 		});
 	},
 	
+	/**
+    * Changes the current number of columns in the displayed sequence.
+    *
+    * @example
+    * // Set the number of columns to 70.
+    * myInstance.setNumCols(70);
+    * 
+    * @param {int} numCols The number of columns.
+    */
 	setNumCols : function(numCols) {
 		this.opt.numCols = numCols;
 		this._redraw();
 	},
 	
+	/**
+    * Set the visibility of the drop-down list of formats.
+    *
+    * @example
+    * // Hide the format selector.
+    * myInstance.formatSelectorVisible(false);
+    * 
+    * @param {boolean} visible true: show; false: hide.
+    */
 	formatSelectorVisible : function (visible){
 		if (visible) {
 			this._headerDiv.show();
@@ -261,19 +296,35 @@ Biojs.Sequence = Biojs.extend(
 		}
 	},
 	
+	/**
+    * This is similar to a {Biojs.Protein3D#formatSelectorVisible} with the 'true' argument.
+    * 
+    */
 	showFormatSelector : function() {
 		this._headerDiv.show();
 	},
 	
+	/**
+    * This is similar to a {Biojs.Protein3D#formatSelectorVisible} with the 'false' argument.
+    * 
+    */
 	hideFormatSelector : function() {
 		this._headerDiv.hide();
 	},
 	
+	/**
+    * Hides the whole component.
+    * 
+    */
 	hide : function () {
 		this._headerDiv.hide();
 		this._contentDiv.hide();
 	},
-	
+
+	/**
+    * Shows the whole component.
+    * 
+    */
 	show : function () {
 		this._headerDiv.show();
 		this._contentDiv.show();
@@ -354,7 +405,7 @@ Biojs.Sequence = Biojs.extend(
 		
 		var self = this;
 		var a = this.opt.sequence.toUpperCase().split('');
-		var pre = $('<pre></pre>').appendTo(this._contentDiv);
+		var pre = $('<pre style="white-space:pre"></pre>').appendTo(this._contentDiv);
 
 		var i = 0;
 		var str = 'ENTRY           ' + this.opt.id + '<br/>';
@@ -420,17 +471,16 @@ Biojs.Sequence = Biojs.extend(
 				return annotation.name + "<br/>" + ((annotation.html)? annotation.html : '');
 			});
 			
-			$(this).mouseover(function(eventObj) {
-				$('.annotation.'+$(eventObj.srcElement).attr("id")).each(function(){
+			$(this).mouseover(function(e) {
+				$('.annotation.'+$(e.target).attr("id")).each(function(){
 					$(this).css("background-color", $(this).attr("color") );
 				});
 		    }).mouseout(function() {
 		    	$('.annotation').css("background-color", "white"); 
 		    }).click(function(e) {
-		    	var a = self.opt.annotations[$(e.srcElement).attr("id")];
 		    	self.raiseEvent('onAnnotationClicked', {
-		    		name: a.name,
-		    		pos: $(e.srcElement).attr("pos")
+		    		name: self.opt.annotations[$(e.target).attr("id")].name,
+		    		pos: $(e.target).attr("pos")
 		    	});
 		    });
 			
@@ -530,6 +580,7 @@ Biojs.Sequence = Biojs.extend(
 		// Index at top?
 		if( opt.numTop )
 		{
+			str += '<span style="white-space:pre" class="numTop">'
 			var size = (opt.spaceBetweenChars)? opt.numTopEach*2: opt.numTopEach;
 			
 			if (opt.numLeft) {
@@ -541,7 +592,7 @@ Biojs.Sequence = Biojs.extend(
 			for(var x = opt.numTopEach; x < opt.numCols; x += opt.numTopEach) {
 				str += this._formatIndex(x, size, ' ', true);
 			}
-			str += '<br/>'
+			str += '</span><br/>'
 		}
 		
 		
@@ -556,8 +607,8 @@ Biojs.Sequence = Biojs.extend(
 				str += '<span class="sequence" id="'+i+'">' + a[i-1] + '</span>';
 				
 				if (opt.numRight) {
+					str += '<span style="white-space:pre" id="numRight'+i+'">';
 					str += '  ';
-					str += '<span id="numRight'+i+'">'
 					str += this._formatIndex(i, opt.numRightSize, opt.numRightPad);	
 					str += '</span>';
 				}
@@ -565,8 +616,10 @@ Biojs.Sequence = Biojs.extend(
 				str += '<br/>';
 				
 				if (opt.numLeft) {
+					str += '<span style="white-space:pre" id="numLeft'+i+'">';
 					str += this._formatIndex(i+1, opt.numLeftSize, opt.numLeftPad);
 					str += '  ';
+					str += '</span>';
 				}
 				
 			} else {
@@ -588,7 +641,7 @@ Biojs.Sequence = Biojs.extend(
 		var padding = size - str.length;	
 		if ( padding > 0 ) {
 			while ( padding-- > 0 ) {
-				filling += fillingChar;
+				filling += ("<span>"+fillingChar+"</span>");
 			}
 			if (alignLeft){
 				str = number+filling;
@@ -727,6 +780,16 @@ Biojs.Sequence = Biojs.extend(
 		annotations.push(annotation);
 	},
 	
+	/**
+    * Removes an annotation by means of its name.
+    * 
+    * @example 
+    * // Remove the UNIPROT annotation.
+    * myInstance.removeAnnotation('UNIPROT'); 
+    * 
+    * @param {string} name The name of the annotation to be removed.
+    * 
+    */
 	removeAnnotation: function ( name ) {
 		for (var i=0; i < this.opt.annotations.length ; i++ ){
 			if(name == annotation.name){
