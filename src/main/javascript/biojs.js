@@ -91,7 +91,17 @@ Biojs.Utils = {
 	},
 	
 	/**
-     * Cross-platform console for debugging.
+     * Cross-browser console for debugging. 
+     * The console is disabled by default. That means, all messages written by means Biojs.console.log("My Message") will be ignored. 
+     * Use Biojs.console.enable() to enable it.
+     * 
+     * @example
+     * // Enabling loggin messages 
+     * Biojs.console.enable();
+     * ...
+     * // Writing a log
+     * Biojs.console.log("My Message");
+     * 
      * @type {Object}
      */
 	console: {
@@ -492,15 +502,7 @@ Biojs = Biojs.extend({
 	
 	/**
      * Cross-browser console for debugging. 
-     * The console is disabled by default. That means, all messages written by means Biojs.console.log("My Message") will be ignored. 
-     * Use Biojs.console.enable() to enable it.
-     * 
-     * @example
-     * // Enabling loggin messages 
-     * Biojs.console.enable();
-     * ...
-     * // Writing a log
-     * Biojs.console.log("My Message");
+     * This is a shorcut for {@link Biojs.Utils.console}
      * 
      * @type {Object}
      */
