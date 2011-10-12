@@ -128,6 +128,7 @@ Biojs.Sequence = Biojs.extend(
 	
 	// Initialize the component
 	init : function() {
+		
 		var self = this;
 		
 		// Disable text selection
