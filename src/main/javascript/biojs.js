@@ -78,17 +78,79 @@ Biojs.Utils = {
 	 * @returns {object} A Clone of the object passed as argument.
 	 * 
 	 */
-	clone : function(obj) {
+	clone: function(obj) {
 	  var newObj = (obj instanceof Array) ? [] : {};
 	  for (i in obj) {
 	    if (obj[i] && typeof obj[i] == "object") {
 	    	newObj[i] = Biojs.Utils.clone(obj[i]);
 	    } else {
-	    	newObj[i] = obj[i]
+	    	newObj[i] = obj[i];
 	    }
 	  } 
 	  return newObj;
-	}	
+	},
+	
+	/**
+     * Cross-platform console for debugging.
+     * @type {Object}
+     */
+	console: {
+		enable: function() {
+			// Define a cross-browser window.console.log method.
+			// For IE and FF without Firebug, fallback to using an alert.
+			if (window.console) {
+				// In this case, there are a console, perfect!
+				this.log = function (msg) { console.log(msg) };
+			} else {
+				// We have not window.console, but it is Opera browser?
+				if (window.opera) {
+					// Right! then lets use window.opera.postError
+					this.log = function (msg) { window.opera.postError(msg) };
+				} else {
+					// None console found! 
+					// Try to write the logs somewhere
+					// That's it! in a new window, identified by 'Biojs.console'
+					var consoleWin = window.open('','myconsole',
+					  'width=350,height=250'
+					   +',menubar=0'
+					   +',toolbar=0'
+					   +',status=0'
+					   +',scrollbars=1'
+					   +',resizable=1'); 
+					 
+					// We got it?
+					if (consoleWin) {
+						// Good, build a blank document into with a DIV 'Biojs.console'
+						consoleWin.document.writeln(
+						  '<html><head><title>BioJS Console</title></head>'
+						   +'<body bgcolor=white onLoad="self.focus()">'
+						   +'<div id="Biojs.console"></div>'
+						   +'</body></html>'
+						);
+						consoleWin.document.close();
+						
+						Biojs.console.domDocument = consoleWin.document;
+						Biojs.console.domDivNode = consoleWin.document.getElementById("Biojs.console");
+						
+						// Finally, the log function will write into the DIV
+						this.log = function (msg) {
+							textNode = Biojs.console.domDocument.createTextNode(msg);
+							line = Biojs.console.domDocument.createElement('pre');
+							line.appendChild(textNode);
+							Biojs.console.domDivNode.appendChild(line);
+						};
+						
+					} else {
+						// Game over! do not write logs, but let's tell to user by means an alert (sorry!)
+						alert("Please activate the pop-up window in this page " +
+								"in order to enable the BioJS console");
+					}	
+				}
+			}
+		},
+		
+		log: function (msg) { ; /* Do nothing by default */ }		
+	}
 };
 
 /**
@@ -385,56 +447,71 @@ Biojs.prototype =
 
 // initialize
 Biojs = Biojs.extend({
-		constructor: function() {
-			this.extend(arguments[0]);
+	constructor: function() {
+		this.extend(arguments[0]);
+	}
+},
+/** @static */
+/** @lends Biojs */
+{
+	/**
+     * Ancestor of the Biojs class (Object).
+     * @type {Object}
+     */
+	ancestor: Object,
+	/**
+     * Version of the Biojs class.
+     * @type {string}
+     */
+	version: "1.0",
+	
+	forEach: function(object, block, context) {
+		for (var key in object) {
+			if (this.prototype[key] === undefined) {
+				block.call(context, object[key], key, object);
+			}
 		}
 	},
-	/** @static */
-	/** @lends Biojs */
-	{
-		/**
-	     * Ancestor of the Biojs class (Object).
-	     * @type {Object}
-	     */
-		ancestor: Object,
-		/**
-	     * Version of the Biojs class.
-	     * @type {string}
-	     */
-		version: "1.0",
-		
-		forEach: function(object, block, context) {
-			for (var key in object) {
-				if (this.prototype[key] === undefined) {
-					block.call(context, object[key], key, object);
-				}
+	
+	implement: function() {
+		for (var i = 0; i < arguments.length; i++) {
+			if (typeof arguments[i] == "function") {
+				// if it's a function, call it
+				arguments[i](this.prototype);
+			} else {
+				// add the interface using the extend method
+				this.prototype.extend(arguments[i]);
 			}
-		},
-		
-		implement: function() {
-			for (var i = 0; i < arguments.length; i++) {
-				if (typeof arguments[i] == "function") {
-					// if it's a function, call it
-					arguments[i](this.prototype);
-				} else {
-					// add the interface using the extend method
-					this.prototype.extend(arguments[i]);
-				}
-			}
-			return this;
-		},
-		
-		toString: function() {
-			return String(this.valueOf());
-		},
-		
-		EventHandler: Biojs.EventHandler,
-		
-		Event: Biojs.Event,
-		
-		Utils: Biojs.Utils
-		
-
+		}
+		return this;
+	},
+	
+	toString: function() {
+		return String(this.valueOf());
+	},
+	
+	/**
+     * Cross-browser console for debugging. 
+     * The console is disabled by default. That means, all messages written by means Biojs.console.log("My Message") will be ignored. 
+     * Use Biojs.console.enable() to enable it.
+     * 
+     * @example
+     * // Enabling loggin messages 
+     * Biojs.console.enable();
+     * ...
+     * // Writing a log
+     * Biojs.console.log("My Message");
+     * 
+     * @type {Object}
+     */
+	console: Biojs.Utils.console,
+	
+	EventHandler: Biojs.EventHandler,
+	
+	Event: Biojs.Event,
+	
+	Utils: Biojs.Utils
+	
 });
 
 
