@@ -10,14 +10,14 @@
     <outputDirectory>target/scripts</outputDirectory>
     <testOutputDirectory>target/test-scripts</testOutputDirectory>
 
-    <plugins>
+    <plugins> 
       <plugin>
         <groupId>nl.windgazer</groupId>
         <artifactId>jsdoctk-plugin</artifactId>
         <version>2.3.2</version>
        	<configuration>
-               <template>${basedir}/src/doc/jsdocTemplate</template> <!-- Alternatives are not pre-installed for version 2.x-->
-               <directory>${project.build.directory}/jsdoc</directory>
+               <template>${basedir}/src/doc/biojsTemplate</template> 
+               <directory>${project.build.directory}</directory>
                <recurse>1</recurse>
                <ext>js</ext>
                <srcDir>${basedir}/src/main/javascript</srcDir>
@@ -28,7 +28,7 @@
         <artifactId>javascript-maven-plugin</artifactId>
         <extensions>true</extensions>
         <version>1.0-alpha-1-SNAPSHOT</version>
-      </plugin>
+      </plugin>  
     </plugins>
   </build>
 
