@@ -1,0 +1,171 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset={+IO.encoding+}" />
+		<meta name="generator" content="BioJS Library" />
+		{! Link.base = "../"; /* all generated links will be relative to this */ !}
+		<title>Biojs {+data.name+} Registry</title>
+		
+		<link rel="stylesheet" type="text/css" href="style/style.css" />
+		<link href="style/shThemeDefault.css" rel="stylesheet" type="text/css" />
+		<link href="style/shCore.css" rel="stylesheet" type="text/css" />
+		
+		<script language="JavaScript" type="text/javascript" src="scripts/jquery-1.6.4.min.js"></script>
+		<script src="scripts/shCore.js" type="text/javascript"></script>
+		<script src="scripts/shBrushJScript.js" type="text/javascript"></script>
+		
+		<if test="data.comment.getTag('dependency').length">
+			<for each="item" in="data.comment.getTag('dependency')">
+				{+ item.desc +}
+			</for>
+	    </if>
+
+		<script language="JavaScript" type="text/javascript" src="{+data.srcFile+}"></script>
+		
+		<script language="JavaScript" type="text/javascript">		
+			window.onload = function() {
+				<if test="data.example.length">
+					<for each="example" in="data.example">
+						{+example+}
+					</for>
+				</if>
+				
+	        	<if test="data.methods.length">
+				{! var ownMethods = data.methods.filter(function($){return $.memberOf == data.alias  && !$.isNamespace}).sort(makeSortby("name")); !}
+			        <if test="ownMethods.length">
+					<for each="member" in="ownMethods">
+						<if test="member.example.length">
+							<for each="example" in="member.example">
+								$("#{+member.name+}").click( function() {  {+example+} } );
+							</for>
+						</if>
+					</for>
+	        		</if>
+			    </if>
+			    
+			    
+			    <if test="data.events.length">
+				{! var ownEvents = data.events.filter(function($){return $.memberOf == data.alias  && !$.isNamespace}).sort(makeSortby("name")); !}
+					<if test="ownEvents.length">
+						<for each="member" in="ownEvents">
+							<if test="member.example.length">
+								<for each="example" in="member.example">
+									$("#{+member.name+}").children().remove();								
+									{! var replaced = example.toString().replace("alert",'$("#'+member.name+'").text'); !}
+									{+replaced+}
+								</for>
+							</if>
+						</for>
+					</if>		
+				</if>
+			};	
+			
+		</script>
+		
+		<script language="JavaScript" type="text/javascript">
+		  	SyntaxHighlighter.all();
+		</script>
+		
+	</head>
+
+	<body>
+	 <div id="main">
+<!-- ============================== header ================================= -->	
+
+	<div id="header">
+      <div id="logo">
+        <h1>Bio<span class="alternate_colour">Js</span> {+data.name+}</h1>
+      </div>
+      <div id="menubar">
+        <ul id="menu">
+          <li class="tab_selected"><a href="{+data.alias+}.html">Overview</a></li>
+          <li><a href="{+data.alias+}.options.html">Options</a></li>
+          <li><a href="{+data.alias+}.events.html">Events</a></li>
+          <li><a href="{+data.alias+}.methods.html">Methods</a></li>
+        </ul>
+      </div>
+    </div>
+
+<!-- ============================== site content ============================ -->	
+	
+	<div id="site_content">
+
+<!-- ============================== side bar ============================ -->	
+	<div class="sidebar">
+
+        <if test="data.events.length">
+		{! var ownEvents = data.events.filter(function($){return $.memberOf == data.alias  && !$.isNamespace}).sort(makeSortby("name")); !}
+			<if test="ownEvents.length">
+				<h1>Events</h1>
+	        	<ul>
+				<for each="member" in="ownEvents">
+					<if test="member.example.length">
+						<for each="example" in="member.example">
+							<li><a href="#">{+member.name+}</a><div class="event" id="{+member.name+}"/></li>
+						</for>
+					</if>
+				</for>
+				</ul>
+			</if>		
+		</if>	
+		
+		<if test="data.methods.length">
+		{! var ownMethods = data.methods.filter(function($){return $.memberOf == data.alias  && !$.isNamespace}).sort(makeSortby("name")); !}
+	        <if test="ownMethods.length">
+				<h1>Methods</h1>
+				<ul>
+				<for each="member" in="ownMethods">
+					<if test="member.example.length">
+						<for each="example" in="member.example">
+							<li><a href="#" id="{+member.name+}">{+member.name+}</a></li>
+						</for>
+					</if>
+				</for>
+				</ul>
+	        </if>
+	    </if>
+		
+		<if test="data.requires.length">
+			<h1>Dependencies</h1>
+        	<ul>
+        		<for each="item" in="data.requires">
+					<li>{+ new Link().toSymbol(item) +}</li>
+				</for>
+        	</ul>
+		</if> 
+	</div>
+
+<!-- ============================== component content ============================ -->		
+		
+	<div id="content">
+		
+		<div id="component"> </div>
+	    
+	    <div id="source">
+		  <if test="!data.isBuiltin() && (data.isNamespace || data.is('CONSTRUCTOR'))">
+			<if test="data.example.length">
+				<b>Source:</b>
+				<for each="example" in="data.example">
+					<pre class="brush: js">{+example+}</pre>
+				</for>
+		  	</if>
+		  </if>
+		</div>	
+		
+	</div>
+	
+	
+	</div> <!-- site content -->
+</div> <!-- main -->
+
+<!-- ============================== footer ======================================= -->
+    <br/>
+	<div style="text-align: center; font-size: 0.75em;">
+		Registry generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> {+JSDOC.VERSION+} on {+new Date()+}
+	</div>
+	<br/>
+	<br/>
+	
+</body>
+</html>
