@@ -3,41 +3,113 @@
  * 
  * @class
  * @extends Biojs
+ * 
+ * @requires <a href=''>BioJS Core</a>
+ * @dependency <script language="JavaScript" type="text/javascript" src="src/biojs.js"></script>
+ * 
  * @requires <a href='http://blog.jquery.com/2011/09/12/jquery-1-6-4-released/'>jQuery Core 1.6.4</a>
+ * @dependency <script language="JavaScript" type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+ * 
  * @requires <a href='http://jqueryui.com/download'>jQuery UI 1.8.16</a>
+ * @dependency <script language="JavaScript" type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
  * 
  * @author <a href="mailto:johncar@gmail.com">John Gomez</a>, based on the code made 
  * by <a href="mailto:secevalliv@gmail.com">Jose Villaveces</a>
  * 
  * @param {Object} options An object with the options for Sequence component.
- * @option {string} target Identifier of the DIV tag where the component should be displayed.
- * @option {string} sequence The sequence to be displayed.
- * @option {int} id (optional) Sequence identifier if apply.
- * @option {int} format (optional) The display format for the sequence representation.
- * @option {Object[]} highlights (Optional) For highlighting multiple regions. Syntax: [ { start: &lt;startVal1&gt;, end: &lt;endVal1&gt;}, ...,  { start: &lt;startValN&gt;, end: &lt;endValN&gt;} ]
+ *    
+ * @option {string} target 
+ *    Identifier of the DIV tag where the component should be displayed.
+ *    
+ * @option {string} sequence 
+ *    The sequence to be displayed.
+ *    
+ * @option {string} [id] 
+ *    Sequence identifier if apply.
+ *    
+ * @option {string} [format="FASTA"] 
+ *    The display format for the sequence representation.
+ *    
+ * @option {Object[]} [highlights] 
+ * 	  For highlighting multiple regions. Syntax: [{ start: &lt;startVal1&gt;, end: &lt;endVal1&gt;}, ...,  { start: &lt;startValN&gt;, end: &lt;endValN&gt;}]
+ * 
+ * @option {Object} [columns={size:40,spacedEach:10}] 
+ * 	  Options for displaying the columns. Syntax: { size: &lt;numCols&gt;, spacedEach: &lt;numCols&gt;}
+ * 
+ * @option {Object} [selection] 
+ * 	  Positions for the current selected region. Syntax: { start: &lt;startValue&gt;, end: &lt;endValue&gt;}
+ * 
+ * @option {Object[]} [annotations] 
+ *    Set of overlapping annotations. Must be an array of objects following the syntax:
+ *     		<pre class="brush: js" title="Syntax:">
+ *            [ 
+ *              // First annotation:
+ *              { name: &lt;name&gt;, 
+ *                html: &lt;message&gt;, 
+ *                color: &lt;color_code&gt;, 
+ *                regions: [{ start: &lt;startVal1&gt;, end: &lt;endVal1&gt; color: &lt;color_code&gt;}, ...,{ start: &lt;startValN&gt;, end: &lt;endValN&gt;, color: &lt;color_code&gt;}] 
+ *              }, 
+ *              // ...
+ *              // more annotations here 
+ *              // ...
+ *            ]
+ *    		 </pre>
+ *    where:
+ *      <ul>
+ *        <li><b>name</b> is the unique name for the annotation</li>
+ *        <li><b>html</b> is the message (can be HTML) to be displayed in the tool tip.</li>
+ *        <li><b>color</b> is the default HTML color code for all the regions.</li>
+ *        <li><b>regions</b> array of objects defining the intervals which belongs to the annotation.</li>
+ *        <li><b>regions.start</b> is the starting character for the interval.</li>
+ *        <li><b>regions.end</b> is the ending character for the interval.</li>
+ *        <li><b>regions.color</b> is an optional color for the interval.   
+ *      </ul> 
+ *       
+ * @example 
+ * var theSequence = 'mlpglallllaawtaralevptdgnagllaepqiamfcgrlnmhmnvqngkwdsdpsgtktcidtkegilqycqevypelqitnvveanqpvtiqnwckrgrkqckthphfvipyrclvgefvsdallvpdkckflhqermdvcethlhwhtvaketcsekstnlhdygmllpcgidkfrgvefvccplaeesdnvdsadaeeddsdvwwggadtdyadgsedkvvevaeeeevaeveeeeadddeddedgdeveeeaeepyeeaterttsiatttttttesveevvrevcseqaetgpcramisrwyfdvtegkcapffyggcggnrnnfdteeycmavcgsamsqsllkttqeplardpvklpttaastpdavdkyletpgdenehahfqkakerleakhrermsqvmreweeaerqaknlpkadkkaviqhfqekvesleqeaanerqqlvethmarveamlndrrrlalenyitalqavpprprhvfnmlkkyvraeqkdrqhtlkhfehvrmvdpkkaaqirsqvmthlrviyermnqslsllynvpavaeeiqdevdellqkeqnysddvlanmiseprisygndalmpsltetkttvellpvngefslddlqpwhsfgadsvpantenevepvdarpaadrglttrpgsgltnikteeisevkmdaefrhdsgyevhhqklvffaedvgsnkgaiiglmvggvviatvivitlvmlkkkqytsihhgvvevdaavtpeerhlskmqqngyenptykffeqmqn';			
+ * var mySequence = new Biojs.Sequence( {
+ * 		sequence : theSequence,
+ * 		target : "#component",
+ * 		format : 'CODATA',
+ * 		id : 'P918283',
+ * 		annotations: [{
+ * 			name:"UNIPROT", 
+ * 			html:"&lt;br&gt; Example of HTML &lt;ul&gt;&lt;li&gt;Example 1&lt;/li&gt;&lt;li&gt;Example 2&lt;/li&gt;&lt;/ul&gt;", 
+ * 			color:"green", 
+ * 			regions: [{start: 11, end: 120},
+ *                    {start: 140, end:147, color: "#FFA010"}, 
+ *         	      	  {start: 148, end:150, color: "red"}, 
+ *                    {start: 151, end:165}] 
+ *  		},{
+ * 	  		name:"CATH", 
+ * 	  		color:"#F0F020", 
+ * 	  		html: "Using color code #F0F020 ", 
+ * 	  		regions: [{start: 20, end: 200}]
+ * 		}]	
+ * });	
+ * 
  */
 
 Biojs.Sequence = Biojs.extend(
-/** @lends Biojs.Sequence# */
+/** @lends Biojs.Sequence */
 {	
 	constructor: function (options) {
 		this.init();
 	},
 	
-   /** 
-    * Default options (and its values) for the Protein3D component. 
-    * @name Biojs.Sequence-opt
-    * @type Object
-    */
+	
+	/**
+	 * Default values for the options
+	 * @name Biojs.Sequence-opt
+	 */
 	opt : {
+		
 		sequence : "",
 		id : "",
 		target : "",
 		format : "FASTA",
-		selectionStart : 0,
-		selectionEnd : 0,
-		numCols : 40,
-		numColsForSpace : 10,
+		selection: { startPos: 0, endPos: 0 },
+		columns: { size: 40, spacedEach: 10 },
 		highlights : [],
 		annotations: [],
 		
@@ -49,6 +121,10 @@ Biojs.Sequence = Biojs.extend(
 		defaultBackgroundColor : 'white'
 	},
 	
+	/**
+	 * Array containing the supported event names
+	 * @name Biojs.Sequence-eventTypes
+	 */
 	eventTypes : [
 		/**
 		 * @name Biojs.Sequence#onSelectionChanged
@@ -64,13 +140,6 @@ Biojs.Sequence = Biojs.extend(
 		 *       alert("Selected: " + objEvent.start + ", " + objEvent.end );
 		 *    }
 		 * ); 
-		 * 
-		 * // Alternative:
-		 * mySequence.addListener("onSelectionChanged",
-		 *    function( objEvent ) {
-		 *       alert("Selected: " + objEvent.start + ", " + objEvent.end );
-		 *    }
-		 * );
 		 * 
 		 * */
 		"onSelectionChanged",
@@ -90,12 +159,6 @@ Biojs.Sequence = Biojs.extend(
 		 *    }
 		 * );  
 		 * 
-		 * // Alternative:
-		 * mySequence.addListener("onSelectionChange",
-		 *    function( objEvent ) {
-		 *       alert("Selection in progress: " + objEvent.start + ", " + objEvent.end );
-		 *    }
-		 * );
 		 * 
 		 * */
 		"onSelectionChange",
@@ -114,13 +177,6 @@ Biojs.Sequence = Biojs.extend(
 		 *       alert("Clicked " + objEvent.name + " on position " + objEvent.pos );
 		 *    }
 		 * );  
-		 * 
-		 * // Alternative:
-		 * mySequence.addListener("onAnnotationClicked",
-		 *    function( objEvent ) {
-		 *       alert("Clicked " + objEvent.name + " on position " + objEvent.pos );
-		 *    }
-		 * );
 		 * 
 		 * */
 		"onAnnotationClicked"
@@ -172,7 +228,7 @@ Biojs.Sequence = Biojs.extend(
     *
     * @example
     * // set selection from the position 100 to 150 
-    * myInstance.selectSelection(100, 150);
+    * mySequence.setSelection(100, 150);
     * 
     * @param {int} start The starting character of the selection.
     * @param {int} end The ending character of the selection
@@ -185,7 +241,7 @@ Biojs.Sequence = Biojs.extend(
 
 		}
 
-		if(start != this.opt.selectionStart || end != this.opt.selectionEnd) {
+		if(start != this.opt.selection.startPos || end != this.opt.selection.endPos) {
 			this._setSelection(start, end);
 			this.raiseEvent('onSelectionChanged', {
 				start : start,
@@ -199,7 +255,7 @@ Biojs.Sequence = Biojs.extend(
     *
     * @example
     * // highlight the characters within the position 100 to 150, included.
-    * myInstance.highlight(100, 150);
+    * mySequence.highlight(100, 150);
     * 
     * @param {int} start The starting character of the highlighting.
     * @param {int} end The ending character of the highlighting
@@ -219,7 +275,7 @@ Biojs.Sequence = Biojs.extend(
     *
     * @example
     * // Clear the highlighted characters within the position 100 to 150, included.
-    * myInstance.unHighlight(100, 150);
+    * mySequence.unHighlight(100, 150);
     * 
     * @param {int} start The starting character.
     * @param {int} end The ending character.
@@ -247,7 +303,7 @@ Biojs.Sequence = Biojs.extend(
     *
     * @example
     * // Set format to 'FASTA'.
-    * myInstance.setFormat('FASTA');
+    * mySequence.setFormat('FASTA');
     * 
     * @param {string} format The format for the sequence to be displayed.
     */
@@ -271,21 +327,17 @@ Biojs.Sequence = Biojs.extend(
     *
     * @example
     * // Set the number of columns to 70.
-    * myInstance.setNumCols(70);
+    * mySequence.setNumCols(70);
     * 
     * @param {int} numCols The number of columns.
     */
 	setNumCols : function(numCols) {
-		this.opt.numCols = numCols;
+		this.opt.columns.size = numCols;
 		this._redraw();
 	},
 	
 	/**
     * Set the visibility of the drop-down list of formats.
-    *
-    * @example
-    * // Hide the format selector.
-    * myInstance.formatSelectorVisible(false);
     * 
     * @param {boolean} visible true: show; false: hide.
     */
@@ -299,6 +351,10 @@ Biojs.Sequence = Biojs.extend(
 	
 	/**
     * This is similar to a {Biojs.Protein3D#formatSelectorVisible} with the 'true' argument.
+    *
+    * @example
+    * // Shows the format selector.
+    * mySequence.showFormatSelector();
     * 
     */
 	showFormatSelector : function() {
@@ -307,6 +363,10 @@ Biojs.Sequence = Biojs.extend(
 	
 	/**
     * This is similar to a {Biojs.Protein3D#formatSelectorVisible} with the 'false' argument.
+    * 
+    * @example
+    * // Hides the format selector.
+    * mySequence.hideFormatSelector();
     * 
     */
 	hideFormatSelector : function() {
@@ -334,8 +394,8 @@ Biojs.Sequence = Biojs.extend(
 	_setSelection : function(start, end) {
 		var self = this;
 		
-		self.opt.selectionStart = start;
-		self.opt.selectionEnd = end;
+		self.opt.selection.startPos = start;
+		self.opt.selection.endPos = end;
 
 		var spans = this._contentDiv.find('.sequence');
 		for(var i = 0; i < spans.length; i++) {
@@ -371,7 +431,7 @@ Biojs.Sequence = Biojs.extend(
 			this.opt.format = 'PRIDE';
 			this._drawPride();
 		}
-		this._setSelection(this.opt.selectionStart, this.opt.selectionEnd);
+		this._setSelection(this.opt.selection.startPos, this.opt.selection.endPos);
 		
 		// Restore the highlighted regions
 		for ( var i in highlighted ) {
@@ -391,15 +451,16 @@ Biojs.Sequence = Biojs.extend(
 		var i = 1;
 		var arr = [];
 	    var str = '>' + this.opt.id + ' ' + a.length + ' bp<br/>';
-		
-	    this.opt.numLeft = false;
-	    this.opt.numRight = false;
-	    this.opt.numTop = false;
 	    
-		str += this._drawSequence(a, this.opt);
+	    var opt = {
+			numCols: self.opt.columns.size,
+		    numColsForSpace: self.opt.columns.spacedEach,
+		};
+
+		str += this._drawSequence(a, opt);
 		pre.html(str);
 		
-		this._drawAnnotations(this.opt);
+		this._drawAnnotations(opt);
 	},
 	
 	_drawCodata : function() {
@@ -418,7 +479,7 @@ Biojs.Sequence = Biojs.extend(
 				numLeftPad:' ',
 				numTop: true,
 				numTopEach: 5,
-				numCols: self.opt.numCols,
+				numCols: self.opt.columns.size,
 			    numColsForSpace: 0,
 			    spaceBetweenChars: true
 		};
@@ -543,7 +604,7 @@ Biojs.Sequence = Biojs.extend(
 		var pre = $('<pre></pre>').appendTo(this._contentDiv);
 
 		var opt = {
-			numCols: self.opt.numCols
+			numCols: self.opt.columns.size
 		};
 		
 		pre.html(
@@ -565,8 +626,8 @@ Biojs.Sequence = Biojs.extend(
 			numRight: true,
 			numRightSize: 5,
 			numRightPad: '0',
-			numCols: self.opt.numCols,
-		    numColsForSpace: self.opt.numColsForSpace
+			numCols: self.opt.columns.size,
+		    numColsForSpace: self.opt.columns.spacedEach
 		};
 		
 		pre.html(
@@ -682,8 +743,8 @@ Biojs.Sequence = Biojs.extend(
 					
 					// Selection is happening, raise an event
 					self.raiseEvent('onSelectionChange', {
-						start : self.opt.selectionStart,
-						end : self.opt.selectionEnd
+						start : self.opt.selection.startPos,
+						end : self.opt.selection.endPos
 					});
 				} 
 				
@@ -691,14 +752,14 @@ Biojs.Sequence = Biojs.extend(
 				isMouseDown = false;
 				// Selection is done, raise an event
 				self.raiseEvent('onSelectionChanged', {
-					start : self.opt.selectionStart,
-					end : self.opt.selectionEnd
+					start : self.opt.selection.startPos,
+					end : self.opt.selection.endPos
 				});
 			});
 			
 			self._addToolTip($(this), function(e) {
 				if (isMouseDown) {
-	     			return "selected: [" + self.opt.selectionStart +", " + self.opt.selectionEnd + "]";	
+	     			return "selected: [" + self.opt.selection.startPos +", " + self.opt.selection.endPos + "]";	
 	     		} else {
 	     			return "position: " + currentPos;
 	     		}
@@ -751,18 +812,9 @@ Biojs.Sequence = Biojs.extend(
    /**
     * Annotate a set of intervals provided in the argument.
     * 
-    * @example 
-    * // One simple annotation for region from 20 to 200.
-    * myInstance.setAnnotation({
-	*    name:"CATH", 
-	*    color:"#F0F020", 
-	*    html: "<br>Using color code #F0F020 ", 
-    *    regions: [{start: 20, end: 200}]
-	* }); 
-    * 
     * @example
     * // Annotations using regions with different colors.
-    * myInstance.setAnnotation({
+    * mySequence.setAnnotation({
 	*    name:"UNIPROT", 
 	*    html:"&lt;br&gt; Example of HTML &lt;ul&gt;&lt;li&gt;Example 1&lt;/li&gt;&lt;li&gt;Example 2&lt;/li&gt;&lt;/ul&gt;", 
 	*    color:"green", 
@@ -778,7 +830,8 @@ Biojs.Sequence = Biojs.extend(
     * Syntax: { name: &lt;value&gt;, color: &lt;HTMLColorCode&gt;, html: &lt;HTMLString&gt;, regions: [{ start: &lt;startVal1&gt;, end: &lt;endVal1&gt;}, ...,  { start: &lt;startValN&gt;, end: &lt;endValN&gt;}] }
     */
 	setAnnotation: function ( annotation ) {
-		annotations.push(annotation);
+		this.opt.annotations.push(annotation);
+		this._redraw();
 	},
 	
 	/**
@@ -786,18 +839,21 @@ Biojs.Sequence = Biojs.extend(
     * 
     * @example 
     * // Remove the UNIPROT annotation.
-    * myInstance.removeAnnotation('UNIPROT'); 
+    * mySequence.removeAnnotation('UNIPROT'); 
     * 
     * @param {string} name The name of the annotation to be removed.
     * 
     */
 	removeAnnotation: function ( name ) {
+		var a = [];
+		
 		for (var i=0; i < this.opt.annotations.length ; i++ ){
-			if(name == annotation.name){
-				annotations.remove(i);
-				return;
+			if(name != this.opt.annotations[i].name){
+				a.push(this.opt.annotations[i]);
 			}
 		}
+		this.opt.annotations = a;
+		this._redraw();
 	}
 	
 	
