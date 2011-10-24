@@ -21,18 +21,15 @@
 Biojs.Protein3D = Biojs.extend(
 /** @lends Biojs.Protein3D# */
 { 
-   constructor: function (options) {
-      init();
-   },
-   
-   /** 
+
+	/** 
     * Default options (and its values) for the Protein3D component. 
     * @name Biojs.Protein3D-opt
     * @type Object
     */
    opt: 
    {
-      target: ÒProtein3DÓ,
+      target: 'component',
       width: 200,
       height: 1000,
       proxyUrl: '',
@@ -41,7 +38,7 @@ Biojs.Protein3D = Biojs.extend(
       loadingImageUrl: ''
    },
    
-   eventTypes: {
+   eventTypes: [
 	   /**
 	    * @name Biojs.Protein3D#onPdbSelection
 	    * @event
@@ -59,7 +56,7 @@ Biojs.Protein3D = Biojs.extend(
 	    * 
 	    * */
 	   "onPdbSelection"
-   }, 
+   ], 
    
    
    init: function () {

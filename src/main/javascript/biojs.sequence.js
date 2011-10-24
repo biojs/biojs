@@ -60,9 +60,9 @@
  *        <li><b>html</b> is the message (can be HTML) to be displayed in the tool tip.</li>
  *        <li><b>color</b> is the default HTML color code for all the regions.</li>
  *        <li><b>regions</b> array of objects defining the intervals which belongs to the annotation.</li>
- *        <li><b>regions.start</b> is the starting character for the interval.</li>
- *        <li><b>regions.end</b> is the ending character for the interval.</li>
- *        <li><b>regions.color</b> is an optional color for the interval.   
+ *        <li><b>regions[i].start</b> is the starting character for the i-th interval.</li>
+ *        <li><b>regions[i].end</b> is the ending character for the i-th interval.</li>
+ *        <li><b>regions[i].color</b> is an optional color for the i-th interval.   
  *      </ul> 
  *       
  * @example 

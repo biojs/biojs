@@ -1,7 +1,8 @@
 /**
- * Main class of the BioJS library. It is the parent class for all the components.
+ * Main container of the BioJS library. It is the parent class for all the components.
  * 
- * @class
+ * 
+ * @namespace
  * 
  */
 var Biojs = function() {
