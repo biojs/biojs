@@ -216,6 +216,8 @@ Biojs.extend = function(_instance, _static) { // subclass
 				clone.setOptions(arguments[0]);
 				// Set the event handlers
 				clone.setEventHandlers(clone.eventTypes);
+				// Set the unique id for the instance
+				clone.biojsObjectId = Biojs.uniqueId();
 				// execute the subclass constructor
 				constructor.apply(clone, arguments);
 				//delete this._constructing;
@@ -452,6 +454,10 @@ Biojs.prototype =
 				source.addListener(eventType, callbackFunction);
 			} 
 		} 
+	},
+	
+	getId: function () {
+		return this.biojsObjectId;
 	}
 	
 };
@@ -499,6 +505,21 @@ Biojs = Biojs.extend({
 	
 	toString: function() {
 		return String(this.valueOf());
+	},
+	
+	uniqueId: function() {
+	    if ( typeof Biojs.prototype.__uniqueid == "undefined" ) {
+	    	Biojs.prototype.__uniqueid = 0;
+	    }
+	    return Biojs.prototype.__uniqueid++;
+	},
+	
+	registerGlobal: function (key,value){
+		window[key] = value;
+	},
+	
+	getGlobal: function(key){
+		return window[key];
 	},
 	
 	/**
