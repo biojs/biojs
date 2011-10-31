@@ -7,10 +7,11 @@
   <name>BioJS</name>
 
   <build>
-    <outputDirectory>target/scripts</outputDirectory>
+    <outputDirectory>target/biojs</outputDirectory>
     <testOutputDirectory>target/test-scripts</testOutputDirectory>
 
-    <plugins> 
+    <plugins>
+     
       <plugin>
         <groupId>nl.windgazer</groupId>
         <artifactId>jsdoctk-plugin</artifactId>
@@ -22,7 +23,8 @@
                <ext>js</ext>
                <srcDir>${basedir}/src/main/javascript</srcDir>
        	</configuration>
-	  </plugin> 
+	  </plugin>
+	   
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>javascript-maven-plugin</artifactId>
