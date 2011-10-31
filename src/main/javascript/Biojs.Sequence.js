@@ -5,7 +5,7 @@
  * @extends Biojs
  * 
  * @requires <a href=''>BioJS Core</a>
- * @dependency <script language="JavaScript" type="text/javascript" src="src/biojs.js"></script>
+ * @dependency <script language="JavaScript" type="text/javascript" src="src/Biojs.js"></script>
  * 
  * @requires <a href='http://blog.jquery.com/2011/09/12/jquery-1-6-4-released/'>jQuery Core 1.6.4</a>
  * @dependency <script language="JavaScript" type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
@@ -791,7 +791,7 @@ Biojs.Sequence = Biojs.extend(
 	        //$('.tipHeader').css('background', "images/tipHeader.gif");  
 			
 			$('.tipBody').css('background-color', "#000");
-			$('.tipBody').css('padding', "3px 10px 3px 10px")
+			$('.tipBody').css('padding', "3px 10px 3px 10px");
 
 			$('.tipFooter').css('background-color', "#000");
 	        $('.tipFooter').css('height', "8px"); 
