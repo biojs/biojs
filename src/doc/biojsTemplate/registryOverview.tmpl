@@ -21,7 +21,7 @@
 			</for>
 	    </if>
 
-		<script language="JavaScript" type="text/javascript" src="{+data.srcFile+}"></script>
+		<script language="JavaScript" type="text/javascript" src="src/Biojs.{+data.name+}.js"></script>
 		
 		<script language="JavaScript" type="text/javascript">		
 			window.onload = function() {
@@ -36,8 +36,10 @@
 			        <if test="ownMethods.length">
 					<for each="member" in="ownMethods">
 						<if test="member.example.length">
+							{! var i=0; !}
 							<for each="example" in="member.example">
-								$("#{+member.name+}").click( function() {  {+example+} } );
+								{! i++; !}
+								$("#{+member.name+}{+i+}").click( function() {  {+example+} } );
 							</for>
 						</if>
 					</for>
@@ -117,8 +119,10 @@
 				<ul>
 				<for each="member" in="ownMethods">
 					<if test="member.example.length">
+						{! var i=0; !}
 						<for each="example" in="member.example">
-							<li><a href="#" id="{+member.name+}">{+member.name+}</a></li>
+							{! i++; !}
+							<li><a href="#" id="{+member.name+}{+i+}">{+member.name+}</a></li>
 						</for>
 					</if>
 				</for>
@@ -140,18 +144,50 @@
 		
 	<div id="content">
 		
-		<div id="component"> </div>
+		<div id="YourOwnDivId"> </div>
+	 
+	    <h1>Installation</h1>
 	    
-	    <div id="source">
-		  <if test="!data.isBuiltin() && (data.isNamespace || data.is('CONSTRUCTOR'))">
-			<if test="data.example.length">
-				<b>Source:</b>
-				<for each="example" in="data.example">
-					<pre class="brush: js">{+example+}</pre>
+	    To get the above Biojs.{+data.name+} to work on your page, you need to do the following:
+	    
+		<ol>
+			<li>Include base files <a href="src/Biojs.{+data.name+}.js">Biojs.{+data.name+}.js</a> and its dependencies to your page.</li>
+			{! var includes = ""; !}
+			<if test="data.comment.getTag('dependency').length">
+				<for each="item" in="data.comment.getTag('dependency')">
+					{! includes += item.desc.toString()+"\n"; !}
 				</for>
+				{! includes = includes.replace('<',"&lt;").replace('>',"&gt;"); 
+				   includes += '&lt;script language="JavaScript" type="text/javascript" src="src/Biojs.'+data.name+'.js" /&gt;'; !}
+			</if>
+			<pre class="brush: js; toolbar: false" >{+includes+}</pre>
+			
+			<li>Create a div tag with an unique identifier.</li>
+			<pre class="brush: js; toolbar: false">
+			&lt;body&gt
+			...
+		    &lt;div id="YourOwnDivId" /&gt
+		    ...
+		    &lt;/body&gt
+		    </pre>
+	    
+			<li>Create a code snippet within a &lt;script&gt; tag and instance Biojs.{+data.name+} into.</li>
+			<if test="!data.isBuiltin() && (data.isNamespace || data.is('CONSTRUCTOR'))">
+			<if test="data.example.length">
+			{! var example = data.example[0].toString().replace('<',"&lt;").replace('>',"&gt;").replace("\n ","\n\t\t"); 
+			   var snippet = 
+			   		'&lt;script language="JavaScript" type="text/javascript"&gt;\n'+
+			   		'  window.onload = function() {\n'+
+			   			 example+'\n\n'+
+			   		'  };\n'+
+			   		'&lt;/script&gt;';
+			!}
+			<pre class="brush: js; toolbar: false; smart-tabs: true;" >{+snippet+}</pre>
 		  	</if>
 		  </if>
-		</div>	
+		  
+	    </ol>
+
 		
 	</div>
 	
