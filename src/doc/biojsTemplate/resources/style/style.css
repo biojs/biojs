@@ -158,7 +158,7 @@ ul#menu li.tab_selected a, ul#menu li.tab_selected a:hover
 ul#menu li a:hover
 { color: #27C0FF;}
 
-#component
+#YourOwnDivId
 { overflow: auto;} 
 
 #site_content
@@ -295,7 +295,7 @@ a.method_name{
  border-color:#E2DCD1;
  padding: 5px;}
 
-#component
+#YourOwnDivId
 {  
   margin: 0 0 20px 0;
   padding: 10px;
