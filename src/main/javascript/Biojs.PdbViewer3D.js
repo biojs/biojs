@@ -2,13 +2,10 @@
  * Pdb file 3D viewer component using JMol
  * 
  * @class
- * @extends Protein3D
+ * @extends Biojs
  * 
  * @requires <a href=''>BioJS Core</a>
  * @dependency <script language="JavaScript" type="text/javascript" src="src/Biojs.js"></script>
- * 
- * @requires <a href=''>BioJS Protein3D</a>
- * @dependency <script language="JavaScript" type="text/javascript" src="src/Biojs.Protein3D.js"></script>
  * 
  * @requires <a href='http://blog.jquery.com/2011/09/12/jquery-1-6-4-released/'>jQuery Core 1.6.4</a>
  * @dependency <script language="JavaScript" type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
@@ -53,7 +50,7 @@
  * 
  * @example 
  * var myPdbViewer3D = new Biojs.PdbViewer3D({
- * 		target: 'component'
+ * 		target: 'YourOwnDivId'
  * });	
  * 
  * // Example of loading a pdb file by means a HTTP request.
@@ -72,7 +69,7 @@
  * 	});
  * 
  */
-Biojs.PdbViewer3D = Biojs.Protein3D.extend(
+Biojs.PdbViewer3D = Biojs.extend(
 /** @lends Biojs.PdbViewer3D# */
 { 
    constructor: function (options) {
@@ -101,7 +98,7 @@ Biojs.PdbViewer3D = Biojs.Protein3D.extend(
    
    /**
 	 * Array containing the supported event names
-	 * @name Biojs.Sequence-eventTypes
+	 * @name Biojs.PdbViewer3D-eventTypes
 	 */
 	eventTypes : [
 		/**
@@ -290,10 +287,6 @@ Biojs.PdbViewer3D = Biojs.Protein3D.extend(
 	setPdb: function( pdb ){
 		var scr = 'select all; cartoon on; wireframe off; spacefill off; color chain; select none;'
 		
-		if(Number(this.opt.width) > Number(this.opt.height)){
-			scr += 'zoom 60;'
-		}
-		
 		if (this.jmolAppletInitialized) {			
 			jmolLoadInlineScript(pdb, scr);
 			
@@ -394,8 +387,9 @@ Biojs.PdbViewer3D = Biojs.Protein3D.extend(
     */
 	displaySurface: function(){
 		if (!this._display.surface) {
-			jmolScriptWait('select all; isoSurface solvent 1.4; color isoSurface translucent 0.8;select none');
+			$("#"+this.opt.target).find('#surfaceCheck').attr("checked","surfaceCheck");
 			this._display.surface = true;
+			jmolScriptWait('select all; isoSurface solvent 1.4; color isoSurface translucent 0.8;select none');
 		}
 	},
 	
@@ -409,8 +403,9 @@ Biojs.PdbViewer3D = Biojs.Protein3D.extend(
     */
 	hideSurface: function(){
 		if (this._display.surface) {
-			jmolScriptWait('select all; isoSurface off; select none');
 			this._display.surface = false;
+			$("#"+this.opt.target).find('#surfaceCheck').removeAttr("checked");
+			jmolScriptWait('select all; isoSurface off; select none');
 		}
 	},
 	
@@ -423,6 +418,7 @@ Biojs.PdbViewer3D = Biojs.Protein3D.extend(
     * 
     */
 	displayNegative: function (color) {
+		$("#"+this.opt.target).find('#negativeCheck').attr("checked","negativeCheck");
 		negativeColor = (color)? color : this.opt.negativeColor;
 		this.display('acidic', negativeColor);
 		this._display.property.negative = true;
@@ -437,6 +433,7 @@ Biojs.PdbViewer3D = Biojs.Protein3D.extend(
     */
 	hideNegative: function () {
 		if (this._display.property.negative) {
+			$("#"+this.opt.target).find('#negativeCheck').removeAttr("checked");
 			this._display.property.negative = false;
 			this.undisplay('acidic');
 		}
@@ -452,6 +449,7 @@ Biojs.PdbViewer3D = Biojs.Protein3D.extend(
     */
 	displayPositive: function (color) {
 		positiveColor = (color)? color : this.opt.positiveColor;
+		$("#"+this.opt.target).find('#positiveCheck').attr("checked","positiveCheck");
 		this.display('basic', positiveColor);
 		this._display.property.positive = true;
 	},
@@ -466,6 +464,7 @@ Biojs.PdbViewer3D = Biojs.Protein3D.extend(
     */
 	hidePositive: function () {
 		if (this._display.property.positive) {
+			$("#"+this.opt.target).find('#positiveCheck').removeAttr("checked");
 			this._display.property.positive = false;
 			this.undisplay('basic');
 		}
@@ -480,6 +479,7 @@ Biojs.PdbViewer3D = Biojs.Protein3D.extend(
     * 
     */	
 	displayPolar: function (color) {
+		$("#"+this.opt.target).find('#polarCheck').attr("checked","polarCheck");
 		polarColor = (color)? color : this.opt.polarColor;
 		this.display('polar', polarColor);
 		this._display.property.polar = true;
@@ -494,6 +494,7 @@ Biojs.PdbViewer3D = Biojs.Protein3D.extend(
     */	
 	hidePolar: function () {
 		if (this._display.property.polar) {
+			$("#"+this.opt.target).find('#polarCheck').removeAttr("checked");
 			this._display.property.polar = false;
 			this.undisplay('polar');
 		}
@@ -509,6 +510,7 @@ Biojs.PdbViewer3D = Biojs.Protein3D.extend(
     // colors the structure depending on the checked check boxes
 	displayUnPolar: function ( color ) {
 		unPolarColor = (color)? color : this.opt.unpolarColor;
+		$("#"+this.opt.target).find('#unpolarCheck').attr("checked","unpolarCheck");
 		this.display('hydrophobic', unPolarColor);
 		this._display.property.unpolar = true;
 	},
@@ -521,6 +523,7 @@ Biojs.PdbViewer3D = Biojs.Protein3D.extend(
     */
 	hideUnPolar: function () {
 		if (this._display.property.unpolar) {
+			$("#"+this.opt.target).find('#unpolarCheck').removeAttr("checked");
 			this._display.property.unpolar = false;
 			this.undisplay('hydrophobic');
 		}
@@ -536,6 +539,18 @@ Biojs.PdbViewer3D = Biojs.Protein3D.extend(
     */
 	setHalosVisible: function (value) {
 		this._display.halos = value;
+		if (value) {
+			if ( ! $("#"+this.opt.target).find('#halosRadio:checked').val()  ) {
+				$("#"+this.opt.target).find('#halosRadio').attr("checked","halosRadio");
+				$("#"+this.opt.target).find('#translucentRadio').removeAttr("checked");
+			}
+		} else {
+			if ( $("#"+this.opt.target).find('#halosRadio:checked').val() ) {
+				$("#"+this.opt.target).find('#halosRadio').removeAttr("checked");
+				$("#"+this.opt.target).find('#translucentRadio').attr("checked","translucentRadio");
+			}			
+		}
+		
 		this._drawSelection();
 	},
 	
@@ -670,7 +685,8 @@ Biojs.PdbViewer3D = Biojs.Protein3D.extend(
 		});
 	
 		controlDiv.find('input[name="selection"]').change(function(){
-	    	self.setHalosVisible($('#halosRadio:checked').val());
+			var showHalos = ( $('#halosRadio:checked').val() )? true: false;
+	    	self.setHalosVisible(showHalos);
 	    });
 		
 		// 
