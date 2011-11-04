@@ -69,7 +69,7 @@
  * var theSequence = 'mlpglallllaawtaralevptdgnagllaepqiamfcgrlnmhmnvqngkwdsdpsgtktcidtkegilqycqevypelqitnvveanqpvtiqnwckrgrkqckthphfvipyrclvgefvsdallvpdkckflhqermdvcethlhwhtvaketcsekstnlhdygmllpcgidkfrgvefvccplaeesdnvdsadaeeddsdvwwggadtdyadgsedkvvevaeeeevaeveeeeadddeddedgdeveeeaeepyeeaterttsiatttttttesveevvrevcseqaetgpcramisrwyfdvtegkcapffyggcggnrnnfdteeycmavcgsamsqsllkttqeplardpvklpttaastpdavdkyletpgdenehahfqkakerleakhrermsqvmreweeaerqaknlpkadkkaviqhfqekvesleqeaanerqqlvethmarveamlndrrrlalenyitalqavpprprhvfnmlkkyvraeqkdrqhtlkhfehvrmvdpkkaaqirsqvmthlrviyermnqslsllynvpavaeeiqdevdellqkeqnysddvlanmiseprisygndalmpsltetkttvellpvngefslddlqpwhsfgadsvpantenevepvdarpaadrglttrpgsgltnikteeisevkmdaefrhdsgyevhhqklvffaedvgsnkgaiiglmvggvviatvivitlvmlkkkqytsihhgvvevdaavtpeerhlskmqqngyenptykffeqmqn';			
  * var mySequence = new Biojs.Sequence( {
  * 		sequence : theSequence,
- * 		target : "#component",
+ * 		target : "YourOwnDivId",
  * 		format : 'CODATA',
  * 		id : 'P918283',
  * 		annotations: [{
@@ -188,14 +188,14 @@ Biojs.Sequence = Biojs.extend(
 		var self = this;
 		
 		// Disable text selection
-		$(self.opt.target).css({
+		$("#"+self.opt.target).css({
                    '-moz-user-select':'none',
                    '-webkit-user-select':'none',
                    'user-select':'none'
         });
 
-		self._headerDiv = $('<div></div>').appendTo(self.opt.target);
-		self._contentDiv = $('<div></div>').appendTo(self.opt.target);
+		self._headerDiv = $('<div></div>').appendTo("#"+self.opt.target);
+		self._contentDiv = $('<div></div>').appendTo("#"+self.opt.target);
 		
 		self._headerDiv.append('Format: ');
 
@@ -520,9 +520,9 @@ Biojs.Sequence = Biojs.extend(
 			}
 			
 			if ( opt.numRight ) {
-				$(row).insertAfter('div'+self.opt.target+' > div > pre > span#numRight'+ (i+opt.numCols) );
+				$(row).insertAfter('div#'+self.opt.target+' > div > pre > span#numRight'+ (i+opt.numCols) );
 			} else {
-				$(row).insertAfter('div'+self.opt.target+' > div > pre > span#'+ (i+opt.numCols) );
+				$(row).insertAfter('div#'+self.opt.target+' > div > pre > span#'+ (i+opt.numCols) );
 			}
 		}
 		
