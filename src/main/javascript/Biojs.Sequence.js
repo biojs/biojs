@@ -74,7 +74,7 @@
  * 		id : 'P918283',
  * 		annotations: [{
  * 			name:"UNIPROT", 
- * 			html:"&lt;br&gt; Example of HTML &lt;ul&gt;&lt;li&gt;Example 1&lt;/li&gt;&lt;li&gt;Example 2&lt;/li&gt;&lt;/ul&gt;", 
+ * 			html:"<b>Example</b> of HTML <ul><li>Example 1</li><li>Example 2</li></ul>", 
  * 			color:"green", 
  * 			regions: [{start: 11, end: 120},
  *                    {start: 140, end:147, color: "#FFA010"}, 
