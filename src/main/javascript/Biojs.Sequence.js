@@ -76,7 +76,7 @@
  * 			name:"UNIPROT", 
  * 			html:"<b>Example</b> of HTML <ul><li>Example 1</li><li>Example 2</li></ul>", 
  * 			color:"green", 
- * 			regions: [{start: 11, end: 120},
+ * 			regions: [{start: 100, end: 120},
  *                    {start: 140, end:147, color: "#FFA010"}, 
  *         	      	  {start: 148, end:150, color: "red"}, 
  *                    {start: 151, end:165}] 
@@ -84,7 +84,7 @@
  * 	  		name:"CATH", 
  * 	  		color:"#F0F020", 
  * 	  		html: "Using color code #F0F020 ", 
- * 	  		regions: [{start: 20, end: 200}]
+ * 	  		regions: [{start: 122, end: 150}]
  * 		}]	
  * });	
  * 
@@ -819,10 +819,10 @@ Biojs.Sequence = Biojs.extend(
 	*    html:"&lt;br&gt; Example of HTML &lt;ul&gt;&lt;li&gt;Example 1&lt;/li&gt;&lt;li&gt;Example 2&lt;/li&gt;&lt;/ul&gt;", 
 	*    color:"green", 
 	*    regions: [
-	*       {start: 11, end: 120},
-	*       {start: 140, end:147, color: "#FFA010"}, 
-	*       {start: 148, end:150, color: "red"}, 
-	*       {start: 151, end:165}]
+	*       {start: 540, end: 560},
+	*       {start: 561, end:580, color: "#FFA010"}, 
+	*       {start: 581, end:590, color: "red"}, 
+	*       {start: 690, end:710}]
 	* });
 	* 
     * 
