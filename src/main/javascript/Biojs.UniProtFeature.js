@@ -67,7 +67,7 @@
  *       
  * @example 
  * var theSequence = 'mlpglallllaawtaralevptdgnagllaepqiamfcgrlnmhmnvqngkwdsdpsgtktcidtkegilqycqevypelqitnvveanqpvtiqnwckrgrkqckthphfvipyrclvgefvsdallvpdkckflhqermdvcethlhwhtvaketcsekstnlhdygmllpcgidkfrgvefvccplaeesdnvdsadaeeddsdvwwggadtdyadgsedkvvevaeeeevaeveeeeadddeddedgdeveeeaeepyeeaterttsiatttttttesveevvrevcseqaetgpcramisrwyfdvtegkcapffyggcggnrnnfdteeycmavcgsamsqsllkttqeplardpvklpttaastpdavdkyletpgdenehahfqkakerleakhrermsqvmreweeaerqaknlpkadkkaviqhfqekvesleqeaanerqqlvethmarveamlndrrrlalenyitalqavpprprhvfnmlkkyvraeqkdrqhtlkhfehvrmvdpkkaaqirsqvmthlrviyermnqslsllynvpavaeeiqdevdellqkeqnysddvlanmiseprisygndalmpsltetkttvellpvngefslddlqpwhsfgadsvpantenevepvdarpaadrglttrpgsgltnikteeisevkmdaefrhdsgyevhhqklvffaedvgsnkgaiiglmvggvviatvivitlvmlkkkqytsihhgvvevdaavtpeerhlskmqqngyenptykffeqmqn';			
- * var mySequence = new Biojs.UniProtFeaturePainter( {
+ * var mySequence = new Biojs.UniProtFeature( {
  * 		sequence : theSequence,
  * 		target : "#component",
  * 		format : 'CODATA',
@@ -90,8 +90,8 @@
  * 
  */
 
-Biojs.UniProtFeaturePainter = Biojs.extend(
-/** @lends Biojs.UniProtFeaturePainter */
+Biojs.UniProtFeature = Biojs.extend(
+/** @lends Biojs.UniProtFeature */
 {	
 	constructor: function (options) {
 		this.init();
@@ -100,7 +100,7 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
 	
 	/**
 	 * Default values for the options
-	 * @name Biojs.UniProtFeaturePainter-opt
+	 * @name Biojs.UniProtFeature-opt
 	 */
 	opt : {
 		
@@ -123,11 +123,11 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
 	
 	/**
 	 * Array containing the supported event names
-	 * @name Biojs.UniProtFeaturePainter-eventTypes
+	 * @name Biojs.UniProtFeature-eventTypes
 	 */
 	eventTypes : [
 		/**
-		 * @name Biojs.UniProtFeaturePainter#onSelectionChanged
+		 * @name Biojs.UniProtFeature#onSelectionChanged
 		 * @event
 		 * @param {function} actionPerformed An function which receives an {@link Biojs.Event} object as argument.
 		 * @eventData {Object} source The component which did triggered the event.
@@ -145,7 +145,7 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
 		"onSelectionChanged",
 		
 		/**
-		 * @name Biojs.UniProtFeaturePainter#onSelectionChange
+		 * @name Biojs.UniProtFeature#onSelectionChange
 		 * @event
 		 * @param {function} actionPerformed An function which receives an {@link Biojs.Event} object as argument.
 		 * @eventData {Object} source The component which did triggered the event.
@@ -164,7 +164,7 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
 		"onSelectionChange",
 		
 		/**
-		 * @name Biojs.UniProtFeaturePainter#onAnnotationClicked
+		 * @name Biojs.UniProtFeature#onAnnotationClicked
 		 * @event
 		 * @param {function} actionPerformed An function which receives an {@link Biojs.Event} object as argument.
 		 * @eventData {Object} source The component which did triggered the event.
@@ -224,7 +224,7 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
 	// Methods
 	
 	/**
-    * Set the current selection in the sequence causing the event {@link Biojs.UniProtFeaturePainter#onSelectionChanged}
+    * Set the current selection in the sequence causing the event {@link Biojs.UniProtFeature#onSelectionChanged}
     *
     * @example
     * // set selection from the position 100 to 150 
