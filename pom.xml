@@ -7,11 +7,10 @@
   <name>BioJS</name>
 
   <build>
-    <outputDirectory>target/biojs</outputDirectory>
-    <testOutputDirectory>target/test-scripts</testOutputDirectory>
+  	<outputDirectory>${basedir}/target/biojs</outputDirectory>
 
     <plugins>
-     
+ 
       <plugin>
         <groupId>nl.windgazer</groupId>
         <artifactId>jsdoctk-plugin</artifactId>
@@ -23,15 +22,32 @@
                <ext>js</ext>
                <srcDir>${basedir}/src/main/javascript</srcDir>
        	</configuration>
-	  </plugin>
-	   
+	  </plugin>	 
+	    
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>javascript-maven-plugin</artifactId>
         <extensions>true</extensions>
         <version>1.0-alpha-1-SNAPSHOT</version>
-      </plugin>  
+        <executions>
+            <execution>
+                <goals>
+                    <goal>compress</goal>
+                </goals>
+            	<phase>compile</phase>
+            </execution>
+        </executions>
+        <configuration>
+			<sourceDirectory>src/main/javascript</sourceDirectory>
+			<webappDirectory>${basedir}/target</webappDirectory>
+			<outputDirectory>${basedir}/target/biojs</outputDirectory>
+			<compressor>jsmin</compressor>
+			<scripts>biojs</scripts>
+		</configuration>
+      </plugin> 
+
     </plugins>
+
   </build>
 
   <repositories>
