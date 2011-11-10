@@ -16,7 +16,7 @@
  * @author <a href="mailto:johncar@gmail.com">John Gomez</a>, based on the code made 
  * by <a href="mailto:christine.jandrasits@gmail.com">Christine Jandrasits</a>
  * 
- * @param {Object} options An object with the options for Biojs.PdbViewer3D component.
+ * @param {Object} options An object with the options for Biojs.PdbViewer component.
  *    
  * @option {string} target 
  *    Identifier of the DIV tag where the component should be displayed.
@@ -49,19 +49,19 @@
  * 	  Enable for showing the control panel. If value is 'false', it disables both methods showControls and hideControls. 
  * 
  * @example 
- * var myPdbViewer3D = new Biojs.PdbViewer3D({
+ * var myPdbViewer = new Biojs.PdbViewer({
  * 		target: 'YourOwnDivId'
  * });	
  * 
  * // Example of loading a pdb file by means a HTTP request.
- * // Note that myPdbViewer3D.setPdb(data) receives the data as argument,
+ * // Note that myPdbViewer.setPdb(data) receives the data as argument,
  * // no matter the source where came up. 
  * $.ajax({
  * 		url: '../biojs/dependencies/proxy/proxy.php',
  * 		data: 'url=http://www.ebi.ac.uk/pdbe-srv/view/files/3nuc.pdb',
  * 		dataType: 'text',
  * 		success: function(pdbFile){
- * 			myPdbViewer3D.setPdb(pdbFile);
+ * 			myPdbViewer.setPdb(pdbFile);
  * 		},
  * 		error: function(qXHR, textStatus, errorThrown){
  * 			console.log(textStatus);
@@ -69,8 +69,8 @@
  * 	});
  * 
  */
-Biojs.PdbViewer3D = Biojs.extend(
-/** @lends Biojs.PdbViewer3D# */
+Biojs.PdbViewer = Biojs.extend(
+/** @lends Biojs.PdbViewer# */
 { 
    constructor: function (options) {
 	   Biojs.console.enable();
@@ -78,14 +78,14 @@ Biojs.PdbViewer3D = Biojs.extend(
    },
    
    /** 
-    * Default options (and its values) for the PdbViewer3D component. 
-    * @name Biojs.PdbViewer3D-opt
+    * Default options (and its values) for the PdbViewer component. 
+    * @name Biojs.PdbViewer-opt
     * @type Object
     */
    opt: 
    {
 	   target: 'component',
-	   width: 597,
+	   width: 590,
 	   height: 400,
 	   jmolFolder: '../biojs/dependencies/jmol-12.0.48',
 	   unpolarColor: "salmon",
@@ -98,11 +98,11 @@ Biojs.PdbViewer3D = Biojs.extend(
    
    /**
 	 * Array containing the supported event names
-	 * @name Biojs.PdbViewer3D-eventTypes
+	 * @name Biojs.PdbViewer-eventTypes
 	 */
 	eventTypes : [
 		/**
-		 * @name Biojs.PdbViewer3D#onPdbLoaded
+		 * @name Biojs.PdbViewer#onPdbLoaded
 		 * @event
 		 * @param {function} actionPerformed An function which receives an {@link Biojs.Event} object as argument.
 		 * @eventData {Object} source The component which did triggered the event.
@@ -111,7 +111,7 @@ Biojs.PdbViewer3D = Biojs.extend(
 		 * @eventData {string} message Error message in case of result be 'failure'.
 		 * 
 		 * @example 
-		 * myPdbViewer3D.onPdbLoaded(
+		 * myPdbViewer.onPdbLoaded(
 		 *    function( objEvent ) {
 		 *       alert( (objEvent.result == "success")? "Pdb file "+ objEvent.file+" loaded."  : objEvent.message );
 		 *    }
@@ -120,7 +120,7 @@ Biojs.PdbViewer3D = Biojs.extend(
 		 * */
 		"onPdbLoaded",
 		/**
-		 * @name Biojs.PdbViewer3D#onSelection
+		 * @name Biojs.PdbViewer#onSelection
 		 * @event
 		 * @param {function} actionPerformed An function which receives an {@link Biojs.Event} object as argument.
 		 * @eventData {Object} source The component which did triggered the event.
@@ -130,7 +130,7 @@ Biojs.PdbViewer3D = Biojs.extend(
 		 * 						    containing the selected positions.
 		 * 
 		 * @example 
-		 * myPdbViewer3D.onSelection(
+		 * myPdbViewer.onSelection(
 		 *    function( objEvent ) {
 		 *       selection = (objEvent.selectionType === "region")? (objEvent.selection.start +" - "+ objEvent.selection.end) : objEvent.selection.join(',');
 		 *       alert( "Selected "+objEvent.selectionType+": "+selection );
@@ -191,6 +191,9 @@ Biojs.PdbViewer3D = Biojs.extend(
 		jmolSetCallback("loadStructCallback", loadStructCallbackName );
 		
 		$("#"+this.opt.target).css("padding","0px");
+		$("#"+this.opt.target).css("width",this.opt.width);
+		$("#"+this.opt.target).css("height",this.opt.height);
+		$("#"+this.opt.target).css("overflow","hidden");
 		$("#"+this.opt.target).html(
 			'<div id="div'+self._appletId+'" style="position:relative; float:right;"/>'+
 			'<div id="controlSection" style="position:relative; float:right;"/>'
@@ -202,7 +205,7 @@ Biojs.PdbViewer3D = Biojs.extend(
     * Shows the form of controls.
     * 
     * @example 
-    * myPdbViewer3D.showControls(); 
+    * myPdbViewer.showControls(); 
     * 
     */
    showControls: function() {
@@ -220,7 +223,7 @@ Biojs.PdbViewer3D = Biojs.extend(
     * Hides the form of controls.
     * 
     * @example 
-    * myPdbViewer3D.hideControls(); 
+    * myPdbViewer.hideControls(); 
     * 
     */
    hideControls: function() {
@@ -234,7 +237,7 @@ Biojs.PdbViewer3D = Biojs.extend(
     * 
     * @example 
     * //Show the region in an alert window.
-    * var selection = myPdbViewer3D.getSelection(); 
+    * var selection = myPdbViewer.getSelection(); 
     * alert("selected: "+ selection );
     *
     * @returns {Object|Array} 
@@ -251,7 +254,7 @@ Biojs.PdbViewer3D = Biojs.extend(
    /**
     * Resets all selected regions or positions and removes the displayed PDB file from the applet.
     *
-    * @example myPdbViewer3D.reset(); 
+    * @example myPdbViewer.reset(); 
     */
 	reset: function(){
 		jmolScriptWait('select all; cartoon on; wireframe off; spacefill off; color chain; select none;');
@@ -276,7 +279,7 @@ Biojs.PdbViewer3D = Biojs.extend(
 	* 		data: 'url=http://www.ebi.ac.uk/pdbe-srv/view/files/1j3s.pdb',
 	* 		dataType: 'text',
 	* 		success: function(pdbFile){
-	* 			myPdbViewer3D.setPdb(pdbFile);
+	* 			myPdbViewer.setPdb(pdbFile);
 	* 		},
 	* 		error: function(qXHR, textStatus, errorThrown){
 	* 			console.log(textStatus);
@@ -301,7 +304,7 @@ Biojs.PdbViewer3D = Biojs.extend(
     * Reverts the highlighting of a region and removes the current selection.
     *
     * @example 
-    * myPdbViewer3D.removeSelection();
+    * myPdbViewer.removeSelection();
     * 
     */ 
 	removeSelection: function(){
@@ -322,11 +325,11 @@ Biojs.PdbViewer3D = Biojs.extend(
     *
     * @example 
     * // Selection of the region in the interval [100,150].
-    * myPdbViewer3D.setSelection({start: 100, end: 150});
+    * myPdbViewer.setSelection({start: 100, end: 150});
     * 
     * @example
     * // Selection of the positions 4, 8 and 100.
-    * myPdbViewer3D.setSelection([4,8,100]);
+    * myPdbViewer.setSelection([4,8,100]);
     * 
     * @param {Object|Array} selection Can be either a plain object or an array.  
     *        If object, it must have the fields start and end; Where "start" is greater than or equal to "end".
@@ -378,11 +381,11 @@ Biojs.PdbViewer3D = Biojs.extend(
 	},
 	
    /**
-    * 
+    * Draws a translucent surface surrounding the protein.
     *
     * @example 
     * // 
-    * myPdbViewer3D.displaySurface();
+    * myPdbViewer.displaySurface();
     * 
     */
 	displaySurface: function(){
@@ -394,11 +397,11 @@ Biojs.PdbViewer3D = Biojs.extend(
 	},
 	
    /**
-    * 
+    * Undo the action of method displaySurface.
     *
     * @example 
     * // 
-    * myPdbViewer3D.hideSurface(true);
+    * myPdbViewer.hideSurface();
     * 
     */
 	hideSurface: function(){
@@ -410,11 +413,13 @@ Biojs.PdbViewer3D = Biojs.extend(
 	},
 	
 	/**
-    * 
+    * Selects the acidic atoms and do coloring.
+    *
+    * @param {string} [color="red"] Refer to the Jmol documentation for availables coloring schemes. 
     *
     * @example 
     * // 
-    * myPdbViewer3D.displayNegative("red");
+    * myPdbViewer.displayNegative("red");
     * 
     */
 	displayNegative: function (color) {
@@ -424,11 +429,11 @@ Biojs.PdbViewer3D = Biojs.extend(
 		this._display.property.negative = true;
 	},
 	/**
-    * 
+    * Undo the action of method displayNegative.
     *
     * @example 
     * // 
-    * myPdbViewer3D.hideNegative();
+    * myPdbViewer.hideNegative();
     * 
     */
 	hideNegative: function () {
@@ -440,11 +445,13 @@ Biojs.PdbViewer3D = Biojs.extend(
 	},
 	
 	/**
-    * 
+    * Selects the basic atoms and do coloring.
+    *
+    * @param {string} [color="blue"] Refer to the Jmol documentation for availables coloring schemes. 
     *
     * @example 
     * // 
-    * myPdbViewer3D.displayPositive("blue");
+    * myPdbViewer.displayPositive();
     * 
     */
 	displayPositive: function (color) {
@@ -455,11 +462,11 @@ Biojs.PdbViewer3D = Biojs.extend(
 	},
 	
 	/**
-    * 
+    * Undo the action of method displayPositive.
     *
     * @example 
     * // 
-    * myPdbViewer3D.hidePositive();
+    * myPdbViewer.hidePositive();
     * 
     */
 	hidePositive: function () {
@@ -471,11 +478,13 @@ Biojs.PdbViewer3D = Biojs.extend(
 	},
 	
 	/**
-    * 
+    * Selects the polar atoms and do coloring.
+    *
+    * @param {string} [color="yellow"] Refer to the Jmol documentation for availables coloring schemes. 
     *
     * @example 
     * // 
-    * myPdbViewer3D.displayPolar("yellow");
+    * myPdbViewer.displayPolar();
     * 
     */	
 	displayPolar: function (color) {
@@ -484,12 +493,13 @@ Biojs.PdbViewer3D = Biojs.extend(
 		this.display('polar', polarColor);
 		this._display.property.polar = true;
 	},
+	
 	/**
-    * 
+    * Undo the action of method displayPolar.
     *
     * @example 
     * // 
-    * myPdbViewer3D.hidePolar();
+    * myPdbViewer.hidePolar();
     * 
     */	
 	hidePolar: function () {
@@ -501,12 +511,15 @@ Biojs.PdbViewer3D = Biojs.extend(
 	},
 	
 	/**
+    * Selects the polar atoms and do coloring.
+    *
+    * @param {string} [color="salmon"] Refer to the Jmol documentation for availables coloring schemes. 
     *
     * @example 
     * // 
-    * myPdbViewer3D.displayUnPolar();
+    * myPdbViewer.displayUnPolar();
     * 
-    */
+    */	
     // colors the structure depending on the checked check boxes
 	displayUnPolar: function ( color ) {
 		unPolarColor = (color)? color : this.opt.unpolarColor;
@@ -515,10 +528,11 @@ Biojs.PdbViewer3D = Biojs.extend(
 		this._display.property.unpolar = true;
 	},
 	/**
+    * Undo the action of method displayUnPolar.
     *
     * @example 
     * // 
-    * myPdbViewer3D.hideUnPolar();
+    * myPdbViewer.hideUnPolar();
     * 
     */
 	hideUnPolar: function () {
@@ -530,11 +544,14 @@ Biojs.PdbViewer3D = Biojs.extend(
 	},
 	
 	/**
-    * 
+    * Enable/disable the visibility of halos for showing up the current selection. 
+    * On halos off, all not selected atoms will be translucent. 
     *
+    * @param {boolean} value 'true' for halos on, 'false' for halos off.  
+    * 
     * @example 
-    * // 
-    * myPdbViewer3D.setHalosVisible(false);
+    * // Sets the halos off
+    * myPdbViewer.setHalosVisible(false);
     * 
     */
 	setHalosVisible: function (value) {
@@ -554,10 +571,29 @@ Biojs.PdbViewer3D = Biojs.extend(
 		this._drawSelection();
 	},
 	
+	/**
+    * Apply a script to the Jmol applet that currently are displayed 
+    * 
+    * @example
+    * // Rotate one time in X-axis.
+    * myPdbViewer.applyJmolCommand('select all; cartoon off; meshribbons on; select none;');
+    * 
+    * @param {string} The Jmol script.  
+    */
 	applyJmolCommand: function(cmd){
 		jmolScriptWait(cmd);
 	},
 	
+	
+	/**
+    * Select and coloring atoms. 
+    * 
+    * @example
+    * // Select hetero atoms and coloring with the RGB triplet code [xFF0088].  
+    * myPdbViewer.display("hetero","[xFF0088]");
+    * 
+    * @param {string} The color. Refer to the Jmol documentation for availables coloring schemes.  
+    */
 	display: function(property, color) {
 		scr = (this._isAnyDisplayed())? '' : 'select all; color lightgrey;';
 		scr += 'select '+property+';color '+color+'; select none';
@@ -568,6 +604,15 @@ Biojs.PdbViewer3D = Biojs.extend(
 		this._drawSelection();
 	},
 	
+	/**
+    * Select and remove the coloring atoms.
+    * 
+    * @example
+    * // Select hetero atoms and remove the coloring .  
+    * myPdbViewer.undisplay("hetero");
+    * 
+    * @param {string} The Jmol script.  
+    */
 	undisplay: function( property ) {
 		scr = 'select '+property+';color lightgrey; select none;'
 		scr += (this._isAnyDisplayed())? '' : 'select all; color chain; select none;';
@@ -704,20 +749,24 @@ Biojs.PdbViewer3D = Biojs.extend(
 			.css('background-color', "#000")
 			.fadeTo('10', 0.8);
 		
+		/**
+		 * @private
+		 * @function
+		 */
 		// This function will hide/show the control panel
 		var toggleControls = function (){
 			
 			showHideTab.find("span").toggle();
 			
 			if (self._controlsVisible) {
-				var appletWidth = self.opt.width - tabWidth -2;
+				var appletWidth = self.opt.width - tabWidth;
 				jmolResizeApplet([appletWidth, self.opt.height], self.getId());
 				$('#div'+self._appletId).css("width", appletWidth);
 				controlDiv.hide();
 				showHideTab.css('background-color', backgroundColor);
 				self._controlsVisible = false;
 			} else {
-				var appletWidth = self.opt.width - width -2;
+				var appletWidth = self.opt.width - width;
 				jmolResizeApplet([appletWidth, self.opt.height], self.getId());
 				$('#div'+self._appletId).css("width", appletWidth);
 				controlDiv.show();

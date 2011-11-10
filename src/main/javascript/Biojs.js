@@ -99,7 +99,7 @@ Biojs.Utils = {
      * @example
      * // Enabling loggin messages 
      * Biojs.console.enable();
-     * ...
+     * ... 
      * // Writing a log
      * Biojs.console.log("My Message");
      * 
@@ -110,11 +110,17 @@ Biojs.Utils = {
 			// Define a cross-browser window.console.log method.
 			// For IE and FF without Firebug, fallback to using an alert.
 			if (window.console) {
+				/**
+				 * @ignore
+				 */
 				// In this case, there are a console, perfect!
 				this.log = function (msg) { console.log(msg) };
 			} else {
 				// We have not window.console, but it is Opera browser?
 				if (window.opera) {
+					/**
+					 * @ignore
+					 */
 					// Right! then lets use window.opera.postError
 					this.log = function (msg) { window.opera.postError(msg) };
 				} else {
@@ -143,6 +149,9 @@ Biojs.Utils = {
 						Biojs.console.domDocument = consoleWin.document;
 						Biojs.console.domDivNode = consoleWin.document.getElementById("Biojs.console");
 						
+						/**
+						 * @ignore
+						 */
 						// Finally, the log function will write into the DIV
 						this.log = function (msg) {
 							textNode = Biojs.console.domDocument.createTextNode(msg);
@@ -197,8 +206,17 @@ Biojs.extend = function(_instance, _static) { // subclass
 	
 	// build the prototype
 	Biojs._prototyping = true;
+	
+	/**
+	 * @name proto
+	 * @constructs
+	 */
 	var proto = new this;
 	extend.call(proto, _instance);
+	
+	/**
+	 * @ignore
+	 */
 	proto.base = function() {
 		// call this method from any other method to invoke that method's ancestor
 	};
@@ -206,10 +224,10 @@ Biojs.extend = function(_instance, _static) { // subclass
 	
 	// create the wrapper for the constructor function
 	//var constructor = proto.constructor.valueOf(); //-dean
+
 	var constructor = proto.constructor;
 	var klass = proto.constructor = function() {
 		if (!Biojs._prototyping) {
-			
 			if (this._constructing || this.constructor == klass) { // instantiation
 				//this._constructing = true;
 				var clone = Biojs.Utils.clone(this);
@@ -235,6 +253,9 @@ Biojs.extend = function(_instance, _static) { // subclass
 	klass.forEach = this.forEach;
 	klass.implement = this.implement;
 	klass.prototype = proto;
+	/**
+	 * @ignore
+	 */
 	klass.valueOf = function(type) {
 		//return (type == "object") ? klass : constructor; //-dean
 		return (type == "object") ? klass : constructor.valueOf();
@@ -527,6 +548,7 @@ Biojs = Biojs.extend({
      * This is a shorcut for {@link Biojs.Utils.console}
      * 
      * @type {Object}
+     * 
      */
 	console: Biojs.Utils.console,
 	
