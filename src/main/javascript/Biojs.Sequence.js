@@ -193,7 +193,7 @@ Biojs.Sequence = Biojs.extend(
                    '-webkit-user-select':'none',
                    'user-select':'none'
         });
-
+		
 		self._headerDiv = $('<div></div>').appendTo("#"+self.opt.target);
 		self._contentDiv = $('<div></div>').appendTo("#"+self.opt.target);
 		
@@ -454,7 +454,7 @@ Biojs.Sequence = Biojs.extend(
 	    
 	    var opt = {
 			numCols: self.opt.columns.size,
-		    numColsForSpace: self.opt.columns.spacedEach,
+		    numColsForSpace: self.opt.columns.spacedEach
 		};
 
 		str += this._drawSequence(a, opt);
@@ -639,10 +639,14 @@ Biojs.Sequence = Biojs.extend(
 	
 	_drawSequence : function(a, opt) {
 		var str = '';
+		
+
+		var spaceStyle =  "white-space: pre;";
+		
 		// Index at top?
 		if( opt.numTop )
 		{
-			str += '<span style="white-space:pre" class="numTop">'
+			str += '<span style="'+spaceStyle+'" class="numTop">'
 			var size = (opt.spaceBetweenChars)? opt.numTopEach*2: opt.numTopEach;
 			
 			if (opt.numLeft) {
@@ -669,7 +673,7 @@ Biojs.Sequence = Biojs.extend(
 				str += '<span class="sequence" id="'+i+'">' + a[i-1] + '</span>';
 				
 				if (opt.numRight) {
-					str += '<span style="white-space:pre" id="numRight'+i+'">';
+					str += '<span style="'+spaceStyle+'" id="numRight'+i+'">';
 					str += '  ';
 					str += this._formatIndex(i, opt.numRightSize, opt.numRightPad);	
 					str += '</span>';
@@ -678,14 +682,14 @@ Biojs.Sequence = Biojs.extend(
 				str += '<br/>';
 				
 				if (opt.numLeft) {
-					str += '<span style="white-space:pre" id="numLeft'+i+'">';
+					str += '<span id="numLeft'+i+'">';
 					str += this._formatIndex(i+1, opt.numLeftSize, opt.numLeftPad);
 					str += '  ';
 					str += '</span>';
 				}
 				
 			} else {
-				str += '<span class="sequence" id="'+i+'">' + a[i-1];
+				str += '<span class="sequence" style="'+spaceStyle+'" id="'+i+'">' + a[i-1];
 				str += (i % opt.numColsForSpace == 0)? ' ' : '';
 				str += (opt.spaceBetweenChars)? ' ' : '';
 				str += '</span>';
@@ -693,6 +697,11 @@ Biojs.Sequence = Biojs.extend(
 		}
 		
 		str += '<br/>'	
+			
+		if ($.browser.msie) {
+			str = "<pre>" + str + "</pre>";
+		}	
+			
 		return str;
 	},
 	
@@ -768,6 +777,7 @@ Biojs.Sequence = Biojs.extend(
 	},
 	
 	_addToolTip : function ( target, msgFunction ) {
+		
 		$(target).mouseover(function(e) {
      		var tip = msgFunction( $(this) );
 	         
@@ -775,31 +785,31 @@ Biojs.Sequence = Biojs.extend(
 	        $(this).append('<div id="tooltip"><div class="tipHeader"></div><div class="tipBody">' + tip + '</div><div class="tipFooter"></div></div>');     
 	         
 	        //Set the X and Y axis of the tooltip
-	        $('#tooltip').css('top', e.pageY + 10 );
-	        $('#tooltip').css('left', e.pageX + 20 );
+	        $('#tooltip').css('top', e.pageY + 10 )
+	        	.css('left', e.pageX + 20 );
 	        
 	        // Style values 
 	        // Would be nice to have it in a css file 
-	        $('#tooltip').css('position', "absolute" );
-	        $('#tooltip').css('z-index', "9999" );
-	        $('#tooltip').css('color', "#fff" );
-	        $('#tooltip').css('font-size', "10px" );
-	        $('#tooltip').css('width', "auto" );
+	        $('#tooltip').css('position', "absolute" )
+	        	.css('z-index', "9999" )
+	        	.css('color', "#fff" )
+	        	.css('font-size', "10px" )
+	        	.css('width', tip.length * 8 );
 	        
-	        $('.tipHeader').css('background-color', "#000");
-	        $('.tipHeader').css('height', "8px"); 
+	        $('.tipHeader').css('background-color', "#000")
+	        	.css('height', "8px"); 
 	        //$('.tipHeader').css('background', "images/tipHeader.gif");  
 			
-			$('.tipBody').css('background-color', "#000");
-			$('.tipBody').css('padding', "3px 10px 3px 10px");
+			$('.tipBody').css('background-color', "#000")
+				.css('padding', "3px 10px 3px 10px");
 
-			$('.tipFooter').css('background-color', "#000");
-	        $('.tipFooter').css('height', "8px"); 
+			$('.tipFooter').css('background-color', "#000")
+	        	.css('height', "8px"); 
 	        //$('.tipFooter').css('background', "images/tipHeader.gif no-repeat");  
 	         
 	        //Show the tooltip with faceIn effect
-	        $('#tooltip').fadeIn('500');
-	        $('#tooltip').fadeTo('10',0.8);
+	        $('#tooltip').animate({opacity: 'show'}, 500);
+	        $('#tooltip').animate({opacity: '0.8'}, 10);
 	        
 	        $(this).css('cursor', "pointer");
 	         

@@ -73,7 +73,7 @@ Biojs.PdbViewer = Biojs.extend(
 /** @lends Biojs.PdbViewer# */
 { 
    constructor: function (options) {
-	   Biojs.console.enable();
+	   //Biojs.console.enable();
 	   this.init();
    },
    
@@ -677,7 +677,6 @@ Biojs.PdbViewer = Biojs.extend(
 			.css("width", controlsWidth )
 			.css("height", controlsHeight)
 			.css("padding", padding)
-			.fadeTo('10', 0.8)
 			.append(
 				'<b> Display: </b><br/>' +
 				'<input id="surfaceCheck" type="checkbox" name="surfaceCheck" value="surfaceCheck"> Surface<br/>' +
@@ -688,6 +687,8 @@ Biojs.PdbViewer = Biojs.extend(
 		        '<br/><b> Show selection using: </b><br/>' +
 		        '<input id="translucentRadio" type="radio" name="selection" value="translucentRadio"/> Translucent ' +
 		        '<input id="halosRadio" type="radio" name="selection" value="halosRadio" checked="halosRadio"/> Halos<br/><br/>');
+		
+		Biojs.console.log("luego de controlDiv.append");
 		
 		controlDiv.find('#surfaceCheck').click( function(event){
 			if ($('#surfaceCheck:checked').val()) {
@@ -734,6 +735,8 @@ Biojs.PdbViewer = Biojs.extend(
 	    	self.setHalosVisible(showHalos);
 	    });
 		
+		Biojs.console.log("luego de append controls");
+		
 		// 
 		// Tab
 		//
@@ -746,8 +749,9 @@ Biojs.PdbViewer = Biojs.extend(
 			.css("float", "left")
 			.css("width", tabWidth)
 			.css("height", tabHeight)
-			.css('background-color', "#000")
-			.fadeTo('10', 0.8);
+			.css('background-color', "#000");
+		
+		Biojs.console.log("Creating the toggleControls function");
 		
 		/**
 		 * @private
@@ -770,7 +774,7 @@ Biojs.PdbViewer = Biojs.extend(
 				jmolResizeApplet([appletWidth, self.opt.height], self.getId());
 				$('#div'+self._appletId).css("width", appletWidth);
 				controlDiv.show();
-				showHideTab.css('background-color', "#000").fadeTo('10', 0.8);
+				showHideTab.css('background-color', "#000");
 				self._controlsVisible = true;
 			}
 		}
@@ -801,6 +805,8 @@ Biojs.PdbViewer = Biojs.extend(
 			.css("cursor","pointer");
 		
 		this._controlsReady = true;
+		
+		Biojs.console.log("_buildControls done");
 	}
 	
 });
