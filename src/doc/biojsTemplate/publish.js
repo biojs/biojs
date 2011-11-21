@@ -93,19 +93,42 @@ function publish(symbolSet) {
 		IO.saveFile(publish.conf.outDir + "jsdoc/" + publish.conf.symbolsDir, ((JSDOC.opt.u)? Link.filemap[symbol.alias] : symbol.alias) + publish.conf.ext, output);
 		
 		if (isAComponent(symbol)) {
-			// Generate the registry
-			// Overview
-			IO.saveFile(publish.conf.outDir+publish.conf.registryDir, symbol.alias + publish.conf.ext, overviewTemplate.process(symbol));
-			// Methods
-			IO.saveFile(publish.conf.outDir+publish.conf.registryDir, symbol.alias + ".methods" + publish.conf.ext, methodsTemplate.process(symbol) );
-			// Events
-			IO.saveFile(publish.conf.outDir+publish.conf.registryDir, symbol.alias + ".events" + publish.conf.ext, eventsTemplate.process(symbol) );
-			// Events
-			IO.saveFile(publish.conf.outDir+publish.conf.registryDir, symbol.alias + ".options" + publish.conf.ext, optionsTemplate.process(symbol) );
-			
 			components.push(symbol);
 		}
 	}
+	
+	// create each of the component' registry pages
+	for (var i = 0; i < components.length; i++) {
+		var symbol = components[i];
+		
+		// Copy inherited dependencies
+		components.map( 
+				function($) {
+					if ( symbol.inheritsFrom.indexOf($.alias) >= 0) {
+						// add the dependencies of the parent class
+						$.requires.map( function($) { symbol.requires.push($) } );  
+						$.comment.getTag('dependency').map( function($) { symbol.comment.tags.push($) } );
+						
+						// add the dependency to the parent class
+						var tagDependency = new JSDOC.DocTag();
+						tagDependency.title = 'dependency';
+						tagDependency.desc = '<script language="JavaScript" type="text/javascript" src="src/'+$.alias+'.js"></script>';
+						symbol.comment.tags.push( tagDependency );
+						
+						symbol.requires.push( new JSDOC.DocTag('@requires '+$.alias) );
+					}	
+				});
+
+		// Overview
+		IO.saveFile(publish.conf.outDir+publish.conf.registryDir, symbol.alias + publish.conf.ext, overviewTemplate.process(symbol));
+		// Methods
+		IO.saveFile(publish.conf.outDir+publish.conf.registryDir, symbol.alias + ".methods" + publish.conf.ext, methodsTemplate.process(symbol) );
+		// Events
+		IO.saveFile(publish.conf.outDir+publish.conf.registryDir, symbol.alias + ".events" + publish.conf.ext, eventsTemplate.process(symbol) );
+		// Events
+		IO.saveFile(publish.conf.outDir+publish.conf.registryDir, symbol.alias + ".options" + publish.conf.ext, optionsTemplate.process(symbol) );
+	}
+	
 	
 	// regenerate the index with different relative links, used in the index pages
 	Link.base = "";

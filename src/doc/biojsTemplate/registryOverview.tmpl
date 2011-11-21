@@ -15,12 +15,16 @@
 		<script src="scripts/shCore.js" type="text/javascript"></script>
 		<script src="scripts/shBrushJScript.js" type="text/javascript"></script>
 		
+		<!-- core code -->
+		<script language="JavaScript" type="text/javascript" src="src/Biojs.js"></script>
+		
+		<!-- dependencies -->
 		<if test="data.comment.getTag('dependency').length">
-			<for each="item" in="data.comment.getTag('dependency')">
-				{+ item.desc +}
-			</for>
+		<for each="item" in="data.comment.getTag('dependency')">
+		{+ item.desc +}
+		</for>
 	    </if>
-
+		<!-- component code -->
 		<script language="JavaScript" type="text/javascript" src="src/Biojs.{+data.name+}.js"></script>
 		
 		<script language="JavaScript" type="text/javascript">		
@@ -32,7 +36,7 @@
 				</if>
 				
 	        	<if test="data.methods.length">
-				{! var ownMethods = data.methods.filter(function($){return $.memberOf == data.alias  && !$.isNamespace}).sort(makeSortby("name")); !}
+				{! var ownMethods = data.methods.filter(function($){return $.memberOf != "Biojs" }).sort(makeSortby("name")); !}
 			        <if test="ownMethods.length">
 					<for each="member" in="ownMethods">
 						<if test="member.example.length">
@@ -48,7 +52,7 @@
 			    
 			    
 			    <if test="data.events.length">
-				{! var ownEvents = data.events.filter(function($){return $.memberOf == data.alias  && !$.isNamespace}).sort(makeSortby("name")); !}
+				{! var ownEvents = data.events.filter(function($){return $.memberOf != "Biojs" }).sort(makeSortby("name")); !}
 					<if test="ownEvents.length">
 						<for each="member" in="ownEvents">
 							<if test="member.example.length">
@@ -96,40 +100,34 @@
 <!-- ============================== side bar ============================ -->	
 	<div class="sidebar">
 
-        <if test="data.events.length">
-		{! var ownEvents = data.events.filter(function($){return $.memberOf == data.alias  && !$.isNamespace}).sort(makeSortby("name")); !}
-			<if test="ownEvents.length">
-				<h1>Events</h1>
-	        	<ul>
-				<for each="member" in="ownEvents">
-					<if test="member.example.length">
-						<for each="example" in="member.example">
-							<li><a href="#">{+member.name+}</a><div class="event" id="{+member.name+}"/></li>
-						</for>
-					</if>
-				</for>
-				</ul>
-			</if>		
-		</if>	
+		<if test="ownEvents.length">
+			<h1>Events</h1>
+        	<ul>
+			<for each="member" in="ownEvents">
+				<if test="member.example.length">
+					<for each="example" in="member.example">
+						<li><a href="#">{+member.name+}</a><div class="event" id="{+member.name+}"/></li>
+					</for>
+				</if>
+			</for>
+			</ul>
+		</if>			
 		
-		<if test="data.methods.length">
-		{! var ownMethods = data.methods.filter(function($){return $.memberOf == data.alias  && !$.isNamespace}).sort(makeSortby("name")); !}
-	        <if test="ownMethods.length">
-				<h1>Methods</h1>
-				<ul>
-				<for each="member" in="ownMethods">
-					<if test="member.example.length">
-						{! var i=0; !}
-						<for each="example" in="member.example">
-							{! i++; !}
-							<li><a href="#" id="{+member.name+}{+i+}">{+member.name+}</a></li>
-						</for>
-					</if>
-				</for>
-				</ul>
-	        </if>
-	    </if>
-		
+        <if test="ownMethods.length">
+			<h1>Methods</h1>
+			<ul>
+			<for each="member" in="ownMethods">
+				<if test="member.example.length">
+					{! var i=0; !}
+					<for each="example" in="member.example">
+						{! i++; !}
+						<li><a href="#" id="{+member.name+}{+i+}">{+member.name+}</a></li>
+					</for>
+				</if>
+			</for>
+			</ul>
+        </if>
+
 		<if test="data.requires.length">
 			<h1>Dependencies</h1>
         	<ul>
@@ -157,8 +155,9 @@
 				<for each="item" in="data.comment.getTag('dependency')">
 					{! includes += item.desc.toString()+"\n"; !}
 				</for>
-				{! includes = includes.replace('<',"&lt;").replace('>',"&gt;"); 
-				   includes += '&lt;script language="JavaScript" type="text/javascript" src="src/Biojs.'+data.name+'.js" /&gt;'; !}
+				{! includes = '&lt;script language="JavaScript" type="text/javascript" src="src/Biojs.js"&gt;&lt;/script&gt;\n'+
+						includes.replace('<',"&lt;").replace('>',"&gt;")+
+						'&lt;script language="JavaScript" type="text/javascript" src="src/Biojs.'+data.name+'.js"&gt;&lt;/script&gt;' !}
 			</if>
 			<pre class="brush: js; toolbar: false" >{+includes+}</pre>
 			
