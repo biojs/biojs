@@ -46,7 +46,7 @@
 	<div id="content"> 
     	<div class="accordion">
 	    <if test="data.events.length">
-		{! var ownEvents = data.events.filter(function($){return $.memberOf == data.alias  && !$.isNamespace}).sort(makeSortby("name")); !}
+		{! var ownEvents = data.events.filter(function($){return $.memberOf != "Biojs" }).sort(makeSortby("name")); !}
 			<if test="ownEvents.length">
 				<for each="member" in="ownEvents">
 

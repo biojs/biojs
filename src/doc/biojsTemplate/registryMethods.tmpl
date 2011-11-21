@@ -47,7 +47,7 @@
     	<div class="accordion">
 
 	    <if test="data.methods.length">
-			{! var ownMethods = data.methods.filter(function($){return $.memberOf == data.alias  && !$.isNamespace}).sort(makeSortby("name")); !}
+			{! var ownMethods = data.methods.filter(function($){return $.memberOf != "Biojs" }).sort(makeSortby("name")); !}
 		    <if test="ownMethods.length">
 				<for each="member" in="ownMethods">
 				

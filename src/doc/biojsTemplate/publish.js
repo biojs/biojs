@@ -105,9 +105,10 @@ function publish(symbolSet) {
 		components.map( 
 				function($) {
 					if ( symbol.inheritsFrom.indexOf($.alias) >= 0) {
-						// add the dependencies of the parent class
+						// add the dependencies and options of the parent class
 						$.requires.map( function($) { symbol.requires.push($) } );  
 						$.comment.getTag('dependency').map( function($) { symbol.comment.tags.push($) } );
+						$.comment.getTag('option').map( function($) { symbol.comment.tags.push($) } );
 						
 						// add the dependency to the parent class
 						var tagDependency = new JSDOC.DocTag();
