@@ -7,13 +7,15 @@
  * 
  * @requires <a href=''>Server side proxy</a>
  * 
- * @option {string} [url=http://www.ebi.ac.uk/pdbe-srv/view/files] 
+ * @param {Object} options An object with the options for the component.
+ * 
+ * @option {string} [url="http://www.ebi.ac.uk/pdbe-srv/view/files"] 
  *    Url of the web service in order to require the pdb file.
  * 
  * @option {string} id
  *    Identifier of the pdb to be displayed (i.e. '3nuc' to require 3nuc.pdb file). You can load another pbd by using setPdb method.
  *    
- * @option {string} [proxy='../biojs/dependencies/proxy/proxy.php']
+ * @option {string} [proxy="../biojs/dependencies/proxy/proxy.php"] 
  *    Server side proxy server. 
  * 
  * @example
@@ -22,6 +24,9 @@
  * 		target: 'YourOwnDivId',
  * 		id: '3nuc'
  * });	
+ * 
+ * console.log(myPdbViewer);
+ * 
  */
 Biojs.PdbViewerWS = Biojs.PdbViewer.extend(
 /** @lends Biojs.PdbViewerWS# */
