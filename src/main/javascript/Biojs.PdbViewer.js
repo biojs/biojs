@@ -4,11 +4,8 @@
  * @class
  * @extends Biojs
  * 
- * @requires <a href=''>BioJS Core</a>
- * @dependency <script language="JavaScript" type="text/javascript" src="src/Biojs.js"></script>
- * 
  * @requires <a href='http://blog.jquery.com/2011/09/12/jquery-1-6-4-released/'>jQuery Core 1.6.4</a>
- * @dependency <script language="JavaScript" type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+ * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jquery/jquery-1.4.2.min.js"></script>
  * 
  * @requires <a href='http://jmol.sourceforge.net/download/'>jMol 12.0.48</a>
  * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jmol-12.0.48/Jmol.js"></script>
@@ -53,6 +50,8 @@
  * 		target: 'YourOwnDivId'
  * });	
  * 
+ * 
+ * 
  * // Example of loading a pdb file by means a HTTP request.
  * // Note that myPdbViewer.setPdb(data) receives the data as argument,
  * // no matter the source where came up. 
@@ -64,7 +63,7 @@
  * 			myPdbViewer.setPdb(pdbFile);
  * 		},
  * 		error: function(qXHR, textStatus, errorThrown){
- * 			console.log(textStatus);
+ * 			alert(textStatus);
  * 		}
  * 	});
  * 
@@ -72,9 +71,48 @@
 Biojs.PdbViewer = Biojs.extend(
 /** @lends Biojs.PdbViewer# */
 { 
-   constructor: function (options) {
-	   //Biojs.console.enable();
-	   this.init();
+	constructor: function (options) {
+		//constructor of Biojs.PdbViewer
+		Biojs.console.log("starting Biojs.PdbViewer constructor");
+		
+		var self = this;
+		
+		jmolInitialize(this.opt.jmolFolder);
+		jmolSetAppletColor( (this.opt.backgroundColor)? this.opt.backgroundColor : "white");
+		jmolSetDocument(0);
+		
+		Biojs.console.log("registring callback for object " + this.getId());
+		
+		this._appletId = "jmolApplet" + this.getId();
+		var loadStructCallbackName = this._appletId+"_pdbLoadCallback";
+		
+		Biojs.registerGlobal(this._appletId,this);
+		Biojs.registerGlobal(loadStructCallbackName, 
+				function ( appletId, url, file, title, message, code, formerFrame, frame ) {
+					if ( Biojs.getGlobal(appletId).opt.enableControls ) {
+						Biojs.getGlobal(appletId).showControls();
+					}
+					if (file!==null) {
+						window[appletId].raiseEvent("onPdbLoaded", {
+							file: title,
+							result: (code==3)? 'success' : 'failure',
+							message: message
+						});
+					}
+				});
+		
+		jmolSetCallback("loadStructCallback", loadStructCallbackName );
+		
+		$("#"+this.opt.target).css("padding","0px");
+		$("#"+this.opt.target).css("width",this.opt.width);
+		$("#"+this.opt.target).css("height",this.opt.height);
+		$("#"+this.opt.target).css("overflow","hidden");
+		$("#"+this.opt.target).html(
+			'<div id="div'+this._appletId+'" style="position:relative; float:right;"/>'+
+			'<div id="controlSection" style="position:relative; float:right;"/>'
+		);
+		
+		Biojs.console.log("ending Biojs.PdbViewer constructor");
    },
    
    /** 
@@ -85,7 +123,7 @@ Biojs.PdbViewer = Biojs.extend(
    opt: 
    {
 	   target: 'component',
-	   width: 590,
+	   width: 597,
 	   height: 400,
 	   jmolFolder: '../biojs/dependencies/jmol-12.0.48',
 	   unpolarColor: "salmon",
@@ -142,9 +180,11 @@ Biojs.PdbViewer = Biojs.extend(
 	],
    
    /* Internal members */
-   
+   _appletId: undefined,
+   _controlsReady: false,
+   _controlsVisible: false,
    _jmoljarfile: "JmolApplet.jar",
-   
+   _jmolAppletInitialized: false,
    _selection: undefined,
    
    _display: { 
@@ -156,49 +196,6 @@ Biojs.PdbViewer = Biojs.extend(
 	   },
 	   surface: false,
 	   halos: true
-   },
-   
-   init: function () {
-		var self = this;
-        
-		this._controlsReady = false;
-		this._controlsVisible = false;
-		
-		jmolInitialize(this.opt.jmolFolder);
-		jmolSetAppletColor( (this.opt.backgroundColor)? this.opt.backgroundColor : "white");
-		jmolSetDocument(0);
-		
-		Biojs.console.log("registring callback for object " + self.getId());
-		
-		self._appletId = "jmolApplet" + self.getId();
-		var loadStructCallbackName = self._appletId+"_pdbLoadCallback";
-		
-		Biojs.registerGlobal(self._appletId,self);
-		Biojs.registerGlobal(loadStructCallbackName, 
-				function ( appletId, url, file, title, message, code, formerFrame, frame ) {
-					if ( Biojs.getGlobal(appletId).opt.enableControls ) {
-						Biojs.getGlobal(appletId).showControls();
-					}
-					if (file!==null) {
-						window[appletId].raiseEvent("onPdbLoaded", {
-							file: title,
-							result: (code==3)? 'success' : 'failure',
-							message: message
-						});
-					}
-				});
-		
-		jmolSetCallback("loadStructCallback", loadStructCallbackName );
-		
-		$("#"+this.opt.target).css("padding","0px");
-		$("#"+this.opt.target).css("width",this.opt.width);
-		$("#"+this.opt.target).css("height",this.opt.height);
-		$("#"+this.opt.target).css("overflow","hidden");
-		$("#"+this.opt.target).html(
-			'<div id="div'+self._appletId+'" style="position:relative; float:right;"/>'+
-			'<div id="controlSection" style="position:relative; float:right;"/>'
-		);
-
    },
 
    /**
@@ -282,22 +279,25 @@ Biojs.PdbViewer = Biojs.extend(
 	* 			myPdbViewer.setPdb(pdbFile);
 	* 		},
 	* 		error: function(qXHR, textStatus, errorThrown){
-	* 			console.log(textStatus);
+	* 			alert(textStatus);
 	* 		}
 	* 	});
     * 
     */
 	setPdb: function( pdb ){
+		Biojs.console.log("setPdb() starting");
+		
 		var scr = 'select all; cartoon on; wireframe off; spacefill off; color chain; select none;'
 		
-		if (this.jmolAppletInitialized) {			
+		if (this._jmolAppletInitialized) {			
 			jmolLoadInlineScript(pdb, scr);
 			
 		} else {
 			html = jmolAppletInline([this.opt.width, this.opt.height], pdb, scr, this.getId() );
 			$("div#div"+this._appletId).html(html);
 		}
-		this.jmolAppletInitialized = true;		
+		this._jmolAppletInitialized = true;		
+		Biojs.console.log("setPdb() ending");
 	},
 	
 	/**
@@ -807,6 +807,11 @@ Biojs.PdbViewer = Biojs.extend(
 		this._controlsReady = true;
 		
 		Biojs.console.log("_buildControls done");
+	}, 
+	
+	toString: function() { 
+		return "Biojs.PdbViewer";
 	}
+	
 	
 });

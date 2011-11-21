@@ -201,7 +201,7 @@ Biojs.Utils = {
  *  alert(Biojs.MyComponent.VERSION);
  * 
  */
-Biojs.extend = function(_instance, _static) { // subclass
+Biojs.extend = function(_child, _static) { // subclass
 	var extend = Biojs.prototype.extend;
 	
 	// build the prototype
@@ -211,8 +211,26 @@ Biojs.extend = function(_instance, _static) { // subclass
 	 * @name proto
 	 * @constructs
 	 */
+	
+//	function BiojsProto() {};
+//	BiojsProto.prototype = this;
+//	var proto = new BiojsProto();
+	
 	var proto = new this;
-	extend.call(proto, _instance);
+
+	// Inherit parent' events to the child
+	if (proto.eventTypes instanceof Array) {
+		proto.eventTypes.map( function( eventType ) { _child.eventTypes.push(eventType) } );
+	}
+	
+	// Inherit parent' options to the child
+	if (proto.opt instanceof Object) {
+		for ( var key in proto.opt ) {
+			_child.opt[key] = proto.opt[key];
+		}
+	}
+	
+	extend.call(proto, _child);
 	
 	/**
 	 * @ignore
@@ -220,33 +238,48 @@ Biojs.extend = function(_instance, _static) { // subclass
 	proto.base = function() {
 		// call this method from any other method to invoke that method's ancestor
 	};
+
 	delete Biojs._prototyping;
 	
 	// create the wrapper for the constructor function
-	//var constructor = proto.constructor.valueOf(); //-dean
-
 	var constructor = proto.constructor;
 	var klass = proto.constructor = function() {
+		
 		if (!Biojs._prototyping) {
-			if (this._constructing || this.constructor == klass) { // instantiation
-				//this._constructing = true;
-				var clone = Biojs.Utils.clone(this);
-				clone.setOptions(arguments[0]);
-				// Set the event handlers
-				clone.setEventHandlers(clone.eventTypes);
-				// Set the unique id for the instance
-				clone.biojsObjectId = Biojs.uniqueId();
-				// execute the subclass constructor
-				constructor.apply(clone, arguments);
-				//delete this._constructing;
-				return clone;
+
+			if (this.constructor == klass) { // instantiation
+
+				// Create a instance of this class
+				function BiojsComponent() {};
+				BiojsComponent.prototype = proto;
+				var instance = new BiojsComponent();
+
+				// Change the default option's values 
+				// in the instance by the provided ones
+				instance.setOptions(arguments[0]);
 				
-			} else if (arguments[0] != null) { // casting
-				return (arguments[0].extend || extend).call(arguments[0], proto);
+				// Set the event handlers
+				instance.setEventHandlers(instance.eventTypes);
+				
+				// Set the unique id for the instance
+				instance.biojsObjectId = Biojs.uniqueId();
+				
+				// execute the instance's constructor
+				constructor.apply(instance, arguments);
+				
+				// return the instance
+				return instance;
+				
+			} else { // Calling to ancestor's constructor
+				
+				constructor.apply(this,arguments);
 			}
+//			else if (arguments[0] != null) { // casting
+//				return (arguments[0].extend || extend).call(arguments[0], proto);
+//			}
 		}
 	};
-	
+
 	// build the class interface
 	klass.ancestor = this;
 	klass.extend = this.extend;
@@ -257,7 +290,6 @@ Biojs.extend = function(_instance, _static) { // subclass
 	 * @ignore
 	 */
 	klass.valueOf = function(type) {
-		//return (type == "object") ? klass : constructor; //-dean
 		return (type == "object") ? klass : constructor.valueOf();
 	};
 	klass.toString = this.toString;
@@ -274,7 +306,7 @@ Biojs.extend = function(_instance, _static) { // subclass
 Biojs.prototype = 
 /** @lends Biojs# */
 {
-	extend: function(source, value) {
+	extend: function(source, value) {	
 		if (arguments.length > 1) { // extending with a name/value pair
 			var ancestor = this[source];
 			if (ancestor && (typeof value == "function") && // overriding a method?
@@ -427,6 +459,7 @@ Biojs.prototype =
 	setOptions : function (options) {
 		if ( this.opt instanceof Object )
 		{
+			this.opt = Biojs.Utils.clone(this.opt);
 			for ( var key in options ) {
 				this.opt[key] = options[key];
 			}
@@ -487,7 +520,9 @@ Biojs.prototype =
 Biojs = Biojs.extend({
 	constructor: function() {
 		this.extend(arguments[0]);
-	}
+	}, 
+	
+	vaueOf: function () { return "Biojs" }
 },
 /** @static */
 /** @lends Biojs */

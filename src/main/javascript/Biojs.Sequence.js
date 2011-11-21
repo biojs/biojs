@@ -4,14 +4,11 @@
  * @class
  * @extends Biojs
  * 
- * @requires <a href=''>BioJS Core</a>
- * @dependency <script language="JavaScript" type="text/javascript" src="src/Biojs.js"></script>
- * 
  * @requires <a href='http://blog.jquery.com/2011/09/12/jquery-1-6-4-released/'>jQuery Core 1.6.4</a>
- * @dependency <script language="JavaScript" type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+ * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jquery/jquery-1.4.2.min.js"></script>
  * 
  * @requires <a href='http://jqueryui.com/download'>jQuery UI 1.8.16</a>
- * @dependency <script language="JavaScript" type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
+ * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jquery/jquery-ui-1.8.2.custom.min.js"></script>
  * 
  * @author <a href="mailto:johncar@gmail.com">John Gomez</a>, based on the code made 
  * by <a href="mailto:secevalliv@gmail.com">Jose Villaveces</a>
@@ -94,7 +91,36 @@ Biojs.Sequence = Biojs.extend(
 /** @lends Biojs.Sequence */
 {	
 	constructor: function (options) {
-		this.init();
+		var self = this;
+		
+		// Disable text selection
+		$("#"+self.opt.target).css({
+                   '-moz-user-select':'none',
+                   '-webkit-user-select':'none',
+                   'user-select':'none'
+        });
+		
+		self._headerDiv = $('<div></div>').appendTo("#"+self.opt.target);
+		self._contentDiv = $('<div></div>').appendTo("#"+self.opt.target);
+		
+		self._headerDiv.append('Format: ');
+
+		var comboBox = $('<select> '+
+			'<option value="FASTA">FASTA</option>'+
+			'<option value="CODATA">CODATA</option>'+
+			'<option value="PRIDE">PRIDE</option>'+
+			'<option value="RAW">RAW</option></select>').appendTo(self._headerDiv);
+
+		$(comboBox).change(function(e) {
+			self.opt.format = comboBox.val();
+			self._redraw();
+		});
+		
+		for (var i in this.opt.highlights){
+			this.highlight(this.opt.highlights[i].start, this.opt.highlights[i].end);
+		}
+		
+		self._redraw();
 	},
 	
 	
@@ -181,41 +207,6 @@ Biojs.Sequence = Biojs.extend(
 		 * */
 		"onAnnotationClicked"
 	],
-	
-	// Initialize the component
-	init : function() {
-		
-		var self = this;
-		
-		// Disable text selection
-		$("#"+self.opt.target).css({
-                   '-moz-user-select':'none',
-                   '-webkit-user-select':'none',
-                   'user-select':'none'
-        });
-		
-		self._headerDiv = $('<div></div>').appendTo("#"+self.opt.target);
-		self._contentDiv = $('<div></div>').appendTo("#"+self.opt.target);
-		
-		self._headerDiv.append('Format: ');
-
-		var comboBox = $('<select> '+
-			'<option value="FASTA">FASTA</option>'+
-			'<option value="CODATA">CODATA</option>'+
-			'<option value="PRIDE">PRIDE</option>'+
-			'<option value="RAW">RAW</option></select>').appendTo(self._headerDiv);
-
-		$(comboBox).change(function(e) {
-			self.opt.format = comboBox.val();
-			self._redraw();
-		});
-		
-		for (var i in this.opt.highlights){
-			this.highlight(this.opt.highlights[i].start, this.opt.highlights[i].end);
-		}
-		
-		self._redraw();
-	},
 
 	// internal members
 	_headerDiv : null,
