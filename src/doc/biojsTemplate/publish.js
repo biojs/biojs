@@ -97,29 +97,10 @@ function publish(symbolSet) {
 		}
 	}
 	
+	copyInheritedMembers(components);
 	// create each of the component' registry pages
 	for (var i = 0; i < components.length; i++) {
 		var symbol = components[i];
-		
-		// Copy inherited dependencies
-		components.map( 
-				function($) {
-					if ( symbol.inheritsFrom.indexOf($.alias) >= 0) {
-						// add the dependencies and options of the parent class
-						$.requires.map( function($) { symbol.requires.push($) } );  
-						$.comment.getTag('dependency').map( function($) { symbol.comment.tags.push($) } );
-						$.comment.getTag('option').map( function($) { symbol.comment.tags.push($) } );
-						
-						// add the dependency to the parent class
-						var tagDependency = new JSDOC.DocTag();
-						tagDependency.title = 'dependency';
-						tagDependency.desc = '<script language="JavaScript" type="text/javascript" src="src/'+$.alias+'.js"></script>';
-						symbol.comment.tags.push( tagDependency );
-						
-						symbol.requires.push( new JSDOC.DocTag('@requires '+$.alias) );
-					}	
-				});
-
 		// Overview
 		IO.saveFile(publish.conf.outDir+publish.conf.registryDir, symbol.alias + publish.conf.ext, overviewTemplate.process(symbol));
 		// Methods
@@ -289,4 +270,76 @@ function isAComponent(symbol) {
 	
 	return false;
 }
+
+
+function copyInheritedMembers(components) {
+	var remain = [];
+	for ( i in components ){
+		remain.push(i);
+	}
+	inheritedMembers(components, remain);
+}
+
+function inheritedMembers(components, remain ) {
+	if ( remain.length == 0 ) {
+		return;
+		
+	} else {
+		
+		var r = remain[0];
+		var node = components[r];
+		
+		if ( node.inheritsFrom[0] == "Biojs" ) { // node hasn't parent, remove it
+			inheritedMembers(components, remain.slice(1));
+			
+		} else { 
+			// search for node's parent in remain 
+			var i=-1;
+			var parent = undefined;
+			for ( key in remain ) {
+				if ( node.inheritsFrom.indexOf(components[remain[key]].alias) >= 0 ) {
+					parent = components[remain[key]];
+					i = key;
+					break;
+				}
+			}
+			
+			if ( parent != undefined ) { // found! put parent heading remain 
+				remain[0] = remain[i];
+				remain[i] = r;
+				inheritedMembers(components, remain);
+				
+			} else { // not found in remain! 
+				
+				// search for node's parent in components
+				for ( var key in components ) {
+					if ( node.inheritsFrom.indexOf(components[key].alias) >= 0 ) {
+						parent = components[key];
+						break;
+					}
+				}
+				
+				// copy the dependencies and options from the parent class
+				parent.requires.map( function($) { node.requires.push($) } );  
+				parent.comment.getTag('dependency').map( function($) { node.comment.tags.push($) } );
+				parent.comment.getTag('option').map( function($) { node.comment.tags.push($) } );
+				
+				
+				var tag = new JSDOC.DocTag();
+				tag.title = 'dependency';
+				tag.desc = '<script language="JavaScript" type="text/javascript" src="src/'+parent.alias+'.js"></script>';
+				node.comment.tags.push( tag );
+
+				node.requires.push( 
+						new JSDOC.DocTag('@requires '+parent.alias) 
+				);
+				
+				// Remove the first
+				inheritedMembers(components, remain.slice(1));
+			}
+		}
+	}	
+}
+
+
 
