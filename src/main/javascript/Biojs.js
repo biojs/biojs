@@ -91,6 +91,19 @@ Biojs.Utils = {
 	  return newObj;
 	},
 	
+	isEmpty: function(o){
+		if (o instanceof Array) {
+			return (o.length<=0);
+		} else {
+			for (var i in o) {
+		        if (o.hasOwnProperty(i)) {
+		            return false;
+		        }
+		    }
+		    return true;
+		}
+	},
+	
 	/**
      * Cross-browser console for debugging. 
      * The console is disabled by default. That means, all messages written by means Biojs.console.log("My Message") will be ignored. 
