@@ -9,23 +9,23 @@
  * 
  * @param {Object} options An object with the options for the component.
  * 
- * @option {string} [url="http://www.ebi.ac.uk/pdbe-srv/view/files"] 
+ * @option {string} [pdbUrl="http://www.ebi.ac.uk/pdbe-srv/view/files"] 
  *    Url of the web service in order to require the pdb file.
  * 
- * @option {string} id
- *    Identifier of the pdb to be displayed (i.e. '3nuc' to require 3nuc.pdb file). You can load another pbd by using setPdb method.
+ * @option {string} [id]
+ *    Identifier of the pdb to be displayed (i.e. '3nuc' to require 3nuc.pdb file). You can load another pbd by using requestPdb method.
  *    
- * @option {string} [proxy="../biojs/dependencies/proxy/proxy.php"] 
+ * @option {string} [proxyUrl="../biojs/dependencies/proxy/proxy.php"] 
  *    Server side proxy server. 
  * 
  * @example
  * 
- * var myPdbViewer = new Biojs.PdbViewerWS({
+ * var instance = new Biojs.PdbViewerWS({
  * 		target: 'YourOwnDivId',
  * 		id: '3nuc'
  * });	
  * 
- * console.log(myPdbViewer);
+ * console.log(instance);
  * 
  */
 Biojs.PdbViewerWS = Biojs.PdbViewer.extend(
@@ -41,8 +41,8 @@ Biojs.PdbViewerWS = Biojs.PdbViewer.extend(
 	
 	opt: {
 	   id: undefined,
-	   url: 'http://www.ebi.ac.uk/pdbe-srv/view/files',
-	   proxy: '../biojs/dependencies/proxy/proxy.php'
+	   pdbUrl: 'http://www.ebi.ac.uk/pdbe-srv/view/files',
+	   proxyUrl: '../biojs/dependencies/proxy/proxy.php'
 	},
 	
 	eventTypes : [
@@ -56,9 +56,9 @@ Biojs.PdbViewerWS = Biojs.PdbViewer.extend(
   		 * @eventData {string} message Error message in case of result be 'failure'.
   		 * 
   		 * @example 
-  		 * myPdbViewer.onRequestError(
-  		 *    function( objEvent ) {
-  		 *       alert( objEvent.message );
+  		 * instance.onRequestError(
+  		 *    function( e ) {
+  		 *       alert( e.message );
   		 *    }
   		 * ); 
   		 * 
@@ -69,8 +69,8 @@ Biojs.PdbViewerWS = Biojs.PdbViewer.extend(
 	requestPdb: function(pdbId) {
 		var self = this;
 		$.ajax({
-			url: self.opt.proxy,
-			data: 'url='+self.opt.url+'/'+pdbId+'.pdb',
+			url: self.opt.proxyUrl,
+			data: 'url='+self.opt.pdbUrl+'/'+pdbId+'.pdb',
 			dataType: 'text',
 			success: function (pdbContent) {
 				self.setPdb(pdbContent);
