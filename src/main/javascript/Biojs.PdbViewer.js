@@ -46,21 +46,21 @@
  * 	  Enable for showing the control panel. If value is 'false', it disables both methods showControls and hideControls. 
  * 
  * @example 
- * var myPdbViewer = new Biojs.PdbViewer({
+ * var instance = new Biojs.PdbViewer({
  * 		target: 'YourOwnDivId'
  * });	
  * 
  * 
  * 
  * // Example of loading a pdb file by means a HTTP request.
- * // Note that myPdbViewer.setPdb(data) receives the data as argument,
+ * // Note that instance.setPdb(data) receives the data as argument,
  * // no matter the source where came up. 
  * $.ajax({
  * 		url: '../biojs/dependencies/proxy/proxy.php',
  * 		data: 'url=http://www.ebi.ac.uk/pdbe-srv/view/files/3nuc.pdb',
  * 		dataType: 'text',
  * 		success: function(pdbFile){
- * 			myPdbViewer.setPdb(pdbFile);
+ * 			instance.setPdb(pdbFile);
  * 		},
  * 		error: function(qXHR, textStatus, errorThrown){
  * 			alert(textStatus);
@@ -149,7 +149,7 @@ Biojs.PdbViewer = Biojs.extend(
 		 * @eventData {string} message Error message in case of result be 'failure'.
 		 * 
 		 * @example 
-		 * myPdbViewer.onPdbLoaded(
+		 * instance.onPdbLoaded(
 		 *    function( objEvent ) {
 		 *       alert( (objEvent.result == "success")? "Pdb file "+ objEvent.file+" loaded."  : objEvent.message );
 		 *    }
@@ -168,7 +168,7 @@ Biojs.PdbViewer = Biojs.extend(
 		 * 						    containing the selected positions.
 		 * 
 		 * @example 
-		 * myPdbViewer.onSelection(
+		 * instance.onSelection(
 		 *    function( objEvent ) {
 		 *       selection = (objEvent.selectionType === "region")? (objEvent.selection.start +" - "+ objEvent.selection.end) : objEvent.selection.join(',');
 		 *       alert( "Selected "+objEvent.selectionType+": "+selection );
@@ -202,7 +202,7 @@ Biojs.PdbViewer = Biojs.extend(
     * Shows the form of controls.
     * 
     * @example 
-    * myPdbViewer.showControls(); 
+    * instance.showControls(); 
     * 
     */
    showControls: function() {
@@ -220,7 +220,7 @@ Biojs.PdbViewer = Biojs.extend(
     * Hides the form of controls.
     * 
     * @example 
-    * myPdbViewer.hideControls(); 
+    * instance.hideControls(); 
     * 
     */
    hideControls: function() {
@@ -234,7 +234,7 @@ Biojs.PdbViewer = Biojs.extend(
     * 
     * @example 
     * //Show the region in an alert window.
-    * var selection = myPdbViewer.getSelection(); 
+    * var selection = instance.getSelection(); 
     * alert("selected: "+ selection );
     *
     * @returns {Object|Array} 
@@ -251,7 +251,7 @@ Biojs.PdbViewer = Biojs.extend(
    /**
     * Resets all selected regions or positions and removes the displayed PDB file from the applet.
     *
-    * @example myPdbViewer.reset(); 
+    * @example instance.reset(); 
     */
 	reset: function(){
 		jmolScriptWait('select all; cartoon on; wireframe off; spacefill off; color chain; select none;');
@@ -268,7 +268,9 @@ Biojs.PdbViewer = Biojs.extend(
 	   
    /**
     * Sets the pdb file to be displayed.
-    * Also triggers the event that a new pdb file was loaded.
+    * Also triggers the event whenever a new pdb file is loaded.
+    * 
+    * @param {string} pdb The content of the pdb file.
     *
     * @example 
     * $.ajax({
@@ -276,7 +278,7 @@ Biojs.PdbViewer = Biojs.extend(
 	* 		data: 'url=http://www.ebi.ac.uk/pdbe-srv/view/files/1j3s.pdb',
 	* 		dataType: 'text',
 	* 		success: function(pdbFile){
-	* 			myPdbViewer.setPdb(pdbFile);
+	* 			instance.setPdb(pdbFile);
 	* 		},
 	* 		error: function(qXHR, textStatus, errorThrown){
 	* 			alert(textStatus);
@@ -287,7 +289,13 @@ Biojs.PdbViewer = Biojs.extend(
 	setPdb: function( pdb ){
 		Biojs.console.log("setPdb() starting");
 		
-		var scr = 'select all; cartoon on; wireframe off; spacefill off; color chain; select none;'
+		// Expected line on pdb content: HEADER   LIPID BINDING PROTEIN 11-JUL-11   3STN 
+//		
+//		this.opt.pdbId = pdb.slice(pdb.indexOf('HEADER'), pdb.indexOf('\n')).split(' ').pop();
+//		Biojs.console.log("Loading pdb file "+this.opt.pdbId);
+		
+		var scr = 'select all; cartoon on; wireframe off; spacefill off; color chain; select none;';
+		scr += (this._selection)? this._getSelectionScript(this._selection) : ''; 
 		
 		if (this._jmolAppletInitialized) {			
 			jmolLoadInlineScript(pdb, scr);
@@ -304,7 +312,7 @@ Biojs.PdbViewer = Biojs.extend(
     * Reverts the highlighting of a region and removes the current selection.
     *
     * @example 
-    * myPdbViewer.removeSelection();
+    * instance.removeSelection();
     * 
     */ 
 	removeSelection: function(){
@@ -325,11 +333,11 @@ Biojs.PdbViewer = Biojs.extend(
     *
     * @example 
     * // Selection of the region in the interval [100,150].
-    * myPdbViewer.setSelection({start: 100, end: 150});
+    * instance.setSelection({start: 100, end: 150});
     * 
     * @example
     * // Selection of the positions 4, 8 and 100.
-    * myPdbViewer.setSelection([4,8,100]);
+    * instance.setSelection([4,8,100]);
     * 
     * @param {Object|Array} selection Can be either a plain object or an array.  
     *        If object, it must have the fields start and end; Where "start" is greater than or equal to "end".
@@ -357,26 +365,21 @@ Biojs.PdbViewer = Biojs.extend(
 	},
 
 	// highlight given region
-	_getSelectionScript: function(positionText){
+	_getSelectionScript: function(selection){
+		var selectionText = (selection instanceof Array)? selection.join(",") : selection.start + "-" + selection.end;
 		var scr = 'select all; color translucent 1;';
         if ( !this._display.halos ) {
-            scr += 'select not ' + positionText + '; color translucent 0.8; selectionHalos off;';
+            scr += 'select not ' + selectionText + '; color translucent 0.8; selectionHalos off;';
         } else {
-            scr += 'select ' + positionText + '; selectionHalos on;';
+            scr += 'select ' + selectionText + '; selectionHalos on;';
         }
 		return scr;		
 	},
 
 	_drawSelection: function(){		
 		if ( this._selection !== undefined ) {
-			if ( this._selection instanceof Array ) {
-				selectionText = this._getSelectionScript(this._selection.join(","));
-			}
-			else {
-				selectionText = this._getSelectionScript(this._selection.start+"-"+this._selection.end);
-			}
-			result = jmolScriptWait(selectionText);
-			Biojs.console.log("applied: "+selectionText); 
+			result = jmolScriptWait( this._getSelectionScript(this._selection) );
+			Biojs.console.log("Selection done, result: "+result); 
 		} 
 	},
 	
@@ -385,7 +388,7 @@ Biojs.PdbViewer = Biojs.extend(
     *
     * @example 
     * // 
-    * myPdbViewer.displaySurface();
+    * instance.displaySurface();
     * 
     */
 	displaySurface: function(){
@@ -401,7 +404,7 @@ Biojs.PdbViewer = Biojs.extend(
     *
     * @example 
     * // 
-    * myPdbViewer.hideSurface();
+    * instance.hideSurface();
     * 
     */
 	hideSurface: function(){
@@ -419,7 +422,7 @@ Biojs.PdbViewer = Biojs.extend(
     *
     * @example 
     * // 
-    * myPdbViewer.displayNegative("red");
+    * instance.displayNegative("red");
     * 
     */
 	displayNegative: function (color) {
@@ -433,7 +436,7 @@ Biojs.PdbViewer = Biojs.extend(
     *
     * @example 
     * // 
-    * myPdbViewer.hideNegative();
+    * instance.hideNegative();
     * 
     */
 	hideNegative: function () {
@@ -451,7 +454,7 @@ Biojs.PdbViewer = Biojs.extend(
     *
     * @example 
     * // 
-    * myPdbViewer.displayPositive();
+    * instance.displayPositive();
     * 
     */
 	displayPositive: function (color) {
@@ -466,7 +469,7 @@ Biojs.PdbViewer = Biojs.extend(
     *
     * @example 
     * // 
-    * myPdbViewer.hidePositive();
+    * instance.hidePositive();
     * 
     */
 	hidePositive: function () {
@@ -484,7 +487,7 @@ Biojs.PdbViewer = Biojs.extend(
     *
     * @example 
     * // 
-    * myPdbViewer.displayPolar();
+    * instance.displayPolar();
     * 
     */	
 	displayPolar: function (color) {
@@ -499,7 +502,7 @@ Biojs.PdbViewer = Biojs.extend(
     *
     * @example 
     * // 
-    * myPdbViewer.hidePolar();
+    * instance.hidePolar();
     * 
     */	
 	hidePolar: function () {
@@ -517,7 +520,7 @@ Biojs.PdbViewer = Biojs.extend(
     *
     * @example 
     * // 
-    * myPdbViewer.displayUnPolar();
+    * instance.displayUnPolar();
     * 
     */	
     // colors the structure depending on the checked check boxes
@@ -532,7 +535,7 @@ Biojs.PdbViewer = Biojs.extend(
     *
     * @example 
     * // 
-    * myPdbViewer.hideUnPolar();
+    * instance.hideUnPolar();
     * 
     */
 	hideUnPolar: function () {
@@ -551,7 +554,7 @@ Biojs.PdbViewer = Biojs.extend(
     * 
     * @example 
     * // Sets the halos off
-    * myPdbViewer.setHalosVisible(false);
+    * instance.setHalosVisible(false);
     * 
     */
 	setHalosVisible: function (value) {
@@ -576,7 +579,7 @@ Biojs.PdbViewer = Biojs.extend(
     * 
     * @example
     * // Rotate one time in X-axis.
-    * myPdbViewer.applyJmolCommand('select all; cartoon off; meshribbons on; select none;');
+    * instance.applyJmolCommand('select all; cartoon off; meshribbons on; select none;');
     * 
     * @param {string} The Jmol script.  
     */
@@ -590,7 +593,7 @@ Biojs.PdbViewer = Biojs.extend(
     * 
     * @example
     * // Select hetero atoms and coloring with the RGB triplet code [xFF0088].  
-    * myPdbViewer.display("hetero","[xFF0088]");
+    * instance.display("hetero","[xFF0088]");
     * 
     * @param {string} The color. Refer to the Jmol documentation for availables coloring schemes.  
     */
@@ -609,7 +612,7 @@ Biojs.PdbViewer = Biojs.extend(
     * 
     * @example
     * // Select hetero atoms and remove the coloring .  
-    * myPdbViewer.undisplay("hetero");
+    * instance.undisplay("hetero");
     * 
     * @param {string} The Jmol script.  
     */
@@ -679,24 +682,49 @@ Biojs.PdbViewer = Biojs.extend(
 			.css("padding", padding)
 			.append(
 				'<b> Display: </b><br/>' +
-				'<input id="surfaceCheck" type="checkbox" name="surfaceCheck" value="surfaceCheck"> Surface<br/>' +
 				'<input id="polarCheck" type="checkbox" name="polarCheck" value="polarCheck"/> Hydrophylic residues<br/>' +
 				'<input id="unpolarCheck" type="checkbox" name="unpolarCheck" value="unpolarCheck"/> Hydrophobic residues<br/>' +
 				'<input id="positiveCheck" type="checkbox" name="positiveCheck" value="positiveCheck"/> Basic(+) residues<br/>' +
 				'<input id="negativeCheck" type="checkbox" name="negativeCheck" value="negativeCheck"/> Acidic(-) residues<br/>' +
+				'<input id="antialiasCheck" type="checkbox" name="antialiasCheck" value="antialiasCheck"/> Antialias<br/>'+
+				'<input id="backgroundCheck" type="checkbox" name="backgroundCheck" value="backgroundCheck"/> Black background<br/>'+
+				
+				'Style: <select id="styleSelect">'+
+					'<option selected="selected">Cartoon</option>'+
+					'<option >Backbone</option>'+
+					'<option >CPK</option>'+
+					'<option >Ball and Stick</option>'+
+					'<option >Ligands</option>'+
+					'<option >Ligands and Pocket</option>'+
+				'</select><br/>'+
+				
+				'Color: <select id="colorSelect">'+						
+					'<option selected="selected">Secondary Structure</option>'+
+					'<option >By Chain</option>'+
+					'<option >Rainbow</option>'+					
+					'<option >By Element</option>'+
+					'<option >By Amino Acid</option>'+
+					'<option >Hydrophobicity</option>'+
+				'</select><br/>'+
+
+				'Surface: <select  id="surfaceSelect">'+
+					'<option selected="selected">None</option>'+
+					'<option >Solvent Accessible</option>'+
+					'<option >Solvent Excluded</option>'+
+					'<option >Cavities</option>'+
+				'</select><br/>'+
+				
 		        '<br/><b> Show selection using: </b><br/>' +
 		        '<input id="translucentRadio" type="radio" name="selection" value="translucentRadio"/> Translucent ' +
 		        '<input id="halosRadio" type="radio" name="selection" value="halosRadio" checked="halosRadio"/> Halos<br/><br/>');
 		
-		Biojs.console.log("luego de controlDiv.append");
-		
-		controlDiv.find('#surfaceCheck').click( function(event){
-			if ($('#surfaceCheck:checked').val()) {
-				self.displaySurface();
-			} else {
-				self.hideSurface();
-			}
-		});
+//		controlDiv.find('#surfaceCheck').click( function(event){
+//			if ($('#surfaceCheck:checked').val()) {
+//				self.displaySurface();
+//			} else {
+//				self.hideSurface();
+//			}
+//		});
 		
 		controlDiv.find('#polarCheck').click(function(){
 			if ($('#polarCheck:checked').val()) {
@@ -729,13 +757,36 @@ Biojs.PdbViewer = Biojs.extend(
 				self.hideNegative();
 			}
 		});
+		
+		controlDiv.find('#antialiasCheck').click( function(event){
+			self.applyJmolCommand('set antialiasDisplay '+ (($('#antialiasCheck:checked').val())? true : false) );
+		});
+
+		controlDiv.find('#backgroundCheck').click( function(event){
+			self.applyJmolCommand('background '+ (($('#backgroundCheck:checked').val())? "black" : "white") );
+		});
+		
+		controlDiv.find('#styleSelect').change( function(){
+			self._onDisplayStyleChange( $(this).val() );
+		});
+		
+		controlDiv.find('#colorSelect').change( function(){
+			self._onDisplayColorChange( $(this).val() );
+		});
+		
+		controlDiv.find('#surfaceSelect').change( function(){
+			self._onDisplaySurfaceChange( $(this).val() );
+		});
+		
+		
+//		controlDiv.find('#exportImageButton').click( function(event){
+//			self.applyJmolCommand( 'write IMAGE y '+self.opt.pdbId+'.jpg ;' );
+//		});
 	
 		controlDiv.find('input[name="selection"]').change(function(){
 			var showHalos = ( $('#halosRadio:checked').val() )? true: false;
 	    	self.setHalosVisible(showHalos);
 	    });
-		
-		Biojs.console.log("luego de append controls");
 		
 		// 
 		// Tab
@@ -750,8 +801,6 @@ Biojs.PdbViewer = Biojs.extend(
 			.css("width", tabWidth)
 			.css("height", tabHeight)
 			.css('background-color', "#000");
-		
-		Biojs.console.log("Creating the toggleControls function");
 		
 		/**
 		 * @private
@@ -781,6 +830,16 @@ Biojs.PdbViewer = Biojs.extend(
 		
 		self._toggleControls = toggleControls;
 
+		/**
+		 * @private
+		 * @function
+		 */
+		var addControl = function(html){
+			controlDiv.append(html);
+		};
+		
+		self._addControl = addControl;
+		
 		showHideTab.find('#hideButton')
 			.click( self._toggleControls )
 			.mouseover(function(){
@@ -808,6 +867,108 @@ Biojs.PdbViewer = Biojs.extend(
 		
 		Biojs.console.log("_buildControls done");
 	}, 
+	
+	_onDisplayStyleChange: function ( text ) {
+	   if (text == 'Cartoon') {
+			
+		   this.applyJmolCommand("hide null; select all;  spacefill off; wireframe off; backbone off;" +
+					" cartoon on; " +
+	 				" select ligand; wireframe 0.16;spacefill 0.5; color cpk; " +
+	 				" select *.FE; spacefill 0.7; color cpk ; " +
+	 				" select *.CU; spacefill 0.7; color cpk ; " +
+	 				" select *.ZN; spacefill 0.7; color cpk ; " +
+	 				" select all; ");
+	    } 
+	    else if (text == 'Backbone') {
+		    
+	    	this.applyJmolCommand("hide null; select all; spacefill off; wireframe off; backbone 0.4;" +
+					" cartoon off; " +
+	 				" select ligand; wireframe 0.16;spacefill 0.5; color cpk; " +
+	 				" select *.FE; spacefill 0.7; color cpk ; " +
+	 				" select *.CU; spacefill 0.7; color cpk ; " +
+	 				" select *.ZN; spacefill 0.7; color cpk ; " +
+	 				" select all; ");
+	    	
+	    } else if (text == 'CPK') {
+		    
+	    	this.applyJmolCommand("hide null; select all; spacefill off; wireframe off; backbone off;" +
+					" cartoon off; cpk on;" +
+	 				" select ligand; wireframe 0.16;spacefill 0.5; color cpk; " +
+	 				" select *.FE; spacefill 0.7; color cpk ; " +
+	 				" select *.CU; spacefill 0.7; color cpk ; " +
+	 				" select *.ZN; spacefill 0.7; color cpk ; " +
+	 				" select all; ");
+	    	
+	    } 
+	    else if (text == 'Ligands') {
+	    	this.applyJmolCommand("restrict ligand; cartoon off; wireframe on;  display selected;"+
+	    			" select *.FE; spacefill 0.7; color cpk ; " +
+	 				" select *.CU; spacefill 0.7; color cpk ; " +
+	 				" select *.ZN; spacefill 0.7; color cpk ; " +
+	 				" select all; "
+	    	);
+	    }
+
+	    else if (text == 'Ligands and Pocket') {
+	    	this.applyJmolCommand(" select within (6.0,true, ligand); cartoon off; wireframe on; backbone off; display selected; " +
+	    			" select *.FE; spacefill 0.7; color cpk ; " +
+	 				" select *.CU; spacefill 0.7; color cpk ; " +
+	 				" select *.ZN; spacefill 0.7; color cpk ; " +
+	 				" select all; "
+	    	);
+	    } 
+	    else if (text == 'Ball and Stick') {
+		    
+	    	this.applyJmolCommand("hide null; restrict not water;  wireframe 0.2; spacefill 25%;" +
+					" cartoon off; backbone off; " +
+	 				" select ligand; wireframe 0.16; spacefill 0.5; color cpk; " +
+	 				" select *.FE; spacefill 0.7; color cpk ; " +
+	 				" select *.CU; spacefill 0.7; color cpk ; " +
+	 				" select *.ZN; spacefill 0.7; color cpk ; " +
+	 				" select all; ");
+	    	
+	    }
+	},
+	
+	_onDisplayColorChange: function ( text ) {
+		if ( text == 'By Chain') {
+			this.applyJmolCommand("hide null; select all;set defaultColors Jmol; color_by_chain(\"cartoon\"); color_by_chain(\"\"); select ligand;wireframe 0.16;spacefill 0.5; color cpk ;; select all; " ); 
+		 }
+		else if ( text == 'By Temperature') {
+		 	this.applyJmolCommand("hide null; select all;spacefill off; wireframe off; backbone 0.4; cartoon off; set defaultColors Jmol; color relativeTemperature; color cartoon relateiveTemperature select ligand;wireframe 0.16;spacefill 0.5; color cpk ;; select all; " );
+		 }
+		else if ( text == 'Rainbow'){
+			 this.applyJmolCommand("hide null; select all; set defaultColors Jmol; color group; color cartoon group; select ligand;wireframe 0.16;spacefill 0.5; color cpk ;; select all; " );
+		} 
+		else if ( text == 'Secondary Structure'){
+			this.applyJmolCommand("hide null; select all; set defaultColors Jmol; color structure; color cartoon structure;select ligand;wireframe 0.16;spacefill 0.5; color cpk ;; select all; " );					
+		} 
+		else if ( text == 'By Element'){
+			 this.applyJmolCommand("hide null; select all; set defaultColors Jmol; color cpk; color cartoon cpk; select ligand;wireframe 0.16;spacefill 0.5; color cpk ;; select all; " );
+		}
+		else if ( text == 'By Amino Acid'){
+			this.applyJmolCommand("hide null; select all; set defaultColors Jmol; color amino; color cartoon amino; select ligand;wireframe 0.16;spacefill 0.5; color cpk ;; select all; " );
+		}
+		else if ( text == 'Hydrophobicity'){
+			 this.applyJmolCommand("hide null; set defaultColors Jmol; select hydrophobic; color red; color cartoon red; select not hydrophobic ; color blue ; color cartoon blue; select ligand;wireframe 0.16;spacefill 0.5; color cpk ;; select all; " );
+		}
+	},
+	
+	_onDisplaySurfaceChange: function ( text ) {
+		if ( text == 'None'){
+			this.applyJmolCommand("isosurface off;");
+		 }
+		 else if ( text == 'Solvent Accessible'){
+			 this.applyJmolCommand("isosurface sasurface 1.2");
+		 }
+		 else if ( text == 'Solvent Excluded'){
+			 this.applyJmolCommand("isosurface solvent 1.2");
+		 }
+		 else if ( text == 'Cavities'){
+			 this.applyJmolCommand("isosurface cavity 1.2 10");
+		 }
+	},
+	
 	
 	toString: function() { 
 		return "Biojs.PdbViewer";
