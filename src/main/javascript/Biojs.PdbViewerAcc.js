@@ -309,14 +309,18 @@ Biojs.PdbViewerAcc = Biojs.PdbViewerWS.extend(
 		
 		// invoke setSelection on the parent 
 		this.base(selection);
-	},
-	
-	// shows only the pdb files that contain the given positions and highlights the atoms at this positions
-	selectPositions: function(featureInformation){
-		
-	},
+	}
 
-
-
+	/**
+    * Removes the current selection and shows all structures available for the current protein 
+    * in the drop-down box.
+    *
+    * 
+    * @example
+    * instance.removeSelection();
+    */ 
+	removeSelection: function() { 
+		setSelection(undefined);
+	}
 
 });
