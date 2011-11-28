@@ -309,7 +309,7 @@ Biojs.PdbViewerAcc = Biojs.PdbViewerWS.extend(
 		
 		// invoke setSelection on the parent 
 		this.base(selection);
-	}
+	},
 
 	/**
     * Removes the current selection and shows all structures available for the current protein 
@@ -320,7 +320,7 @@ Biojs.PdbViewerAcc = Biojs.PdbViewerWS.extend(
     * instance.removeSelection();
     */ 
 	removeSelection: function() { 
-		setSelection(undefined);
+		this.setSelection(undefined);
 	}
 
 });
