@@ -31,6 +31,44 @@ Biojs.PdbViewerAcc = Biojs.PdbViewerWS.extend(
 {
 	constructor: function(options) {
 		this.base(options);
+		
+		var self = this;
+		
+		this.onPdbLoaded (function (e) {
+			
+			Biojs.console.log( e.result +" loading the pdb file " + e.file );
+			Biojs.console.log( "self._aligmentsJustArrived= " + self._alignmentsJustArrived );
+			
+    		if ( self._alignmentsJustArrived ) {
+    			Biojs.console.log("Initialising the alignments selection list");
+    			
+    			self.reset();
+    			
+    			// creates a drop-down box with the help of the given datastructure
+    	    	// is displays the name and the covered uniprot region
+    			var alignments = self._filterAligmentsBySelection(self._selection);
+    			var pdbOptions = self._createOptions(alignments);
+    			
+    			if ( $('#'+self.opt.target).find('#pdbStructures').length == 0 ) {
+    				self._addControl('<div id="pdbStructures"></div>');
+    			}
+    			
+    			$('#'+self.opt.target)
+    				.find('div#pdbStructures')
+    				.html('Structures for <b>'+self.opt.proteinId+'</b><br/>'+
+    						'<select id="pdbFile_select">'+ pdbOptions +'</select></div>');
+ 
+    			$('#pdbFile_select').val(pdb);
+    			
+    			$('#pdbFile_select').change( function() {
+    				self._onAlignmentSelectionChange();
+    			});
+    			
+    			self._alignmentsJustArrived = false;
+    		}
+    		
+    	});
+		
 		if( this.opt.proteinId != undefined ){
 			var proteinId = this.opt.proteinId;
 			this.opt.proteinId = '';
@@ -73,26 +111,17 @@ Biojs.PdbViewerAcc = Biojs.PdbViewerWS.extend(
     * @option {string} proteinId Uniprot identifier of the protein.
     *
     * @example 
-    * instance.setProtein("");
+    * instance.setProtein("P99999");
     * 
     */
 	setProtein: function(proteinId){
 		if (proteinId != this.opt.proteinId) {
 			this.opt.proteinId = proteinId;
-			
-			
 			this._selection = undefined;
-
-			//this._unhighlight();
-	
 			this._minStart = Number.MAX_VALUE;
 			this._maxEnd = 0;
-
 			this._alignments = undefined;
-			//this._regionAlignments = [];
-
 			this._requestAligmentsXML();
-			
 		} 
 	},
 	
@@ -161,38 +190,20 @@ Biojs.PdbViewerAcc = Biojs.PdbViewerWS.extend(
 	// adds all available pdb files to a dropdown box 
 	// or displays the fact that there are no pdb files for the given id
 	_aligmentsArrived: function(){
-		var self = this;
+
+		this._alignmentsJustArrived = true;
 		
 		var alignments = this._filterAligmentsBySelection(this._selection);
 		
 	    if (!Biojs.Utils.isEmpty(alignments)) {
-    	
-	    	// creates a drop-down box with the help of the given datastructure
-	    	// is displays the name and the covered uniprot region
-		    var pdbOptions = this._createOptions(alignments);
 		    var pdb = undefined;
-	    	for( pdb in alignments) {
+	    	for( pdb in alignments ) {
 	    		break;
 	    	}
-	
-	    	this.onPdbLoaded(function (e) {
-	    		// add options to control panel
-	    		if ( $("#"+self.opt.target).find('#pdbFile_select').length == 0 ) {
-	    			self._addControl('Protein <b>'+self.opt.proteinId+'</b><br/>'+
-	    					'Available PDB entries:<br/><select id="pdbFile_select">'+ pdbOptions +'</select>');
-	    			
-	    			$('#pdbFile_select').val(pdb);
-	    			
-	    			$('#pdbFile_select').change(function(){
-	    				self._onAlignmentSelectionChange();
-	    			});
-	    		}
-	    	});
-	
 	    	this.requestPdb(pdb.substring(0, pdb.indexOf('.')).toLowerCase());
 
 	    } else {
-	    	$('#pdbFile_select').html("none");
+	    	$('#'+self.opt.target).find('#pdbStructures').html("None structure for current selection");
 	    	Biojs.console.log("No structural information available for "+this.opt.proteinId);
 	    	this.raiseEvent('onRequestError', { message: "No structural information available for "+self.opt.proteinId });  
 	    }
@@ -211,15 +222,21 @@ Biojs.PdbViewerAcc = Biojs.PdbViewerWS.extend(
 	_filterAligmentsBySelection: function(selection){
 		var alignments = undefined;
 		if ( selection instanceof Array ) {
-			
-				
-			/** TODO: filter by positions **/
-			
-			
-			
-		} else if ( selection instanceof Object ) { // Region selected, return the alignments in region
+			/** filter by positions **/
 			alignments = {};
-			
+			for (al in this._alignments) {
+				var uniprot = this._alignments[al][1];
+
+				for ( i in selection ) {
+					if( selection[i] >= uniprot.start && selection[i] <= uniprot.end){
+						alignments[this._alignments[al][0].intObjectId] = this._alignments[al];
+						break;
+					}
+				}
+			}
+		} else if ( selection instanceof Object ) { // Region selected, return the alignments in region
+			/** filter by region **/
+			alignments = {};
 			var i = 0;
 			for (al in this._alignments) {
 				var uniprot = this._alignments[al][1];
@@ -270,67 +287,33 @@ Biojs.PdbViewerAcc = Biojs.PdbViewerWS.extend(
     *        If array, it must contain numbers representing the positions to be selected.
     */ 
 	setSelection: function(selection) { 
-		if ( selection instanceof Array ) { // positions selected
-			/** TODO: selection by positions **/
+		var alignments = this._filterAligmentsBySelection(selection);
+		var selectedAlignment = $('#pdbFile_select').val();
+		
+		// Update the drop-down box showing the filtered alignments
+		$('#pdbFile_select').html(this._createOptions(alignments));
+		
+		// Select an alignment
+		if ( alignments.hasOwnProperty( selectedAlignment.slice(0,selectedAlignment.indexOf(' '))) ) {
+			// Select current alignment if it belongs to filtered alignments
+			$('#pdbFile_select').val(selectedAlignment);
+			
+		} else { 
+			// Select any alignment
+			for ( a in alignments ){
+				$('#pdbFile_select').val(a);
+				break;
+			}
+			this._onAlignmentSelectionChange();
 		}
-		else if ( selection instanceof Object ) { // region selected
-			if ( !this._selection || (selection.start != this._selection.start) || (selection.end != this._selection.end)) {
-
-				var alignments = this._filterAligmentsBySelection(selection);
-				var selectedAlignment = $('#pdbFile_select').val();
-				
-				Biojs.console.log("Selected alignment: ");
-				Biojs.console.log(selectedAlignment);
-				
-				// Update the drop-down box showing the filtered alignments
-				$('#pdbFile_select').html(this._createOptions(alignments));
-				
-				// Select an alignment
-				if ( alignments.hasOwnProperty( selectedAlignment.slice(0,selectedAlignment.indexOf(' '))) ) {
-					// Select current alignment if it belongs to filtered alignments
-					$('#pdbFile_select').val(selectedAlignment);
-					
-				} else { 
-					// Select any alignment
-					for ( a in alignments ){
-						$('#pdbFile_select').val(a);
-						break;
-					}
-					this._onAlignmentSelectionChange();
-				}
-			} 
-			this.base(selection);
-		} 
+		
+		// invoke setSelection on the parent 
+		this.base(selection);
 	},
 	
 	// shows only the pdb files that contain the given positions and highlights the atoms at this positions
 	selectPositions: function(featureInformation){
-		var positions = featureInformation.coordinates.positionArray;
-		this._regionInformation = featureInformation;
-		this._selectedStart = undefined;
-		this._selectedEnd = undefined;
-	    this._selectedAlignment = $('#' + this._regionId + '_select').val();
-		if ((this._selectedPositions === undefined) || !this._arraysEqual(positions, this._selectedPositions)) {
-			this._selectedPositions = positions;
-			this._regionAlignments = {};
-			var i = 0;
-			for (al in this._alignments) {
-				var add = false;
-				var uni = this._alignments[al][1];
-				$(positions).each(function(){
-					if(this > uni.start && this < uni.end){
-						add = true;
-						return;
-					}
-				});
-				if(add){
-					this._regionAlignments[this._alignments[al][0].intObjectId] = this._alignments[al];
-				}
-			}
-			$('#' + this._regionId + '_select').html(this._createSelect(this._regionAlignments));
-			$('#' + this._regionId + '_select').val(this._selectedAlignment);
-		}
-		this._on_selection_change();
+		
 	},
 
 

@@ -77,8 +77,10 @@ Biojs.PdbViewer = Biojs.extend(
 		
 		var self = this;
 		
+		self.opt.backgroundColor = (self.opt.backgroundColor)? self.opt.backgroundColor : "white";
+		
 		jmolInitialize(this.opt.jmolFolder);
-		jmolSetAppletColor( (this.opt.backgroundColor)? this.opt.backgroundColor : "white");
+		jmolSetAppletColor( self.opt.backgroundColor );
 		jmolSetDocument(0);
 		
 		Biojs.console.log("registring callback for object " + this.getId());
@@ -249,19 +251,24 @@ Biojs.PdbViewer = Biojs.extend(
 	},
 	   
    /**
-    * Resets all selected regions or positions and removes the displayed PDB file from the applet.
+    * Restores the default display settings for the current PDB file.
+    * Note: for removing out the current selection use removeSelection().
     *
     * @example instance.reset(); 
     */
 	reset: function(){
-		jmolScriptWait('select all; cartoon on; wireframe off; spacefill off; color chain; select none;');
+		jmolScriptWait( this._getDisplayColor("By Chain") + this._getDisplayStyle("Cartoon") );
+		
+		var theTargetDiv = $("#"+this.opt.target);
+		theTargetDiv.find("div#controlSection > div#controls > input[type='checkbox']").attr("checked",false);
+		theTargetDiv.find('select#styleSelect').val("Cartoon");
+		theTargetDiv.find('select#colorSelect').val("By Chain");
+		theTargetDiv.find('select#surfaceSelect').val("None");
 		
 		for (var key in this._display.property) {
 			this._display.property[key] = false;
 		}
 		
-		this.hideSurface();
-		this.removeSelection();
 		this.setHalosVisible(true);
 	},
 	
@@ -293,9 +300,10 @@ Biojs.PdbViewer = Biojs.extend(
 //		
 //		this.opt.pdbId = pdb.slice(pdb.indexOf('HEADER'), pdb.indexOf('\n')).split(' ').pop();
 //		Biojs.console.log("Loading pdb file "+this.opt.pdbId);
-		
-		var scr = 'select all; cartoon on; wireframe off; spacefill off; color chain; select none;';
-		scr += (this._selection)? this._getSelectionScript(this._selection) : ''; 
+
+		var scr =  ""; //'select all; cartoon on; wireframe off; spacefill off; color chain; select none;';
+		scr += this._getDisplayColor("By Chain") + this._getDisplayStyle("Cartoon") + this._getDisplaySurface("None");
+		scr += this._getSelectionScript(this._selection); 
 		
 		if (this._jmolAppletInitialized) {			
 			jmolLoadInlineScript(pdb, scr);
@@ -352,7 +360,7 @@ Biojs.PdbViewer = Biojs.extend(
 				selection: Biojs.Utils.clone(selection)
 			});
 		}
-		else if ( !isNaN(selection.start) && !isNaN(selection.end) && selection.start <= selection.end ){
+		else if ( selection instanceof Object && selection.start <= selection.end ){
 			this._selection = Biojs.Utils.clone(selection);
 			this._drawSelection();
 			this.raiseEvent("onSelection", {
@@ -366,13 +374,21 @@ Biojs.PdbViewer = Biojs.extend(
 
 	// highlight given region
 	_getSelectionScript: function(selection){
-		var selectionText = (selection instanceof Array)? selection.join(",") : selection.start + "-" + selection.end;
-		var scr = 'select all; color translucent 1;';
-        if ( !this._display.halos ) {
-            scr += 'select not ' + selectionText + '; color translucent 0.8; selectionHalos off;';
-        } else {
-            scr += 'select ' + selectionText + '; selectionHalos on;';
-        }
+		var scr = "";
+		var selectionText = "";
+		
+		if ( selection ){
+			scr = 'select all; color translucent 1;';
+			selectionText = (selection instanceof Array)? selection.join(",") : selection.start + "-" + selection.end;
+			
+	        if ( !this._display.halos ) {
+	            scr += 'select not ' + selectionText + '; color translucent 0.8; selectionHalos off;';
+	        } else {
+	            scr += 'select ' + selectionText + '; selectionHalos on;';
+	        }
+		} else {
+			scr = "select none"; 
+		}
 		return scr;		
 	},
 
@@ -388,14 +404,14 @@ Biojs.PdbViewer = Biojs.extend(
     *
     * @example 
     * // 
-    * instance.displaySurface();
+    * instance.displaySurface('Cavities');
     * 
     */
-	displaySurface: function(){
+	displaySurface: function(name){
 		if (!this._display.surface) {
 			$("#"+this.opt.target).find('#surfaceCheck').attr("checked","surfaceCheck");
 			this._display.surface = true;
-			jmolScriptWait('select all; isoSurface solvent 1.4; color isoSurface translucent 0.8;select none');
+			jmolScriptWait(this._getDisplaySurface(name));
 		}
 	},
 	
@@ -688,6 +704,7 @@ Biojs.PdbViewer = Biojs.extend(
 				'<input id="negativeCheck" type="checkbox" name="negativeCheck" value="negativeCheck"/> Acidic(-) residues<br/>' +
 				'<input id="antialiasCheck" type="checkbox" name="antialiasCheck" value="antialiasCheck"/> Antialias<br/>'+
 				'<input id="backgroundCheck" type="checkbox" name="backgroundCheck" value="backgroundCheck"/> Black background<br/>'+
+				'<input id="rotationCheck" type="checkbox" name="rotationCheck" value="rotationCheck"/> Rotation<br/><br/>'+
 				
 				'Style: <select id="styleSelect">'+
 					'<option selected="selected">Cartoon</option>'+
@@ -696,16 +713,16 @@ Biojs.PdbViewer = Biojs.extend(
 					'<option >Ball and Stick</option>'+
 					'<option >Ligands</option>'+
 					'<option >Ligands and Pocket</option>'+
-				'</select><br/>'+
+				'</select><br/><br/>'+
 				
 				'Color: <select id="colorSelect">'+						
-					'<option selected="selected">Secondary Structure</option>'+
-					'<option >By Chain</option>'+
+					'<option >Secondary Structure</option>'+
+					'<option selected="selected">By Chain</option>'+
 					'<option >Rainbow</option>'+					
 					'<option >By Element</option>'+
 					'<option >By Amino Acid</option>'+
 					'<option >Hydrophobicity</option>'+
-				'</select><br/>'+
+				'</select><br/><br/>'+
 
 				'Surface: <select  id="surfaceSelect">'+
 					'<option selected="selected">None</option>'+
@@ -717,14 +734,6 @@ Biojs.PdbViewer = Biojs.extend(
 		        '<br/><b> Show selection using: </b><br/>' +
 		        '<input id="translucentRadio" type="radio" name="selection" value="translucentRadio"/> Translucent ' +
 		        '<input id="halosRadio" type="radio" name="selection" value="halosRadio" checked="halosRadio"/> Halos<br/><br/>');
-		
-//		controlDiv.find('#surfaceCheck').click( function(event){
-//			if ($('#surfaceCheck:checked').val()) {
-//				self.displaySurface();
-//			} else {
-//				self.hideSurface();
-//			}
-//		});
 		
 		controlDiv.find('#polarCheck').click(function(){
 			if ($('#polarCheck:checked').val()) {
@@ -759,23 +768,27 @@ Biojs.PdbViewer = Biojs.extend(
 		});
 		
 		controlDiv.find('#antialiasCheck').click( function(event){
-			self.applyJmolCommand('set antialiasDisplay '+ (($('#antialiasCheck:checked').val())? true : false) );
+			self.applyJmolCommand('set antialiasDisplay '+ (($('#antialiasCheck:checked').val())? "true" : "false") );
+		});
+		
+		controlDiv.find('#rotationCheck').click( function(event){
+			self.applyJmolCommand('spin '+ (($('#rotationCheck:checked').val())? "true" : "false") );
 		});
 
 		controlDiv.find('#backgroundCheck').click( function(event){
-			self.applyJmolCommand('background '+ (($('#backgroundCheck:checked').val())? "black" : "white") );
+			self.applyJmolCommand('background '+ (($('#backgroundCheck:checked').val())? "black" : self.opt.backgroundColor) );
 		});
 		
 		controlDiv.find('#styleSelect').change( function(){
-			self._onDisplayStyleChange( $(this).val() );
+			self.applyJmolCommand( self._getDisplayStyle( $(this).val() ) + self._getSelectionScript(self._selection) );
 		});
 		
 		controlDiv.find('#colorSelect').change( function(){
-			self._onDisplayColorChange( $(this).val() );
+			self.applyJmolCommand( self._getDisplayColor( $(this).val() ) + self._getSelectionScript(self._selection) );
 		});
 		
 		controlDiv.find('#surfaceSelect').change( function(){
-			self._onDisplaySurfaceChange( $(this).val() );
+			self.applyJmolCommand( self._getDisplaySurface( $(this).val() ) );
 		});
 		
 		
@@ -792,7 +805,6 @@ Biojs.PdbViewer = Biojs.extend(
 		// Tab
 		//
 		var showHideTab = controlSectionDiv.find('#controlTab');
-		var backgroundColor = (this.opt.backgroundColor)? this.opt.backgroundColor : "white";
 
 		showHideTab.css("border", 0)
 			.css("margin", 0)
@@ -816,7 +828,7 @@ Biojs.PdbViewer = Biojs.extend(
 				jmolResizeApplet([appletWidth, self.opt.height], self.getId());
 				$('#div'+self._appletId).css("width", appletWidth);
 				controlDiv.hide();
-				showHideTab.css('background-color', backgroundColor);
+				showHideTab.css('background-color', self.opt.backgroundColor);
 				self._controlsVisible = false;
 			} else {
 				var appletWidth = self.opt.width - width;
@@ -868,104 +880,103 @@ Biojs.PdbViewer = Biojs.extend(
 		Biojs.console.log("_buildControls done");
 	}, 
 	
-	_onDisplayStyleChange: function ( text ) {
+	_getDisplayStyle: function ( text ) {
 	   if (text == 'Cartoon') {
 			
-		   this.applyJmolCommand("hide null; select all;  spacefill off; wireframe off; backbone off;" +
+		  return "hide null; select all;  spacefill off; wireframe off; backbone off;" +
 					" cartoon on; " +
 	 				" select ligand; wireframe 0.16;spacefill 0.5; color cpk; " +
 	 				" select *.FE; spacefill 0.7; color cpk ; " +
 	 				" select *.CU; spacefill 0.7; color cpk ; " +
 	 				" select *.ZN; spacefill 0.7; color cpk ; " +
-	 				" select all; ");
+	 				" select all; ";
 	    } 
 	    else if (text == 'Backbone') {
 		    
-	    	this.applyJmolCommand("hide null; select all; spacefill off; wireframe off; backbone 0.4;" +
+	    	return "hide null; select all; spacefill off; wireframe off; backbone 0.4;" +
 					" cartoon off; " +
 	 				" select ligand; wireframe 0.16;spacefill 0.5; color cpk; " +
 	 				" select *.FE; spacefill 0.7; color cpk ; " +
 	 				" select *.CU; spacefill 0.7; color cpk ; " +
 	 				" select *.ZN; spacefill 0.7; color cpk ; " +
-	 				" select all; ");
+	 				" select all; ";
 	    	
 	    } else if (text == 'CPK') {
 		    
-	    	this.applyJmolCommand("hide null; select all; spacefill off; wireframe off; backbone off;" +
+	    	return "hide null; select all; spacefill off; wireframe off; backbone off;" +
 					" cartoon off; cpk on;" +
 	 				" select ligand; wireframe 0.16;spacefill 0.5; color cpk; " +
 	 				" select *.FE; spacefill 0.7; color cpk ; " +
 	 				" select *.CU; spacefill 0.7; color cpk ; " +
 	 				" select *.ZN; spacefill 0.7; color cpk ; " +
-	 				" select all; ");
+	 				" select all; ";
 	    	
 	    } 
 	    else if (text == 'Ligands') {
-	    	this.applyJmolCommand("restrict ligand; cartoon off; wireframe on;  display selected;"+
+	    	return "restrict ligand; cartoon off; wireframe on;  display selected;"+
 	    			" select *.FE; spacefill 0.7; color cpk ; " +
 	 				" select *.CU; spacefill 0.7; color cpk ; " +
 	 				" select *.ZN; spacefill 0.7; color cpk ; " +
-	 				" select all; "
-	    	);
+	 				" select all; ";
 	    }
 
 	    else if (text == 'Ligands and Pocket') {
-	    	this.applyJmolCommand(" select within (6.0,true, ligand); cartoon off; wireframe on; backbone off; display selected; " +
+	    	return " select within (6.0,true, ligand; cartoon off; wireframe on; backbone off; display selected; " +
 	    			" select *.FE; spacefill 0.7; color cpk ; " +
 	 				" select *.CU; spacefill 0.7; color cpk ; " +
 	 				" select *.ZN; spacefill 0.7; color cpk ; " +
-	 				" select all; "
-	    	);
+	 				" select all; ";
 	    } 
 	    else if (text == 'Ball and Stick') {
 		    
-	    	this.applyJmolCommand("hide null; restrict not water;  wireframe 0.2; spacefill 25%;" +
+	    	return "hide null; restrict not water;  wireframe 0.2; spacefill 25%;" +
 					" cartoon off; backbone off; " +
 	 				" select ligand; wireframe 0.16; spacefill 0.5; color cpk; " +
 	 				" select *.FE; spacefill 0.7; color cpk ; " +
 	 				" select *.CU; spacefill 0.7; color cpk ; " +
 	 				" select *.ZN; spacefill 0.7; color cpk ; " +
-	 				" select all; ");
+	 				" select all; ";
 	    	
 	    }
 	},
 	
-	_onDisplayColorChange: function ( text ) {
+	_getDisplayColor: function ( text ) {
 		if ( text == 'By Chain') {
-			this.applyJmolCommand("hide null; select all;set defaultColors Jmol; color_by_chain(\"cartoon\"); color_by_chain(\"\"); select ligand;wireframe 0.16;spacefill 0.5; color cpk ;; select all; " ); 
+			
+			return "hide null; select all; cartoon on; wireframe off; spacefill off; color chain; select ligand; wireframe 0.16; spacefill 0.5; color chain ; select all; "; 
 		 }
 		else if ( text == 'By Temperature') {
-		 	this.applyJmolCommand("hide null; select all;spacefill off; wireframe off; backbone 0.4; cartoon off; set defaultColors Jmol; color relativeTemperature; color cartoon relateiveTemperature select ligand;wireframe 0.16;spacefill 0.5; color cpk ;; select all; " );
+		 	return "hide null; select all;spacefill off; wireframe off; backbone 0.4; cartoon off; set defaultColors Jmol; color relativeTemperature; color cartoon relateiveTemperature select ligand;wireframe 0.16;spacefill 0.5; color cpk ;; select all; " ;
 		 }
 		else if ( text == 'Rainbow'){
-			 this.applyJmolCommand("hide null; select all; set defaultColors Jmol; color group; color cartoon group; select ligand;wireframe 0.16;spacefill 0.5; color cpk ;; select all; " );
+			return "hide null; select all; set defaultColors Jmol; color group; color cartoon group; select ligand;wireframe 0.16;spacefill 0.5; color cpk ; select all; " ;
 		} 
 		else if ( text == 'Secondary Structure'){
-			this.applyJmolCommand("hide null; select all; set defaultColors Jmol; color structure; color cartoon structure;select ligand;wireframe 0.16;spacefill 0.5; color cpk ;; select all; " );					
+			return "hide null; select all; set defaultColors Jmol; color structure; color cartoon structure;select ligand;wireframe 0.16;spacefill 0.5; color cpk ;; select all; " ;					
 		} 
 		else if ( text == 'By Element'){
-			 this.applyJmolCommand("hide null; select all; set defaultColors Jmol; color cpk; color cartoon cpk; select ligand;wireframe 0.16;spacefill 0.5; color cpk ;; select all; " );
+			return "hide null; select all; set defaultColors Jmol; color cpk; color cartoon cpk; select ligand;wireframe 0.16; spacefill 0.5; color cpk ; select all; " ;
 		}
 		else if ( text == 'By Amino Acid'){
-			this.applyJmolCommand("hide null; select all; set defaultColors Jmol; color amino; color cartoon amino; select ligand;wireframe 0.16;spacefill 0.5; color cpk ;; select all; " );
+			return "hide null; select all; set defaultColors Jmol; color amino; color cartoon amino; select ligand;wireframe 0.16;spacefill 0.5; color cpk ;; select all; " ;
 		}
 		else if ( text == 'Hydrophobicity'){
-			 this.applyJmolCommand("hide null; set defaultColors Jmol; select hydrophobic; color red; color cartoon red; select not hydrophobic ; color blue ; color cartoon blue; select ligand;wireframe 0.16;spacefill 0.5; color cpk ;; select all; " );
+			return "hide null; set defaultColors Jmol; select hydrophobic; color red; color cartoon red; select not hydrophobic ; color blue ; color cartoon blue; select ligand;wireframe 0.16;spacefill 0.5; color cpk ;; select all; " ;
 		}
 	},
 	
-	_onDisplaySurfaceChange: function ( text ) {
-		if ( text == 'None'){
-			this.applyJmolCommand("isosurface off;");
+	_getDisplaySurface: function ( text ) {
+		 if ( text == 'None'){
+			return "isosurface off;";
 		 }
 		 else if ( text == 'Solvent Accessible'){
-			 this.applyJmolCommand("isosurface sasurface 1.2");
+			return "isosurface sasurface 1.2";
 		 }
 		 else if ( text == 'Solvent Excluded'){
-			 this.applyJmolCommand("isosurface solvent 1.2");
+			return "isosurface solvent 1.2";
 		 }
 		 else if ( text == 'Cavities'){
-			 this.applyJmolCommand("isosurface cavity 1.2 10");
+			return "isosurface cavity 1.2 10";
 		 }
 	},
 	
@@ -973,6 +984,5 @@ Biojs.PdbViewer = Biojs.extend(
 	toString: function() { 
 		return "Biojs.PdbViewer";
 	}
-	
-	
+
 });
