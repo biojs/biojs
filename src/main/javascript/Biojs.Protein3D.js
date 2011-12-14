@@ -261,9 +261,9 @@ Biojs.Protein3D = Biojs.extend(
 		
 		var theTargetDiv = $("#"+this.opt.target);
 		theTargetDiv.find("div#controlSection > div#controls > input[type='checkbox']").attr("checked",false);
-		theTargetDiv.find('select#styleSelect').val("Cartoon");
-		theTargetDiv.find('select#colorSelect').val("By Chain");
-		theTargetDiv.find('select#surfaceSelect').val("None");
+		theTargetDiv.find('#styleSelect').val("Cartoon");
+		theTargetDiv.find('#colorSelect').val("By Chain");
+		theTargetDiv.find('#surfaceSelect').val("None");
 		
 		for (var key in this._display.property) {
 			this._display.property[key] = false;
@@ -300,12 +300,13 @@ Biojs.Protein3D = Biojs.extend(
 //		
 //		this.opt.pdbId = pdb.slice(pdb.indexOf('HEADER'), pdb.indexOf('\n')).split(' ').pop();
 //		Biojs.console.log("Loading pdb file "+this.opt.pdbId);
-
+		
 		var scr =  ""; //'select all; cartoon on; wireframe off; spacefill off; color chain; select none;';
 		scr += this._getDisplayColor("By Chain") + this._getDisplayStyle("Cartoon") + this._getDisplaySurface("None");
 		scr += this._getSelectionScript(this._selection); 
 		
-		if (this._jmolAppletInitialized) {			
+		if (this._jmolAppletInitialized) {
+			this.reset();
 			jmolLoadInlineScript(pdb, scr);
 			
 		} else {
@@ -680,7 +681,9 @@ Biojs.Protein3D = Biojs.extend(
 			.css("margin", 0)
 			.css("width",  "auto")
 			.css("height", "auto")
-			.css('float', 'left');
+			.css('float', 'left')
+			.css('font-family','"Heveltica Neue", Arial, "sans serif"')
+			.css('font-size','12px');
 		
 		// Measurements 
 		// 

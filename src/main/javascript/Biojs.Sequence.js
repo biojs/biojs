@@ -40,12 +40,13 @@
  *    Set of overlapping annotations. Must be an array of objects following the syntax:
  *     		<pre class="brush: js" title="Syntax:">
  *            [ 
- *              // First annotation:
+ *              // An annotation:
  *              { name: &lt;name&gt;, 
  *                html: &lt;message&gt;, 
  *                color: &lt;color_code&gt;, 
  *                regions: [{ start: &lt;startVal1&gt;, end: &lt;endVal1&gt; color: &lt;color_code&gt;}, ...,{ start: &lt;startValN&gt;, end: &lt;endValN&gt;, color: &lt;color_code&gt;}] 
  *              }, 
+ *              
  *              // ...
  *              // more annotations here 
  *              // ...
@@ -63,32 +64,32 @@
  *      </ul> 
  *       
  * @example 
- * var theSequence = 'mlpglallllaawtaralevptdgnagllaepqiamfcgrlnmhmnvqngkwdsdpsgtktcidtkegilqycqevypelqitnvveanqpvtiqnwckrgrkqckthphfvipyrclvgefvsdallvpdkckflhqermdvcethlhwhtvaketcsekstnlhdygmllpcgidkfrgvefvccplaeesdnvdsadaeeddsdvwwggadtdyadgsedkvvevaeeeevaeveeeeadddeddedgdeveeeaeepyeeaterttsiatttttttesveevvrevcseqaetgpcramisrwyfdvtegkcapffyggcggnrnnfdteeycmavcgsamsqsllkttqeplardpvklpttaastpdavdkyletpgdenehahfqkakerleakhrermsqvmreweeaerqaknlpkadkkaviqhfqekvesleqeaanerqqlvethmarveamlndrrrlalenyitalqavpprprhvfnmlkkyvraeqkdrqhtlkhfehvrmvdpkkaaqirsqvmthlrviyermnqslsllynvpavaeeiqdevdellqkeqnysddvlanmiseprisygndalmpsltetkttvellpvngefslddlqpwhsfgadsvpantenevepvdarpaadrglttrpgsgltnikteeisevkmdaefrhdsgyevhhqklvffaedvgsnkgaiiglmvggvviatvivitlvmlkkkqytsihhgvvevdaavtpeerhlskmqqngyenptykffeqmqn';			
- * var mySequence = new Biojs.Sequence( {
+ * var theSequence = 'mlpglallllaawtaralevptdgnagllaepqiamfcgrlnmhmnvqngkwdsdpsgtktcidtkegilqycqevypelqitnvveanqpvtiqnwckrgrkqckthphfvipyrclvgefvsdallvpdkckflhqermdvcethlhwhtvaketcsekstnlhdygmllpcgidkfrgvefvccplaeesdnvdsadaeeddsdvwwggadtdyadgsedkvvevaeeeevaeveeeeadddeddedgdeveeeaeepyeeaterttsiatttttttesveevvrevcseqaetgpcramisrwyfdvtegkcapffyggcggnrnnfdteeycmavcgsamsqsllkttqeplardpvklpttaastpdavdkyletpgdenehahfqkakerleakhrermsqvmreweeaerqaknlpkadkkaviqhfqekvesleqeaanerqqlvethmarveamlndrrrlalenyitalqavpprprhvfnmlkkyvraeqkdrqhtlkhfehvrmvdpkkaaqirsqvmthlrviyermnqslsllynvpavaeeiqdevdellqkeqnysddvlanmiseprisygndalmpsltetkttvellpvngefslddlqpwhsfgadsvpantenevepvdarpaadrglttrpgsgltnikteeisevkmdaefrhdsgyevhhqklvffaedvgsnkgaiiglmvggvviatvivitlvmlkkkqytsihhgvvevdaavtpeerhlskmqqngyenptykffeqmqn';
+ * var mySequence = new Biojs.Sequence({
  * 		sequence : theSequence,
  * 		target : "YourOwnDivId",
  * 		format : 'CODATA',
  * 		id : 'P918283',
- * 		annotations: [{
- * 			name:"UNIPROT", 
- * 			html:"<b>Example</b> of HTML <ul><li>Example 1</li><li>Example 2</li></ul>", 
- * 			color:"green", 
- * 			regions: [{start: 100, end: 120},
- *                    {start: 140, end:147, color: "#FFA010"}, 
- *         	      	  {start: 148, end:150, color: "red"}, 
- *                    {start: 151, end:165}] 
- *  		},{
- * 	  		name:"CATH", 
+ * 		annotations: [
+ *        { name:"CATH", 
  * 	  		color:"#F0F020", 
  * 	  		html: "Using color code #F0F020 ", 
- * 	  		regions: [{start: 122, end: 150}]
- * 		}]	
+ * 	  		regions: [{start: 122, end: 135}]
+ * 		  },
+ *        { name:"TEST", 
+ *          html:"&lt;br&gt; Example of &lt;b&gt;HTML&lt;/b&gt;", 
+ *          color:"green", 
+ *          regions: [
+ *            {start: 285, end: 292},
+ *            {start: 293, end: 314, color: "#2E4988"}]
+ *        }
+ *      ]
  * });	
  * 
  */
 
 Biojs.Sequence = Biojs.extend(
-/** @lends Biojs.Sequence */
+/** @lends Biojs.Sequence# */
 {	
 	constructor: function (options) {
 		var self = this;
@@ -101,7 +102,10 @@ Biojs.Sequence = Biojs.extend(
         });
 		
 		self._headerDiv = $('<div></div>').appendTo("#"+self.opt.target);
+		self._headerDiv.css('font-family','"Heveltica Neue", Arial, "sans serif"').css('font-size','14px');
+		
 		self._contentDiv = $('<div></div>').appendTo("#"+self.opt.target);
+		self._contentDiv.css('font-family',this.opt.fontFamily).css('font-size',this.opt.fontSize);
 		
 		self._headerDiv.append('Format: ');
 
@@ -135,7 +139,7 @@ Biojs.Sequence = Biojs.extend(
 		target : "",
 		format : "FASTA",
 		selection: { startPos: 0, endPos: 0 },
-		columns: { size: 40, spacedEach: 10 },
+		columns: { size: 35, spacedEach: 10 },
 		highlights : [],
 		annotations: [],
 		
@@ -143,8 +147,11 @@ Biojs.Sequence = Biojs.extend(
 		selectionColor : 'Yellow',
 		highlightFontColor : 'red',
 		highlightBackgroundColor : 'white',
-		defaultFontColor : 'black',
-		defaultBackgroundColor : 'white'
+		fontFamily: '"Andale mono", courier, monospace',
+		fontSize: '12px',
+		fontColor : 'black',
+		backgroundColor : 'white'
+		
 	},
 	
 	/**
@@ -213,7 +220,7 @@ Biojs.Sequence = Biojs.extend(
 	_contentDiv : null,
 	
 	// Methods
-	
+
 	/**
     * Set the current selection in the sequence causing the event {@link Biojs.Sequence#onSelectionChanged}
     *
@@ -275,7 +282,7 @@ Biojs.Sequence = Biojs.extend(
 		for( var i=start; i <= end; i++ ) {
 			this._contentDiv.find('span.sequence.highlighted#'+i)
 				.removeClass("highlighted")
-				.css("color", this.opt.defaultFontColor);
+				.css("color", this.opt.fontColor);
 		}
 	},
 	
@@ -285,7 +292,7 @@ Biojs.Sequence = Biojs.extend(
     */
 	unHighlightAll : function () {
 		this._contentDiv.find('span.sequence.highlighted').each( function() {
-			$(this).removeClass("highlighted").css("color", this.opt.defaultFontColor);
+			$(this).removeClass("highlighted").css("color", this.opt.fontColor);
 		});
 	},
 	
@@ -393,7 +400,7 @@ Biojs.Sequence = Biojs.extend(
 			if(i + 1 >= start && i + 1 <= end) {
 				$(spans[i]).css("background-color", self.opt.selectionColor);
 			} else {
-				$(spans[i]).css("background-color", self.opt.defaultBackgroundColor);
+				$(spans[i]).css("background-color", self.opt.backgroundColor);
 			}
 		}
 	},
@@ -511,9 +518,9 @@ Biojs.Sequence = Biojs.extend(
 			}
 			
 			if ( opt.numRight ) {
-				$(row).insertAfter('div#'+self.opt.target+' > div > pre > span#numRight'+ (i+opt.numCols) );
+				$(row).insertAfter('div#'+self.opt.target+' div pre span#numRight'+ (i+opt.numCols) );
 			} else {
-				$(row).insertAfter('div#'+self.opt.target+' > div > pre > span#'+ (i+opt.numCols) );
+				$(row).insertAfter('div#'+self.opt.target+' div pre span#'+ (i+opt.numCols) );
 			}
 		}
 		
@@ -630,7 +637,6 @@ Biojs.Sequence = Biojs.extend(
 	
 	_drawSequence : function(a, opt) {
 		var str = '';
-		
 
 		var spaceStyle =  "white-space: pre;";
 		
@@ -659,7 +665,9 @@ Biojs.Sequence = Biojs.extend(
 			str += '  ';
 		}
 
+		var j=1;
 		for (var i=1; i <= a.length; i++) {
+
 			if( i % opt.numCols == 0) {	
 				str += '<span class="sequence" id="'+i+'">' + a[i-1] + '</span>';
 				
@@ -679,11 +687,14 @@ Biojs.Sequence = Biojs.extend(
 					str += '</span>';
 				}
 				
+				j = 1;
+				
 			} else {
 				str += '<span class="sequence" style="'+spaceStyle+'" id="'+i+'">' + a[i-1];
-				str += (i % opt.numColsForSpace == 0)? ' ' : '';
+				str += ( j % opt.numColsForSpace == 0)? ' ' : '';
 				str += (opt.spaceBetweenChars)? ' ' : '';
 				str += '</span>';
+				j++;
 			}
 		}
 		
@@ -770,7 +781,7 @@ Biojs.Sequence = Biojs.extend(
 	_addToolTip : function ( target, msgFunction ) {
 		
 		$(target).mouseover(function(e) {
-     		var tip = msgFunction( $(this) );
+     		var tip = msgFunction( target );
 	         
 	        //Append the tooltip template and its value
 	        $(this).append('<div id="tooltip"><div class="tipHeader"></div><div class="tipBody">' + tip + '</div><div class="tipFooter"></div></div>');     
@@ -785,7 +796,9 @@ Biojs.Sequence = Biojs.extend(
 	        	.css('z-index', "9999" )
 	        	.css('color', "#fff" )
 	        	.css('font-size', "10px" )
-	        	.css('width', tip.length * 8 );
+	        	.css('width', "auto");
+	        
+	        //console.log("Tip size: "+tip.length)
 	        
 	        $('.tipHeader').css('background-color', "#000")
 	        	.css('height', "8px"); 
@@ -817,7 +830,7 @@ Biojs.Sequence = Biojs.extend(
     * // Annotations using regions with different colors.
     * mySequence.setAnnotation({
 	*    name:"UNIPROT", 
-	*    html:"&lt;br&gt; Example of HTML &lt;ul&gt;&lt;li&gt;Example 1&lt;/li&gt;&lt;li&gt;Example 2&lt;/li&gt;&lt;/ul&gt;", 
+	*    html:"&lt;br&gt; Example of &lt;b&gt;HTML&lt;/b&gt;", 
 	*    color:"green", 
 	*    regions: [
 	*       {start: 540, end: 560},

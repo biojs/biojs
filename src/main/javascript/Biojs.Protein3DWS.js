@@ -25,7 +25,6 @@
  * 		id: '3nuc'
  * });	
  * 
- * console.log(instance);
  * 
  */
 Biojs.Protein3DWS = Biojs.Protein3D.extend(

@@ -5,8 +5,6 @@
  * @class
  * @extends Biojs.Protein3DWS
  * 
- * @requires test
- * 
  * @param {Object} options An object with the options for the component.
  * 
  * @option {string} [proteinId] 
@@ -21,8 +19,6 @@
  * 		target: 'YourOwnDivId',
  * 		proteinId: 'P07148'
  * });	
- * 
- * Biojs.console.log(instance);
  * 
  */
 Biojs.Protein3DUniprot = Biojs.Protein3DWS.extend(
@@ -77,7 +73,7 @@ Biojs.Protein3DUniprot = Biojs.Protein3DWS.extend(
 	
 	opt: {
 		proteinId: undefined,
-		alignmentsUrl: 'http://www.rcsb.org/pdb/rest/das/pdb_uniprot_mapping/alignment?query=',
+		alignmentsUrl: 'http://www.rcsb.org/pdb/rest/das/pdb_uniprot_mapping/alignment?query='
 	},
 	
 	eventTypes : [
@@ -202,9 +198,9 @@ Biojs.Protein3DUniprot = Biojs.Protein3DWS.extend(
 	    	this.requestPdb(pdb.substring(0, pdb.indexOf('.')).toLowerCase());
 
 	    } else {
-	    	$('#'+self.opt.target).find('#pdbStructures').html("None structure for current selection");
+	    	$('#'+this.opt.target).find('#pdbStructures').html("None structure for current selection");
 	    	Biojs.console.log("No structural information available for "+this.opt.proteinId);
-	    	this.raiseEvent('onRequestError', { message: "No structural information available for "+self.opt.proteinId });  
+	    	this.raiseEvent('onRequestError', { message: "No structural information available for "+this.opt.proteinId });  
 	    }
 	},
 

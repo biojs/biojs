@@ -233,7 +233,9 @@ Biojs.extend = function(_child, _static) { // subclass
 
 	// Inherit parent' events to the child
 	if (proto.eventTypes instanceof Array) {
-		proto.eventTypes.map( function( eventType ) { _child.eventTypes.push(eventType) } );
+		for ( var i in proto.eventTypes ) {
+			_child.eventTypes.push(proto.eventTypes[i]);
+		}
 	}
 	
 	// Inherit parent' options to the child
