@@ -173,12 +173,12 @@
 			<li>Create a code snippet within a &lt;script&gt; tag and instance Biojs.{+data.name+} into.</li>
 			<if test="!data.isBuiltin() && (data.isNamespace || data.is('CONSTRUCTOR'))">
 			<if test="data.example.length">
-			{! var example = data.example[0].toString().replace('<',"&lt;").replace('>',"&gt;").replace("\n ","\n\t\t"); 
+			{! var example = data.example[0].toString().replace('<',"&lt;").replace('>',"&gt;").replace("\n","\n\t\t"); 
 			   var snippet = 
 			   		'&lt;script language="JavaScript" type="text/javascript"&gt;\n'+
-			   		'  window.onload = function() {\n'+
+			   		'\twindow.onload = function() {\n'+
 			   			 example+'\n\n'+
-			   		'  };\n'+
+			   		'\t};\n'+
 			   		'&lt;/script&gt;';
 			!}
 			<pre class="brush: js; toolbar: false; smart-tabs: true;" >{+snippet+}</pre>
