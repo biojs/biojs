@@ -34,6 +34,7 @@ Biojs.Protein3DUniprot = Biojs.Protein3DWS.extend(
 			Biojs.console.log( e.result +" loading the pdb file " + e.file );
 			Biojs.console.log( "self._aligmentsJustArrived= " + self._alignmentsJustArrived );
 			
+
     		if ( self._alignmentsJustArrived ) {
     			Biojs.console.log("Initialising the alignments selection list");
     			
@@ -44,20 +45,22 @@ Biojs.Protein3DUniprot = Biojs.Protein3DWS.extend(
     			var alignments = self._filterAligmentsBySelection(self._selection);
     			var pdbOptions = self._createOptions(alignments);
     			
-    			if ( $('#'+self.opt.target).find('#pdbStructures').length == 0 ) {
+    			if ( $('#'+self.opt.target).find('div#pdbStructures').length == 0 ) {
     				self._addControl('<div id="pdbStructures"></div>');
     			}
     			
     			$('#'+self.opt.target)
     				.find('div#pdbStructures')
     				.html('Structures for <b>'+self.opt.proteinId+'</b><br/>'+
-    						'<select id="pdbFile_select">'+ pdbOptions +'</select></div>');
+    						'<select id="pdbFile_select">'+ pdbOptions +'</select>');
  
-    			$('#pdbFile_select').val(pdb);
+    			$('#'+self.opt.target + ' #pdbFile_select').val(pdb);
     			
-    			$('#pdbFile_select').change( function() {
+    			$('#'+self.opt.target + ' #pdbFile_select').change( function() {
     				self._onAlignmentSelectionChange();
     			});
+    			
+    			$('#'+self.opt.target).find('#pdbStructures').show();
     			
     			self._alignmentsJustArrived = false;
     		}
@@ -126,7 +129,7 @@ Biojs.Protein3DUniprot = Biojs.Protein3DWS.extend(
 		$.ajax({
 			url: this.opt.proxyUrl,
 			data: 'url=' + self.opt.alignmentsUrl + self.opt.proteinId,
-			dataType: 'text/xml',
+			dataType: 'text',
 			success: function(xml){
 				Biojs.console.log("SUCCESS: data received from "+this.data);
 				self._parseResponse(xml);
@@ -145,7 +148,12 @@ Biojs.Protein3DUniprot = Biojs.Protein3DWS.extend(
 	    this._alignments = {};
 	    var i = 0;
 		var self = this;
-	    $(xml).find('block').each(function(){
+		
+		Biojs.console.log("Decoding " + xml);
+		
+		xmlDoc = $.parseXML( xml );
+		
+	    $(xmlDoc).find('block').each( function(){
 	        var children = $(this).children();
 	        var segment0 = self._createNode(children[0]);
 	        var segment1 = self._createNode(children[1]);
@@ -153,6 +161,7 @@ Biojs.Protein3DUniprot = Biojs.Protein3DWS.extend(
 	        var arr = [];
 	        arr.push(segment0);
 	        arr.push(segment1);
+	        
 	        self._alignments[segment0.intObjectId] = arr || [];
 	        i++;
 			
@@ -191,10 +200,13 @@ Biojs.Protein3DUniprot = Biojs.Protein3DWS.extend(
 		var alignments = this._filterAligmentsBySelection(this._selection);
 		
 	    if (!Biojs.Utils.isEmpty(alignments)) {
+	    	
 		    var pdb = undefined;
 	    	for( pdb in alignments ) {
 	    		break;
 	    	}
+	    	
+	    	Biojs.console.log("Requesting pdb "+pdb);
 	    	this.requestPdb(pdb.substring(0, pdb.indexOf('.')).toLowerCase());
 
 	    } else {

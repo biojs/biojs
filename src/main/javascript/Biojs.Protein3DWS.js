@@ -65,8 +65,21 @@ Biojs.Protein3DWS = Biojs.Protein3D.extend(
   		"onRequestError"
 	],
 	
+	/**
+    * Request and display a pdb file by means of its identifier.
+    * 
+    * @param {string} pdbId Pdb file identifier.
+    *
+    * @example 
+    * instance.requestPdb('3t6f');
+    * 
+    */
 	requestPdb: function(pdbId) {
 		var self = this;
+		
+		self.showLoadingImage();
+		self.opt.id = pdbId;
+		
 		$.ajax({
 			url: self.opt.proxyUrl,
 			data: 'url='+self.opt.pdbUrl+'/'+pdbId+'.pdb',

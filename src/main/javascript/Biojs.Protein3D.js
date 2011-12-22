@@ -5,7 +5,7 @@
  * @extends Biojs
  * 
  * @requires <a href='http://blog.jquery.com/2011/09/12/jquery-1-6-4-released/'>jQuery Core 1.6.4</a>
- * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jquery/jquery-1.4.2.min.js"></script>
+ * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jquery/jquery-1.6.4.js"></script>
  * 
  * @requires <a href='http://jmol.sourceforge.net/download/'>jMol 12.0.48</a>
  * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jmol-12.0.48/Jmol.js"></script>
@@ -24,7 +24,7 @@
  * @option {int} [height=400] 
  *    Height in pixels .
  *    
- * @option {string} [jmolFolder="biojs/dependencies/jmol-12.0.48"] 
+ * @option {string} [jmolFolder="../biojs/dependencies/jmol-12.0.48"] 
  *    The relative path of the jMol library.
  *    
  * @option {string} [unpolarColor="salmon"] 
@@ -77,6 +77,8 @@ Biojs.Protein3D = Biojs.extend(
 		
 		var self = this;
 		
+		self.image = '<img id="image_' + this.getId() + '" src="../biojs/images/ajax-loader-1.gif" style="display:block; margin: 0 auto;" />';
+		
 		self.opt.backgroundColor = (self.opt.backgroundColor)? self.opt.backgroundColor : "white";
 		
 		jmolInitialize(this.opt.jmolFolder);
@@ -105,14 +107,43 @@ Biojs.Protein3D = Biojs.extend(
 		
 		jmolSetCallback("loadStructCallback", loadStructCallbackName );
 		
-		$("#"+this.opt.target).css("padding","0px");
-		$("#"+this.opt.target).css("width",this.opt.width);
-		$("#"+this.opt.target).css("height",this.opt.height);
-		$("#"+this.opt.target).css("overflow","hidden");
-		$("#"+this.opt.target).html(
-			'<div id="div'+this._appletId+'" style="position:relative; float:right;"/>'+
-			'<div id="controlSection" style="position:relative; float:right;"/>'
-		);
+//		$("#"+self.opt.target)
+//			.css("padding","0px")
+//			.css("width",this.opt.width)
+//			.css("height",this.opt.height)
+//			.css("overflow","hidden")
+//			.css('display','table-cell')
+//			.css('vertical-align','middle')
+//			.html( self.image );
+		
+		$("div#"+this.opt.target)
+			.css('display', 'block')
+			.css("padding","0px")
+			.css("width",this.opt.width)
+			.css("height",this.opt.height)
+			.css("overflow","hidden")
+			.html('<div id="div'+this._appletId+'"/><div id="controlSection" />')
+			.find('div')
+			.css('position','relative')
+			.css('float','right')
+			.hide();
+		
+		$("div#"+this.opt.target).append('<div id="loadingImage" />');
+		
+		$('#' + self.opt.target + ' div#loadingImage')
+			.css("padding","0px")
+			.css("width",this.opt.width)
+			.css("height",this.opt.height)
+			.css("overflow","hidden")
+			.css('display','table-cell')
+			.css('vertical-align','middle')
+			.html( self.image );
+		
+		
+		if ($.browser.msie) {
+			$('#' + self.opt.target + ' div#loadingImage').css('display','inline');
+			$('#' + self.opt.target + ' img#image_' + this.getId()).css('vertical-align','middle');
+		}
 		
 		Biojs.console.log("ending Biojs.Protein3D constructor");
    },
@@ -272,7 +303,12 @@ Biojs.Protein3D = Biojs.extend(
 		this.setHalosVisible(true);
 	},
 	
-	   
+	showLoadingImage: function(){
+		// Show loading image
+		$('#' + this.opt.target ).find('div').hide();
+		$("#" + this.opt.target + ' div#loadingImage').show();
+	},
+	
    /**
     * Sets the pdb file to be displayed.
     * Also triggers the event whenever a new pdb file is loaded.
@@ -280,9 +316,11 @@ Biojs.Protein3D = Biojs.extend(
     * @param {string} pdb The content of the pdb file.
     *
     * @example 
+    * instance.showLoadingImage();
+    * 
     * $.ajax({
 	* 		url: '../biojs/dependencies/proxy/proxy.php',
-	* 		data: 'url=http://www.ebi.ac.uk/pdbe-srv/view/files/1j3s.pdb',
+	* 		data: 'url=http://www.ebi.ac.uk/pdbe-srv/view/files/3u01.pdb',
 	* 		dataType: 'text',
 	* 		success: function(pdbFile){
 	* 			instance.setPdb(pdbFile);
@@ -296,23 +334,26 @@ Biojs.Protein3D = Biojs.extend(
 	setPdb: function( pdb ){
 		Biojs.console.log("setPdb() starting");
 		
-		// Expected line on pdb content: HEADER   LIPID BINDING PROTEIN 11-JUL-11   3STN 
-//		
-//		this.opt.pdbId = pdb.slice(pdb.indexOf('HEADER'), pdb.indexOf('\n')).split(' ').pop();
-//		Biojs.console.log("Loading pdb file "+this.opt.pdbId);
-		
-		var scr =  ""; //'select all; cartoon on; wireframe off; spacefill off; color chain; select none;';
+		var self = this;
+
+		var scr =  ""; 
 		scr += this._getDisplayColor("By Chain") + this._getDisplayStyle("Cartoon") + this._getDisplaySurface("None");
 		scr += this._getSelectionScript(this._selection); 
+
+		$('#' + self.opt.target ).find('div').show();
+		$("#" + self.opt.target + ' div#loadingImage').hide();
 		
 		if (this._jmolAppletInitialized) {
-			this.reset();
-			jmolLoadInlineScript(pdb, scr);
-			
-		} else {
-			html = jmolAppletInline([this.opt.width, this.opt.height], pdb, scr, this.getId() );
-			$("div#div"+this._appletId).html(html);
-		}
+			this.reset();	
+		} 
+		
+		this.jmolHTML = jmolAppletInline([this.opt.width, this.opt.height], pdb, scr, this.getId() );
+		$("div#" + self.opt.target + ' #div' + self._appletId ).html( self.jmolHTML );
+
+		this.hideControls();
+		this.showControls();
+		
+		
 		this._jmolAppletInitialized = true;		
 		Biojs.console.log("setPdb() ending");
 	},
@@ -687,7 +728,7 @@ Biojs.Protein3D = Biojs.extend(
 		
 		// Measurements 
 		// 
-		var padding = 5;
+		var padding = 3;
 		var tabWidth = 20, tabHeight = height;
 		var controlsWidth = width - (2*padding+tabWidth), controlsHeight = height - (padding*2);
 		
@@ -851,16 +892,6 @@ Biojs.Protein3D = Biojs.extend(
 		}
 		
 		self._toggleControls = toggleControls;
-
-		/**
-		 * @private
-		 * @function
-		 */
-		var addControl = function(html){
-			controlDiv.append(html);
-		};
-		
-		self._addControl = addControl;
 		
 		showHideTab.find('#hideButton')
 			.click( self._toggleControls )
@@ -889,6 +920,10 @@ Biojs.Protein3D = Biojs.extend(
 		
 		Biojs.console.log("_buildControls done");
 	}, 
+	
+	_addControl: function(html){
+		$('#' + this.opt.target + ' div#controls').append( html );
+	},
 	
 	_getDisplayStyle: function ( text ) {
 	   if (text == 'Cartoon') {

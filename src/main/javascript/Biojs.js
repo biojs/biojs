@@ -167,7 +167,23 @@ Biojs.Utils = {
 						 */
 						// Finally, the log function will write into the DIV
 						this.log = function (msg) {
-							textNode = Biojs.console.domDocument.createTextNode(msg);
+							var message = '';
+							
+							if (msg instanceof Array) {
+								for ( i=0; i < msg.length; i++ ) {
+									message += '[' + i + ']=' + msg[i] + ' ';
+								}
+								
+							} else if (msg instanceof String || typeof msg === "string") {
+								message = msg;
+								
+							} else {
+								for (var i in msg) {
+									message += '[' + i + ']=' + msg[i] + ' ';
+							    }
+							}
+							
+							textNode = Biojs.console.domDocument.createTextNode(message);
 							line = Biojs.console.domDocument.createElement('pre');
 							line.appendChild(textNode);
 							Biojs.console.domDivNode.appendChild(line);
