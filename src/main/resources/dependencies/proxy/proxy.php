@@ -4,7 +4,14 @@
         $url = str_replace(" ", "%20", $_GET['url']);
 
 /* SET INTERNAL PROXY */
-        $proxy = "";
+        $ebiDomainFlag = strpos($_SERVER['SERVER_NAME'], "ebi.ac.uk");
+        
+        if ( $ebiDomainFlag ) {
+        	$proxy = "http://wwwcache.ebi.ac.uk:3128/";
+        } else {
+        	$proxy = "";
+        }
+ 		
         //$proxy = "http://wwwcache.ebi.ac.uk:3128/";
         //$proxy = "http://wwwcache.sanger.ac.uk:3128/";
 
@@ -25,7 +32,10 @@
 
 
 /* DISPLAY DATA FROM THE ORIGINAL QUERY */
-		  	$xmlFlag = strpos($url, "stylesheet");
+
+		$xmlFlag = strpos($_SERVER['HTTP_ACCEPT'], "xml"); 
+
+		//$xmlFlag = strpos($url, "stylesheet");
        	$data = curl_exec($ch); 
         	curl_close($ch);
 			if($xmlFlag){
