@@ -131,6 +131,11 @@ Biojs.HelloWorld = Biojs.extend (
 
 	  var self = this;
 	  var isMouseDown = false;
+	  
+	  /**
+	   * @private
+	   * @function
+	   */
 	  var toggleClass = function (span) {
 		  span.toggleClass( 'selected' );
 			if ( span.hasClass('selected') ) {

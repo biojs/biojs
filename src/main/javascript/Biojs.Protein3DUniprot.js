@@ -129,9 +129,9 @@ Biojs.Protein3DUniprot = Biojs.Protein3DWS.extend(
 		$.ajax({
 			url: this.opt.proxyUrl,
 			data: 'url=' + self.opt.alignmentsUrl + self.opt.proteinId,
-			dataType: 'text',
+			dataType: "text",
 			success: function(xml){
-				Biojs.console.log("SUCCESS: data received from "+this.data);
+				Biojs.console.log("SUCCESS: data received");
 				self._parseResponse(xml);
 			},
 			async: false,
