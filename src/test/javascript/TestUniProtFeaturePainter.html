@@ -28,33 +28,36 @@
     <!--SVG & CANVAS LIB-->
     <script language="JavaScript" type="text/javascript" src="../../main/resources/dependencies/graphics/rgbcolor.js"></script>
     <script language="JavaScript" type="text/javascript" src="../../main/resources/dependencies/graphics/canvg.js"></script>
-    <script language="JavaScript">
+    <script>
 /**
  * Parses a JSON response from the given URL
  * @param url
  */
 function uniprotFeaturePainter_jsonFeatureParser(url) {
-    var params = jQuery.url(url).param();//Ext.urlDecode(url);
+    var params = jQuery.url(url).param();
     var propCount = 0;
     for (prop in params) {
         propCount++;
         break;
     }
     if (!params || (propCount == 0)) {
-        window.location = "../../image";
+        window.location = "http://localhost:8080/image";
         return;
     }
-    //console.log(params);
+    Biojs.console.log(params);
     if (params.segment) {
         var segment = params.segment;
-        if (params.option != "image") {
+        if (params.option != "image") {					
             jQuery.ajax({
-                url: '../../image',
-                data: {segment:segment, dasReference:params.dasReference, dasSources:params.dasSources,
-                    width:params.width, option:params.option, hgrid:params.hgrid,
-                    style:params.style, vgrid: params.vgrid},
+				url: '../../main/resources/dependencies/proxy/proxy.php',
+				data: 'url=http://localhost:8080/image?style=nonOverlapping&segment=' + segment,
+				dataType: 'text',
+//                url: 'http://localhost:8080/image',
+//                data: {segment:segment, dasReference:params.dasReference, dasSources:params.dasSources,
+//                    width:params.width, option:params.option, hgrid:params.hgrid,
+//                    style:params.style, vgrid: params.vgrid},
                 success: function(response, callOptions) {
-                    //console.log(response);
+                    Biojs.console.log(response);
                     try {
                         var myPainter = new Biojs.UniProtFeaturePainter({
                             target: "uniprotFeaturePainter-div",
@@ -74,34 +77,34 @@ function uniprotFeaturePainter_jsonFeatureParser(url) {
                                         "<br/>Type: " + obj.featureTypeLabel + " - " + obj.typeCode + " - " + obj.typeCategory +
                                         "<br/>Evidence: " + obj.evidenceText + " - " + obj.evidenceCode;
                                  alert("Clicked: " + tooltip );
-                                 //console.log(obj.shapeOn);
+                                 console.log(obj.shapeOn);
                              }
                         );
                     } catch (err) {
-                        //console.log(err);
+                        Biojs.console.log(err);
                         document.getElementById('uniprotFeaturePainter-div').innerHTML = '';
                         document.getElementById('uniprotFeaturePainter-div').innerHTML = 'No image available. Did you provide a valid UniProt accession or identifier, and valid limits?';
                     }
                 },
                 error: function(response, callOptions) {
-                    //console.log(error);
+                    Biojs.console.log(error);
                     document.getElementById('uniprotFeaturePainter-div').innerHTML = '';
                     document.getElementById('uniprotFeaturePainter-div').innerHTML = 'No image available. Did you provide a valid UniProt accession or identifier, and valid limits?';
                 }
             });
         } else {
             try {
-                //alert(location.pathname);
-                //alert(location.search);
-                window.location = "../../?image" + location.search;
+                alert(location.pathname);
+                alert(location.search);
+                window.location = "http://localhost:8080/image?" + location.search;
             } catch(err) {
-                //console.log(err);
+                Biojs.console.log(err);
                 document.getElementById('uniprotFeaturePainter-div').innerHTML = '';
                 document.getElementById('uniprotFeaturePainter-div').innerHTML = 'No image available. Did you provide a valid UniProt accession or identifier, and valid limits?';
             }
         }
     } else {
-        window.location = "image";
+        window.location = "http://localhost:8080/image";
     }
 }
     </script>

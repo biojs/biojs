@@ -609,7 +609,7 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
      * Private: Initializes the component.
      */
     _init: function() {
-        //console.log(json);
+        //console.log(this.opt);
         Biojs_UniProtFeaturePainter_myself = this;
         var config = this.opt.json.configuration;
         //First create the slider, button, and holder
