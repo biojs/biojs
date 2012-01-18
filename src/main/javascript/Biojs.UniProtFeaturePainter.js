@@ -85,7 +85,9 @@ var Biojs_UniProtFeaturePainter_myself = undefined;
  * });
  *
  * jQuery.ajax({
- * 		url: 'data/uniprotFeaturesJSON.js',
+ * 		//url: 'data/uniprotFeaturesJSON.js',
+ * 	    url: '../biojs/dependencies/proxy/proxy.php',
+ * 	    data: 'url=http://localhost:8080/image?segment=a4_human%3Fstyle=nonOverlapping',
  *      dataType: 'json',
  *      success: function(response) {           	   
  *      	Biojs.console.log(response);
