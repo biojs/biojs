@@ -58,9 +58,9 @@
 
 		if ($mimeType == "")
 		{
-			if ( strpos($_SERVER['SERVER_NAME'], "xml") ) {
+			if ( strpos($_SERVER['HTTP_ACCEPT'], "xml") ) {
 				$mimeType = "application/xml";
-			} else if ( strpos($_SERVER['SERVER_NAME'], "json") ) {
+			} else if ( strpos($_SERVER['HTTP_ACCEPT'], "json") ) {
 				$mimeType = "application/json";
 			} else {
 				$mimeType = "text/plain";
