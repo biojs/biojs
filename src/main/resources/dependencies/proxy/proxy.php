@@ -29,6 +29,8 @@
 		   $query .= key($data).'='.$element.'&';
 		   next($data);
 		}
+		
+		$query = substr($query,0,strlen($query)-1);
 
 		if ($_POST['url']) {
 			 curl_setopt ($session, CURLOPT_POST, true);
