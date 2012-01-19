@@ -87,7 +87,7 @@ var Biojs_UniProtFeaturePainter_myself = undefined;
  * jQuery.ajax({
  * 		//url: 'data/uniprotFeaturesJSON.js',
  * 	    url: '../biojs/dependencies/proxy/proxy.php',
- * 	    data: 'url=http://jweb-5b.ebi.ac.uk:21280/das_uniprot_cartoon/image?segment=a4_human&style=nonOverlapping',
+ * 	    data: 'url=http://jweb-5b.ebi.ac.uk:21280/das_uniprot_cartoon/image?segment=a4_human&style=nonOverlapping&width=580',
  *      dataType: 'json',
  *      success: function(response) {           	   
  *      	Biojs.console.log(response);
