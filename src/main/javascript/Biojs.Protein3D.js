@@ -57,7 +57,7 @@
  * // no matter the source where came up. 
  * $.ajax({
  * 		url: '../biojs/dependencies/proxy/proxy.php',
- * 		data: 'url=http://www.ebi.ac.uk/pdbe-srv/view/files/3nuc.pdb',
+ * 		data: 'url=http://www.ebi.ac.uk/pdbe-srv/view/files/1wq6.pdb',
  * 		dataType: 'text',
  * 		success: function(pdbFile){
  * 			instance.setPdb(pdbFile);
@@ -77,20 +77,20 @@ Biojs.Protein3D = Biojs.extend(
 		
 		var self = this;
 		
-		self.image = '<img id="image_' + this.getId() + '" src="../biojs/images/ajax-loader-1.gif" style="display:block; margin: 0 auto;" />';
+		self.image = '<img id="image_' + self.getId() + '" src="' + self.opt.loadingStatusImage + '" style="display:block; margin: 0 auto;" />';
 		
 		self.opt.backgroundColor = (self.opt.backgroundColor)? self.opt.backgroundColor : "white";
 		
-		jmolInitialize(this.opt.jmolFolder);
+		jmolInitialize(self.opt.jmolFolder);
 		jmolSetAppletColor( self.opt.backgroundColor );
 		jmolSetDocument(0);
 		
-		Biojs.console.log("registring callback for object " + this.getId());
+		Biojs.console.log("registring callback for object " + self.getId());
 		
-		this._appletId = "jmolApplet" + this.getId();
-		var loadStructCallbackName = this._appletId+"_pdbLoadCallback";
+		self._appletId = "jmolApplet" + self.getId();
+		var loadStructCallbackName = self._appletId+"_pdbLoadCallback";
 		
-		Biojs.registerGlobal(this._appletId,this);
+		Biojs.registerGlobal(self._appletId,self);
 		Biojs.registerGlobal(loadStructCallbackName, 
 				function ( appletId, url, file, title, message, code, formerFrame, frame ) {
 					if ( Biojs.getGlobal(appletId).opt.enableControls ) {
@@ -116,24 +116,24 @@ Biojs.Protein3D = Biojs.extend(
 //			.css('vertical-align','middle')
 //			.html( self.image );
 		
-		$("div#"+this.opt.target)
+		$("div#"+self.opt.target)
 			.css('display', 'block')
 			.css("padding","0px")
-			.css("width",this.opt.width)
-			.css("height",this.opt.height)
+			.css("width",self.opt.width)
+			.css("height",self.opt.height)
 			.css("overflow","hidden")
-			.html('<div id="div'+this._appletId+'"/><div id="controlSection" />')
+			.html('<div id="div'+self._appletId+'"/><div id="controlSection" />')
 			.find('div')
 			.css('position','relative')
 			.css('float','right')
 			.hide();
 		
-		$("div#"+this.opt.target).append('<div id="loadingImage" />');
+		$("div#"+self.opt.target).append('<div id="loadingImage" />');
 		
 		$('#' + self.opt.target + ' div#loadingImage')
 			.css("padding","0px")
-			.css("width",this.opt.width)
-			.css("height",this.opt.height)
+			.css("width",self.opt.width)
+			.css("height",self.opt.height)
 			.css("overflow","hidden")
 			.css('display','table-cell')
 			.css('vertical-align','middle')
@@ -164,7 +164,8 @@ Biojs.Protein3D = Biojs.extend(
 	   positiveColor: "blue",
 	   polarColor: "yellow",
 	   backgroundColor: "white",
-	   enableControls: true
+	   enableControls: true,
+	   loadingStatusImage: '../biojs/images/ajax-loader-1.gif'
    },
    
    /**
@@ -332,7 +333,8 @@ Biojs.Protein3D = Biojs.extend(
     * 
     */
 	setPdb: function( pdb ){
-		Biojs.console.log("setPdb() starting");
+		Biojs.console.log("LOADING pdb:");
+		Biojs.console.log(pdb);
 		
 		var self = this;
 
@@ -352,7 +354,6 @@ Biojs.Protein3D = Biojs.extend(
 
 		this.hideControls();
 		this.showControls();
-		
 		
 		this._jmolAppletInitialized = true;		
 		Biojs.console.log("setPdb() ending");
@@ -746,6 +747,7 @@ Biojs.Protein3D = Biojs.extend(
 			.css("width", controlsWidth )
 			.css("height", controlsHeight)
 			.css("padding", padding)
+			.css("text-align","left")
 			.append(
 				'<b> Display: </b><br/>' +
 				'<input id="polarCheck" type="checkbox" name="polarCheck" value="polarCheck"/> Hydrophylic residues<br/>' +

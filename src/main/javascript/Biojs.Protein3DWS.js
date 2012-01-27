@@ -85,6 +85,7 @@ Biojs.Protein3DWS = Biojs.Protein3D.extend(
 			data: 'url='+self.opt.pdbUrl+'/'+pdbId+'.pdb',
 			dataType: 'text',
 			success: function (pdbContent) {
+				Biojs.console.log("DATA ARRIVED");
 				self.setPdb(pdbContent);
 			},
 			error: function(qXHR, textStatus, errorThrown){
@@ -95,6 +96,11 @@ Biojs.Protein3DWS = Biojs.Protein3D.extend(
 	
 	setPdb: function(pdb) {
 		this.base(pdb);
+	},
+	
+	
+	getPdbId: function(pdb) {
+		return opt.id;
 	}
 
 
