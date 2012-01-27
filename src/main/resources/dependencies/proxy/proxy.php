@@ -47,7 +47,7 @@
         curl_setopt($ch, CURLOPT_TIMEOUT, 50);
         curl_setopt($ch, CURLOPT_HEADER, 1);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($ch, CURLOPT_VERBOSE, 1);
+		curl_setopt($ch, CURLOPT_VERBOSE, 0);
 		
         if(strlen($proxy) != 0){
             curl_setopt($ch, CURLOPT_PROXY, "$proxy");
@@ -72,8 +72,8 @@
 		
 		// The web service returns XML. Set the Content-Type appropriately
 		header("Content-Type: ".$mimeType);
-
-        echo $response;
 		
 		curl_close($ch);
+
+        echo $response;
 ?>
