@@ -95,27 +95,27 @@ Biojs.Sequence = Biojs.extend(
 		var self = this;
 		
 		// Disable text selection
-		$("#"+self.opt.target).css({
+		jQuery("#"+self.opt.target).css({
                    '-moz-user-select':'none',
                    '-webkit-user-select':'none',
                    'user-select':'none'
         });
 		
-		self._headerDiv = $('<div></div>').appendTo("#"+self.opt.target);
+		self._headerDiv = jQuery('<div></div>').appendTo("#"+self.opt.target);
 		self._headerDiv.css('font-family','"Heveltica Neue", Arial, "sans serif"').css('font-size','14px');
 		
-		self._contentDiv = $('<div></div>').appendTo("#"+self.opt.target);
+		self._contentDiv = jQuery('<div></div>').appendTo("#"+self.opt.target);
 		self._contentDiv.css('font-family',this.opt.fontFamily).css('font-size',this.opt.fontSize);
 		
 		self._headerDiv.append('Format: ');
 
-		var comboBox = $('<select> '+
+		var comboBox = jQuery('<select> '+
 			'<option value="FASTA">FASTA</option>'+
 			'<option value="CODATA">CODATA</option>'+
 			'<option value="PRIDE">PRIDE</option>'+
 			'<option value="RAW">RAW</option></select>').appendTo(self._headerDiv);
 
-		$(comboBox).change(function(e) {
+		jQuery(comboBox).change(function(e) {
 			self.opt.format = comboBox.val();
 			self._redraw();
 		});
@@ -292,7 +292,7 @@ Biojs.Sequence = Biojs.extend(
     */
 	unHighlightAll : function () {
 		this._contentDiv.find('span.sequence.highlighted').each( function() {
-			$(this).removeClass("highlighted").css("color", this.opt.fontColor);
+			jQuery(this).removeClass("highlighted").css("color", this.opt.fontColor);
 		});
 	},
 	
@@ -314,8 +314,8 @@ Biojs.Sequence = Biojs.extend(
 		var self = this;
 		// Changes the option in the combo box
 		this._headerDiv.find('option').each(function() {
-			if($(this).val() == self.opt.format.toUpperCase()) {
-				$(this).attr('selected', 'selected');
+			if(jQuery(this).val() == self.opt.format.toUpperCase()) {
+				jQuery(this).attr('selected', 'selected');
 			}
 		});
 	},
@@ -398,9 +398,9 @@ Biojs.Sequence = Biojs.extend(
 		var spans = this._contentDiv.find('.sequence');
 		for(var i = 0; i < spans.length; i++) {
 			if(i + 1 >= start && i + 1 <= end) {
-				$(spans[i]).css("background-color", self.opt.selectionColor);
+				jQuery(spans[i]).css("background-color", self.opt.selectionColor);
 			} else {
-				$(spans[i]).css("background-color", self.opt.backgroundColor);
+				jQuery(spans[i]).css("background-color", self.opt.backgroundColor);
 			}
 		}
 	},
@@ -411,7 +411,7 @@ Biojs.Sequence = Biojs.extend(
 		var highlighted = [];
 
 		this._contentDiv.find('.sequence.highlighted').each( function(){
-			highlighted.push($(this).attr("id"));
+			highlighted.push(jQuery(this).attr("id"));
 		});
 		
 		// Reset the content
@@ -434,7 +434,7 @@ Biojs.Sequence = Biojs.extend(
 		// Restore the highlighted regions
 		for ( var i in highlighted ) {
 			this._contentDiv.find('.sequence#'+highlighted[i]).each( function(){
-				$(this).css("color", self.opt.highlightFontColor).addClass("highlighted");
+				jQuery(this).css("color", self.opt.highlightFontColor).addClass("highlighted");
 			});	
 		}
 
@@ -444,7 +444,7 @@ Biojs.Sequence = Biojs.extend(
 	_drawFasta : function() {
 		var self = this;
 		var a = this.opt.sequence.toUpperCase().split('');
-		var pre = $('<pre></pre>').appendTo(this._contentDiv);
+		var pre = jQuery('<pre></pre>').appendTo(this._contentDiv);
 
 		var i = 1;
 		var arr = [];
@@ -465,7 +465,7 @@ Biojs.Sequence = Biojs.extend(
 		
 		var self = this;
 		var a = this.opt.sequence.toUpperCase().split('');
-		var pre = $('<pre style="white-space:pre"></pre>').appendTo(this._contentDiv);
+		var pre = jQuery('<pre style="white-space:pre"></pre>').appendTo(this._contentDiv);
 
 		var i = 0;
 		var str = 'ENTRY           ' + this.opt.id + '<br/>';
@@ -518,29 +518,29 @@ Biojs.Sequence = Biojs.extend(
 			}
 			
 			if ( opt.numRight ) {
-				$(row).insertAfter('div#'+self.opt.target+' div pre span#numRight'+ (i+opt.numCols) );
+				jQuery(row).insertAfter('div#'+self.opt.target+' div pre span#numRight'+ (i+opt.numCols) );
 			} else {
-				$(row).insertAfter('div#'+self.opt.target+' div pre span#'+ (i+opt.numCols) );
+				jQuery(row).insertAfter('div#'+self.opt.target+' div pre span#'+ (i+opt.numCols) );
 			}
 		}
 		
 		// add tool tips and background' coloring effect
-		$(this._contentDiv).find('.annotation').each(function(){
-			self._addToolTip($(this), function(a) {
+		jQuery(this._contentDiv).find('.annotation').each(function(){
+			self._addToolTip(jQuery(this), function(a) {
 				var annotation = self.opt.annotations[a.attr("id")];
 				return annotation.name + "<br/>" + ((annotation.html)? annotation.html : '');
 			});
 			
-			$(this).mouseover(function(e) {
-				$('.annotation.'+$(e.target).attr("id")).each(function(){
-					$(this).css("background-color", $(this).attr("color") );
+			jQuery(this).mouseover(function(e) {
+				jQuery('.annotation.'+jQuery(e.target).attr("id")).each(function(){
+					jQuery(this).css("background-color", jQuery(this).attr("color") );
 				});
 		    }).mouseout(function() {
-		    	$('.annotation').css("background-color", "white"); 
+		    	jQuery('.annotation').css("background-color", "white"); 
 		    }).click(function(e) {
 		    	self.raiseEvent('onAnnotationClicked', {
-		    		name: self.opt.annotations[$(e.target).attr("id")].name,
-		    		pos: $(e.target).attr("pos")
+		    		name: self.opt.annotations[jQuery(e.target).attr("id")].name,
+		    		pos: jQuery(e.target).attr("pos")
 		    	});
 		    });
 			
@@ -599,7 +599,7 @@ Biojs.Sequence = Biojs.extend(
 		var a = this.opt.sequence.toLowerCase().split('');
 		var i = 0;
 		var arr = [];
-		var pre = $('<pre></pre>').appendTo(this._contentDiv);
+		var pre = jQuery('<pre></pre>').appendTo(this._contentDiv);
 
 		var opt = {
 			numCols: self.opt.columns.size
@@ -615,7 +615,7 @@ Biojs.Sequence = Biojs.extend(
 	_drawPride : function() {
 		var self = this;
 		var a = this.opt.sequence.toUpperCase().split('');
-		var pre = $('<pre></pre>').appendTo(this._contentDiv);
+		var pre = jQuery('<pre></pre>').appendTo(this._contentDiv);
 	
 		opt = {
 			numLeft: true,
@@ -700,7 +700,7 @@ Biojs.Sequence = Biojs.extend(
 		
 		str += '<br/>'	
 			
-		if ($.browser.msie) {
+		if (jQuery.browser.msie) {
 			str = "<pre>" + str + "</pre>";
 		}	
 			
@@ -733,8 +733,8 @@ Biojs.Sequence = Biojs.extend(
 		self._contentDiv.find('.sequence').each( function () {	
 			
 			// Register the starting position
-			$(this).mousedown(function() {
-				currentPos = parseInt($(this).attr('id'));
+			jQuery(this).mousedown(function() {
+				currentPos = parseInt(jQuery(this).attr('id'));
 				clickPos = currentPos;
 				self._setSelection(clickPos,currentPos);
 				isMouseDown = true;
@@ -743,7 +743,7 @@ Biojs.Sequence = Biojs.extend(
 				// Update selection
 				// Show tooltip containing the position
 				
-				currentPos = parseInt($(this).attr('id'));
+				currentPos = parseInt(jQuery(this).attr('id'));
 				
 				if(isMouseDown) {
 					if( currentPos > clickPos ) {
@@ -768,7 +768,7 @@ Biojs.Sequence = Biojs.extend(
 				});
 			});
 			
-			self._addToolTip($(this), function(e) {
+			self._addToolTip(jQuery(this), function(e) {
 				if (isMouseDown) {
 	     			return "selected: [" + self.opt.selection.startPos +", " + self.opt.selection.endPos + "]";	
 	     		} else {
@@ -780,19 +780,19 @@ Biojs.Sequence = Biojs.extend(
 	
 	_addToolTip : function ( target, msgFunction ) {
 		
-		$(target).mouseover(function(e) {
+		jQuery(target).mouseover(function(e) {
      		var tip = msgFunction( target );
 	         
 	        //Append the tooltip template and its value
-	        $(this).append('<div id="tooltip"><div class="tipHeader"></div><div class="tipBody">' + tip + '</div><div class="tipFooter"></div></div>');     
+	        jQuery(this).append('<div id="tooltip"><div class="tipHeader"></div><div class="tipBody">' + tip + '</div><div class="tipFooter"></div></div>');     
 	         
 	        //Set the X and Y axis of the tooltip
-	        $('#tooltip').css('top', e.pageY + 10 )
+	        jQuery('#tooltip').css('top', e.pageY + 10 )
 	        	.css('left', e.pageX + 20 );
 	        
 	        // Style values 
 	        // Would be nice to have it in a css file 
-	        $('#tooltip').css('position', "absolute" )
+	        jQuery('#tooltip').css('position', "absolute" )
 	        	.css('z-index', "9999" )
 	        	.css('color', "#fff" )
 	        	.css('font-size', "10px" )
@@ -800,26 +800,26 @@ Biojs.Sequence = Biojs.extend(
 	        
 	        //console.log("Tip size: "+tip.length)
 	        
-	        $('.tipHeader').css('background-color', "#000")
+	        jQuery('.tipHeader').css('background-color', "#000")
 	        	.css('height', "8px"); 
-	        //$('.tipHeader').css('background', "images/tipHeader.gif");  
+	        //jQuery('.tipHeader').css('background', "images/tipHeader.gif");  
 			
-			$('.tipBody').css('background-color', "#000")
+			jQuery('.tipBody').css('background-color', "#000")
 				.css('padding', "3px 10px 3px 10px");
 
-			$('.tipFooter').css('background-color', "#000")
+			jQuery('.tipFooter').css('background-color', "#000")
 	        	.css('height', "8px"); 
-	        //$('.tipFooter').css('background', "images/tipHeader.gif no-repeat");  
+	        //jQuery('.tipFooter').css('background', "images/tipHeader.gif no-repeat");  
 	         
 	        //Show the tooltip with faceIn effect
-	        $('#tooltip').animate({opacity: 'show'}, 500);
-	        $('#tooltip').animate({opacity: '0.8'}, 10);
+	        jQuery('#tooltip').animate({opacity: 'show'}, 500);
+	        jQuery('#tooltip').animate({opacity: '0.8'}, 10);
 	        
-	        $(this).css('cursor', "pointer");
+	        jQuery(this).css('cursor', "pointer");
 	         
 	    }).mouseout(function() {
 	        //Remove the appended tooltip template
-	        $(this).children('div#tooltip').remove();	         
+	        jQuery(this).children('div#tooltip').remove();	         
 	    });
 	},
 	

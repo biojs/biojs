@@ -36,7 +36,7 @@ Biojs.ChEMBLCompound = Biojs.extend(
 		Biojs.console.enable();
 		//constructor of Biojs.ChEMBLCompound
 		
-		$("#"+this.opt.target).css("padding","0px")
+		jQuery("#"+this.opt.target).css("padding","0px")
 			.css("width",this.opt.width)
 			.css("height",this.opt.height)
 			.css("overflow","hidden");
@@ -111,12 +111,12 @@ Biojs.ChEMBLCompound = Biojs.extend(
 		var url = self.opt.imageUrl + chEMBLId;
 		var image = '<img id="image_' + chEMBLId + '" src="'+ url +'"   />';
 		
-		$("div#"+this.opt.target).html(
+		jQuery("div#"+this.opt.target).html(
 				'<div id="div'+chEMBLId+'" style="position:relative; float:right;">'+ image +'</div>'+
 				'<div id="controlSection'+chEMBLId+'" style="position:relative; float:right;"/>'
 		);
 		
-		$('#image_' + chEMBLId ).load(function() {
+		jQuery('#image_' + chEMBLId ).load(function() {
 			self.raiseEvent('onLoadedImage', {id: chEMBLId});
 		})
 		.css('height',self.opt.height)
@@ -130,7 +130,7 @@ Biojs.ChEMBLCompound = Biojs.extend(
 		
 		Biojs.console.log('url=' + self.opt.detailsUrl + chEMBLId + '.json' );
 	
-		$.ajax({
+		jQuery.ajax({
 			url: self.opt.proxyUrl,
 			dataType: 'json',
 			data: 'url=' + self.opt.detailsUrl + chEMBLId + '.json',
@@ -153,8 +153,8 @@ Biojs.ChEMBLCompound = Biojs.extend(
 //	    var i = 0;
 //		var self = this;
 //		
-//		xmlDoc = $.parseXML( xml );
-//	    xmlResult = $(xmlDoc).find('return');
+//		xmlDoc = jQuery.parseXML( xml );
+//	    xmlResult = jQuery(xmlDoc).find('return');
 //		
 //		data.Identifier = xmlResult.find('> chEMBLId').text();
 //		data.Definition = xmlResult.find('> definition').text();
@@ -162,7 +162,7 @@ Biojs.ChEMBLCompound = Biojs.extend(
 //		data.Stars = xmlResult.find(' > entityStar').text();
 //		data.SecondaryIds = xmlResult.find(' > SecondaryChEBIIds').text();
 ////		data.Synonyms = xmlResult.find(' > Synonyms > data').map(function(){
-////		      return $(this).text();
+////		      return jQuery(this).text();
 ////	    	}).get().join(", ");
 //		
 //	    Biojs.console.log("Details decoded:");
@@ -181,7 +181,7 @@ Biojs.ChEMBLCompound = Biojs.extend(
 		var width = Math.round(self.opt.width * 0.3); 
 		var height = self.opt.height; 
 		
-		var controlSectionDiv = $("#"+self.opt.target+" > div#controlSection"+self.opt.id);
+		var controlSectionDiv = jQuery("#"+self.opt.target+" > div#controlSection"+self.opt.id);
 		
 		controlSectionDiv.append('<div id="controls" />'+
 				'<div id="controlTab">'+
@@ -262,10 +262,10 @@ Biojs.ChEMBLCompound = Biojs.extend(
 		showHideTab.find('#hideButton')
 			.click( self._toggleControls )
 			.mouseover(function(){
-				$(this).css("color","#27C0FF");
+				jQuery(this).css("color","#27C0FF");
 			})
 			.mouseout(function(){
-				$(this).css("color","#fff");
+				jQuery(this).css("color","#fff");
 			})
 			.css("color","#fff")
 			.css("display","none")
@@ -274,10 +274,10 @@ Biojs.ChEMBLCompound = Biojs.extend(
 		showHideTab.find('#showButton')
 			.click( self._toggleControls )
 			.mouseover(function(){
-				$(this).css("color","#27C0FF");
+				jQuery(this).css("color","#27C0FF");
 			})
 			.mouseout(function(){
-				$(this).css("color","#000");
+				jQuery(this).css("color","#000");
 			})
 			.css("color","#000")
 			.css("cursor","pointer");

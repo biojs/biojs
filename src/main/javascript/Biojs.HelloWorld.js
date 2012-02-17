@@ -44,7 +44,7 @@ Biojs.HelloWorld = Biojs.extend (
 	  var self = this;
 	  
 	  // Apply options values
-	  $("#"+self.opt.target).css({
+	  jQuery("#"+self.opt.target).css({
 		  'font-family': self.opt.fontFamily,
 		  'background-color': self.opt.backgroundColor,
 		  'color': self.opt.fontColor,
@@ -59,7 +59,7 @@ Biojs.HelloWorld = Biojs.extend (
 	  // Disable text selection and
 	  // Change the selection mouse pointer  
 	  // from text to hand.
-	  $("#"+self.opt.target).css({
+	  jQuery("#"+self.opt.target).css({
 		  '-moz-user-select':'none',
 		  '-webkit-user-select':'none',
 		  'user-select':'none'
@@ -71,7 +71,7 @@ Biojs.HelloWorld = Biojs.extend (
 	  for( i=0; i< text.length; i++ ) {
 		  contentHTML += '<span>' + text[i] + '</span>';
 	  }	  
-	  $( contentHTML ).appendTo( "#"+self.opt.target );  
+	  jQuery( contentHTML ).appendTo( "#"+self.opt.target );  
 
 	  // Internal method to initialize mouse events
 	  self._addSelectionTrigger();
@@ -123,7 +123,7 @@ Biojs.HelloWorld = Biojs.extend (
    */
   setSize: function(size) {
 	  if ( size != undefined ){
-		  $("#"+this.opt.target).css('font-size', size);
+		  jQuery("#"+this.opt.target).css('font-size', size);
 	  }
   },
   
@@ -147,28 +147,28 @@ Biojs.HelloWorld = Biojs.extend (
 			}
 	  };
 
-	  $( '#' + self.opt.target ).find('span')
+	  jQuery( '#' + self.opt.target ).find('span')
 	  	.mousedown(function() {
 			isMouseDown = true;
-			$('#' + self.opt.target + ' span' ).each( function() {
-				$(this).removeClass('selected')
+			jQuery('#' + self.opt.target + ' span' ).each( function() {
+				jQuery(this).removeClass('selected')
 					.css('color', self.opt.fontColor)
 					.css("background-color", self.opt.backgroundColor);
 			});
-			toggleClass( $(this) );
+			toggleClass( jQuery(this) );
 		})
 		.mouseover(function() {
 			if (isMouseDown) {
-				toggleClass( $(this) );
+				toggleClass( jQuery(this) );
 			}	
 		})
 		.mouseup(function() {
 			isMouseDown = false;
 			var textSelected = '';
 			
-			$('#' + self.opt.target + ' span.selected' )
+			jQuery('#' + self.opt.target + ' span.selected' )
 			.each(function(){
-				textSelected += $(this).text();
+				textSelected += jQuery(this).text();
 			});
 			
 			if (textSelected == 'Hello') {

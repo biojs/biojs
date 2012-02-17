@@ -55,7 +55,7 @@
  * // Example of loading a pdb file by means a HTTP request.
  * // Note that instance.setPdb(data) receives the data as argument,
  * // no matter the source where came up. 
- * $.ajax({
+ * jQuery.ajax({
  * 		url: '../biojs/dependencies/proxy/proxy.php',
  * 		data: 'url=http://www.ebi.ac.uk/pdbe-srv/view/files/1wq6.pdb',
  * 		dataType: 'text',
@@ -107,7 +107,7 @@ Biojs.Protein3D = Biojs.extend(
 		
 		jmolSetCallback("loadStructCallback", loadStructCallbackName );
 		
-//		$("#"+self.opt.target)
+//		jQuery("#"+self.opt.target)
 //			.css("padding","0px")
 //			.css("width",this.opt.width)
 //			.css("height",this.opt.height)
@@ -116,7 +116,7 @@ Biojs.Protein3D = Biojs.extend(
 //			.css('vertical-align','middle')
 //			.html( self.image );
 		
-		$("div#"+self.opt.target)
+		jQuery("div#"+self.opt.target)
 			.css('display', 'block')
 			.css("padding","0px")
 			.css("width",self.opt.width)
@@ -128,9 +128,9 @@ Biojs.Protein3D = Biojs.extend(
 			.css('float','right')
 			.hide();
 		
-		$("div#"+self.opt.target).append('<div id="loadingImage" />');
+		jQuery("div#"+self.opt.target).append('<div id="loadingImage" />');
 		
-		$('#' + self.opt.target + ' div#loadingImage')
+		jQuery('#' + self.opt.target + ' div#loadingImage')
 			.css("padding","0px")
 			.css("width",self.opt.width)
 			.css("height",self.opt.height)
@@ -140,9 +140,9 @@ Biojs.Protein3D = Biojs.extend(
 			.html( self.image );
 		
 		
-		if ($.browser.msie) {
-			$('#' + self.opt.target + ' div#loadingImage').css('display','inline');
-			$('#' + self.opt.target + ' img#image_' + this.getId()).css('vertical-align','middle');
+		if (jQuery.browser.msie) {
+			jQuery('#' + self.opt.target + ' div#loadingImage').css('display','inline');
+			jQuery('#' + self.opt.target + ' img#image_' + this.getId()).css('vertical-align','middle');
 		}
 		
 		Biojs.console.log("ending Biojs.Protein3D constructor");
@@ -291,7 +291,7 @@ Biojs.Protein3D = Biojs.extend(
 	reset: function(){
 		jmolScriptWait( this._getDisplayColor("By Chain") + this._getDisplayStyle("Cartoon") );
 		
-		var theTargetDiv = $("#"+this.opt.target);
+		var theTargetDiv = jQuery("#"+this.opt.target);
 		theTargetDiv.find("div#controlSection > div#controls > input[type='checkbox']").attr("checked",false);
 		theTargetDiv.find('#styleSelect').val("Cartoon");
 		theTargetDiv.find('#colorSelect').val("By Chain");
@@ -306,8 +306,8 @@ Biojs.Protein3D = Biojs.extend(
 	
 	showLoadingImage: function(){
 		// Show loading image
-		$('#' + this.opt.target ).find('div').hide();
-		$("#" + this.opt.target + ' div#loadingImage').show();
+		jQuery('#' + this.opt.target ).find('div').hide();
+		jQuery("#" + this.opt.target + ' div#loadingImage').show();
 	},
 	
    /**
@@ -319,7 +319,7 @@ Biojs.Protein3D = Biojs.extend(
     * @example 
     * instance.showLoadingImage();
     * 
-    * $.ajax({
+    * jQuery.ajax({
 	* 		url: '../biojs/dependencies/proxy/proxy.php',
 	* 		data: 'url=http://www.ebi.ac.uk/pdbe-srv/view/files/3u01.pdb',
 	* 		dataType: 'text',
@@ -342,15 +342,15 @@ Biojs.Protein3D = Biojs.extend(
 		scr += this._getDisplayColor("By Chain") + this._getDisplayStyle("Cartoon") + this._getDisplaySurface("None");
 		scr += this._getSelectionScript(this._selection); 
 
-		$('#' + self.opt.target ).find('div').show();
-		$("#" + self.opt.target + ' div#loadingImage').hide();
+		jQuery('#' + self.opt.target ).find('div').show();
+		jQuery("#" + self.opt.target + ' div#loadingImage').hide();
 		
 		if (this._jmolAppletInitialized) {
 			this.reset();	
 		} 
 		
 		this.jmolHTML = jmolAppletInline([this.opt.width, this.opt.height], pdb, scr, this.getId() );
-		$("div#" + self.opt.target + ' #div' + self._appletId ).html( self.jmolHTML );
+		jQuery("div#" + self.opt.target + ' #div' + self._appletId ).html( self.jmolHTML );
 
 		this.hideControls();
 		this.showControls();
@@ -459,7 +459,7 @@ Biojs.Protein3D = Biojs.extend(
 			name = "None";
 		}
 		
-		$("#"+this.opt.target).find('#surfaceSelect').val(name);
+		jQuery("#"+this.opt.target).find('#surfaceSelect').val(name);
 		jmolScriptWait(surface + this._getSelectionScript(this._selection));
 	},
 	
@@ -472,7 +472,7 @@ Biojs.Protein3D = Biojs.extend(
     * 
     */
 	hideSurface: function(){
-		var surfaceSelect = $("#"+this.opt.target).find('#surfaceSelect');
+		var surfaceSelect = jQuery("#"+this.opt.target).find('#surfaceSelect');
 		if ( surfaceSelect.val(name) != "None" ){
 			surfaceSelect.val("None");
 			jmolScriptWait( this._getDisplaySurface("None") + this._getSelectionScript(this._selection) );
@@ -491,7 +491,7 @@ Biojs.Protein3D = Biojs.extend(
     * 
     */
 	displayNegative: function (color) {
-		$("#"+this.opt.target).find('#negativeCheck').attr("checked","negativeCheck");
+		jQuery("#"+this.opt.target).find('#negativeCheck').attr("checked","negativeCheck");
 		negativeColor = (color)? color : this.opt.negativeColor;
 		this.display('acidic', negativeColor);
 		this._display.property.negative = true;
@@ -506,7 +506,7 @@ Biojs.Protein3D = Biojs.extend(
     */
 	hideNegative: function () {
 		if (this._display.property.negative) {
-			$("#"+this.opt.target).find('#negativeCheck').removeAttr("checked");
+			jQuery("#"+this.opt.target).find('#negativeCheck').removeAttr("checked");
 			this._display.property.negative = false;
 			this.undisplay('acidic');
 		}
@@ -524,7 +524,7 @@ Biojs.Protein3D = Biojs.extend(
     */
 	displayPositive: function (color) {
 		positiveColor = (color)? color : this.opt.positiveColor;
-		$("#"+this.opt.target).find('#positiveCheck').attr("checked","positiveCheck");
+		jQuery("#"+this.opt.target).find('#positiveCheck').attr("checked","positiveCheck");
 		this.display('basic', positiveColor);
 		this._display.property.positive = true;
 	},
@@ -539,7 +539,7 @@ Biojs.Protein3D = Biojs.extend(
     */
 	hidePositive: function () {
 		if (this._display.property.positive) {
-			$("#"+this.opt.target).find('#positiveCheck').removeAttr("checked");
+			jQuery("#"+this.opt.target).find('#positiveCheck').removeAttr("checked");
 			this._display.property.positive = false;
 			this.undisplay('basic');
 		}
@@ -556,7 +556,7 @@ Biojs.Protein3D = Biojs.extend(
     * 
     */	
 	displayPolar: function (color) {
-		$("#"+this.opt.target).find('#polarCheck').attr("checked","polarCheck");
+		jQuery("#"+this.opt.target).find('#polarCheck').attr("checked","polarCheck");
 		polarColor = (color)? color : this.opt.polarColor;
 		this.display('polar', polarColor);
 		this._display.property.polar = true;
@@ -572,7 +572,7 @@ Biojs.Protein3D = Biojs.extend(
     */	
 	hidePolar: function () {
 		if (this._display.property.polar) {
-			$("#"+this.opt.target).find('#polarCheck').removeAttr("checked");
+			jQuery("#"+this.opt.target).find('#polarCheck').removeAttr("checked");
 			this._display.property.polar = false;
 			this.undisplay('polar');
 		}
@@ -591,7 +591,7 @@ Biojs.Protein3D = Biojs.extend(
     // colors the structure depending on the checked check boxes
 	displayUnPolar: function ( color ) {
 		unPolarColor = (color)? color : this.opt.unpolarColor;
-		$("#"+this.opt.target).find('#unpolarCheck').attr("checked","unpolarCheck");
+		jQuery("#"+this.opt.target).find('#unpolarCheck').attr("checked","unpolarCheck");
 		this.display('hydrophobic', unPolarColor);
 		this._display.property.unpolar = true;
 	},
@@ -605,7 +605,7 @@ Biojs.Protein3D = Biojs.extend(
     */
 	hideUnPolar: function () {
 		if (this._display.property.unpolar) {
-			$("#"+this.opt.target).find('#unpolarCheck').removeAttr("checked");
+			jQuery("#"+this.opt.target).find('#unpolarCheck').removeAttr("checked");
 			this._display.property.unpolar = false;
 			this.undisplay('hydrophobic');
 		}
@@ -625,14 +625,14 @@ Biojs.Protein3D = Biojs.extend(
 	setHalosVisible: function (value) {
 		this._display.halos = value;
 		if (value) {
-			if ( ! $("#"+this.opt.target).find('#halosRadio:checked').val()  ) {
-				$("#"+this.opt.target).find('#halosRadio').attr("checked","halosRadio");
-				$("#"+this.opt.target).find('#translucentRadio').removeAttr("checked");
+			if ( ! jQuery("#"+this.opt.target).find('#halosRadio:checked').val()  ) {
+				jQuery("#"+this.opt.target).find('#halosRadio').attr("checked","halosRadio");
+				jQuery("#"+this.opt.target).find('#translucentRadio').removeAttr("checked");
 			}
 		} else {
-			if ( $("#"+this.opt.target).find('#halosRadio:checked').val() ) {
-				$("#"+this.opt.target).find('#halosRadio').removeAttr("checked");
-				$("#"+this.opt.target).find('#translucentRadio').attr("checked","translucentRadio");
+			if ( jQuery("#"+this.opt.target).find('#halosRadio:checked').val() ) {
+				jQuery("#"+this.opt.target).find('#halosRadio').removeAttr("checked");
+				jQuery("#"+this.opt.target).find('#translucentRadio').attr("checked","translucentRadio");
 			}			
 		}
 		
@@ -713,7 +713,7 @@ Biojs.Protein3D = Biojs.extend(
 		var width = Math.round(self.opt.width * 0.3); 
 		var height = self.opt.height; 
 		
-		var controlSectionDiv = $("#"+self.opt.target+" > div#controlSection");
+		var controlSectionDiv = jQuery("#"+self.opt.target+" > div#controlSection");
 		
 		controlSectionDiv.append('<div id="controls" />'+
 				'<div id="controlTab">'+
@@ -789,7 +789,7 @@ Biojs.Protein3D = Biojs.extend(
 		        '<input id="halosRadio" type="radio" name="selection" value="halosRadio" checked="halosRadio"/> Halos<br/><br/>');
 		
 		controlDiv.find('#polarCheck').click(function(){
-			if ($('#polarCheck:checked').val()) {
+			if (jQuery('#polarCheck:checked').val()) {
 				self.displayPolar();
 			} else {
 				self.hidePolar();
@@ -797,7 +797,7 @@ Biojs.Protein3D = Biojs.extend(
 		});
 		
 		controlDiv.find('#unpolarCheck').click(function(){
-			if ($('#unpolarCheck:checked').val()) {
+			if (jQuery('#unpolarCheck:checked').val()) {
 				self.displayUnPolar();
 			} else {
 				self.hideUnPolar();
@@ -805,7 +805,7 @@ Biojs.Protein3D = Biojs.extend(
 		});
 		
 		controlDiv.find('#positiveCheck').click(function(){
-			if ($('#positiveCheck:checked').val()) {
+			if (jQuery('#positiveCheck:checked').val()) {
 				self.displayPositive();
 			} else {
 				self.hidePositive();
@@ -813,7 +813,7 @@ Biojs.Protein3D = Biojs.extend(
 		});
 		
 		controlDiv.find('#negativeCheck').click(function(){
-			if ($('#negativeCheck:checked').val()) {
+			if (jQuery('#negativeCheck:checked').val()) {
 				self.displayNegative();
 			} else {
 				self.hideNegative();
@@ -821,27 +821,27 @@ Biojs.Protein3D = Biojs.extend(
 		});
 		
 		controlDiv.find('#antialiasCheck').click( function(event){
-			self.applyJmolCommand('set antialiasDisplay '+ (($('#antialiasCheck:checked').val())? "true" : "false") );
+			self.applyJmolCommand('set antialiasDisplay '+ ((jQuery('#antialiasCheck:checked').val())? "true" : "false") );
 		});
 		
 		controlDiv.find('#rotationCheck').click( function(event){
-			self.applyJmolCommand('spin '+ (($('#rotationCheck:checked').val())? "true" : "false") );
+			self.applyJmolCommand('spin '+ ((jQuery('#rotationCheck:checked').val())? "true" : "false") );
 		});
 
 		controlDiv.find('#backgroundCheck').click( function(event){
-			self.applyJmolCommand('background '+ (($('#backgroundCheck:checked').val())? "black" : self.opt.backgroundColor) );
+			self.applyJmolCommand('background '+ ((jQuery('#backgroundCheck:checked').val())? "black" : self.opt.backgroundColor) );
 		});
 		
 		controlDiv.find('#styleSelect').change( function(){
-			self.applyJmolCommand( self._getDisplayStyle( $(this).val() ) + self._getSelectionScript(self._selection) );
+			self.applyJmolCommand( self._getDisplayStyle( jQuery(this).val() ) + self._getSelectionScript(self._selection) );
 		});
 		
 		controlDiv.find('#colorSelect').change( function(){
-			self.applyJmolCommand( self._getDisplayColor( $(this).val() ) + self._getSelectionScript(self._selection) );
+			self.applyJmolCommand( self._getDisplayColor( jQuery(this).val() ) + self._getSelectionScript(self._selection) );
 		});
 		
 		controlDiv.find('#surfaceSelect').change( function(){
-			self.applyJmolCommand( self._getDisplaySurface( $(this).val() ) + self._getSelectionScript(self._selection) );
+			self.applyJmolCommand( self._getDisplaySurface( jQuery(this).val() ) + self._getSelectionScript(self._selection) );
 		});
 		
 		
@@ -850,7 +850,7 @@ Biojs.Protein3D = Biojs.extend(
 //		});
 	
 		controlDiv.find('input[name="selection"]').change(function(){
-			var showHalos = ( $('#halosRadio:checked').val() )? true: false;
+			var showHalos = ( jQuery('#halosRadio:checked').val() )? true: false;
 	    	self.setHalosVisible(showHalos);
 	    });
 		
@@ -879,14 +879,14 @@ Biojs.Protein3D = Biojs.extend(
 			if (self._controlsVisible) {
 				var appletWidth = self.opt.width - tabWidth;
 				jmolResizeApplet([appletWidth, self.opt.height], self.getId());
-				$('#div'+self._appletId).css("width", appletWidth);
+				jQuery('#div'+self._appletId).css("width", appletWidth);
 				controlDiv.hide();
 				showHideTab.css('background-color', self.opt.backgroundColor);
 				self._controlsVisible = false;
 			} else {
 				var appletWidth = self.opt.width - width;
 				jmolResizeApplet([appletWidth, self.opt.height], self.getId());
-				$('#div'+self._appletId).css("width", appletWidth);
+				jQuery('#div'+self._appletId).css("width", appletWidth);
 				controlDiv.show();
 				showHideTab.css('background-color', "#000");
 				self._controlsVisible = true;
@@ -898,10 +898,10 @@ Biojs.Protein3D = Biojs.extend(
 		showHideTab.find('#hideButton')
 			.click( self._toggleControls )
 			.mouseover(function(){
-				$(this).css("color","#27C0FF");
+				jQuery(this).css("color","#27C0FF");
 			})
 			.mouseout(function(){
-				$(this).css("color","#fff");
+				jQuery(this).css("color","#fff");
 			})
 			.css("color","#fff")
 			.css("display","none")
@@ -910,10 +910,10 @@ Biojs.Protein3D = Biojs.extend(
 		showHideTab.find('#showButton')
 			.click( self._toggleControls )
 			.mouseover(function(){
-				$(this).css("color","#27C0FF");
+				jQuery(this).css("color","#27C0FF");
 			})
 			.mouseout(function(){
-				$(this).css("color","#000");
+				jQuery(this).css("color","#000");
 			})
 			.css("color","#000")
 			.css("cursor","pointer");
@@ -924,7 +924,7 @@ Biojs.Protein3D = Biojs.extend(
 	}, 
 	
 	_addControl: function(html){
-		$('#' + this.opt.target + ' div#controls').append( html );
+		jQuery('#' + this.opt.target + ' div#controls').append( html );
 	},
 	
 	_getDisplayStyle: function ( text ) {

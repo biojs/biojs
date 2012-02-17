@@ -80,7 +80,7 @@ Biojs.Protein3DWS = Biojs.Protein3D.extend(
 		self.showLoadingImage();
 		self.opt.id = pdbId;
 		
-		$.ajax({
+		jQuery.ajax({
 			url: self.opt.proxyUrl,
 			data: 'url='+self.opt.pdbUrl+'/'+pdbId+'.pdb',
 			dataType: 'text',
