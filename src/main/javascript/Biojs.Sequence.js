@@ -770,9 +770,9 @@ Biojs.Sequence = Biojs.extend(
 			
 			self._addToolTip(jQuery(this), function(e) {
 				if (isMouseDown) {
-	     			return "selected: [" + self.opt.selection.startPos +", " + self.opt.selection.endPos + "]";	
+	     			return "[" + self.opt.selection.startPos +", " + self.opt.selection.endPos + "]";
 	     		} else {
-	     			return "position: " + currentPos;
+	     			return currentPos;
 	     		}
 			});
 		});
