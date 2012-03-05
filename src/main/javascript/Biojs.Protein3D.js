@@ -883,6 +883,8 @@ Biojs.Protein3D = Biojs.extend(
 				controlDiv.hide();
 				showHideTab.css('background-color', self.opt.backgroundColor);
 				self._controlsVisible = false;
+                jQuery('#hideButton').toggle(false);
+                jQuery('#showButton').toggle(true);
 			} else {
 				var appletWidth = self.opt.width - width;
 				jmolResizeApplet([appletWidth, self.opt.height], self.getId());
@@ -890,6 +892,8 @@ Biojs.Protein3D = Biojs.extend(
 				controlDiv.show();
 				showHideTab.css('background-color', "#000");
 				self._controlsVisible = true;
+                jQuery('#hideButton').toggle(true);
+                jQuery('#showButton').toggle(false);
 			}
 		}
 		
