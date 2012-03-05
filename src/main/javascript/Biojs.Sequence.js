@@ -795,7 +795,7 @@ Biojs.Sequence = Biojs.extend(
 	        jQuery('#tooltip').css('position', "absolute" )
 	        	.css('z-index', "9999" )
 	        	.css('color', "#fff" )
-	        	.css('font-size', "10px" )
+	        	.css('font-size', "12px" )
 	        	.css('width', "auto");
 	        
 	        //console.log("Tip size: "+tip.length)
@@ -813,7 +813,7 @@ Biojs.Sequence = Biojs.extend(
 	         
 	        //Show the tooltip with faceIn effect
 	        jQuery('#tooltip').animate({opacity: 'show'}, 500);
-	        jQuery('#tooltip').animate({opacity: '0.8'}, 10);
+	        jQuery('#tooltip').animate({opacity: '0.85'}, 10);
 	        
 	        jQuery(this).css('cursor', "pointer");
 	         
