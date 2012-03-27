@@ -1,6 +1,5 @@
 /** 
- * Table to show binary molecular interactions 
- * to put it on the generated documentation.  
+ * Table.  
  * 
  * @class
  * @extends Biojs
@@ -117,17 +116,22 @@ Biojs.Table = Biojs.extend (
   constructor: function (options) {
 	  var self = this; 
 	  
-	  Biojs.console.enable();
+	  //Biojs.console.enable();
 	  
+	  // TODO: validate mandatory values
+	  //if ( Biojs.Utils.isEmpty(columns) )
+
 	  self._tableId = 'biojs_Table_'+self.getId();
 	  self._tableSelector = '#'+self._tableId;
 	  self._topControls = $('<div></div>').appendTo("#"+self.opt.target);
 	  self._body = $('<div></div>').appendTo("#"+self.opt.target);
 	  self._table = $('<table id="'+ self._tableId +'" cellpadding="0" cellspacing="0" border="0" class="display"></table>').appendTo(self._body);
-	  self._buildTable(options.dataSet);
+	  self._columnsOffset = (this.opt.rowSelection)? 1 : 0;
+	  self._buildTable();
 	  self._addEvents();
 	  
 	  Biojs.console.log("Biojs.Table constructor has finished");
+	  //Biojs.console.log(self._table);
   },
 
   /**
@@ -139,7 +143,7 @@ Biojs.Table = Biojs.extend (
      hideColumns: [],
      columns: [],
      dataSet: [],
-     paginate: false,
+     paginate: true,
      pageLength: 10,
      width: 597,
      height: 400,
@@ -206,6 +210,28 @@ Biojs.Table = Biojs.extend (
 	 "onDataArrived"
   ],
   
+  /**
+   * Shows the columns indicated by the indexes array.
+   * @param {int[]} columns Column indexes to be showed.
+   * 
+   * @example 
+   * myTable.toggleColumns([0,3],true);
+   * 
+   */
+  toggleColumns: function (columns, flag) {
+	  Biojs.console.log("Toggle columns to :"+ flag );
+	  Biojs.console.log(columns);
+
+	  var checkbox = jQuery('input[name="multiselect_' + this._tableId + '_columns"]');
+	  
+	  for ( i=0; i < columns.length; i++ ) {
+		  toToggle = jQuery(checkbox[ columns[i] ]);
+		  if ( toToggle.attr("checked") != flag ) {
+			  toToggle.click();
+		  }
+		  this._table.fnSetColumnVis( columns[i] + this._columnsOffset, flag );
+	  }
+  },
   
   /**
    * Shows the columns indicated by the indexes array.
@@ -216,12 +242,10 @@ Biojs.Table = Biojs.extend (
    * 
    */
   showColumns: function(columns){
-	  var offset = (this.opt.rowSelection)? 1 : 0;
-	  for (var i = 0; i < columns.length; i++ ) {
-		  this._table.fnSetColumnVis(columns[i]+offset, true);
-		  jQuery('#ui-multiselect-'+this._tableId+'_columns-option-'+columns[i]+offset)
-		  	.attr("checked","checked");
-	  }
+	  Biojs.console.log("Showing columns:");
+	  Biojs.console.log(columns);
+	  
+	  this.toggleColumns(columns,true);
   },
   
   /**
@@ -232,13 +256,11 @@ Biojs.Table = Biojs.extend (
    * myTable.hideColumns([0,3]);
    * 
    */
-  hideColumns: function(columnsToHide){
-	  var offset = (this.opt.rowSelection)? 1 : 0;
-	  for (var i = 0 ; i < columnsToHide.length; i++ ) {
-		  this._table.fnSetColumnVis(columnsToHide[i]+offset, false);
-		  jQuery('#ui-multiselect-'+this._tableId+'_columns-option-'+columnsToHide[i]+offset)
-		  	.attr("checked","");
-	  }
+  hideColumns: function(columns){
+	  Biojs.console.log("Hiding columns:");
+	  Biojs.console.log(columns);
+
+	  this.toggleColumns(columns,false);
   },
   
   /**
@@ -251,8 +273,7 @@ Biojs.Table = Biojs.extend (
    * 
    */
   orderBy: function (columnIndex, direction) {
-	  var offset = (this.opt.rowSelection)? 1 : 0;
-	  this._table.fnSort( [ [columnIndex+offset, direction] ] );
+	  this._table.fnSort( [ [columnIndex + this._columnsOffset, direction] ] );
   },
   
   /**
@@ -284,13 +305,17 @@ Biojs.Table = Biojs.extend (
    * myTable.setData({});
    * 
    */
-  _buildTable: function(dataSet) {
+  _buildTable: function() {
 	  var self = this;
 	  var settings = {};
 	  
+	  if ( typeof (self._table.fnDestroy) == "function"  ) {
+		  self._table.fnDestroy();
+	  }
+  
 	  // Row selection active 
 	  if (self.opt.rowSelection) {
-		 self._addSelectionColumn(self.opt.columns, dataSet);
+		 self._addCheckboxesColumn(self.opt.columns, self.opt.dataSet);
 		 settings.aoColumnDefs = [ { "bSortable": false, "aTargets": [ 0 ] } ];
 	  }
 	  
@@ -304,7 +329,7 @@ Biojs.Table = Biojs.extend (
 		  settings.aaSorting = self.opt.orderBy;
 	  }
 	  
-	  settings.aaData = dataSet;
+	  settings.aaData = self.opt.dataSet;
 	  settings.aoColumns = self._getColumns(self.opt.columns);
 	  
 	  if ( !this.opt.paginate ) {
@@ -314,7 +339,7 @@ Biojs.Table = Biojs.extend (
 		  settings.sPaginationType = "full_numbers"; 
 		  settings.iDisplayLength = this.opt.pageLength;
 	  }
-	  
+	  	  
 	  settings.oLanguage = {
 	      "oPaginate": {
 	        "sPrevious": "<",
@@ -330,11 +355,11 @@ Biojs.Table = Biojs.extend (
 	  // Uses the DataTables plugin
 	  self._table.dataTable(settings);
 	  jQuery(self._tableSelector+'_length').remove();
+	  
 	  self._setColumnSelector(self.opt.columns);
-	  self.hideColumns(self.opt.hideColumns);
   },
   
-  _addSelectionColumn: function(columns, dataSet) {
+  _addCheckboxesColumn: function(columns, dataSet) {
 	  var self = this;
 	  
 	  column = { name: '<input type="checkbox" />' };
@@ -347,24 +372,23 @@ Biojs.Table = Biojs.extend (
   
   _setColumnSelector: function(columns){
 	  var self = this;
-	  var select = '<select id="' + self._tableId + '_columns" name="columns" multiselect="multiselect">';
-		 
-	  for ( j = (self.opt.rowSelection)? 1 : 0 ; j< columns.length; j++) {
-		  columnName = (typeof columns[j] == "string")? columns[j]: columns[j].name;
-		  select += '<option value="'+j+'" selected="selected">' + columnName + '</option>'; 
+	  
+	  var select = jQuery('<select id="' + self._tableId + '_columns" name="columns" multiselect="multiselect" />');
+	  
+	  // 
+	  for ( i = this._columnsOffset ; i< columns.length; i++) {
+		  columnName = (typeof columns[i] == "string")? columns[i]: columns[i].name;
+		  select.append('<option value="' + i + '">' + columnName + '</option>'); 
 	  }
 	  
-	  select += '</select>';
-	  
-	  jQuery(select).insertBefore(self._tableSelector+'_filter');
+	  select.insertBefore(self._tableSelector+'_filter');
 
 	  // Uses the MultiSelect plugin as column selector
-	  jQuery(self._tableSelector+'_columns')
-	  	.multiselect({ 
-	  			header: false,
-	  			click: function(event, ui) {
-	  				self._table.fnSetColumnVis(ui.value, ui.checked);
-	  			}
+	  self._columnSelector = select.multiselect({ 
+  			header: false,
+  			click: function(event, ui) {
+  				self._table.fnSetColumnVis(ui.value, ui.checked);
+  			}
 	  	});
 	  
 	  // Changes the icon for the column selector
@@ -374,13 +398,10 @@ Biojs.Table = Biojs.extend (
 	  	.addClass('dataTables_settings')
 	  	.attr("title", "Show/hide columns");
 	  
-	  // check columns
-	  for(var i=0; i< columns.length; i++) {
-		  jQuery('#ui-multiselect-'+self._tableId+'_columns-option-'+i)
-		  	.attr("checked",true);
-	  }
+	  self._columnSelector.multiselect('checkAll');
+	  
+	  this.hideColumns(this.opt.hideColumns);
   },
-  
   
   
   /**
@@ -391,7 +412,10 @@ Biojs.Table = Biojs.extend (
    * myTable.addDataRow([ 1, "col", "Colombia", 46420000, "March 12, 2012", "0.0066" ]);
    *  
    */
-  addDataRow: function(row){
+  addDataRow: function(row) {
+	  if (this.opt.rowSelection) {
+		  row.unshift('<input type="checkbox" id="" />');
+	  }
 	  this._table.fnAddData(row); 
   },
   
