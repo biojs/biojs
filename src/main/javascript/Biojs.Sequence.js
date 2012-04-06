@@ -28,7 +28,9 @@
  *    The display format for the sequence representation.
  *    
  * @option {Object[]} [highlights] 
- * 	  For highlighting multiple regions. Syntax: [{ start: &lt;startVal1&gt;, end: &lt;endVal1&gt;}, ...,  { start: &lt;startValN&gt;, end: &lt;endValN&gt;}]
+ * 	  For highlighting multiple regions. 
+ *    Syntax: [{ start: &lt;startVal1&gt;, end: &lt;endVal1&gt;, color: &lt;HTMLColor1&gt;, background: &lt;HTMLColor1&gt;}, ...,  { start: &lt;startValN&gt;, end: &lt;endValN&gt;, color: &lt;HTMLColorN&gt;}, background: &lt;HTMLColorN&gt;].
+ *    Color and background are optional. 
  * 
  * @option {Object} [columns={size:40,spacedEach:10}] 
  * 	  Options for displaying the columns. Syntax: { size: &lt;numCols&gt;, spacedEach: &lt;numCols&gt;}
@@ -44,7 +46,7 @@
  *              { name: &lt;name&gt;, 
  *                html: &lt;message&gt;, 
  *                color: &lt;color_code&gt;, 
- *                regions: [{ start: &lt;startVal1&gt;, end: &lt;endVal1&gt; color: &lt;color_code&gt;}, ...,{ start: &lt;startValN&gt;, end: &lt;endValN&gt;, color: &lt;color_code&gt;}] 
+ *                regions: [{ start: &lt;startVal1&gt;, end: &lt;endVal1&gt; color: &lt;HTMLColor&gt;}, ...,{ start: &lt;startValN&gt;, end: &lt;endValN&gt;, color: &lt;HTMLColor&gt;}] 
  *              }, 
  *              
  *              // ...
@@ -83,7 +85,8 @@
  *            {start: 285, end: 292},
  *            {start: 293, end: 314, color: "#2E4988"}]
  *        }
- *      ]
+ *      ],
+ *      highlights : [{start:30, end:42, color:"white", background:"green" },{ start:139, end:140 }, { start:631, end:633, color:"white", background:"blue" }]
  * });	
  * 
  */
@@ -98,7 +101,8 @@ Biojs.Sequence = Biojs.extend(
 		jQuery("#"+self.opt.target).css({
                    '-moz-user-select':'none',
                    '-webkit-user-select':'none',
-                   'user-select':'none'
+                   'user-select':'none',
+                   'overflow': 'auto'
         });
 		
 		self._headerDiv = jQuery('<div></div>').appendTo("#"+self.opt.target);
@@ -109,24 +113,23 @@ Biojs.Sequence = Biojs.extend(
 		
 		self._headerDiv.append('Format: ');
 
-		var comboBox = jQuery('<select> '+
-			'<option value="FASTA">FASTA</option>'+
-			'<option value="CODATA">CODATA</option>'+
-			'<option value="PRIDE">PRIDE</option>'+
-			'<option value="RAW">RAW</option></select>').appendTo(self._headerDiv);
-
-		jQuery(comboBox).change(function(e) {
-			self.opt.format = comboBox.val();
-			self._redraw();
-		});
 		
-		for (var i in this.opt.highlights){
-			this.highlight(this.opt.highlights[i].start, this.opt.highlights[i].end);
+		self._buildFormatSelector();
+		self._redraw();
+		
+		// Initialize highlighting 
+		self._highlights = [];
+		self._highlightsCount = 0;
+		for ( var i=0; i < options.highlights.length; i++ ){
+			self.highlight(
+					options.highlights[i].start, 
+					options.highlights[i].end,
+					options.highlights[i].color,
+					options.highlights[i].background
+			);
 		}
 		
-		self._redraw();
 	},
-	
 	
 	/**
 	 * Default values for the options
@@ -138,13 +141,14 @@ Biojs.Sequence = Biojs.extend(
 		id : "",
 		target : "",
 		format : "FASTA",
-		selection: { startPos: 0, endPos: 0 },
+		selection: { start: 0, end: 0 },
 		columns: { size: 35, spacedEach: 10 },
 		highlights : [],
 		annotations: [],
 		
 		// Styles 
 		selectionColor : 'Yellow',
+		selectionFontColor : 'black',
 		highlightFontColor : 'red',
 		highlightBackgroundColor : 'white',
 		fontFamily: '"Andale mono", courier, monospace',
@@ -239,7 +243,7 @@ Biojs.Sequence = Biojs.extend(
 
 		}
 
-		if(start != this.opt.selection.startPos || end != this.opt.selection.endPos) {
+		if(start != this.opt.selection.start || end != this.opt.selection.end) {
 			this._setSelection(start, end);
 			this.raiseEvent('onSelectionChanged', {
 				start : start,
@@ -248,23 +252,108 @@ Biojs.Sequence = Biojs.extend(
 		}
 	},
 	
+	_buildFormatSelector: function () {
+		var self = this;
+		
+		this._formatSelector = jQuery('<select> '+
+				'<option value="FASTA">FASTA</option>'+
+				'<option value="CODATA">CODATA</option>'+
+				'<option value="PRIDE">PRIDE</option>'+
+				'<option value="RAW">RAW</option></select>').appendTo(self._headerDiv);
+
+		this._formatSelector.change(function(e) {
+			self.opt.format = jQuery(this).val();
+			self._redraw();
+		});
+		
+		self._formatSelector.val(self.opt.format);		
+	},
+	
 	/**
     * Highlights a region using the font color defined in {Biojs.Protein3D#highlightFontColor} by default is red.
     *
     * @example
     * // highlight the characters within the position 100 to 150, included.
-    * mySequence.highlight(100, 150);
+    * mySequence.highlight(100, 150, "white", "red" );
     * 
     * @param {int} start The starting character of the highlighting.
-    * @param {int} end The ending character of the highlighting
+    * @param {int} end The ending character of the highlighting.
+    * @param {string} [color] HTML color code.
+    * 
+    * @return {int} representing the id of the highlight on the internal array. Returns -1 on failure  
     */
-	highlight : function (start, end) {
+	highlight : function (start, end, color, background) {
+		var id = -1;
+		
 		if ( start <= end ) {
-			for ( var i=start; i <= end; i++ ){
-				this._contentDiv.find('.sequence#'+i)
-					.css("color", this.opt.highlightFontColor)
-					.addClass("highlighted");
+			color = ("string" == typeof color)? color : this.opt.highlightFontColor;
+			background = ("string" == typeof background)? background : this.opt.highlightBackgroundColor;
+			id = this._highlightsCount++;
+			h = { "start": start, "end": end, "color": color, "background": background, "id": id };
+			this._highlights.push(h);
+			this._applyHighlight(h);
+			this._restoreSelection(start,end);
+		}
+		
+		return id;
+	},
+	
+	_applyHighlight: function ( highlight ) {		
+		var seq = this._contentDiv.find('.sequence');
+		for ( var i = highlight.start - 1; i < highlight.end; i++ ){
+			jQuery(seq[i])
+				.css({ 
+					"color": highlight.color,
+					"background-color": highlight.background})
+				.addClass("highlighted");
+		}
+	},
+	
+	_applyHighlights: function ( highlights ) {
+		for ( var i in highlights ) {
+			this._applyHighlight(highlights[i]);
+		}
+	},
+	
+	_restoreHighlights: function ( start, end ) {
+		var h = this._highlights;
+		
+		// paint it with default blank settings
+		this._applyHighlight({
+			"start": start, 
+			"end": end, 
+			"color": this.opt.fontColor, 
+			"background": this.opt.backgroundColor 
+		});
+		// restore highlights in that region
+		for ( var i in h ) {
+			// interval intersects with highlight i ?
+			if ( !( h[i].start > end || h[i].end < start ) ) {
+				a = ( h[i].start < start ) ? start : h[i].start;
+				b = ( h[i].end > end ) ? end : h[i].end;
+				this._applyHighlight({
+					"start": a, 
+					"end": b, 
+					"color": h[i].color, 
+					"background": h[i].background 
+				});
 			}
+		}
+	},
+	
+	_restoreSelection: function ( start, end ) {
+		var sel = this.opt.selection;
+		// interval intersects with current selection ?
+		// restore selection
+		if ( !( start > sel.end || end < sel.start ) ) {
+			a = ( start < sel.start ) ? sel.start : start;
+			b = ( end > sel.end ) ? sel.end : end;
+			this._applyHighlight({
+				"start": a, 
+				"end": b, 
+				"color": this.opt.selectionFontColor, 
+				"background": this.opt.selectionColor
+			});
 		}
 	},
 	
@@ -273,16 +362,23 @@ Biojs.Sequence = Biojs.extend(
     *
     * @example
     * // Clear the highlighted characters within the position 100 to 150, included.
-    * mySequence.unHighlight(100, 150);
+    * mySequence.unHighlight(2);
     * 
-    * @param {int} start The starting character.
-    * @param {int} end The ending character.
+    * @param {int} id The id of the highlight on the internal array. This value is returned by method highlight.
     */
-	unHighlight : function (start, end) {	
-		for( var i=start; i <= end; i++ ) {
-			this._contentDiv.find('span.sequence.highlighted#'+i)
-				.removeClass("highlighted")
-				.css("color", this.opt.fontColor);
+	unHighlight : function (id) {	
+		var h = this._highlights;
+		for ( i in h ) {
+			if ( h[i].id == id ) {
+				start = h[i].start;
+				end = h[i].end;
+				h.splice(i,1);
+				
+				this._restoreHighlights(start,end);
+				this._restoreSelection(start,end);
+				
+				break;
+			}
 		}
 	},
 	
@@ -294,6 +390,7 @@ Biojs.Sequence = Biojs.extend(
 		this._contentDiv.find('span.sequence.highlighted').each( function() {
 			jQuery(this).removeClass("highlighted").css("color", this.opt.fontColor);
 		});
+		this._highlights = [];
 	},
 	
 	/**
@@ -390,29 +487,50 @@ Biojs.Sequence = Biojs.extend(
 	},
 	
 	_setSelection : function(start, end) {
-		var self = this;
 		
-		self.opt.selection.startPos = start;
-		self.opt.selection.endPos = end;
-
-		var spans = this._contentDiv.find('.sequence');
-		for(var i = 0; i < spans.length; i++) {
-			if(i + 1 >= start && i + 1 <= end) {
-				jQuery(spans[i]).css("background-color", self.opt.selectionColor);
+		var current = this.opt.selection;
+		var change = {};
+		
+		// Which is the change on selection?
+		if ( current.start == start ) {
+			// forward?
+			if ( current.end < end ) {
+				change.start = current.end;
+				change.end = end;
 			} else {
-				jQuery(spans[i]).css("background-color", self.opt.backgroundColor);
+				this._restoreHighlights(end, current.end);
 			}
+		} else if ( current.end == end ) {
+			// forward?
+			if ( current.start < start ) {
+				this._restoreHighlights(current.start, start);
+			} else {
+				change.start = start;
+				change.end = current.start;
+			}
+		} else {
+			this._restoreHighlights(current.start, current.end);
+			change.start = start;
+			change.end = end;
 		}
+
+		current.start = start;
+		current.end = end;
+
+		if ( change.start != undefined ) {
+			this._applyHighlight({
+				"start": change.start, 
+				"end": change.end, 
+				"color": this.opt.selectionFontColor, 
+				"background": this.opt.selectionColor 
+			});
+		}
+		
 	},
 	
 	_redraw : function() {
 		var i = 0;	
 		var self = this;
-		var highlighted = [];
-
-		this._contentDiv.find('.sequence.highlighted').each( function(){
-			highlighted.push(jQuery(this).attr("id"));
-		});
 		
 		// Reset the content
 		this._contentDiv.text('');
@@ -429,15 +547,10 @@ Biojs.Sequence = Biojs.extend(
 			this.opt.format = 'PRIDE';
 			this._drawPride();
 		}
-		this._setSelection(this.opt.selection.startPos, this.opt.selection.endPos);
 		
 		// Restore the highlighted regions
-		for ( var i in highlighted ) {
-			this._contentDiv.find('.sequence#'+highlighted[i]).each( function(){
-				jQuery(this).css("color", self.opt.highlightFontColor).addClass("highlighted");
-			});	
-		}
-
+		this._applyHighlights(this._highlights);
+		this._setSelection(this.opt.selection.start, this.opt.selection.end);
 		this._addSpanEvents();
 	},
 	
@@ -540,7 +653,7 @@ Biojs.Sequence = Biojs.extend(
 		    }).click(function(e) {
 		    	self.raiseEvent('onAnnotationClicked', {
 		    		name: self.opt.annotations[jQuery(e.target).attr("id")].name,
-		    		pos: jQuery(e.target).attr("pos")
+		    		pos: parseInt(jQuery(e.target).attr("pos"))
 		    	});
 		    });
 			
@@ -554,11 +667,11 @@ Biojs.Sequence = Biojs.extend(
     	var styleEnd = 'border-bottom:1px solid; border-right:1px solid; border-color:';
     	
     	var row = [];
-    	var endPos = (currentPos + opt.numCols);
+    	var end = (currentPos + opt.numCols);
     	var spaceBetweenChars = (opt.spaceBetweenChars)? ' ' : '';    	
     	var defaultColor = annotation.color;
     	var id = annotation.id;
-    	for ( var pos=currentPos; pos < endPos ; pos++ ) {
+    	for ( var pos=currentPos; pos < end ; pos++ ) {
 			// regions
 			for ( var r in annotation.regions ) {
 				region = annotation.regions[r];
@@ -707,7 +820,6 @@ Biojs.Sequence = Biojs.extend(
 		return str;
 	},
 	
-	
 	_formatIndex : function( number, size, fillingChar, alignLeft) {
 		var str = number.toString();
 		var filling = '';
@@ -754,8 +866,8 @@ Biojs.Sequence = Biojs.extend(
 					
 					// Selection is happening, raise an event
 					self.raiseEvent('onSelectionChange', {
-						start : self.opt.selection.startPos,
-						end : self.opt.selection.endPos
+						start : self.opt.selection.start,
+						end : self.opt.selection.end
 					});
 				} 
 				
@@ -763,14 +875,14 @@ Biojs.Sequence = Biojs.extend(
 				isMouseDown = false;
 				// Selection is done, raise an event
 				self.raiseEvent('onSelectionChanged', {
-					start : self.opt.selection.startPos,
-					end : self.opt.selection.endPos
+					start : self.opt.selection.start,
+					end : self.opt.selection.end
 				});
 			});
 			
 			self._addToolTip(jQuery(this), function(e) {
 				if (isMouseDown) {
-	     			return "[" + self.opt.selection.startPos +", " + self.opt.selection.endPos + "]";
+	     			return "[" + self.opt.selection.start +", " + self.opt.selection.end + "]";
 	     		} else {
 	     			return currentPos;
 	     		}
@@ -869,8 +981,6 @@ Biojs.Sequence = Biojs.extend(
 		this.opt.annotations = a;
 		this._redraw();
 	}
-	
-	
 	
 });
 
