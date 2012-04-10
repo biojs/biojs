@@ -32,17 +32,17 @@
  *    <pre class="brush: js" title="Syntax:"> 
  *    [
  *    	// Highlight aminoacids from 'start' to 'end' of the current strand using the specified 'color' (optional) and 'background' (optional).
- *    	{ start: &lt;startVal1&gt;, end: &lt;endVal1&gt;[, color: &lt;HTMLColor&gt;[, background: &lt;HTMLColor&gt;]]}, 
+ *    	{ start: &lt;startVal1&gt;, end: &lt;endVal1&gt; [, id:&lt;idVal1&gt;] [, color: &lt;HTMLColor&gt;] [, background: &lt;HTMLColor&gt;]}, 
  *    	//
  *    	// Any others highlights
  *    	...,  
  *    	// 
- *    	{ start: &lt;startValN&gt;, end: &lt;endValN&gt;[, color: &lt;HTMLColor&gt;}[, background: &lt;HTMLColor&gt;]]
+ *    	{ start: &lt;startValN&gt;, end: &lt;endValN&gt; [, id:&lt;idValN&gt;] [, color: &lt;HTMLColor&gt;] [, background: &lt;HTMLColor&gt;]}
  *    ]</pre>
  * 
  * <pre class="brush: js" title="Example:"> 
  * highlights : [
- * 		{ start:30, end:42, color:"white", background:"green" },
+ * 		{ start:30, end:42, color:"white", background:"green", id:"spin1" },
  *		{ start:139, end:140 }, 
  *		{ start:631, end:633, color:"white", background:"blue" }
  *	]
@@ -103,7 +103,7 @@
  *        }
  *      ],
  *      highlights : [
- *      	{ start:30, end:42, color:"white", background:"green" },
+ *      	{ start:30, end:42, color:"white", background:"green", id:"spin1" },
  *      	{ start:139, end:140 }, 
  *      	{ start:631, end:633, color:"white", background:"blue" }
  *      ]
@@ -132,23 +132,15 @@ Biojs.Sequence = Biojs.extend(
 		self._contentDiv.css('font-family',this.opt.fontFamily).css('font-size',this.opt.fontSize);
 		
 		self._headerDiv.append('Format: ');
-
+		
+		// Initialize highlighting 
+		self._highlights = options.highlights;
+		
+		// Initialize annotations
+		self._annotations = options.annotations;
 		
 		self._buildFormatSelector();
 		self._redraw();
-		
-		// Initialize highlighting 
-		self._highlights = [];
-		self._highlightsCount = 0;
-		for ( var i=0; i < options.highlights.length; i++ ){
-			self.highlight(
-					options.highlights[i].start, 
-					options.highlights[i].end,
-					options.highlights[i].color,
-					options.highlights[i].background
-			);
-		}
-		
 	},
 	
 	/**
@@ -261,7 +253,7 @@ Biojs.Sequence = Biojs.extend(
 		this._highlightsCount = 0;
 		this.opt.selection = { start: 0, end: 0 };
 		//highlights : [],
-		this.opt.annotations = [];
+		this._annotations = [];
 		this._redraw();
     },
 	
@@ -313,9 +305,7 @@ Biojs.Sequence = Biojs.extend(
 	/**
     * Highlights a region using the font color defined in {Biojs.Protein3D#highlightFontColor} by default is red.
     *
-    * @example
-    * // highlight the characters within the position 100 to 150, included.
-    * mySequence.highlight(100, 150, "white", "red" );
+    * @deprecated use addHighlight instead.
     * 
     * @param {int} start The starting character of the highlighting.
     * @param {int} end The ending character of the highlighting.
@@ -323,14 +313,33 @@ Biojs.Sequence = Biojs.extend(
     * 
     * @return {int} representing the id of the highlight on the internal array. Returns -1 on failure  
     */
-	highlight : function (start, end, color, background) {
+	highlight : function (start, end, color, background, id ) {
+		return this.addHighlight(start, end, color, background);
+	},
+	
+	/**
+    * Highlights a region using the font color defined in {Biojs.Sequence#highlightFontColor} by default is red.
+    *
+    * @example
+    * // highlight the characters within the position 100 to 150, included.
+    * mySequence.addHighlight(100, 150, "white", "red" );
+    * 
+    * @param {int} start The starting character of the highlighting.
+    * @param {int} end The ending character of the highlighting.
+    * @param {string} [color] HTML color code.
+    * 
+    * @return {int} representing the id of the highlight on the internal array. Returns -1 on failure  
+    */
+	addHighlight : function (start, end, color, background, id) {
 		var id = -1;
 		
 		if ( start <= end ) {
 			color = ("string" == typeof color)? color : this.opt.highlightFontColor;
 			background = ("string" == typeof background)? background : this.opt.highlightBackgroundColor;
-			id = this._highlightsCount++;
+			id = ("string" == typeof id)? id : this._highlightsCount++;
+			
 			h = { "start": start, "end": end, "color": color, "background": background, "id": id };
+			
 			this._highlights.push(h);
 			this._applyHighlight(h);
 			this._restoreSelection(start,end);
@@ -425,13 +434,24 @@ Biojs.Sequence = Biojs.extend(
 	/**
     * Clear a highlighted region using.
     *
-    * @example
-    * // Clear the highlighted characters within the position 100 to 150, included.
-    * mySequence.unHighlight(2);
+    * @deprecated use removeHighlight instead.
     * 
     * @param {int} id The id of the highlight on the internal array. This value is returned by method highlight.
     */
 	unHighlight : function (id) {	
+		this.removeHighlight(id);
+	},
+	
+	/**
+    * Remove a highlight.
+    *
+    * @example
+    * // Clear the highlighted characters within the position 100 to 150, included.
+    * mySequence.removeHighlight("spin1");
+    * 
+    * @param {int} id The id of the highlight on the internal array. This value is returned by method highlight.
+    */
+	removeHighlight : function (id) {	
 		var h = this._highlights;
 		for ( i in h ) {
 			if ( h[i].id == id ) {
@@ -449,13 +469,22 @@ Biojs.Sequence = Biojs.extend(
 	
 	/**
     * Clear the highlights of whole sequence.
-    *
+    * @deprecated use removeAllHighlights instead.
     */
 	unHighlightAll : function () {
-		this._contentDiv.find('span.sequence.highlighted').each( function() {
-			jQuery(this).removeClass("highlighted").css("color", this.opt.fontColor);
-		});
+		this.removeAllHighlights();
+	},
+	
+	/**
+    * Remove all the highlights of whole sequence.
+    *
+    * @example
+    * mySequence.removeAllHighlights();
+    */
+	removeAllHighlights : function () {
 		this._highlights = [];
+		this._restoreHighlights(1,this.opt.sequence.length);
+		this._restoreSelection(1,this.opt.sequence.length);
 	},
 	
 	/**
@@ -599,6 +628,18 @@ Biojs.Sequence = Biojs.extend(
 		
 	},
 	/* 
+     * Function: Biojs.Sequence._repaintSelection
+     * Purpose:  Repaint the whole current selection. 
+     * Returns:  -
+     * Inputs: -
+     */
+	_repaintSelection: function(){
+		var s = Biojs.Utils.clone(this.opt.selection);
+		this._setSelection(0,0);
+		this._setSelection(s.start,s.end);
+	},
+	
+	/* 
      * Function: Biojs.Sequence._redraw
      * Purpose:  Repaint the current sequence. 
      * Returns:  -
@@ -626,7 +667,7 @@ Biojs.Sequence = Biojs.extend(
 		
 		// Restore the highlighted regions
 		this._applyHighlights(this._highlights);
-		this._setSelection(this.opt.selection.start, this.opt.selection.end);
+		this._repaintSelection();
 		this._addSpanEvents();
 	},
 	/* 
@@ -698,7 +739,7 @@ Biojs.Sequence = Biojs.extend(
     	
     	var self = this;
     	var a = this.opt.sequence.toLowerCase().split('');    	
-    	var annotations = this.opt.annotations;
+    	var annotations = this._annotations;
     	var leftSpaces = '';
     	var row = '';
     	var annot = '';
@@ -731,7 +772,7 @@ Biojs.Sequence = Biojs.extend(
 		// add tool tips and background' coloring effect
 		jQuery(this._contentDiv).find('.annotation').each(function(){
 			self._addToolTip(jQuery(this), function(a) {
-				var annotation = self.opt.annotations[a.attr("id")];
+				var annotation = self._annotations[a.attr("id")];
 				return annotation.name + "<br/>" + ((annotation.html)? annotation.html : '');
 			});
 			
@@ -743,7 +784,7 @@ Biojs.Sequence = Biojs.extend(
 		    	jQuery('.annotation').css("background-color", "white"); 
 		    }).click(function(e) {
 		    	self.raiseEvent('onAnnotationClicked', {
-		    		name: self.opt.annotations[jQuery(e.target).attr("id")].name,
+		    		name: self._annotations[jQuery(e.target).attr("id")].name,
 		    		pos: parseInt(jQuery(e.target).attr("pos"))
 		    	});
 		    });
@@ -1070,10 +1111,22 @@ Biojs.Sequence = Biojs.extend(
 	
    /**
     * Annotate a set of intervals provided in the argument.
+	* 
+	* @deprecated Use addAnnotation() instead.
+    * 
+    * @param {Object} annotation The intervals belonging to the same annotation. 
+    * Syntax: { name: &lt;value&gt;, color: &lt;HTMLColorCode&gt;, html: &lt;HTMLString&gt;, regions: [{ start: &lt;startVal1&gt;, end: &lt;endVal1&gt;}, ...,  { start: &lt;startValN&gt;, end: &lt;endValN&gt;}] }
+    */
+	setAnnotation: function ( annotation ) {
+		this.addAnnotation(annotation);
+	},
+	
+	/**
+    * Annotate a set of intervals provided in the argument.
     * 
     * @example
     * // Annotations using regions with different colors.
-    * mySequence.setAnnotation({
+    * mySequence.addAnnotation({
 	*    name:"UNIPROT", 
 	*    html:"&lt;br&gt; Example of &lt;b&gt;HTML&lt;/b&gt;", 
 	*    color:"green", 
@@ -1088,8 +1141,8 @@ Biojs.Sequence = Biojs.extend(
     * @param {Object} annotation The intervals belonging to the same annotation. 
     * Syntax: { name: &lt;value&gt;, color: &lt;HTMLColorCode&gt;, html: &lt;HTMLString&gt;, regions: [{ start: &lt;startVal1&gt;, end: &lt;endVal1&gt;}, ...,  { start: &lt;startValN&gt;, end: &lt;endValN&gt;}] }
     */
-	setAnnotation: function ( annotation ) {
-		this.opt.annotations.push(annotation);
+	addAnnotation: function ( annotation ) {
+		this._annotations.push(annotation);
 		this._redraw();
 	},
 	
@@ -1104,14 +1157,23 @@ Biojs.Sequence = Biojs.extend(
     * 
     */
 	removeAnnotation: function ( name ) {
-		var a = [];
-		
-		for (var i=0; i < this.opt.annotations.length ; i++ ){
-			if(name != this.opt.annotations[i].name){
-				a.push(this.opt.annotations[i]);
+		for (var i=0; i < this._annotations.length ; i++ ){
+			if(name != this._annotations[i].name){
+				this._annotations.splice(i,1);
+				this._redraw();
+				break;
 			}
 		}
-		this.opt.annotations = a;
+	},
+	/**
+    * Removes all the current annotations.
+    * 
+    * @example 
+    * mySequence.removeAllAnnotations(); 
+    * 
+    */
+	removeAllAnnotations: function () {
+		this._annotations = [];
 		this._redraw();
 	}
 	
