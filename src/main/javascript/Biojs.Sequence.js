@@ -29,8 +29,24 @@
  *    
  * @option {Object[]} [highlights] 
  * 	  For highlighting multiple regions. 
- *    Syntax: [{ start: &lt;startVal1&gt;, end: &lt;endVal1&gt;, color: &lt;HTMLColor1&gt;, background: &lt;HTMLColor1&gt;}, ...,  { start: &lt;startValN&gt;, end: &lt;endValN&gt;, color: &lt;HTMLColorN&gt;}, background: &lt;HTMLColorN&gt;].
- *    Color and background are optional. 
+ *    <pre class="brush: js" title="Syntax:"> 
+ *    [
+ *    	// Highlight aminoacids from 'start' to 'end' of the current strand using the specified 'color' (optional) and 'background' (optional).
+ *    	{ start: &lt;startVal1&gt;, end: &lt;endVal1&gt;[, color: &lt;HTMLColor&gt;[, background: &lt;HTMLColor&gt;]]}, 
+ *    	//
+ *    	// Any others highlights
+ *    	...,  
+ *    	// 
+ *    	{ start: &lt;startValN&gt;, end: &lt;endValN&gt;[, color: &lt;HTMLColor&gt;}[, background: &lt;HTMLColor&gt;]]
+ *    ]</pre>
+ * 
+ * <pre class="brush: js" title="Example:"> 
+ * highlights : [
+ * 		{ start:30, end:42, color:"white", background:"green" },
+ *		{ start:139, end:140 }, 
+ *		{ start:631, end:633, color:"white", background:"blue" }
+ *	]
+ * </pre>
  * 
  * @option {Object} [columns={size:40,spacedEach:10}] 
  * 	  Options for displaying the columns. Syntax: { size: &lt;numCols&gt;, spacedEach: &lt;numCols&gt;}
@@ -86,7 +102,11 @@
  *            {start: 293, end: 314, color: "#2E4988"}]
  *        }
  *      ],
- *      highlights : [{start:30, end:42, color:"white", background:"green" },{ start:139, end:140 }, { start:631, end:633, color:"white", background:"blue" }]
+ *      highlights : [
+ *      	{ start:30, end:42, color:"white", background:"green" },
+ *      	{ start:139, end:140 }, 
+ *      	{ start:631, end:633, color:"white", background:"blue" }
+ *      ]
  * });	
  * 
  */
@@ -226,6 +246,27 @@ Biojs.Sequence = Biojs.extend(
 	// Methods
 
 	/**
+	 * Shows the columns indicated by the indexes array.
+	 * @param {string} seq The sequence strand.
+	 * @param {string} [identifier] Sequence identifier.
+	 * 
+	 * @example 
+	 * mySequence.setSequence("METLCQRLNVCQDKILTHYENDSTDLRDHIDYWKHMRLECAIYYKAREMGFKHINHQVVPTLAVSKNKALQAIELQLTLETIYNSQYSNEKWTLQDVSLEVYLTAPTGCIKKHGYTVEVQFDGDICNTMHYTNWTHIYICEEASVTVVEGQVDYYGLYYVHEGIRTYFVQFKDDAEKYSKNKVWEVHAGGQVILCPTSVFSSNEVSSPEIIRQHLANHPAATHTKAVALGTEETQTTIQRPRSEPDTGNPCHTTKLLHRDSVDSAPILTAFNSSHKGRINCNSNTTPIVHLKGDANTLKCLRYRFKKHCTLYTAVSSTWHWTGHNVKHKSAIVTLTYDSEWQRDQFLSQVKIPKTITVSTGFMSI");
+	 * 
+	 */
+    setSequence: function ( seq, identifier ) {
+    	this.opt.sequence = seq;
+    	this.opt.id = identifier; 
+    	this._highlights = [];
+		this._highlightsCount = 0;
+		this.opt.selection = { start: 0, end: 0 };
+		//highlights : [],
+		this.opt.annotations = [];
+		this._redraw();
+    },
+	
+	
+	/**
     * Set the current selection in the sequence causing the event {@link Biojs.Sequence#onSelectionChanged}
     *
     * @example
@@ -297,7 +338,13 @@ Biojs.Sequence = Biojs.extend(
 		
 		return id;
 	},
-	
+	/* 
+     * Function: Biojs.Sequence._applyHighlight
+     * Purpose:  Apply the specified color and background to a region between 'start' and 'end'.
+     * Returns:  -
+     * Inputs: highlight -> {Object} An object containing the fields start (int), end (int), 
+     * 						color (HTML color string) and background (HTML color string).
+     */
 	_applyHighlight: function ( highlight ) {		
 		var seq = this._contentDiv.find('.sequence');
 		for ( var i = highlight.start - 1; i < highlight.end; i++ ){
@@ -308,17 +355,28 @@ Biojs.Sequence = Biojs.extend(
 				.addClass("highlighted");
 		}
 	},
-	
+	/* 
+     * Function: Biojs.Sequence._applyHighlights
+     * Purpose:  Apply the specified highlights.
+     * Returns:  -
+     * Inputs: highlights -> {Object[]} An array containing the highlights to be applied.
+     */
 	_applyHighlights: function ( highlights ) {
 		for ( var i in highlights ) {
 			this._applyHighlight(highlights[i]);
 		}
 	},
-	
+	/* 
+     * Function: Biojs.Sequence._restoreHighlights
+     * Purpose:  Repaint the highlights in the specified region.
+     * Returns:  -
+     * Inputs: start -> {int} Start of the region to be restored.
+     * 		   end -> {int} End of the region to be restored.
+     */
 	_restoreHighlights: function ( start, end ) {
 		var h = this._highlights;
 		
-		// paint it with default blank settings
+		// paint the region using default blank settings
 		this._applyHighlight({
 			"start": start, 
 			"end": end, 
@@ -340,7 +398,14 @@ Biojs.Sequence = Biojs.extend(
 			}
 		}
 	},
-	
+	/* 
+     * Function: Biojs.Sequence._restoreSelection
+     * Purpose:  Repaint the current selection in the specified region. 
+     * 			 It is used in the case of any highlight do overriding of the current selection. 
+     * Returns:  -
+     * Inputs: start -> {int} Start of the region to be restored.
+     * 		   end -> {int} End of the region to be restored.
+     */
 	_restoreSelection: function ( start, end ) {
 		var sel = this.opt.selection;
 		// interval intersects with current selection ?
@@ -485,7 +550,13 @@ Biojs.Sequence = Biojs.extend(
 		this._headerDiv.show();
 		this._contentDiv.show();
 	},
-	
+	/* 
+     * Function: Biojs.Sequence._setSelection
+     * Purpose:  Update the current selection. 
+     * Returns:  -
+     * Inputs: start -> {int} Start of the region to be selected.
+     * 		   end -> {int} End of the region to be selected.
+     */
 	_setSelection : function(start, end) {
 		
 		var current = this.opt.selection;
@@ -527,7 +598,12 @@ Biojs.Sequence = Biojs.extend(
 		}
 		
 	},
-	
+	/* 
+     * Function: Biojs.Sequence._redraw
+     * Purpose:  Repaint the current sequence. 
+     * Returns:  -
+     * Inputs: -
+     */
 	_redraw : function() {
 		var i = 0;	
 		var self = this;
@@ -553,7 +629,12 @@ Biojs.Sequence = Biojs.extend(
 		this._setSelection(this.opt.selection.start, this.opt.selection.end);
 		this._addSpanEvents();
 	},
-	
+	/* 
+     * Function: Biojs.Sequence._drawFasta
+     * Purpose:  Repaint the current sequence using FASTA format.  
+     * Returns:  -
+     * Inputs: -
+     */
 	_drawFasta : function() {
 		var self = this;
 		var a = this.opt.sequence.toUpperCase().split('');
@@ -573,7 +654,12 @@ Biojs.Sequence = Biojs.extend(
 		
 		this._drawAnnotations(opt);
 	},
-	
+	/* 
+     * Function: Biojs.Sequence._drawCodata
+     * Purpose:  Repaint the current sequence using CODATA format.  
+     * Returns:  -
+     * Inputs: -
+     */
 	_drawCodata : function() {
 		
 		var self = this;
@@ -602,8 +688,13 @@ Biojs.Sequence = Biojs.extend(
 		
 		this._drawAnnotations(opt);
 	},
-	
-    _drawAnnotations: function(opt){ 
+	/* 
+     * Function: Biojs.Sequence._drawAnnotations
+     * Purpose:  Paint the annotations on the sequence.  
+     * Returns:  -
+     * Inputs: -
+     */
+    _drawAnnotations: function ( settings ){ 
     	
     	var self = this;
     	var a = this.opt.sequence.toLowerCase().split('');    	
@@ -613,15 +704,15 @@ Biojs.Sequence = Biojs.extend(
     	var annot = '';
     	
     	// Index at the left?
-		if (opt.numLeft) {
-			leftSpaces += this._formatIndex(' ', opt.numLeftSize+2, ' ');
+		if ( settings.numLeft ) {
+			leftSpaces += this._formatIndex(' ', settings.numLeftSize+2, ' ');
 		}
 
-		for ( var i = 0; i < a.length; i += opt.numCols ){
+		for ( var i = 0; i < a.length; i += settings.numCols ){
 			row = '';
 			for ( var key in annotations ){
 				annotations[key].id = key;
-				annot = this._getHTMLRowAnnot(i+1, annotations[key], opt);				
+				annot = this._getHTMLRowAnnot(i+1, annotations[key], settings);				
 				if (annot.length > 0) {
 					row += '<br/>';
 					row += leftSpaces;
@@ -630,10 +721,10 @@ Biojs.Sequence = Biojs.extend(
 				} 
 			}
 			
-			if ( opt.numRight ) {
-				jQuery(row).insertAfter('div#'+self.opt.target+' div pre span#numRight'+ (i+opt.numCols) );
+			if ( settings.numRight ) {
+				jQuery(row).insertAfter('div#'+self.opt.target+' div pre span#numRight'+ (i + settings.numCols) );
 			} else {
-				jQuery(row).insertAfter('div#'+self.opt.target+' div pre span#'+ (i+opt.numCols) );
+				jQuery(row).insertAfter('div#'+self.opt.target+' div pre span#'+ (i + settings.numCols) );
 			}
 		}
 		
@@ -660,15 +751,22 @@ Biojs.Sequence = Biojs.extend(
 		});
 
     },
-    
-    _getHTMLRowAnnot : function (currentPos, annotation, opt) {
+    /* 
+     * Function: Biojs.Sequence._getHTMLRowAnnot
+     * Purpose:  Build an annotation
+     * Returns:  HTML of the annotation
+     * Inputs:   currentPos -> {int}
+     * 			 annotation -> {Object} 
+     *  		 settings -> {Object}
+     */
+    _getHTMLRowAnnot : function (currentPos, annotation, settings) {
     	var styleBegin = 'border-left:1px solid; border-bottom:1px solid; border-color:';
     	var styleOn = 'border-bottom:1px solid; border-color:';
     	var styleEnd = 'border-bottom:1px solid; border-right:1px solid; border-color:';
     	
     	var row = [];
-    	var end = (currentPos + opt.numCols);
-    	var spaceBetweenChars = (opt.spaceBetweenChars)? ' ' : '';    	
+    	var end = (currentPos + settings.numCols);
+    	var spaceBetweenChars = (settings.spaceBetweenChars)? ' ' : '';    	
     	var defaultColor = annotation.color;
     	var id = annotation.id;
     	for ( var pos=currentPos; pos < end ; pos++ ) {
@@ -677,7 +775,7 @@ Biojs.Sequence = Biojs.extend(
 				region = annotation.regions[r];
 				
 				spaceAfter = '';
-				spaceAfter += (pos % opt.numColsForSpace == 0 )? ' ' : '';
+				spaceAfter += (pos % settings.numColsForSpace == 0 )? ' ' : '';
 				spaceAfter += spaceBetweenChars;
 				
 				color = ((region.color)? region.color : defaultColor);
@@ -706,7 +804,12 @@ Biojs.Sequence = Biojs.extend(
     	
     	return ( str.indexOf("span") == -1 )? "" : str;
     },
-	
+    /* 
+     * Function: Biojs.Sequence._drawRaw
+     * Purpose:  Repaint the current sequence using RAW format.  
+     * Returns:  -
+     * Inputs: -
+     */
 	_drawRaw : function() {
 		var self = this;
 		var a = this.opt.sequence.toLowerCase().split('');
@@ -724,7 +827,12 @@ Biojs.Sequence = Biojs.extend(
 		
 		this._drawAnnotations(opt);
 	},
-	
+	/* 
+     * Function: Biojs.Sequence._drawPride
+     * Purpose:  Repaint the current sequence using PRIDE format.  
+     * Returns:  -
+     * Inputs: -
+     */
 	_drawPride : function() {
 		var self = this;
 		var a = this.opt.sequence.toUpperCase().split('');
@@ -747,7 +855,13 @@ Biojs.Sequence = Biojs.extend(
 		
 		this._drawAnnotations(opt);
 	},
-	
+	/* 
+     * Function: Biojs.Sequence._drawSequence
+     * Purpose:  Repaint the current sequence using CUSTOM format.  
+     * Returns:  -
+     * Inputs:   a -> {char[]} a The sequence strand.
+     * 			 opt -> {Object} opt The CUSTOM format.
+     */
 	_drawSequence : function(a, opt) {
 		var str = '';
 
@@ -819,7 +933,15 @@ Biojs.Sequence = Biojs.extend(
 			
 		return str;
 	},
-	
+	/* 
+     * Function: Biojs.Sequence._formatIndex
+     * Purpose:  Build the HTML corresponding to counting numbers (top, left, right) in the strand.
+     * Returns:  -
+     * Inputs:   number -> {int} The number 
+     * 			 size -> {int} Number of bins to suit the number.
+     * 			 fillingChar -> {char} Character to be used for filling out blank bins.
+     * 			 alignLeft -> {bool} Tell if aligned to the left.
+     */
 	_formatIndex : function( number, size, fillingChar, alignLeft) {
 		var str = number.toString();
 		var filling = '';
@@ -836,7 +958,12 @@ Biojs.Sequence = Biojs.extend(
 		}
 		return str;
 	},
-	
+	/* 
+     * Function: Biojs.Sequence._addSpanEvents
+     * Purpose:  Add the event handlers to the strand.
+     * Returns:  -
+     * Inputs:   -
+     */
 	_addSpanEvents : function() {
 		var self = this;
 		var isMouseDown = false;
@@ -889,7 +1016,13 @@ Biojs.Sequence = Biojs.extend(
 			});
 		});
 	},
-	
+	/* 
+     * Function: Biojs.Sequence._addSpanEvents
+     * Purpose:  Add a tooltip to any element on the sequence.
+     * Returns:  -
+     * Inputs:   target -> {Element} Target element for adding out the tip message.
+     * 			 msgFunction -> {function} Function that return the message to be displayed in the tip.
+     */
 	_addToolTip : function ( target, msgFunction ) {
 		
 		jQuery(target).mouseover(function(e) {
