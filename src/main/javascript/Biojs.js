@@ -1,7 +1,6 @@
 /**
  * Main container of the BioJS library. It is the parent class for all the components.
  * 
- * 
  * @namespace
  * 
  */
@@ -91,6 +90,11 @@ Biojs.Utils = {
 	  return newObj;
 	},
 	
+	/**
+	 * Determine if an onject or array is empty.
+	 * @param {object|array} o Either object or array to figure out if empty or not.
+	 * @returns {bool} true if empty, false if don't 
+	 */
 	isEmpty: function(o){
 		if (o instanceof Array) {
 			return (o.length<=0);
@@ -224,7 +228,7 @@ Biojs.Utils = {
  *    }
  *  }, 
  *  { // class interface
- *     VERSION: 3.14.15
+ *     VERSION: "3.14.15"
  *  });
  * 
  *  alert(Biojs.MyComponent.VERSION);
@@ -240,11 +244,6 @@ Biojs.extend = function(_child, _static) { // subclass
 	 * @name proto
 	 * @constructs
 	 */
-	
-//	function BiojsProto() {};
-//	BiojsProto.prototype = this;
-//	var proto = new BiojsProto();
-	
 	var proto = new this;
 
 	// Inherit parent' events to the child
@@ -295,6 +294,9 @@ Biojs.extend = function(_child, _static) { // subclass
 				// Set the unique id for the instance
 				instance.biojsObjectId = Biojs.uniqueId();
 				
+				// register instance
+				Biojs.addInstance(instance);
+				
 				// execute the instance's constructor
 				constructor.apply(instance, arguments);
 				
@@ -302,12 +304,8 @@ Biojs.extend = function(_child, _static) { // subclass
 				return instance;
 				
 			} else { // Calling to ancestor's constructor
-				
 				constructor.apply(this,arguments);
 			}
-//			else if (arguments[0] != null) { // casting
-//				return (arguments[0].extend || extend).call(arguments[0], proto);
-//			}
 		}
 	};
 
@@ -589,26 +587,54 @@ Biojs = Biojs.extend({
 		}
 		return this;
 	},
-	
+	/**
+     * Get string. 
+     * @type {function}
+     */
 	toString: function() {
 		return String(this.valueOf());
 	},
-	
+	/**
+     * Get a unique identifier. It is useful to assign the instance' id 
+     * @type {function}
+     */
 	uniqueId: function() {
 	    if ( typeof Biojs.prototype.__uniqueid == "undefined" ) {
 	    	Biojs.prototype.__uniqueid = 0;
 	    }
 	    return Biojs.prototype.__uniqueid++;
 	},
-	
-	registerGlobal: function (key,value){
+	/**
+     * Register a Biojs instance. 
+     * @type {function}
+     */
+	addInstance: function ( instance ) {
+	    if ( typeof Biojs.prototype.__instances == "undefined" ) {
+	    	Biojs.prototype.__instances = {};
+	    }
+	    return Biojs.prototype.__instances[instance.biojsObjectId] = instance;
+	},
+	/**
+     * Get a Biojs instance by means of its id. 
+     * @type {function}
+     */
+	getInstance: function ( id ) {
+	    return Biojs.prototype.__instances[id];
+	},
+	/**
+     * Set a variable in the DOM window. 
+     * @type {function}
+     */
+	registerGlobal: function ( key, value ) {
 		window[key] = value;
 	},
-	
+	/**
+     * Get a variable value from the DOM window. 
+     * @type {function}
+     */
 	getGlobal: function(key){
 		return window[key];
-	},
-	
+	},	
 	/**
      * Cross-browser console for debugging. 
      * This is a shorcut for {@link Biojs.Utils.console}
@@ -625,5 +651,6 @@ Biojs = Biojs.extend({
 	Utils: Biojs.Utils
 	
 });
+
 
 
