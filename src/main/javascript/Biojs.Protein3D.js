@@ -165,7 +165,7 @@ Biojs.Protein3D = Biojs.extend(
 	   polarColor: "yellow",
 	   backgroundColor: "white",
 	   enableControls: true,
-	   loadingStatusImage: '../biojs/images/ajax-loader-1.gif'
+	   loadingStatusImage: '../biojs/css/images/ajax-loader-1.gif'
    },
    
    /**
