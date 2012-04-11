@@ -25,6 +25,7 @@
 		unset($data['url']);
 
 		$query = '';
+		reset($data);
 		while ($element = current($data)) {
 		   $query .= key($data).'='.$element.'&';
 		   next($data);
@@ -38,7 +39,6 @@
 		} else {
 			$url .= ( strpos($url, '?') ) ? '&'.$query : '?'.$query ;
 		}
-
 
 /* CURL CONFIGURARTION */
         
