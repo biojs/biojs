@@ -200,6 +200,8 @@ Biojs.Table = Biojs.extend (
 	constructor: function (options) {
 		var self = this; 
 
+		//Biojs.console.enable();
+		
 		// TODO: validate mandatory values
 
 		self._tableId = 'biojs_Table_'+self.getId();
@@ -211,17 +213,9 @@ Biojs.Table = Biojs.extend (
 
 		self._settings = {};
 		self._settings.opt = this.opt;
-
-		if ( this.opt.dataSet instanceof Array ) {
-			this._initSettingsForLocalData(this._settings);
-
-		} else {
-			this._initSettingsForRemoteData(this._settings);
-		}
-
-		self._table.dataTable(this._settings);
-		self._setColumnSelector(self._table.fnSettings());
-
+		
+		self._initSettings(self._settings);
+		self.setDataSource(self.opt.dataSet);
 		self._addEvents();
 
 		Biojs.console.log("Biojs.Table constructor has finished");
@@ -319,6 +313,31 @@ Biojs.Table = Biojs.extend (
      "onDataArrived"],
 
      /**
+      * Rebuild the table
+      * 
+      * @example 
+      * myTable.setDataSource({
+	  * 	url: 'data/tableJSON.js'
+	  * });
+      * 
+      */
+     setDataSource: function ( dataSet ) {
+
+    	this.opt.dataSet = dataSet;
+    	
+		if ( dataSet instanceof Array ) {
+			this._initSettingsForLocalData(this._settings);
+		} else {
+			this._initSettingsForRemoteData(this._settings);
+		}
+		
+		Biojs.console.log("Drawing..");
+		this._settings.bDestroy = true;
+    	this._table.dataTable( this._settings ); 
+    	this._setColumnSelector( this._table.fnSettings() );
+     },
+     
+     /**
       * Shows the columns indicated by the indexes array.
       * @param {int[]} columns Column indexes to be showed.
       * @param {bool} flag The new value.
@@ -399,205 +418,27 @@ Biojs.Table = Biojs.extend (
     	 var selectedRows = [];
 
     	 jQuery(self._tableSelector + ' tr.selected')
-    	 .each(function(index, e) {
-    		 selectedRows.push(self._table.fnGetData(e));
-    	 });
+	    	 .each(function(index, e) {
+	    		 selectedRows.push(self._table.fnGetData(e));
+	    	 });
 
     	 Biojs.console.log(selectedRows)
     	 return selectedRows;
      },
-
+     
      /* 
-      * Function: Biojs.Table._initSettingsForRemoteData
-      * Purpose:  initialize the settings for DataTables plugin in case of using remote data
-      * Returns:  -
-      * Inputs:   settings -> {Object} where the configuration settings will be added.
-      */
-     _initSettingsForRemoteData: function(settings) {
-
-    	 Biojs.console.log("Using data from remote server: "+ this.opt.dataSet.url);
-
-    	 settings.aoColumnDefs = [];
-
-    	 if ( this.opt.hideColumns.length > 0 ) {
-    		 settings.aoColumnDefs.push( { "bVisible": false, "aTargets": this.opt.hideColumns } );
-    	 }
-
-    	 // Order by 
-    	 if ( this.opt.orderBy.length > 0 ) {
-    		 settings.aaSorting = this.opt.orderBy;
-    	 }
-
-    	// Row selection column (checkboxes column) is enabled? 
-    	 if (this.opt.rowSelection) { 
-    		 var columnsToHide = settings.aoColumnDefs[0].aTargets;
-
-    		 // Shift the index of the columns to hide
-    		 for ( i in columnsToHide ) {
-    			 columnsToHide[i] += 1;
-    		 }
-
-    		 // Shift the index of the columns to order
-    		 for ( i in settings.aaSorting ) {
-    			 settings.aaSorting[i][0] += 1;
-    		 }
-    		 
-    		 // Disable the ordering on the column 0 (checkboxes column) 
-    		 settings.aoColumnDefs.push( { "bSortable": false, "aTargets": [ 0 ] } );
-    	 }
-
-    	 // Data Set
-    	 // Use server data provider 
-    	 settings.bProcessing = true;
-    	 settings.bServerSide = true;
-    	 settings.sAjaxSource = this.opt.dataSet.url;
-    	 settings.fnServerData = this._fetchData;
-    	 //settings.fnServerParams = this.opt.mapUrlParams;
-
-    	 // Enable filtering if it is supported by the server
-    	 settings.bFilter = this.opt.dataSet.filter;
-
-    	 this._setColumns(this.opt.columns, settings);
-
-    	 if ( !this.opt.paginate ) {
-    		 settings.bScrollInfinite = true;
-    		 settings.bScrollCollapse = true;
-    	 } else {
-    		 settings.sPaginationType = "full_numbers"; 
-    		 settings.iDisplayLength = this.opt.pageLength;
-    	 }
-
-    	 settings.oLanguage = {
-    			 "oPaginate": {
-    				 "sPrevious": "<",
-    				 "sNext": ">",
-    				 "sFirst": "|",
-    				 "sLast": "|"
-    			 }
-    	 };
-
-    	 settings.sScrollX = this.opt.height;
-    	 settings.sScrollY = "100%";
-    	 settings.bLengthChange = false;
-     },
-
-     /* 
-      * Function: _fetchData
-      * Purpose:  do the Ajax request to get the data from server. Note that 'this' will not refered to the Biojs.Table instance
-      * 	due to this function will be linked to the internal DataTables object.
-      * Returns:  -
-      * Inputs:   
-      * 	sSource -> {string} HTTP source to obtain the data from (defined in option dataSet.url).
-      * 	aoData -> {Object[]} a key/value pair object containing the data to send to the server.
-      * 	fnCallback -> {function} to be called on completion of the data get process that will draw the data on the page.
-      * 	oSettings -> {object} DataTables settings object.
-      */
-     _fetchData: function ( sSource, aoData, fnCallback, oSettings ) {
-
-    	 var httpRequest = { url: sSource };
-    	 var params = aoData;
-
-    	 // Get the Biojs Table instance 
-    	 var biojsId = oSettings.sTableId.substr( "biojs_Table_".length );
-    	 var instance = Biojs.getInstance(biojsId);
-
-    	 // Rename param names using those defined in the options instance.opt.dataSet.mapParams
-    	 instance._mapUrlParams(aoData);
-
-    	 // Set callback function on success
-    	 httpRequest.success = fnCallback;
-
-    	 // Data type expected 
-    	 httpRequest.dataType = 'json';
-
-    	 // Using proxy?
-    	 // Redirect using the proxy and encode all params as url data
-    	 if ( instance.getProxy() != undefined ) {
-
-    		 // Redirect to proxy url
-    		 httpRequest.url = instance.getProxy();
-
-    		 // Encode both url and parameters under the param url
-    		 params = [{ name: "url", value: sSource + '?' + jQuery.param(aoData) }];
-
-    		 // Data type 
-    		 httpRequest.dataType = instance.getProxyDataType();
-
-    		 // Wrap the callback function 
-    		 httpRequest.success = function ( data ) {
-    			 // Decode data
-    			 jsonData = instance._decodeToJSON( data );
-    			 // Add the column of checkboxes in case of using row selection
-    			 instance._setSelectionColumn( jsonData );
-    			 // Set the echo var
-    			 jsonData.sEcho = this.sEcho;
-    			 // Call the datatables cb function
-    			 fnCallback( jsonData );
-
-    			 // fire event
-    			 instance.raiseEvent( instance.eventTypes[Biojs.Table.EVT_DATA_ARRIVED], { 
-    				 jsonData: jsonData 
-    			 });
-    		 }
-    	 }
-
-    	 httpRequest.type = 'GET';
-    	 httpRequest.data = params;
-    	 httpRequest.sEcho = aoData[0].value;
-
-    	 jQuery.ajax( httpRequest );
-     },
-
-     getProxy: function() {
-    	 return this.opt.dataSet.proxyUrl;
-     },
-
-     getProxyDataType: function() {
-    	 return this.opt.dataSet.dataType | "text";
-     },
-
-     /**
-      * Returns the total records in the dataset.
-      * 
-      * @example 
-      * alert("Total records:" + myTable.getTotalRecords());
-      * 
-      */
-     getTotalRecords: function() {
-    	 return this.opt.dataSet.totalRecords;
-     },
-
-     _setSelectionColumn: function( jsonData ) {
-    	 if ( this.opt.rowSelection ) {
-    		 for ( i = 0; i < jsonData.aaData.length; i++ ){
-    			 jsonData.aaData[i].unshift('<input type="checkbox" id="'+ i +'" />');
-    		 }
-    	 }
-     },
-
-     /* 
-      * Function: Biojs.Table._decodeToJSON
-      * Purpose:  Decode the received data to suit it into the expected JSON format. It is useful to override by Biojs.Table's children. 
-      * Returns:  {Object} formatted in the expected JSON. 
-      * Inputs:   data -> {*} raw data received from the server. 
-      */
-     _decodeToJSON: function ( data ) {
-    	 return data;
-     },
-
-     /* 
-      * Function: Biojs.Table._initSettingsForLocalData
+      * Function: Biojs.Table._initSettings
       * Purpose:  initialize the settings for DataTables plugin in case of using local data
       * Returns:  -
       * Inputs:   settings -> {Object} where the configuration settings will be added.
       */
-     _initSettingsForLocalData: function( settings ) {
-    	 Biojs.console.log("Using local data");
+     _initSettings: function( settings ) {
+    	 Biojs.console.log("initializing settings...");
 
     	 settings.aoColumnDefs = []; 
 
     	 this._setColumns(this.opt.columns, settings);
-    	 this._setData(this.opt.dataSet, settings);
+    	 //this._setData(this.opt.dataSet, settings);
 
     	 // Hide columns 
     	 if ( this.opt.hideColumns.length > 0 ) {
@@ -626,7 +467,7 @@ Biojs.Table = Biojs.extend (
     		 // Disable the ordering on the column 0 (checkboxes column) 
     		 settings.aoColumnDefs.push( { "bSortable": false, "aTargets": [ 0 ] } );
     	 }
-
+    	 
     	 // pagination
     	 if ( !this.opt.paginate ) {
     		 settings.bScrollInfinite = true;
@@ -644,10 +485,173 @@ Biojs.Table = Biojs.extend (
     				 }
     		 };
     	 }
-
+    	 settings.bProcessing = true;
     	 settings.bLengthChange = false;
     	 settings.sScrollX = this.opt.height;
     	 settings.sScrollY = "100%";
+     },
+     
+     /* 
+      * Function: Biojs.Table._initSettingsForLocalData
+      * Purpose:  initialize the settings for DataTables plugin in case of using local data
+      * Returns:  -
+      * Inputs:   settings -> {Object} where the configuration settings will be added.
+      */
+     _initSettingsForLocalData: function( settings ) {
+    	 Biojs.console.log("Using local data");
+    	 this._setData(this.opt.dataSet, settings);;
+    	 // Don't use data source provided by a server 
+    	 settings.bServerSide = false;
+    	 // Set URL of the data source
+    	 settings.sAjaxSource = null;
+    	 // Set the function which manages the Ajax requests
+    	 settings.fnServerData = null;
+    	 // Enable filtering
+    	 settings.bFilter = true;
+     },
+     
+     /* 
+      * Function: Biojs.Table._initSettingsForRemoteData
+      * Purpose:  initialize the settings for DataTables plugin in case of using remote data
+      * Returns:  -
+      * Inputs:   settings -> {Object} where the configuration settings will be added.
+      */
+     _initSettingsForRemoteData: function(settings) {
+    	 
+    	 Biojs.console.log("Using data from remote URL: "+ this.opt.dataSet.url);
+
+    	 // Use data source provided by a server 
+    	 settings.bServerSide = true;
+    	 // Set URL of the data source
+    	 settings.sAjaxSource = this.opt.dataSet.url;
+    	 // Set the function which manages the Ajax requests
+    	 settings.fnServerData = this._fetchData;
+    	 // Enable/disable filtering depending on the support by the server
+    	 settings.bFilter = this.opt.dataSet.filter;
+     },
+
+     /* 
+      * Function: _fetchData
+      * Purpose:  do the Ajax request to get the data from server. Note that 'this' will not refered to the Biojs.Table instance
+      * 	due to this function will be linked to the internal DataTables object.
+      * Returns:  -
+      * Inputs:   
+      * 	sSource -> {string} HTTP source to obtain the data from (defined in option dataSet.url).
+      * 	aoData -> {Object[]} a key/value pair object containing the data to send to the server.
+      * 	fnCallback -> {function} to be called on completion of the data get process that will draw the data on the page.
+      * 	oSettings -> {object} DataTables settings object.
+      */
+     _fetchData: function ( sSource, aoData, fnCallback, oSettings ) {
+
+    	 var httpRequest = { url: sSource };
+    	 var params = aoData;
+
+    	 // Get the Biojs Table instance 
+    	 var biojsId = oSettings.sTableId.substr( "biojs_Table_".length );
+    	 var instance = Biojs.getInstance(biojsId);
+
+    	 // Rename param names using those defined in the options instance.opt.dataSet.mapParams
+    	 instance._mapUrlParams(aoData);
+
+    	 // Set callback function on success
+    	 //httpRequest.success = fnCallback;
+
+    	 // Data type expected 
+    	 httpRequest.dataType = 'json';
+
+    	 // Using proxy?
+    	 // Redirect using the proxy and encode all params as url data
+    	 if ( instance.getProxy() != undefined ) {
+
+    		 // Redirect to proxy url
+    		 httpRequest.url = instance.getProxy();
+
+    		 // Encode both url and parameters under the param url
+    		 params = [{ name: "url", value: sSource + '?' + jQuery.param(aoData) }];
+
+    		 // Data type 
+    		 httpRequest.dataType = instance.getProxyDataType();
+    		 
+    	 }
+    	 
+    	// Wrap the callback function 
+		 httpRequest.success = function ( data ) {
+
+			 // Decode data
+			 jsonData = instance._decodeToJSON( data );
+			 
+			 // Set the echo var
+			 jsonData.sEcho = this.sEcho;
+			 
+			 // Add the column of checkboxes in case of using row selection
+			 instance._setSelectionColumn( jsonData );
+			 
+			 // Call the datatables cb function
+			 fnCallback( jsonData );
+
+			 // fire event
+			 instance.raiseEvent( instance.eventTypes[Biojs.Table.EVT_ON_DATA_ARRIVED], { 
+				 "jsonData": jsonData 
+			 });
+		 }
+
+    	 httpRequest.type = 'GET';
+    	 httpRequest.data = params;
+    	 httpRequest.sEcho = aoData[0].value;
+
+    	 jQuery.ajax( httpRequest );
+     },
+
+     getProxy: function() {
+    	 return this.opt.dataSet.proxyUrl;
+     },
+
+     getProxyDataType: function() {
+    	 return this.opt.dataSet.dataType | "text";
+     },
+
+     /**
+      * Returns the total records in the dataset.
+      * 
+      * @example 
+      * alert("Total records:" + myTable.getTotalRecords());
+      * 
+      */
+     getTotalRecords: function() {
+    	 return this.opt.dataSet.totalRecords;
+     },
+
+     _setSelectionColumn: function( jsonData ) {
+    	 if ( this.opt.rowSelection && jsonData.aaData instanceof Array ) {
+    		 for ( i = 0; i < jsonData.aaData.length; i++ ){
+    			 jsonData.aaData[i].unshift('<input type="checkbox" id="'+ i +'" />');
+    		 }
+    	 }
+     },
+
+     /* 
+      * Function: Biojs.Table._decodeToJSON
+      * Purpose:  Decode the received data to suit it into the expected JSON format. 
+      * 		  Override this method in the Biojs.Table's children to suit any raw data into the expected JSON format.
+      * Returns:  {Object} formatted in the expected JSON format. 
+      * Inputs:   data -> {*} raw data received from the server. 
+      */
+     _decodeToJSON: function ( data ) {
+    	 var jsonData = data;
+    	 
+    	 if ( Biojs.Utils.isEmpty(data) ) {
+    		 Biojs.console.log("Empty data was received");
+    		 
+    	 } else if ( !(jsonData instanceof Object) || !(jsonData.aaData instanceof Array) ) {
+			 jsonData = {};
+			 jsonData.aaData = [];
+			 jsonData.iTotalRecords = 0;
+			 jsonData.iTotalDisplayRecords = 0;
+			 Biojs.console.log("Error: data with unknown format was detected.");
+		 }
+    	 
+    	 Biojs.console.log(jsonData);
+    	 return jsonData;
      },
 
      /* 
@@ -679,13 +683,16 @@ Biojs.Table = Biojs.extend (
 
     	 var self = this;
     	 var columns = settings.aoColumns;
-
     	 var select = jQuery('<select id="' + self._tableId + '_columns" name="columns" multiselect="multiselect" />');
 
     	 for ( i = this._columnsOffset ; i< columns.length; i++) {
     		 select.append('<option value="' + i + '">' + columns[i].sTitle + '</option>'); 
     	 }
 
+    	 // Take selector out of the DOM
+    	 jQuery(self._tableSelector+'_wrapper > ' + self._tableId + '_columns').remove();
+    	 
+    	 // Add selector to the DOM 
     	 select.prependTo(self._tableSelector+'_wrapper');
 
     	 // Uses the MultiSelect plugin as column selector
@@ -698,10 +705,10 @@ Biojs.Table = Biojs.extend (
 
     	 // Changes the icon for the column selector
     	 jQuery(self._tableSelector+'_wrapper > button')
-    	 .html('<span class="ui-icon ui-icon-carat-2-e-w"></span>')
-    	 .css("width","auto")
-    	 .addClass('dataTables_settings')
-    	 .attr("title", "Show/hide columns");
+	    	 .html('<span class="ui-icon ui-icon-carat-2-e-w"></span>')
+	    	 .css("width","auto")
+	    	 .addClass('dataTables_settings')
+	    	 .attr("title", "Show/hide columns");
 
     	 // Set the current selection status
     	 self._columnSelector.multiselect('uncheckAll');
@@ -868,6 +875,8 @@ Biojs.Table = Biojs.extend (
     	 });
      }
 
+     
+     
 	//TODO: Render functions to format used data types: date, number, ...
 
 },
