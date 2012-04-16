@@ -45,42 +45,25 @@
  *      
  *    <pre class="brush: js" title="Example of plain object: ">
  *    {
- * 		url: 'http://www.ebi.ac.uk/Tools/webservices/psicquic/intact/webservices/current/search/query/species:human',
- * 		paramsMap: { "iDisplayStart": "firstResult", "iDisplayLength": "maxResults" },
- *      totalRecords: 80,
+ * 		psiquicUrl: 'http://www.ebi.ac.uk/Tools/webservices/psicquic/intact/webservices/current/search/query',
+ * 		proxyUrl: '../biojs/dependencies/proxy/proxy.php',
  *      version: "MITAB_VERSION_2_5_EXT",
+ *      query: "species:human",
  *      filter: false
  *    }
  *    </pre>  
  *  
  *    <pre class="brush: js" title="Example of 2D array of data: ">
- *    [
- *		[ 1, "chi", "China", 1347350000, "December 31, 2011", "0.1925" ],
- *		[ 2, "ind", "India", 1210193422, "March 1, 2011", "0.1729" ],
- *		[ 3, "usa", "United States", 313149000, "March 9, 2012", "0.0447" ],
- *		[ 4, "ino", "Indonesia", 237641326, "May 1, 2010", "0.034" ],
- * 		[ 5, "bra", "Brazil", 192376496, "July 1, 2011", "0.0275" ],
- * 		[ 6, "pak", "Pakistan", 178945000, "March 9, 2012", "0.0256" ],
- * 		[ 7, "nig", "Nigeria", 162471000, "July 1, 2011", "0.0232" ],
- * 		[ 8, "rus", "Russia", 143030106, "January 1, 2012", "0.0204" ],
- * 		[ 9, "ban", "Bangladesh", 142319000, "March 15, 2011", "0.0203" ],
- * 		[ 10, "jap", "Japan", 127770000, "February 1, 2012", "0.0183" ],
- * 		[ 11, "mex", "Mexico", 112336538, "June 12, 2010", "0.016" ],
- * 		[ 12, "phi", "Philippines", 94013200, "July 1, 2010", "0.0134" ],
- * 		[ 13, "vie", "Vietnam", 87840000, "December 31, 2011", "0.0125" ],
- * 		[ 14, "eth", "Ethiopia", 84320987,	"July 1, 2012", "0.012" ],
- * 		[ 15, "ger", "Germany", 81796000, "August 31, 2011", "0.0117" ]
- *    ]
+ *    ...soon
  *    </pre>
  * 
  * @example 
  * var myTable = new Biojs.InteractionsTable({
  *  	target: "YourOwnDivId",
  *  	dataSet: {
- *  		url: 'http://www.ebi.ac.uk/Tools/webservices/psicquic/intact/webservices/current/search/query/species:human',
+ *  		psicquicUrl: 'http://www.ebi.ac.uk/Tools/webservices/psicquic/intact/webservices/current/search/query',
  *  		proxyUrl: '../biojs/dependencies/proxy/proxy.php',
- *          paramsMap: { "iDisplayStart": "firstResult", "iDisplayLength": "maxResults" },
- *          totalRecords: 80,
+ *  		query: "brca2",
  *          version: "MITAB_VERSION_2_5_EXT",
  *          filter: false
  *      },
@@ -98,15 +81,19 @@ Biojs.InteractionsTable = Biojs.Table.extend(
 
 		// Calling super's constructor
 		this.base(options);
+		
 	},
-
+	
 	/**
 	 * Default values for the options
 	 * @name Biojs.InteractionsTable-opt
 	 */
 	opt: {
 		target: "YourOwnDivId",
-		rowSelection: false
+		rowSelection: false,
+		version: "MITAB_VERSION_2_5_EXT",
+		psiquicUrl: 'http://www.ebi.ac.uk/Tools/webservices/psicquic/intact/webservices/current/search/query',
+		proxyUrl: '../biojs/dependencies/proxy/proxy.php'
 	},
 	
 	/**
@@ -115,6 +102,108 @@ Biojs.InteractionsTable = Biojs.Table.extend(
 	 */
 	eventTypes: [],
 	
+	/**
+     * Do a query to PSICQUIC server by using the provided query in MIQL.
+     * Uses the structure of the URL to fetch data from PSICQUIC.
+     * @param {string} columns Column indexes to be hided.
+     * 
+     * @example 
+     * myTable.setQuery("species:human");
+     * 
+     */
+	setQuery: function ( query ) {
+		
+		// remove this properties to set a new query
+		delete this.opt.dataSet.url;
+		delete this.opt.totalRecords;
+		
+		// set the new query
+		this.opt.dataSet.query = query;
+		
+		// request data
+		this.setDataSource(this.opt.dataSet);
+	},
+	
+	/**
+     * Get the actual query.
+     * Uses the structure of the URL to fetch data from PSICQUIC.
+     * 
+     * @return {string} Current query.
+     * 
+     * @example 
+     * alert( "The query is " + myTable.getQuery() );
+     */
+	getQuery: function () {
+		return unescape(this.opt.dataSet.query);
+	},
+	
+	/* 
+	 * Function: Biojs.InteractionTable._requestQueryCount
+	 * Purpose:  Request total rows counting with the provided query for pagination purposes. 
+	 * 			 Since the PSIQUIC service does not provides the total row count with retrieved data,
+	 * 			 it's necessary to do another request in order to get it.
+	 * Inputs:   dataSet -> {Object} Settings of the data set. 
+	 * 			 action -> {function} Callback function having the dataSet as argument.
+	 */
+	_requestQueryCount: function ( dataSet, action ) {
+		var self = this;
+		
+		dataSet.url = dataSet.psicquicUrl + '/' + dataSet.query;
+		dataSet.paramsMap = { "iDisplayStart": "firstResult", "iDisplayLength": "maxResults" };
+		
+		jQuery.ajax({ 
+			url: dataSet.proxyUrl,
+			dataType: "text",
+			data: [{ name: "url", value: dataSet.url + '?format=count' }],
+			success: function ( data ) {
+				dataSet.totalRecords = parseInt(data) | 0;
+				action.call( self, dataSet );
+			}
+		});
+	},
+	
+    /**
+     * Rebuild the table
+     * 
+     * @example 
+     * myTable.setDataSource({
+     * 		psicquicUrl: 'http://www.ebi.ac.uk/Tools/webservices/psicquic/intact/webservices/current/search/query',
+     *  	proxyUrl: '../biojs/dependencies/proxy/proxy.php',
+     *  	query: "pubid:(10837477 OR 12029088)",
+     *      version: "MITAB_VERSION_2_5_EXT",
+     *      filter: false
+	 * });
+     * 
+     */
+    setDataSource: function ( dataSet ) {
+    	
+    	if ( dataSet instanceof Array ) {
+    		// Local data
+    		// invoke parent's setDataSource
+    		this.base( dataSet );
+    		
+    	} else {
+    		// Remote data 
+        	if ( dataSet.hasOwnProperty("totalRecords") && dataSet.hasOwnProperty("url") ) {
+        		// Already have the number of records for pagination 
+        		// then, invoke parent's setDataSource
+        		this.base( dataSet );
+        		
+        	} else {
+        		// Set the new query
+        		this.opt.dataSet = {};
+        		this.opt.dataSet.psicquicUrl = dataSet.psicquicUrl;
+        		this.opt.dataSet.proxyUrl = dataSet.proxyUrl;
+        		this.opt.dataSet.version = dataSet.version;
+        		this.opt.dataSet.filter = dataSet.filter;
+        		this.opt.dataSet.query = escape(dataSet.query);
+        		this.opt.dataSet.url = dataSet.psicquicUrl + '/' + dataSet.query;
+        		this.opt.dataSet.paramsMap = { "iDisplayStart": "firstResult", "iDisplayLength": "maxResults" };
+        		// Request query counting rows and apply setDataSource then
+        		this._requestQueryCount( this.opt.dataSet, this.base );
+        	}
+    	}
+    },
 	/* 
 	 * Function: Biojs.InteractionTable._decodeToJSON
 	 * Purpose:  Overrides the parent method to decode the received MITAB data into the expected JSON format. 
