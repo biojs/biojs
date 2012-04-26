@@ -117,21 +117,30 @@ Biojs.Sequence = Biojs.extend(
 	constructor: function (options) {
 		var self = this;
 		
+		self._selector = "#" + this.opt.target;
+		self._container = jQuery(self._selector);
+		
 		// Disable text selection
-		jQuery("#"+self.opt.target).css({
-                   '-moz-user-select':'none',
-                   '-webkit-user-select':'none',
-                   'user-select':'none',
-                   'overflow': 'auto'
+		self._container.css({
+			'-moz-user-select':'none',
+			'-webkit-user-select':'none',
+			'user-select':'none'
         });
 		
-		self._headerDiv = jQuery('<div></div>').appendTo("#"+self.opt.target);
-		self._headerDiv.css('font-family','"Heveltica Neue", Arial, "sans serif"').css('font-size','14px');
+		// DIV for the format selector
+		self._headerDiv = jQuery('<div></div>').appendTo(self._selector);
+		self._headerDiv.css({
+			'font-family': '"Heveltica Neue", Arial, "sans serif"',
+			'font-size': '14px'
+		})
+		.append('Format: ');
 		
-		self._contentDiv = jQuery('<div></div>').appendTo("#"+self.opt.target);
-		self._contentDiv.css('font-family',this.opt.fontFamily).css('font-size',this.opt.fontSize);
-		
-		self._headerDiv.append('Format: ');
+		// DIV for the sequence
+		self._contentDiv = jQuery('<div></div>').appendTo(self._selector);
+		self._contentDiv.css({
+			'font-family': this.opt.fontFamily,
+			'font-size': this.opt.fontSize
+		});
 		
 		// Initialize highlighting 
 		self._highlights = options.highlights;
@@ -165,8 +174,8 @@ Biojs.Sequence = Biojs.extend(
 		highlightBackgroundColor : 'white',
 		fontFamily: '"Andale mono", courier, monospace',
 		fontSize: '12px',
-		fontColor : 'black',
-		backgroundColor : 'white'
+		fontColor : 'inherit',
+		backgroundColor : 'inherit'
 		
 	},
 	
@@ -278,10 +287,10 @@ Biojs.Sequence = Biojs.extend(
 
 		if(start != this.opt.selection.start || end != this.opt.selection.end) {
 			this._setSelection(start, end);
-			this.raiseEvent('onSelectionChanged', {
-				start : start,
-				end : end
-			});
+			this.raiseEvent(
+					Biojs.Sequence.EVT_ON_SELECTION_CHANGED, 
+					{ "start" : start, "end" : end }
+			);
 		}
 	},
 	
@@ -310,11 +319,13 @@ Biojs.Sequence = Biojs.extend(
     * @param {int} start The starting character of the highlighting.
     * @param {int} end The ending character of the highlighting.
     * @param {string} [color] HTML color code.
+    * @param {string} [background] HTML color code.
+    * @param {string} [id] Custom identifier.
     * 
     * @return {int} representing the id of the highlight on the internal array. Returns -1 on failure  
     */
 	highlight : function (start, end, color, background, id ) {
-		return this.addHighlight(start, end, color, background);
+		return this.addHighlight({ "start": start, "end": end, "color": color, "background": background, "id": id });
 	},
 	
 	/**
@@ -322,28 +333,27 @@ Biojs.Sequence = Biojs.extend(
     *
     * @example
     * // highlight the characters within the position 100 to 150, included.
-    * mySequence.addHighlight(100, 150, "white", "red" );
+    * mySequence.addHighlight( { "start": 100, "end": 150, "color": "white", "background": "red", "id": "aaa" } );
     * 
-    * @param {int} start The starting character of the highlighting.
-    * @param {int} end The ending character of the highlighting.
-    * @param {string} [color] HTML color code.
+    * @param {Object} h The highlight defined as follows:
+    * 	
     * 
     * @return {int} representing the id of the highlight on the internal array. Returns -1 on failure  
     */
-	addHighlight : function (start, end, color, background, id) {
+	addHighlight : function ( h ) {
 		var id = -1;
 		
-		if ( start <= end ) {
-			color = ("string" == typeof color)? color : this.opt.highlightFontColor;
-			background = ("string" == typeof background)? background : this.opt.highlightBackgroundColor;
-			id = ("string" == typeof id)? id : this._highlightsCount++;
+		if ( h instanceof Object && h.start <= h.end ) {
+			color = ("string" == typeof h.color)? h.color : this.opt.highlightFontColor;
+			background = ("string" == typeof h.background)? h.background : this.opt.highlightBackgroundColor;
+			id = ("string" == typeof h.id)? h.id : this._highlightsCount++;
 			
-			h = { "start": start, "end": end, "color": color, "background": background, "id": id };
+			highlight = { "start": h.start, "end": h.end, "color": color, "background": background, "id": id };
 			
-			this._highlights.push(h);
-			this._applyHighlight(h);
-			this._restoreSelection(start,end);
-		}
+			this._highlights.push(highlight);
+			this._applyHighlight(highlight);
+			this._restoreSelection(h.start,h.end);
+		} 
 		
 		return id;
 	},
@@ -733,7 +743,7 @@ Biojs.Sequence = Biojs.extend(
      * Function: Biojs.Sequence._drawAnnotations
      * Purpose:  Paint the annotations on the sequence.  
      * Returns:  -
-     * Inputs: -
+     * Inputs: settings -> {object} 
      */
     _drawAnnotations: function ( settings ){ 
     	
@@ -770,10 +780,9 @@ Biojs.Sequence = Biojs.extend(
 		}
 		
 		// add tool tips and background' coloring effect
-		jQuery(this._contentDiv).find('.annotation').each(function(){
-			self._addToolTip(jQuery(this), function(a) {
-				var annotation = self._annotations[a.attr("id")];
-				return annotation.name + "<br/>" + ((annotation.html)? annotation.html : '');
+		jQuery(this._contentDiv).find('.annotation').each( function(){
+			self._addToolTip( this, function() {
+				return self._getAnnotationString( jQuery(this).attr("id") );
 			});
 			
 			jQuery(this).mouseover(function(e) {
@@ -782,16 +791,28 @@ Biojs.Sequence = Biojs.extend(
 				});
 		    }).mouseout(function() {
 		    	jQuery('.annotation').css("background-color", "white"); 
+		    	
 		    }).click(function(e) {
-		    	self.raiseEvent('onAnnotationClicked', {
-		    		name: self._annotations[jQuery(e.target).attr("id")].name,
-		    		pos: parseInt(jQuery(e.target).attr("pos"))
+		    	self.raiseEvent( Biojs.Sequence.EVT_ON_ANNOTATION_CLICKED, {
+		    		"name": self._annotations[ jQuery(e.target).attr("id") ].name,
+		    		"pos": parseInt( jQuery(e.target).attr("pos") )
 		    	});
 		    });
 			
 		});
 
     },
+    /* 
+     * Function: Biojs.Sequence._getAnnotationString
+     * Purpose:  Get the annotation text message for the tooltip 
+     * Returns:  {string} Annotation text for the annotation
+     * Inputs:   id -> {int} index of the internal annotation array
+     */
+    _getAnnotationString: function ( id ) {
+		var annotation = this._annotations[id];
+		return annotation.name + "<br/>" + ((annotation.html)? annotation.html : '');
+    },
+    
     /* 
      * Function: Biojs.Sequence._getHTMLRowAnnot
      * Purpose:  Build an annotation
@@ -1018,6 +1039,15 @@ Biojs.Sequence = Biojs.extend(
 				clickPos = currentPos;
 				self._setSelection(clickPos,currentPos);
 				isMouseDown = true;
+				
+				// Selection is happening, raise an event
+				self.raiseEvent(
+					Biojs.Sequence.EVT_ON_SELECTION_CHANGE, 
+					{ 
+						"start" : self.opt.selection.start, 
+						"end" : self.opt.selection.end 
+					}
+				);
 			
 			}).mouseover(function() {
 				// Update selection
@@ -1033,29 +1063,31 @@ Biojs.Sequence = Biojs.extend(
 					}
 					
 					// Selection is happening, raise an event
-					self.raiseEvent('onSelectionChange', {
-						start : self.opt.selection.start,
-						end : self.opt.selection.end
+					self.raiseEvent( Biojs.Sequence.EVT_ON_SELECTION_CHANGE, { 
+						"start" : self.opt.selection.start, 
+						"end" : self.opt.selection.end 
 					});
 				} 
 				
 			}).mouseup(function() {
 				isMouseDown = false;
 				// Selection is done, raise an event
-				self.raiseEvent('onSelectionChanged', {
-					start : self.opt.selection.start,
-					end : self.opt.selection.end
+				self.raiseEvent( Biojs.Sequence.EVT_ON_SELECTION_CHANGED, { 
+					"start" : self.opt.selection.start, 
+					"end" : self.opt.selection.end 
 				});
 			});
 			
-			self._addToolTip(jQuery(this), function(e) {
+			self._addToolTip( this, function( ) {
 				if (isMouseDown) {
 	     			return "[" + self.opt.selection.start +", " + self.opt.selection.end + "]";
 	     		} else {
 	     			return currentPos;
 	     		}
 			});
-		});
+			
+		})
+		.css('cursor', 'pointer');
 	},
 	/* 
      * Function: Biojs.Sequence._addSpanEvents
@@ -1066,46 +1098,59 @@ Biojs.Sequence = Biojs.extend(
      */
 	_addToolTip : function ( target, msgFunction ) {
 		
+ 		var tooltipId = 'tooltip_' + this.getId();
+ 		var position = jQuery(this._selector).css('position');
+ 		var offsetTop = jQuery(target).offsetTop;
+ 		var offsetLeft = jQuery(target).offsetLeft;
+		
 		jQuery(target).mouseover(function(e) {
-     		var tip = msgFunction( target );
-	         
+        	
+			// get the text to be diplayed
+     		var tipText = msgFunction.call( target );
+     		
+     		// Tooltip position will be 
+     		// mouse position plus offsets 
+     		var top = e.pageY + 10;
+        	var left = e.pageX + 20;
+        	
+        	// Correct the position in case of 
+        	// component container be relative positioned
+        	if ( "relative" == position ) {
+     			top -= offsetTop;
+     			left -= offsetLeft/2;
+     		}
+     		
 	        //Append the tooltip template and its value
-	        jQuery(this).append('<div id="tooltip"><div class="tipHeader"></div><div class="tipBody">' + tip + '</div><div class="tipFooter"></div></div>');     
-	         
-	        //Set the X and Y axis of the tooltip
-	        jQuery('#tooltip').css('top', e.pageY + 10 )
-	        	.css('left', e.pageX + 20 );
-	        
-	        // Style values 
-	        // Would be nice to have it in a css file 
-	        jQuery('#tooltip').css('position', "absolute" )
-	        	.css('z-index', "9999" )
-	        	.css('color', "#fff" )
-	        	.css('font-size', "12px" )
-	        	.css('width', "auto");
-	        
-	        //console.log("Tip size: "+tip.length)
-	        
+	        jQuery('<div id="'+ tooltipId +'"><div class="tipHeader"></div><div class="tipBody">' + tipText + '</div><div class="tipFooter"></div></div>') 
+		        .css({	
+		        	// Position values
+		        	'top': top,
+		        	'left': left,
+		        	// Style values 
+		        	'position': "absolute",
+		        	'z-index': "9999",
+		        	'color': "#fff",
+		        	'font-size': "12px",
+		        	'width': "auto"
+		        	
+		        })
+		        .animate( {opacity: '0.85'}, 10)
+		        .appendTo( target );
+
 	        jQuery('.tipHeader').css('background-color', "#000")
 	        	.css('height', "8px"); 
-	        //jQuery('.tipHeader').css('background', "images/tipHeader.gif");  
+	        //.css('background', "images/tipHeader.gif");  
 			
 			jQuery('.tipBody').css('background-color', "#000")
 				.css('padding', "3px 10px 3px 10px");
 
 			jQuery('.tipFooter').css('background-color', "#000")
 	        	.css('height', "8px"); 
-	        //jQuery('.tipFooter').css('background', "images/tipHeader.gif no-repeat");  
-	         
-	        //Show the tooltip with faceIn effect
-	        jQuery('#tooltip').animate({opacity: 'show'}, 500);
-	        jQuery('#tooltip').animate({opacity: '0.85'}, 10);
-	        
-	        jQuery(this).css('cursor', "pointer");
-	         
+	        //.css('background', "images/tipHeader.gif no-repeat");  
+ 
 	    }).mouseout(function() {
 	        //Remove the appended tooltip template
-	        jQuery(this).children('div#tooltip').remove();	         
+	        jQuery(this).children("div").remove();	         
 	    });
 	},
 	
@@ -1177,6 +1222,12 @@ Biojs.Sequence = Biojs.extend(
 		this._redraw();
 	}
 	
+},
+{
+	EVT_ON_SELECTION_CHANGE: "onSelectionChange",
+	EVT_ON_SELECTION_CHANGED: "onSelectionChanged",
+	EVT_ON_ANNOTATION_CLICKED: "onAnnotationClicked"
+
 });
 
 
