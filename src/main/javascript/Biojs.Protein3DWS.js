@@ -94,11 +94,6 @@ Biojs.Protein3DWS = Biojs.Protein3D.extend(
 		});
 	},
 	
-	setPdb: function(pdb) {
-		this.base(pdb);
-	},
-	
-	
 	getPdbId: function(pdb) {
 		return opt.id;
 	}
