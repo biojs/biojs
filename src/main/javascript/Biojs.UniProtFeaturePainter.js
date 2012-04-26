@@ -327,7 +327,7 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
      * @name Biojs.UniProtFeaturePainter-constructor
      */
     constructor: function(options) {
-    	Biojs.console.enable();
+    	//Biojs.console.enable();
     	jQuery.noConflict();
     	this.initRaphael();
     	
