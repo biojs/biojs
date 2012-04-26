@@ -24,8 +24,11 @@
  * @option {int} [height=400] 
  *    Height in pixels .
  *    
- * @option {string} [jmolFolder="../biojs/dependencies/jmol-12.0.48"] 
- *    The relative path of the jMol library.
+ * @option {string} [jmolFolder="{BIOJS_HOME}/dependencies/jmol-12.0.48"] 
+ *    Relative path of the jMol library.
+ *    
+ * @option {string} [loadingStatusImage="{BIOJS_HOME}/css/images/ajax-loader-1.gif"] 
+ *    Relative path of the image to be displayed on loading status.
  *    
  * @option {string} [unpolarColor="salmon"] 
  * 	  This value is used by displayUnpolar() method for coloring hydrophobic residues.
@@ -45,16 +48,16 @@
  * @option {bool} [enableControls=true] 
  * 	  Enable for showing the control panel. If value is 'false', it disables both methods showControls and hideControls. 
  * 
+ * 
  * @example 
  * var instance = new Biojs.Protein3D({
  * 		target: 'YourOwnDivId'
  * });	
  * 
  * 
- * 
- * // Example of loading a pdb file by means a HTTP request.
- * // Note that instance.setPdb(data) receives the data as argument,
- * // no matter the source where came up. 
+ * // Example of loading a pdb file by means of an HTTP request to
+ * // 'http://www.ebi.ac.uk/pdbe-srv/view/files/1wq6.pdb' through the local proxy 'proxy.php'.
+ * // Note that instance.setPdb(data) is invoked once the data have been arrived. 
  * jQuery.ajax({
  * 		url: '../biojs/dependencies/proxy/proxy.php',
  * 		data: 'url=http://www.ebi.ac.uk/pdbe-srv/view/files/1wq6.pdb',
@@ -72,13 +75,14 @@ Biojs.Protein3D = Biojs.extend(
 /** @lends Biojs.Protein3D# */
 { 
 	constructor: function (options) {
-		//constructor of Biojs.Protein3D
+
+		//Biojs.console.enable();
 		Biojs.console.log("starting Biojs.Protein3D constructor");
 		
 		var self = this;
 		
 		self.image = '<img id="image_' + self.getId() + '" src="' + self.opt.loadingStatusImage + '" style="display:block; margin: 0 auto;" />';
-		
+		self._appletId = "jmolApplet" + self.getId();
 		self.opt.backgroundColor = (self.opt.backgroundColor)? self.opt.backgroundColor : "white";
 		
 		jmolInitialize(self.opt.jmolFolder);
@@ -87,34 +91,15 @@ Biojs.Protein3D = Biojs.extend(
 		
 		Biojs.console.log("registring callback for object " + self.getId());
 		
-		self._appletId = "jmolApplet" + self.getId();
-		var loadStructCallbackName = self._appletId+"_pdbLoadCallback";
+		// Jmol needs a global function for executing up whenever a pbd is loaded
+		// Name for the function in global scope
+		var loadStructCallbackName = self._appletId + "_pdbLoadCallback";
 		
-		Biojs.registerGlobal(self._appletId,self);
-		Biojs.registerGlobal(loadStructCallbackName, 
-				function ( appletId, url, file, title, message, code, formerFrame, frame ) {
-					if ( Biojs.getGlobal(appletId).opt.enableControls ) {
-						Biojs.getGlobal(appletId).showControls();
-					}
-					if (file!==null) {
-						window[appletId].raiseEvent("onPdbLoaded", {
-							file: title,
-							result: (code==3)? 'success' : 'failure',
-							message: message
-						});
-					}
-				});
+		// Register the function _loadStructCallback as global for JmolApplet use 
+		Biojs.registerGlobal(loadStructCallbackName, self._loadStructCallback );
 		
+		// Tell Jmol the name of the function in global scope
 		jmolSetCallback("loadStructCallback", loadStructCallbackName );
-		
-//		jQuery("#"+self.opt.target)
-//			.css("padding","0px")
-//			.css("width",this.opt.width)
-//			.css("height",this.opt.height)
-//			.css("overflow","hidden")
-//			.css('display','table-cell')
-//			.css('vertical-align','middle')
-//			.html( self.image );
 		
 		jQuery("div#"+self.opt.target)
 			.css('display', 'block')
@@ -165,7 +150,12 @@ Biojs.Protein3D = Biojs.extend(
 	   polarColor: "yellow",
 	   backgroundColor: "white",
 	   enableControls: true,
-	   loadingStatusImage: '../biojs/css/images/ajax-loader-1.gif'
+	   loadingStatusImage: '../biojs/css/images/ajax-loader-1.gif',
+	   surface: "None",
+	   style: "Cartoon",
+	   colorScheme: "By Chain",
+	   antialias: false,
+	   rotate: false
    },
    
    /**
@@ -289,13 +279,15 @@ Biojs.Protein3D = Biojs.extend(
     * @example instance.reset(); 
     */
 	reset: function(){
-		jmolScriptWait( this._getDisplayColor("By Chain") + this._getDisplayStyle("Cartoon") );
+		jmolScriptWait( this._getDisplayColor( this.opt.colorScheme ) + this._getDisplayStyle( this.opt.style ), this.getId() );
+		
+		// TODO: use functions instead of jquery
 		
 		var theTargetDiv = jQuery("#"+this.opt.target);
 		theTargetDiv.find("div#controlSection > div#controls > input[type='checkbox']").attr("checked",false);
 		theTargetDiv.find('#styleSelect').val("Cartoon");
-		theTargetDiv.find('#colorSelect').val("By Chain");
-		theTargetDiv.find('#surfaceSelect').val("None");
+		theTargetDiv.find('#colorSelect').val( this.opt.colorScheme );
+		theTargetDiv.find('#surfaceSelect').val( this.opt.style );
 		
 		for (var key in this._display.property) {
 			this._display.property[key] = false;
@@ -338,9 +330,11 @@ Biojs.Protein3D = Biojs.extend(
 		
 		var self = this;
 
-		var scr =  ""; 
-		scr += this._getDisplayColor("By Chain") + this._getDisplayStyle("Cartoon") + this._getDisplaySurface("None");
-		scr += this._getSelectionScript(this._selection); 
+		var surfaceCmd = this._getDisplaySurface( this.opt.surface );
+		var styleCmd = this._getDisplayStyle( this.opt.style );
+		var colorSchemeCmd = this._getDisplayColor( this.opt.colorScheme );
+		
+		var scr = colorSchemeCmd + styleCmd + surfaceCmd + this._getSelectionScript(this._selection); 
 
 		jQuery('#' + self.opt.target ).find('div').show();
 		jQuery("#" + self.opt.target + ' div#loadingImage').hide();
@@ -371,7 +365,7 @@ Biojs.Protein3D = Biojs.extend(
         var scr = 'select all; ';
         scr += (!this._display.halos)? 'color translucent 1; ': 'selectionHalos off; ';
         scr += 'select none;'
-		jmolScriptWait(scr);
+		jmolScriptWait(scr, this.getId());
 	},
 	
 	// function that highlights the atoms in the given region
@@ -398,7 +392,7 @@ Biojs.Protein3D = Biojs.extend(
 		if ( selection instanceof Array ) {
 			this._selection = Biojs.Utils.clone(selection);
 			this._drawSelection();
-			this.raiseEvent("onSelection", {
+			this.raiseEvent( Biojs.Protein3D.EVT_ON_SELECTION, {
 				selectionType: "positions",
 				selection: Biojs.Utils.clone(selection)
 			});
@@ -406,7 +400,7 @@ Biojs.Protein3D = Biojs.extend(
 		else if ( selection instanceof Object && selection.start <= selection.end ){
 			this._selection = Biojs.Utils.clone(selection);
 			this._drawSelection();
-			this.raiseEvent("onSelection", {
+			this.raiseEvent( Biojs.Protein3D.EVT_ON_SELECTION, {
 				selectionType: "region",
 				selection: Biojs.Utils.clone(selection)
 			});
@@ -432,35 +426,70 @@ Biojs.Protein3D = Biojs.extend(
 		} else {
 			scr = "select none"; 
 		}
+		
+		Biojs.console.log("Selection script: " + scr);
+		
 		return scr;		
 	},
 
 	_drawSelection: function(){		
 		if ( this._selection !== undefined ) {
-			result = jmolScriptWait( this._getSelectionScript(this._selection) );
+			result = jmolScriptWait( this._getSelectionScript(this._selection), this.getId() );
 			Biojs.console.log("Selection done, result: "+result); 
 		} 
+	},
+
+   /**
+    * Apply antialias rendering filter.
+    * 
+    * @param {boolean} flag If true, smooth rendering will be applied. 
+    * 
+    * @example 
+    * instance.displayAntialias(true);
+    */
+	displayAntialias: function ( flag ) {
+		// Update the checkbox control
+		this._getControl('antialiasCheck').attr("checked", flag ); 
+		// Apply the antialiasing
+		this.applyJmolCommand('set antialiasDisplay '+ flag );
+	},
+	
+   /**
+    * Apply rotation.
+
+    * @example 
+    * instance.rotate(true);
+    * 
+    */
+	rotate: function ( flag ) {
+		// Update the checkbox control
+		this._getControl('rotationCheck').attr("checked", flag ); 
+		// Apply the rotation
+		this.applyJmolCommand('spin '+ flag );
 	},
 	
    /**
     * Draws a translucent surface surrounding the protein.
     * 
-    * @param {string} [name="None"] One of these strings: "Solvent Accessible", "Solvent Excluded", "Cavities" or "None"
+    * @param {string} name Type of surface wanted. Use one of these: Biojs.Protein3D.SURFACE_NONE, 
+    * 	Biojs.Protein3D.SURFACE_ACCESSIBLE, Biojs.Protein3D.SURFACE_EXCLUDED, Biojs.Protein3D.SURFACE_CAVITIES
     *
     * @example 
-    * // 
-    * instance.displaySurface('Cavities');
+    * instance.displaySurface( Biojs.Protein3D.SURFACE_CAVITIES );
     * 
     */
-	displaySurface: function(name){
-		var surface = this._getDisplaySurface(name);
+	displaySurface: function ( name ) {
 		
-		if ( surface == undefined ) {
-			name = "None";
+		var surfaceCmd = this._getDisplaySurface( name );
+		
+		if ( surfaceCmd === undefined ) {
+			Biojs.console.log("Unknown surface name " + name );
+			return;
 		}
 		
-		jQuery("#"+this.opt.target).find('#surfaceSelect').val(name);
-		jmolScriptWait(surface + this._getSelectionScript(this._selection));
+		// Update select control
+		this._getControl('surfaceSelect').val(name);
+		this.applyJmolCommand( surfaceCmd + this._getSelectionScript(this._selection) );
 	},
 	
    /**
@@ -472,12 +501,7 @@ Biojs.Protein3D = Biojs.extend(
     * 
     */
 	hideSurface: function(){
-		var surfaceSelect = jQuery("#"+this.opt.target).find('#surfaceSelect');
-		if ( surfaceSelect.val(name) != "None" ){
-			surfaceSelect.val("None");
-			jmolScriptWait( this._getDisplaySurface("None") + this._getSelectionScript(this._selection) );
-		}
-		
+		this.displaySurface( Biojs.Protein3D.SURFACE_NONE );
 	},
 	
 	/**
@@ -490,11 +514,18 @@ Biojs.Protein3D = Biojs.extend(
     * instance.displayNegative("red");
     * 
     */
-	displayNegative: function (color) {
-		jQuery("#"+this.opt.target).find('#negativeCheck').attr("checked","negativeCheck");
-		negativeColor = (color)? color : this.opt.negativeColor;
-		this.display('acidic', negativeColor);
-		this._display.property.negative = true;
+	displayNegative: function (color, flag) {
+		
+		color = ( color !== undefined )? color : this.opt.positiveColor;
+		flag = ( flag !== undefined )? flag : true;
+		
+		// Update the checkbox control
+		this._getControl('negativeCheck').attr("checked", flag ); 
+		
+		// Update the Jmol applet
+		(flag) ? this.display('acidic', color) : this.undisplay('acidic');
+		this._display.property.negative = flag;
+		
 	},
 	/**
     * Undo the action of method displayNegative.
@@ -505,11 +536,7 @@ Biojs.Protein3D = Biojs.extend(
     * 
     */
 	hideNegative: function () {
-		if (this._display.property.negative) {
-			jQuery("#"+this.opt.target).find('#negativeCheck').removeAttr("checked");
-			this._display.property.negative = false;
-			this.undisplay('acidic');
-		}
+		this.displayNegative(undefined, false);
 	},
 	
 	/**
@@ -522,11 +549,17 @@ Biojs.Protein3D = Biojs.extend(
     * instance.displayPositive();
     * 
     */
-	displayPositive: function (color) {
-		positiveColor = (color)? color : this.opt.positiveColor;
-		jQuery("#"+this.opt.target).find('#positiveCheck').attr("checked","positiveCheck");
-		this.display('basic', positiveColor);
-		this._display.property.positive = true;
+	displayPositive: function ( color, flag ) {
+		
+		color = ( color !== undefined )? color : this.opt.positiveColor;
+		flag = ( flag !== undefined )? flag : true;
+		
+		// Update the checkbox control
+		this._getControl('positiveCheck').attr("checked", flag ); 
+		
+		// Update the Jmol applet
+		(flag) ? this.display('basic', color) : this.undisplay('basic');
+		this._display.property.positive = flag;
 	},
 	
 	/**
@@ -538,11 +571,7 @@ Biojs.Protein3D = Biojs.extend(
     * 
     */
 	hidePositive: function () {
-		if (this._display.property.positive) {
-			jQuery("#"+this.opt.target).find('#positiveCheck').removeAttr("checked");
-			this._display.property.positive = false;
-			this.undisplay('basic');
-		}
+		this.displayPositive(undefined, false);
 	},
 	
 	/**
@@ -555,11 +584,22 @@ Biojs.Protein3D = Biojs.extend(
     * instance.displayPolar();
     * 
     */	
-	displayPolar: function (color) {
-		jQuery("#"+this.opt.target).find('#polarCheck').attr("checked","polarCheck");
-		polarColor = (color)? color : this.opt.polarColor;
-		this.display('polar', polarColor);
-		this._display.property.polar = true;
+	displayPolar: function ( color, flag ) {
+		
+		polarColor = ( color !== undefined )? color : this.opt.polarColor;
+		flag = ( flag !== undefined )? flag : true;
+		
+		// Update the checkbox control
+		this._getControl('polarCheck').attr("checked", flag ); 
+		
+		// Update the Jmol applet
+		(flag) ? this.display('polar', polarColor) : this.undisplay('polar');
+		this._display.property.polar = flag;
+
+	},
+	
+	_getControl: function ( name ) {
+		return jQuery ( jQuery( "#"+this.opt.target ).find( '#'+name )[0] );
 	},
 	
 	/**
@@ -571,11 +611,7 @@ Biojs.Protein3D = Biojs.extend(
     * 
     */	
 	hidePolar: function () {
-		if (this._display.property.polar) {
-			jQuery("#"+this.opt.target).find('#polarCheck').removeAttr("checked");
-			this._display.property.polar = false;
-			this.undisplay('polar');
-		}
+		this.displayPolar( undefined, false );
 	},
 	
 	/**
@@ -589,12 +625,68 @@ Biojs.Protein3D = Biojs.extend(
     * 
     */	
     // colors the structure depending on the checked check boxes
-	displayUnPolar: function ( color ) {
-		unPolarColor = (color)? color : this.opt.unpolarColor;
-		jQuery("#"+this.opt.target).find('#unpolarCheck').attr("checked","unpolarCheck");
-		this.display('hydrophobic', unPolarColor);
-		this._display.property.unpolar = true;
+	displayUnPolar: function ( color, flag ) {
+		
+		color = ( color !== undefined )? color : this.opt.unpolarColor;
+		flag = ( flag !== undefined )? flag : true;
+		
+		// Update the checkbox control
+		this._getControl('unpolarCheck').attr("checked", flag ); 
+		
+		// Update the Jmol applet
+		(flag) ? this.display('hydrophobic', color) : this.undisplay('hydrophobic');
+		this._display.property.unpolar = flag;
 	},
+	
+	
+	/**
+    * Selects the color scheme for the current structure.
+    *
+    * @param {string} colorScheme Color scheme to be applied to the current structure.
+    * 	Use one of these values: Biojs.Protein3D.COLOR_BY_CHAIN, Biojs.Protein3D.COLOR_SECONDARY_STRUCTURE, 
+    * 	Biojs.Protein3D.COLOR_RAINBOW, Biojs.Protein3D.COLOR_BY_ELEMENT, Biojs.Protein3D.COLOR_BY_AMINO_ACID, 
+    * 	Biojs.Protein3D.COLOR_BY_TEMPERATURE, Biojs.Protein3D.COLOR_HIDROPHOBICITY
+    *
+    * @example 
+    * instance.displayColorScheme(Biojs.Protein3D.COLOR_RAINBOW);
+    * 
+    */	
+	displayColorScheme: function ( colorScheme ) {
+		
+		colorCmd = this._getDisplayColor( colorScheme );
+		
+		if ( colorCmd === undefined ) {
+			Biojs.console.log("Unknown color scheme " + colorScheme );
+			return;
+		}
+		
+		this._getControl("colorSelect").val( colorScheme );
+		this.applyJmolCommand( colorCmd + this._getSelectionScript( this._selection ) );		
+	},
+	/**
+    * Selects the style for the current structure.
+    *
+    * @param {string} style Style of structure to be applied to the current structure.
+    * 	Use one of these values: Biojs.Protein3D.STYLE_CARTOON, Biojs.Protein3D.STYLE_BACKBONE, Biojs.Protein3D.STYLE_CPK, 
+    * 	Biojs.Protein3D.STYLE_BALL_STICK, Biojs.Protein3D.STYLE_LIGANDS, Biojs.Protein3D.STYLE_LIGANDS_POCKET
+    *
+    * @example 
+    * instance.displayStyle( Biojs.Protein3D.STYLE_CPK );
+    * 
+    */	
+	displayStyle: function ( style ) {
+		
+		var styleCmd = this._getDisplayStyle( style );
+		
+		if ( styleCmd === undefined ) {
+			Biojs.console.log("Unknown style name " + style );
+			return;
+		}
+		
+		this._getControl("styleSelect").val( style );
+		this.applyJmolCommand( styleCmd + this._getSelectionScript(this._selection) );
+	},
+	
 	/**
     * Undo the action of method displayUnPolar.
     *
@@ -604,11 +696,7 @@ Biojs.Protein3D = Biojs.extend(
     * 
     */
 	hideUnPolar: function () {
-		if (this._display.property.unpolar) {
-			jQuery("#"+this.opt.target).find('#unpolarCheck').removeAttr("checked");
-			this._display.property.unpolar = false;
-			this.undisplay('hydrophobic');
-		}
+		this.displayUnPolar( undefined, false );
 	},
 	
 	/**
@@ -649,9 +737,8 @@ Biojs.Protein3D = Biojs.extend(
     * @param {string} The Jmol script.  
     */
 	applyJmolCommand: function(cmd){
-		jmolScriptWait(cmd);
+		jmolScriptWait(cmd, this.getId());
 	},
-	
 	
 	/**
     * Select and coloring atoms. 
@@ -666,10 +753,23 @@ Biojs.Protein3D = Biojs.extend(
 		scr = (this._isAnyDisplayed())? '' : 'select all; color lightgrey;';
 		scr += 'select '+property+';color '+color+'; select none';
 		
-		jmolScriptWait(scr);
+		jmolScriptWait(scr, this.getId());
 		Biojs.console.log("applied: "+scr);
 		
 		this._drawSelection();
+	},
+	
+	/**
+    * Select and coloring atoms. 
+    * 
+    * @example
+    * // Select hetero atoms and coloring with the RGB triplet code [xFF0088].  
+    * instance.changeBackgroundColor("[xFF0088]");
+    * 
+    * @param {string} color Refer to the Jmol documentation for availables coloring schemes.  
+    */
+	changeBackgroundColor: function ( color ) {
+		this.applyJmolCommand('background '+ ( ( color !== undefined )? color : this.opt.backgroundColor) );
 	},
 	
 	/**
@@ -685,7 +785,7 @@ Biojs.Protein3D = Biojs.extend(
 		scr = 'select '+property+';color lightgrey; select none;'
 		scr += (this._isAnyDisplayed())? '' : 'select all; color chain; select none;';
 		
-		jmolScriptWait(scr);
+		jmolScriptWait(scr, this.getId());
 		Biojs.console.log("applied: "+scr);
 		
 		this._drawSelection();
@@ -759,89 +859,73 @@ Biojs.Protein3D = Biojs.extend(
 				'<input id="rotationCheck" type="checkbox" name="rotationCheck" value="rotationCheck"/> Rotation<br/><br/>'+
 				
 				'Style: <select id="styleSelect">'+
-					'<option selected="selected">Cartoon</option>'+
-					'<option >Backbone</option>'+
-					'<option >CPK</option>'+
-					'<option >Ball and Stick</option>'+
-					'<option >Ligands</option>'+
-					'<option >Ligands and Pocket</option>'+
+					'<option selected="selected">' + Biojs.Protein3D.STYLE_CARTOON + '</option>'+
+					'<option >' + Biojs.Protein3D.STYLE_BACKBONE + '</option>'+
+					'<option >' + Biojs.Protein3D.STYLE_CPK + '</option>'+
+					'<option >' + Biojs.Protein3D.STYLE_BALL_STICK + '</option>'+
+					'<option >' + Biojs.Protein3D.STYLE_LIGANDS + '</option>'+
+					'<option >' + Biojs.Protein3D.STYLE_LIGANDS_POCKET + '</option>'+
 				'</select><br/><br/>'+
 				
 				'Color: <select id="colorSelect">'+			
-					'<option selected="selected">By Chain</option>'+
-					'<option >Secondary Structure</option>'+
-					'<option >Rainbow</option>'+					
-					'<option >By Element</option>'+
-					'<option >By Amino Acid</option>'+
-					'<option >By Temperature</option>'+
-					'<option >Hydrophobicity</option>'+
+					'<option selected="selected">' + Biojs.Protein3D.COLOR_BY_CHAIN + '</option>'+
+					'<option >' + Biojs.Protein3D.COLOR_SECONDARY_STRUCTURE + '</option>'+
+					'<option >' + Biojs.Protein3D.COLOR_RAINBOW + '</option>'+					
+					'<option >' + Biojs.Protein3D.COLOR_BY_ELEMENT + '</option>'+
+					'<option >' + Biojs.Protein3D.COLOR_BY_AMINO_ACID + '</option>'+
+					'<option >' + Biojs.Protein3D.COLOR_BY_TEMPERATURE + '</option>'+
+					'<option >' + Biojs.Protein3D.COLOR_HIDROPHOBICITY + '</option>'+
 				'</select><br/><br/>'+
 
 				'Surface: <select  id="surfaceSelect">'+
-					'<option selected="selected">None</option>'+
-					'<option >Solvent Accessible</option>'+
-					'<option >Solvent Excluded</option>'+
-					'<option >Cavities</option>'+
+					'<option selected="selected">' + Biojs.Protein3D.SURFACE_NONE + '</option>'+
+					'<option >' + Biojs.Protein3D.SURFACE_ACCESSIBLE + '</option>'+
+					'<option >' + Biojs.Protein3D.SURFACE_EXCLUDED + '</option>'+
+					'<option >' + Biojs.Protein3D.SURFACE_CAVITIES + '</option>'+
 				'</select><br/>'+
 				
 		        '<br/><b> Show selection using: </b><br/>' +
 		        '<input id="translucentRadio" type="radio" name="selection" value="translucentRadio"/> Translucent ' +
 		        '<input id="halosRadio" type="radio" name="selection" value="halosRadio" checked="halosRadio"/> Halos<br/><br/>');
 		
-		controlDiv.find('#polarCheck').click(function(){
-			if (jQuery('#polarCheck:checked').val()) {
-				self.displayPolar();
-			} else {
-				self.hidePolar();
-			}
-		});
-		
-		controlDiv.find('#unpolarCheck').click(function(){
-			if (jQuery('#unpolarCheck:checked').val()) {
-				self.displayUnPolar();
-			} else {
-				self.hideUnPolar();
-			}
-		});
-		
-		controlDiv.find('#positiveCheck').click(function(){
-			if (jQuery('#positiveCheck:checked').val()) {
-				self.displayPositive();
-			} else {
-				self.hidePositive();
-			}
-		});
-		
-		controlDiv.find('#negativeCheck').click(function(){
-			if (jQuery('#negativeCheck:checked').val()) {
-				self.displayNegative();
-			} else {
-				self.hideNegative();
-			}
-		});
-		
-		controlDiv.find('#antialiasCheck').click( function(event){
-			self.applyJmolCommand('set antialiasDisplay '+ ((jQuery('#antialiasCheck:checked').val())? "true" : "false") );
-		});
-		
-		controlDiv.find('#rotationCheck').click( function(event){
-			self.applyJmolCommand('spin '+ ((jQuery('#rotationCheck:checked').val())? "true" : "false") );
+		controlDiv.find('#polarCheck').click( function( e ) {	
+			self.displayPolar( undefined, e.target.checked );
 		});
 
-		controlDiv.find('#backgroundCheck').click( function(event){
-			self.applyJmolCommand('background '+ ((jQuery('#backgroundCheck:checked').val())? "black" : self.opt.backgroundColor) );
+		controlDiv.find('#unpolarCheck').click(function( e ) {	
+			self.displayUnPolar( undefined, e.target.checked );
 		});
 		
-		controlDiv.find('#styleSelect').change( function(){
-			self.applyJmolCommand( self._getDisplayStyle( jQuery(this).val() ) + self._getSelectionScript(self._selection) );
+		controlDiv.find('#positiveCheck').click( function ( e ){
+			self.displayPositive( undefined, e.target.checked );
 		});
 		
-		controlDiv.find('#colorSelect').change( function(){
-			self.applyJmolCommand( self._getDisplayColor( jQuery(this).val() ) + self._getSelectionScript(self._selection) );
+		controlDiv.find('#negativeCheck').click( function ( e ){
+			self.displayNegative( undefined, e.target.checked );
 		});
 		
-		controlDiv.find('#surfaceSelect').change( function(){
-			self.applyJmolCommand( self._getDisplaySurface( jQuery(this).val() ) + self._getSelectionScript(self._selection) );
+		controlDiv.find('#antialiasCheck').click( function(event) {
+			self.displayAntialias( event.target.checked );
+		});
+		
+		controlDiv.find('#rotationCheck').click( function(event) {
+			self.rotate( event.target.checked );
+		});
+
+		controlDiv.find('#backgroundCheck').click( function( e ) {
+			self.changeBackgroundColor( "black", e.target );
+		});
+		
+		controlDiv.find('#styleSelect').change( function( e ){
+			self.displayStyle( e.target.value );
+		});
+		
+		controlDiv.find('#colorSelect').change( function( e ){
+			self.displayColorScheme( e.target.value );
+		});
+		
+		controlDiv.find('#surfaceSelect').change( function( e ){
+			self.displaySurface( e.target.value );
 		});
 		
 		
@@ -932,7 +1016,7 @@ Biojs.Protein3D = Biojs.extend(
 	},
 	
 	_getDisplayStyle: function ( text ) {
-	   if (text == 'Cartoon') {
+	   if (text == Biojs.Protein3D.STYLE_CARTOON ) {
 			
 		  return "hide null; select all;  spacefill off; wireframe off; backbone off;" +
 					" cartoon on; " +
@@ -942,7 +1026,7 @@ Biojs.Protein3D = Biojs.extend(
 	 				" select *.ZN; spacefill 0.7; color cpk ; " +
 	 				" select all; ";
 	    } 
-	    else if (text == 'Backbone') {
+	    else if (text == Biojs.Protein3D.STYLE_BACKBONE ) {
 		    
 	    	return "hide null; select all; spacefill off; wireframe off; backbone 0.4;" +
 					" cartoon off; " +
@@ -952,7 +1036,7 @@ Biojs.Protein3D = Biojs.extend(
 	 				" select *.ZN; spacefill 0.7; color cpk ; " +
 	 				" select all; ";
 	    	
-	    } else if (text == 'CPK') {
+	    } else if (text == Biojs.Protein3D.STYLE_CPK ) {
 		    
 	    	return "hide null; select all; spacefill off; wireframe off; backbone off;" +
 					" cartoon off; cpk on;" +
@@ -963,7 +1047,7 @@ Biojs.Protein3D = Biojs.extend(
 	 				" select all; ";
 	    	
 	    } 
-	    else if (text == 'Ligands') {
+	    else if (text == Biojs.Protein3D.STYLE_LIGANDS ) {
 	    	return "restrict ligand; cartoon off; wireframe on;  display selected;"+
 	    			" select *.FE; spacefill 0.7; color cpk ; " +
 	 				" select *.CU; spacefill 0.7; color cpk ; " +
@@ -971,14 +1055,14 @@ Biojs.Protein3D = Biojs.extend(
 	 				" select all; ";
 	    }
 
-	    else if (text == 'Ligands and Pocket') {
+	    else if (text == Biojs.Protein3D.STYLE_LIGANDS_POCKET ) {
 	    	return " select within (6.0,true, ligand; cartoon off; wireframe on; backbone off; display selected; " +
 	    			" select *.FE; spacefill 0.7; color cpk ; " +
 	 				" select *.CU; spacefill 0.7; color cpk ; " +
 	 				" select *.ZN; spacefill 0.7; color cpk ; " +
 	 				" select all; ";
 	    } 
-	    else if (text == 'Ball and Stick') {
+	    else if (text == Biojs.Protein3D.STYLE_BALL_STICK ) {
 		    
 	    	return "hide null; restrict not water;  wireframe 0.2; spacefill 25%;" +
 					" cartoon off; backbone off; " +
@@ -994,25 +1078,25 @@ Biojs.Protein3D = Biojs.extend(
 	},
 	
 	_getDisplayColor: function ( text ) {
-		if ( text == 'By Chain') {
+		if ( text == Biojs.Protein3D.COLOR_BY_CHAIN ) {
 			return "hide null; select all; cartoon on; wireframe off; spacefill off; color chain; select ligand; wireframe 0.16; spacefill 0.5; color chain ; select all; "; 
 		 }
-		else if ( text == 'By Temperature') {
+		else if ( text == Biojs.Protein3D.COLOR_BY_TEMPERATURE ) {
 		 	return "hide null; select all;spacefill off; wireframe off; backbone 0.4; cartoon off; set defaultColors Jmol; color relativeTemperature; color cartoon relateiveTemperature select ligand;wireframe 0.16;spacefill 0.5; color cpk ;; select all; " ;
 		 }
-		else if ( text == 'Rainbow'){
+		else if ( text == Biojs.Protein3D.COLOR_RAINBOW ){
 			return "hide null; select all; set defaultColors Jmol; color group; color cartoon group; select ligand;wireframe 0.16;spacefill 0.5; color cpk ; select all; " ;
 		} 
-		else if ( text == 'Secondary Structure'){
+		else if ( text == Biojs.Protein3D.COLOR_SECONDARY_STRUCTURE ){
 			return "hide null; select all; set defaultColors Jmol; color structure; color cartoon structure;select ligand;wireframe 0.16;spacefill 0.5; color cpk ;; select all; " ;					
 		} 
-		else if ( text == 'By Element'){
+		else if ( text == Biojs.Protein3D.COLOR_BY_ELEMENT ){
 			return "hide null; select all; set defaultColors Jmol; color cpk; color cartoon cpk; select ligand;wireframe 0.16; spacefill 0.5; color cpk ; select all; " ;
 		}
-		else if ( text == 'By Amino Acid'){
+		else if ( text == Biojs.Protein3D.COLOR_BY_AMINO_ACID ){
 			return "hide null; select all; set defaultColors Jmol; color amino; color cartoon amino; select ligand;wireframe 0.16;spacefill 0.5; color cpk ;; select all; " ;
 		}
-		else if ( text == 'Hydrophobicity'){
+		else if ( text == Biojs.Protein3D.COLOR_HIDROPHOBICITY ){
 			return "hide null; set defaultColors Jmol; select hydrophobic; color red; color cartoon red; select not hydrophobic ; color blue ; color cartoon blue; select ligand;wireframe 0.16;spacefill 0.5; color cpk ;; select all; " ;
 		} else {
 			return undefined;
@@ -1020,16 +1104,16 @@ Biojs.Protein3D = Biojs.extend(
 	},
 	
 	_getDisplaySurface: function ( text ) {
-		 if ( text == 'None'){
+		 if ( text == Biojs.Protein3D.SURFACE_NONE ){
 			return "select all; isosurface off; select none;";
 		 }
-		 else if ( text == 'Solvent Accessible'){
+		 else if ( text == Biojs.Protein3D.SURFACE_ACCESSIBLE ){
 			return "select all; isosurface sasurface 1.2; color isoSurface translucent 0.8; select none;";
 		 }
-		 else if ( text == 'Solvent Excluded'){
+		 else if ( text == Biojs.Protein3D.SURFACE_EXCLUDED ){
 			return "select all; isosurface solvent 1.2; color isoSurface translucent 0.8; select none;";
 		 }
-		 else if ( text == 'Cavities'){
+		 else if ( text == Biojs.Protein3D.SURFACE_CAVITIES ){
 			return "select all; isosurface cavity 1.2 10; color isoSurface translucent 0.8; select none;";
 		 } else {
 			 return undefined;
@@ -1038,6 +1122,89 @@ Biojs.Protein3D = Biojs.extend(
 	
 	toString: function() { 
 		return "Biojs.Protein3D";
-	}
+	},
+	/* 
+     * Function: Biojs.Protein3D._loadStructCallback
+     * Purpose:  enable controls an triggers the loading pdb file event. 
+     * 			 It is invoked by JmolApplet. 
+     * Returns:  -
+     * Inputs: 
+     *    appletId    -> {string} Applet identifier.
+     *    url         -> {string} URL of the loaded file (full path+filename).
+     *    file        -> {string} the filename of the loaded file (without the path). 
+     *    title       -> {string} the internal title of the model in the loaded file. 
+     *    message     -> {string} any error messages generated.
+     *    code        -> {int} A numeric code: 
+     *                         3 when the file loaded successfully, 
+     *                         0 when the model was zapped, 
+     *                        -1 when the loading failed.
+     *    formerFrame -> {string} a text string with the frame 
+     *                        number prior to loading the current model, in file.model syntax 
+     *                        (for example, "3.1" or "1.1 - 3.31" if a whole range of models was framed). 
+     *    frame       -> {string} A text string with the last frame number after loading the current model, 
+     *                        in file.model syntax.
+     */
+	_loadStructCallback: function ( appletId, url, file, title, message, code, formerFrame, frame ) {
+		
+		switch (code) {
+			case 3  : result = 'success'; break;		
+			case 0  : result = 'zapped'; break; 
+			case -1 : result = 'failure'; break;
+			default : result = 'undefined'; break;
+		}
+		
+		// Ignore the execution of the callback on replacing pdb file.
+		if ( "zapped" != result ) {
+			var instanceId = parseInt( appletId.replace("jmolApplet",'') );
+			var instance = Biojs.getInstance(instanceId);
+	
+			instance.raiseEvent(Biojs.Protein3D.EVT_ON_PDB_LOADED, {
+				"file": title,
+				"result": result,
+				"message": message
+			});
 
+		}
+		
+		if ( "success" == result ) {
+			instance.showControls();
+			instance.displayAntialias(instance.opt.antalias);
+			instance.rotate(instance.opt.rotate);
+		} 
+
+	}
+	
+
+},{
+	//
+	// Coloring Schemes
+	//
+	COLOR_BY_CHAIN: "By Chain",
+	COLOR_SECONDARY_STRUCTURE: "Secondary Structure",
+	COLOR_RAINBOW: "Rainbow",
+	COLOR_BY_ELEMENT: "By Element",
+	COLOR_BY_AMINO_ACID: "By Amino Acid",
+	COLOR_BY_TEMPERATURE: "By Temperature",
+	COLOR_HIDROPHOBICITY: "Hidrophobicity",
+	//
+	// Surfaces 
+	//
+	SURFACE_NONE: "None",
+	SURFACE_ACCESSIBLE: "Solvent Accessible",
+	SURFACE_EXCLUDED: "Solvent Excluded",
+	SURFACE_CAVITIES: "Cavities",
+	//
+	// Drawing Style 
+	//
+	STYLE_CARTOON: "Cartoon",
+	STYLE_BACKBONE: "Backbone",
+	STYLE_CPK: "CPK",
+	STYLE_BALL_STICK: "Ball and Stick",
+	STYLE_LIGANDS: "Ligands",
+	STYLE_LIGANDS_POCKET: "Ligands and Pocket",
+	//
+	// Events
+	// 
+	EVT_ON_PDB_LOADED: "onPdbLoaded",
+	EVT_ON_SELECTION: "onSelection"
 });
