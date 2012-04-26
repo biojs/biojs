@@ -1,20 +1,202 @@
-
-
-/*
- * Add a tooltip (from http://www.strathausen.eu/en/2010/04/25/raphael-svg-tooltip/)
- * Done by using EXTJS
- */
-
 var Biojs_UniProtFeaturePainter_myself = undefined;
 
 /**
  *
  * UniprotFeaturePainter component
+ * This component takes a json object and paints it as a Raphäel object. The json object should be like this one:
+ * <table>
+ * <tbody>
+ * <tr>
+ * <th style="text-align: justify;">
+ * Element</th>
+ * <th style="text-align: justify;">
+ * Type</th>
+ * <th style="text-align: justify;">
+ * Content</th>
+ * </tr>
+ * <tr>
+ * <td>
+ * segment</td>
+ * <td>
+ * String</td>
+ * <td>
+ * Segment, accession or identification</td>
+ * </tr>
+ * <tr>
+ * <td>
+ * configuration</td>
+ * <td>
+ * Object</td>
+ * <td>
+ * General configuration used mainly to paint the ruler, grid lines, and slider.<br />
+ * Elements such as XXXNonOverlapping, XXXCentered, and XXXRows are necessary only it you want to enable changing styles without retrieving the data from the server again<br />
+ * <div style="border-width: 1px;">
+ * <div>
+ * <pre class="brush: js" title="configuration object">
+ * aboveRuler: &lt;<span>int</span>&gt;, <span>//pixels above the ruler
+ * </span>belowRuler: &lt;<span>int</span>&gt;, <span>//pixels below the ruler
+ * </span>dasReference: &lt;<span>String</span>&gt;, <span>//das reference URL
+ * </span>dasSources: &lt;<span>String</span>&gt;, <span>//das annotations URLs separated by commas
+ * </span>gridLineHeight: &lt;<span>int</span>&gt;, <span>//row height (used <span>for</span> rows and nonOverlapping styles)
+ * </span>horizontalGrid: &lt;<span>boolean</span>&gt;, <span>//should horizontal grid lines be displayed?
+ * </span>horizontalGridNumLines: &lt;<span>int</span>&gt;, <span>//number of horizontal grid lines</span><span>
+ * </span>leftMargin: &lt;<span>int</span>&gt;, <span>//pixels <span>for</span> the holder&#39;s left margin
+ * </span>nonOverlapping: &lt;<span>boolean</span>&gt;, <span>//is nonOverlapping style requested?
+ * </span>pixelsDivision: &lt;<span>int</span>&gt;, <span>//number of pixels between every main division in the ruler
+ * </span>requestedStart: &lt;<span>int</span>&gt;, <span>//requested start position
+ * </span>requestedStop: &lt;<span>int</span>&gt;, <span>//requested stop position
+ * </span>rightMargin: &lt;<span>int</span>&gt;, <span>//pixels <span>for</span> the holder&#39;s right margin
+ * </span>rulerLength: &lt;<span>int</span>&gt;, <span>//ruler length in pixels
+ * </span>rulerY: &lt;<span>int</span>&gt;, <span>//ruler y position in pixels
+ * </span>sequenceLength: &lt;<span>int</span>&gt;, <span>//sequence length (number of amino acids)
+ * </span>sequenceLineY: &lt;<span>int</span>&gt;, <span>//sequence line y position (blue line representing the sequence)</span><span>
+ * </span>sizeX: &lt;<span>int</span>&gt;, <span>//holder&#39;s width in pixels
+ * </span>sizeY: &lt;<span>int</span>&gt;, <span>//holder&#39;s height in pixels</span><span>
+ * </span>sizeYKey: &lt;<span>int</span>&gt;, <span>//key holder&#39;s height in pixels
+ * </span>start: &lt;<span>int</span>&gt;, <span>//first amino acid to show
+ * </span>stop: &lt;<span>int</span>&gt;, <span>//last amino acid to show
+ * </span>style: &lt;<span>String</span>&gt;, <span>// style in use from centered, rows, or nonOverlapping
+ * </span>unitSize: &lt;<span>int</span>&gt;, <span>//number of pixels used to represent one amino acid
+ * </span>verticalGrid: &lt;<span>boolean</span>&gt; <span>//are vertical grid lines displayed?
+ * </span>verticalGridLineLength: &lt;<span>int</span>&gt; <span>//vertical grid lines&#39; length
  *
+ * </span>horizontalGridNumLinesCentered: &lt;<span>int</span>&gt;, <span>//number of horizontal grid line <span>for</span> the centered style
+ * </span>horizontalGridNumLinesNonOverlapping: &lt;<span>int</span>&gt;, <span>//number of horizontal grid line <span>for</span> the nonOverlapping style
+ * </span>horizontalGridNumLinesRows: &lt;<span>int</span>&gt;, <span>//number of horizontal grid line <span>for</span> the rows style</span>
+ * sequenceLineYCentered: &lt;<span>int</span>&gt;, <span>//sequence line y position <span>for</span> centered style (blue line representing the sequence)
+ * </span>sequenceLineYNonOverlapping: &lt;<span>int</span>&gt;, <span>//sequence line y position <span>for</span> nonOverlapping style (blue line representing the sequence)
+ * </span>sequenceLineYRows: &lt;<span>int</span>&gt;, <span>//sequence line y position <span>for</span> rows style (blue line representing the sequence)</span>
+ * sizeYCentered: &lt;<span>int</span>&gt;, <span>//holder&#39;s height in pixels <span>for</span> the centered style
+ * </span>sizeYNonOverlapping: &lt;<span>int</span>&gt;, <span>//holder&#39;s height in pixels <span>for</span> the nonOverlapping style</span>
+ * sizeYRows: &lt;<span>int</span>&gt;, <span>//holder&#39;s height in pixels <span>for</span> the rows style</span><span>
+ * </span>verticalGridLineLengthCentered: &lt;<span>int</span>&gt; <span>//vertical grid lines&#39; length <span>for</span> the centered style
+ * </span>verticalGridLineLengthNonOverlapping: &lt;<span>int</span>&gt; <span>//vertical grid lines&#39; length <span>for</span> the nonOverlapping style
+ * </span>verticalGridLineLengthRows: &lt;<span>int</span>&gt; <span>//vertical grid lines&#39; length <span>for</span> the rows style</span>
+ * </pre>
+ * </div>
+ * </div>
+ * </td>
+ * </tr>
+ * <tr>
+ *  <td>
+ *  featuresArray</td>
+ *  <td>
+ *  Array</td>
+ *  <td>
+ *  Each element corresponds to an annotation, it includes elements representing the annotation itself as well as elements representing the SVG properties,<br />
+ *  <em>i.e.</em> those related to the shape.<br />
+ *  Elements such as XXXNonOverlapping, XXXCentered, and XXXRows are necessary only it you want to enable changing styles without retrieving the data from the server again<br />
+ *  <div style="border-width: 1px;">
+ *  <div>
+ *  <pre class="brush: js" title="featuresArray object">
+ *  cx:  &lt;<span>int</span>&gt; <span>//shape x position (<span>for</span> all shapes but rectangles)
+ *  </span>cy: &lt;<span>int</span>&gt; <span>//shape y position (<span>for</span> all shapes but rectangles)
+ *  </span>evidenceCode: &lt;<span>String</span>&gt;, <span>//annotation evidence code, e.g. <span>&quot;ECO:0000001&quot;</span>
+ *  </span>evidenceText: &lt;<span>String</span>&gt;, <span>//annotation evidence text, e.g. <span>&quot;inferred by curator&quot;</span>
+ *  </span>featureEnd: &lt;<span>int</span>&gt; <span>//annotation stop
+ *  </span>featureId: &lt;<span>String</span>&gt; <span>//annotation id, e.g. <span>&quot;UNIPROTKB_P05067_SIGNAL_1_17&quot;</span>
+ *  </span>featureLabel: &lt;<span>String</span>&gt; <span>//annotation label, e.g. <span>&quot;Signal&quot;</span>
+ *  </span>featureStart: &lt;<span>int</span>&gt; <span>//annotation start
+ *  </span>featureTypeLabel: &lt;<span>String</span>&gt; <span>//annotation type label, e.g. <span>&quot;signal_peptide&quot;</span>
+ *  </span>fill: &lt;hexa color&gt; <span>//e.g. <span>&quot;#AA8CF0&quot;</span>
+ *  </span>fillOpacity: &lt;<span>float</span>&gt; <span>//transparency, e.g. 0.5
+ *  </span>height: &lt;<span>int</span>&gt; <span>//shape&#39;s height in pixels (<span>for</span> rectangles)</span><span>
+ *  </span>path: &lt;<span>String</span>&gt; <span>//shape path (empty <span>if</span> it is not a path)
+ *  </span>r: &lt;radius&gt; <span>//shape&#39;s radius in pixels (all but rectangles)</span><span>
+ *  </span>stroke: &lt;hexa color&gt; <span>//e.g. #AA8CF0&quot;
+ *  </span>strokeWidth: &lt;<span>int</span>&gt; <span>//stroke width
+ *  </span>text: &lt;<span>String</span>&gt; <span>//<span>for</span> shapes corresponding to text
+ *  </span>type: &lt;<span>String</span>&gt; <span>//shape type (one of: rect, triangle, circle, diamond, wave, hexagon)
+ *  </span>typeCategory: &lt;<span>String</span>&gt;, <span>//type category, e.g. domain
+ *  </span>typeCode: &lt;<span>String</span>&gt; <span>//annotation controlled vocabulary id, e.g. <span>&quot;SO:0000418&quot;</span>
+ *  </span>typeLabel: &lt;<span>String</span>&gt; <span>//annotation label to be displayed in the tool tip
+ *  </span>width: &lt;<span>int</span>&gt; <span>//shape&#39;s width in pixels
+ *  </span>x: &lt;<span>int</span>&gt; <span>//shape x position in pixels
+ *  </span>y: &lt;<span>int</span>&gt; <span>//shape y position in pixels
+ *  </span>centeredStyle: &lt;<span>Object</span>&gt;, <span>//{<span>&quot;heightOrRadius&quot;</span>:&lt;<span>int</span>&gt;,<span>&quot;y&quot;</span>:&lt;<span>int</span>&gt;} height and y position <span>for</span> the centered style
+ *  </span>nonOverlappingStyle: &lt;<span>Object</span>&gt;, <span>//{<span>&quot;heightOrRadius&quot;</span>:&lt;<span>int</span>&gt;,<span>&quot;y&quot;</span>:&lt;<span>int</span>&gt;} height and y position <span>for</span> the nonOverlapping style</span><span>
+ *  </span>rowsStyle: &lt;<span>Object</span>&gt;, <span>//{<span>&quot;heightOrRadius&quot;</span>:&lt;<span>int</span>&gt;,<span>&quot;y&quot;</span>:&lt;<span>int</span>&gt;} height and y position <span>for</span> the rows style</span>
+ *  </pre>
+ *  </div>
+ *  </div>
+ *  </td>
+ *  </tr>
+ *  <tr>
+ *  <td>
+ *  legend</td>
+ *  <td>
+ *  Object</td>
+ *  <td>
+ *  Information to be displayed in the key<br />
+ *  Elements such as XXXNonOverlapping, XXXCentered, and XXXRows are necessary only it you want to enable changing styles without retrieving the data from the server again<br />
+ *  <div style="border-width: 1px;">
+ *  <div>
+ *  <pre class="brush: js" title="legend object">
+ *  key: &lt;Array{label object, shape object}&gt; <span>//annotation types with the number of features showed in the segment
+ *  </span>segment: &lt;<span>Object</span>&gt; <span>//requested segment without the limits, just the identifier or accession</span>
+ *  </pre>
+ *  </div>
+ *  </div>
+ *  <p>
+ *  Detail for elements in the key array</p>
+ *  <div style="border-width: 1px;">
+ *  <div>
+ *  <pre class="brush: js" title="legend.key object">
+ *  label: &lt;<span>Object</span>&gt;, <span>//
+ *  </span>    text: &lt;<span>String</span>&gt; <span>//annotation type name
+ *  </span>    total: &lt;<span>int</span>&gt; <span>//total annotations displayed <span>for</span> that type</span>
+ *  xPos: &lt;<span>int</span>&gt; <span>//x position in pixels
+ *  </span>    yPos: &lt;<span>int</span>&gt; <span>//y position in pixels
+ *  </span>    yPosCentered: &lt;<span>int</span>&gt; <span>//y position in pixels <span>for</span> the centered style
+ *  </span>    yPosNonOverlapping: &lt;<span>int</span>&gt; <span>//y position in pixels <span>for</span> the nonOverlapping style
+ *  </span>    yPosRows: &lt;<span>int</span>&gt; <span>//y position in pixels <span>for</span> the rows style</span><span>
+ *  </span>shape: &lt;<span>Object</span>&gt; <span>//corresponding shape
+ *  </span>    cx:  &lt;<span>int</span>&gt; <span>//shape x position (<span>for</span> all shapes but rectangles)
+ *  </span>    cy: &lt;<span>int</span>&gt; <span>//shape y position (<span>for</span> all shapes but rectangles)
+ *  </span>    fill: &lt;hexa color&gt; <span>//e.g. <span>&quot;#AA8CF0&quot;</span>
+ *  </span>    fillOpacity: &lt;<span>float</span>&gt; <span>//transparency, e.g. 0.5
+ *  </span>    height: &lt;<span>int</span>&gt; <span>//shape&#39;s height in pixels (<span>for</span> rectangles)
+ *  </span>    path: &lt;<span>String</span>&gt; <span>//shape path (empty <span>if</span> it is not a path)
+ *  </span>    r: &lt;radius&gt; <span>//shape&#39;s radius height in pixels (all but rectangles)
+ *  </span>    stroke: &lt;hexa color&gt; <span>//e.g. #AA8CF0&quot;
+ *  </span>    strokeWidth: &lt;<span>int</span>&gt; <span>//stroke width
+ *  </span>    text: &lt;<span>String</span>&gt; <span>//<span>for</span> shapes corresponding to text
+ *  </span>    type: &lt;<span>String</span>&gt; <span>//shape type (one of: rect, triangle, circle, diamond, wave, hexagon)
+ *  </span>    typeLabel: &lt;<span>String</span>&gt; <span>//annotation type name
+ *  </span>    width: &lt;<span>int</span>&gt; <span>//shape&#39;s width in pixels
+ *  </span>    x: &lt;<span>int</span>&gt; <span>//shape x position in pixels (it is probably a good idea to keep both cx and x, even for non-rectangles)
+ *  </span>    y: &lt;<span>int</span>&gt; <span>//shape y position in pixels </span><span>(it is probably a good idea to keep both cy and y, even for non-rectangles)
+ *  </span>    centeredStyle: &lt;<span>Object</span>&gt;, <span>//{<span>&quot;heightOrRadius&quot;</span>:&lt;<span>int</span>&gt;,<span>&quot;y&quot;</span>:&lt;<span>int</span>&gt;} height and y position <span>for</span> the centered style
+ *  </span>    nonOverlappingStyle: &lt;<span>Object</span>&gt;, <span>//{<span>&quot;heightOrRadius&quot;</span>:&lt;<span>int</span>&gt;,<span>&quot;y&quot;</span>:&lt;<span>int</span>&gt;} height and y position <span>for</span> the nonOverlapping style
+ *  </span>    rowsStyle: &lt;<span>Object</span>&gt;, <span>//{<span>&quot;heightOrRadius&quot;</span>:&lt;<span>int</span>&gt;,<span>&quot;y&quot;</span>:&lt;<span>int</span>&gt;} height and y position <span>for</span> the rows style
+ *  </span>
+ *  </pre>
+ *  </div>
+ *  </div>
+ *  <p>
+ *  Detail for the segment element</p>
+ *  <div style="border-width: 1px;">
+ *  <div>
+ *  <pre class="brush: js" title="legend.segment object">
+ *  text: &lt;<span>String</span>&gt;, <span>//Accession or identifier, e.g. A4_HUMAN
+ *  </span>xPos: &lt;<span>int</span>&gt;, <span>//x position in pixels
+ *  </span>yPos: &lt;<span>int</span>&gt;, <span>//y position in pixels
+ *  </span>yPosCentered:&lt;<span>int</span>&gt;, <span>//y position in pixels <span>for</span> the centered style
+ *  </span>yPosNonOverlapping:&lt;<span>int</span>&gt;, <span>//y position in pixels <span>for</span> the nonOverlapping style
+ *  </span>yPosRows:&lt;<span>int</span>&gt;, <span>//y position in pixels <span>for</span> the rows style</span>
+ *  </pre>
+ *  </div>
+ *  </div>
+ *  </td>
+ *  </tr>
+ *  </tbody>
+ *  </table>
+ *
+ * Please remember to use jQuery in compatibility mode, particularly a good idea if you use other libraries.
  * @class
  * @extends Biojs
  *
- * @requires <a href='http://code.jquery.com/jquery-1.6.2.min.js/'>jQuery Core 1.6.2</a>
+ * @requires <a href='http://code.jquery.com/jquery-1.6.2.min.js/'>jQuery Core 1.4.2</a>
  * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jquery/jquery-1.4.2.min.js"></script>
  *
  * @requires <a href='http://jquery.bassistance.de/tooltip/jquery.tooltip.js'>jQuery.tooltip</a>
@@ -80,18 +262,23 @@ var Biojs_UniProtFeaturePainter_myself = undefined;
  *    Note: We recommend to use the same Web service that was used to generate the json file if any.
  *
  * @example      
- * var myPainter = new Biojs.UniProtFeaturePainter({
- *              target : "YourOwnDivId"
- * });
+ * var segment = "a4:human";
+ * var service = "http://wwwdev.ebi.ac.uk/uniprot/das_uniprot_cartoon/image";
  *
  * jQuery.ajax({
  * 		//url: 'data/uniprotFeaturesJSON.js',
  * 	    url: '../biojs/dependencies/proxy/proxy.php',
- * 	    data: 'url=http://jweb-5b.ebi.ac.uk:21280/das_uniprot_cartoon/image?segment=a4_human&style=nonOverlapping&width=580',
- *      dataType: 'json',
- *      success: function(response) {           	   
- *      	Biojs.console.log(response);
+ * 	    data: 'url=' + service + '?segment=' + segment + '&style=nonOverlapping&width=580',
+ *      mimeType: 'json',
+ *      success: function(response) {
+ *          //You may have to use jQuery.parseJSON(response) with some jQuery versions
+ *          Biojs.console.log(response);
  *      	try {
+ *              var myPainter = new Biojs.UniProtFeaturePainter({
+ *                  target: "YourOwnDivId",
+ *                  json: response,
+ *                  featureImageWebService: "http://wwwdev.ebi.ac.uk/uniprot/das_uniprot_cartoon/image"
+ *              });
  *      		myPainter.paintFeatures(response);
  *      	} catch (err) {
  *      		Biojs.console.log(err);
@@ -575,7 +762,7 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
             var myself = this;
             this.zoomSlider = jQuery('<div id="uniprotFeaturePainter-slider-bar" style="width:300px"></div>').appendTo(slider_div);
             
-            console.log(jQuery('#uniprotFeaturePainter-slider-bar' ));
+            //console.log(jQuery('#uniprotFeaturePainter-slider-bar' ));
             
             jQuery('#uniprotFeaturePainter-slider-bar' ).slider({
                 range: true,
@@ -945,8 +1132,8 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
         //tooltip
         if (this.opt.showFeaturesTooltip == true) {
             if (obj.featureId) {//only features in the sequence have tooltips
-            	console.log(obj);
-            	console.log(shape);
+            	//console.log(obj);
+            	//console.log(shape);
                 obj.featureId = obj.featureId.replace(/:|\./g, "_");
                 shape.node.id = "uniprotFeaturePainter_" + obj.featureId;
                 //shape.id = shape.node.id;
@@ -1354,7 +1541,4 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
     	    }
     	};
     }
-    
-    
-    
 });
