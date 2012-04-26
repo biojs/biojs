@@ -590,7 +590,7 @@ Biojs.Table = Biojs.extend (
 			 fnCallback( jsonData );
 
 			 // fire event
-			 instance.raiseEvent( instance.eventTypes[Biojs.Table.EVT_ON_DATA_ARRIVED], { 
+			 instance.raiseEvent( Biojs.Table.EVT_ON_DATA_ARRIVED, { 
 				 "jsonData": jsonData 
 			 });
 		 }
@@ -833,7 +833,7 @@ Biojs.Table = Biojs.extend (
     		 if ( self.opt.rowSelection && column == 0 ) {
     			 if( cell.children[0].checked ) {
     				 jQuery(cell).parent().addClass('selected');
-    				 self.raiseEvent( self.eventTypes[Biojs.Table.EVT_ON_ROW_SELECTED], { 
+    				 self.raiseEvent( Biojs.Table.EVT_ON_ROW_SELECTED , { 
     					 rowIndex: row, 
     					 row: jQuery(cell).parent() 
     				 });
@@ -841,7 +841,7 @@ Biojs.Table = Biojs.extend (
     				 jQuery(cell).parent().removeClass('selected');
     			 }
     		 } else {
-    			 self.raiseEvent(self.eventTypes[Biojs.Table.EVT_ON_CELL_CLICKED], { 
+    			 self.raiseEvent( Biojs.Table.EVT_ON_CELL_CLICKED, { 
     				 "cell": cell,
     				 "rowIndex": row,
     				 "colIndex": column 
@@ -865,7 +865,7 @@ Biojs.Table = Biojs.extend (
     				 jQuery(self._tableSelector + ' tr td input').attr('checked',false);
     			 }
     		 } else {
-    			 self.raiseEvent(self.eventTypes[Biojs.Table.EVT_ON_HEADER_CLICKED], { 
+    			 self.raiseEvent( Biojs.Table.EVT_ON_HEADER_CLICKED, { 
     				 "colName": cell.innerHTML,
     				 "colIndex": column 
     			 });
@@ -884,10 +884,10 @@ Biojs.Table = Biojs.extend (
 /** @lends Biojs.Table */
 {
 	// Indexes to access the event name in this.eventTypes array
-	EVT_ON_CELL_CLICKED:   0,
-	EVT_ON_ROW_SELECTED:   1,
-	EVT_ON_HEADER_CLICKED: 2,
-	EVT_ON_DATA_ARRIVED:   3
+	EVT_ON_CELL_CLICKED:   "onCellClicked",
+	EVT_ON_ROW_SELECTED:   "onRowSelected",
+	EVT_ON_HEADER_CLICKED: "onHeaderClicked",
+	EVT_ON_DATA_ARRIVED:   "onDataArrived"
 }
 
 
