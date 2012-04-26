@@ -269,7 +269,7 @@ var Biojs_UniProtFeaturePainter_myself = undefined;
  * 		//url: 'data/uniprotFeaturesJSON.js',
  * 	    url: '../biojs/dependencies/proxy/proxy.php',
  * 	    data: 'url=' + service + '?segment=' + segment + '&style=nonOverlapping&width=580',
- *      mimeType: 'json',
+ *      dataType: 'json',
  *      success: function(response) {
  *          //You may have to use jQuery.parseJSON(response) with some jQuery versions
  *          Biojs.console.log(response);
