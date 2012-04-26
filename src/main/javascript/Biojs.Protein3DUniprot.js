@@ -35,15 +35,15 @@ Biojs.Protein3DUniprot = Biojs.Protein3DWS.extend(
                 self.reset();
                 var alignments = self._filterAligmentsBySelection(self._selection);
                 var pdbOptions = self._createOptions(alignments);
-                if ($('#' + self.opt.target).find('div#pdbStructures').length == 0) {
+                if (jQuery('#' + self.opt.target).find('div#pdbStructures').length == 0) {
                     self._addControl('<div id="pdbStructures"></div>');
                 }
-                $('#' + self.opt.target).find('div#pdbStructures').html('Structures for <b>' + self.opt.proteinId + '</b><br/>' + '<select id="pdbFile_select">' + pdbOptions + '</select>');
-                $('#' + self.opt.target + ' #pdbFile_select').val(pdb);
-                $('#' + self.opt.target + ' #pdbFile_select').change(function() {
+                jQuery('#' + self.opt.target).find('div#pdbStructures').html('Structures for <b>' + self.opt.proteinId + '</b><br/>' + '<select id="pdbFile_select">' + pdbOptions + '</select>');
+                jQuery('#' + self.opt.target + ' #pdbFile_select').val(pdb);
+                jQuery('#' + self.opt.target + ' #pdbFile_select').change(function() {
                     self._onAlignmentSelectionChange();
                 });
-                $('#' + self.opt.target).find('#pdbStructures').show();
+                jQuery('#' + self.opt.target).find('#pdbStructures').show();
                 var alignmentId = pdb;
                 var pdbId = alignmentId.substring(0, pdb.indexOf('.')).toLowerCase();
                 var alignment = self.getAlignmentsByPdb(alignmentId);
@@ -116,7 +116,7 @@ Biojs.Protein3DUniprot = Biojs.Protein3DWS.extend(
 	// makes an ajax request to get the pdb files for the given uniprot id
 	_requestAligmentsXML: function(){
 		var self = this;
-		$.ajax({
+		jQuery.ajax({
 			url: this.opt.proxyUrl,
 			data: 'url=' + self.opt.alignmentsUrl + self.opt.proteinId,
 			dataType: "text",
@@ -141,10 +141,10 @@ Biojs.Protein3DUniprot = Biojs.Protein3DWS.extend(
 		
 		Biojs.console.log("Decoding " + xml);
 		
-		xmlDoc = $.parseXML( xml );
+		xmlDoc = jQuery.parseXML( xml );
 		
-	    $(xmlDoc).find('block').each( function(){
-	        var children = $(this).children();
+	    jQuery(xmlDoc).find('block').each( function(){
+	        var children = jQuery(this).children();
 	        var segment0 = self._createNode(children[0]);
 	        var segment1 = self._createNode(children[1]);
 	        
@@ -171,10 +171,10 @@ Biojs.Protein3DUniprot = Biojs.Protein3DWS.extend(
 	
 	// creates a node for the data structure that holds the xml information
 	_createNode: function(segment){
-		var start = parseInt($(segment).attr('start'));
-	    var end = parseInt($(segment).attr('end'));
+		var start = parseInt(jQuery(segment).attr('start'));
+	    var end = parseInt(jQuery(segment).attr('end'));
 	    var obj = {
-	        intObjectId: $(segment).attr('intObjectId') || '',
+	        intObjectId: jQuery(segment).attr('intObjectId') || '',
 	        start: start || '',
 	        end: end || ''
 	    }
@@ -194,14 +194,14 @@ Biojs.Protein3DUniprot = Biojs.Protein3DWS.extend(
             Biojs.console.log("Requesting pdb " + pdb);
             this.requestPdb(pdb.substring(0, pdb.indexOf('.')).toLowerCase());
         } else {
-            $('#' + this.opt.target).find('#pdbStructures').html("None structure for current selection");
+            jQuery('#' + this.opt.target).find('#pdbStructures').html("None structure for current selection");
             Biojs.console.log("No structural information available for " + this.opt.proteinId);
             this.raiseEvent('onRequestError', {message: "No structural information available for " + this.opt.proteinId});
         }
 	},
 	
 	_onAlignmentSelectionChange: function(){
-		var pdb = $('#pdbFile_select').val();
+		var pdb = jQuery('#pdbFile_select').val();
 		
 		if ( pdb != undefined ) {
 			
@@ -297,20 +297,20 @@ Biojs.Protein3DUniprot = Biojs.Protein3DWS.extend(
 	filterAlignments: function ( selection ) { 
 		
 		var alignments = this._filterAligmentsBySelection(selection);
-		var selectedAlignment = $('#pdbFile_select').val();
+		var selectedAlignment = jQuery('#pdbFile_select').val();
 		
 		// Update the drop-down box showing the filtered alignments
-		$('#pdbFile_select').html(this._createOptions(alignments));
+		jQuery('#pdbFile_select').html(this._createOptions(alignments));
 		
 		// Select an alignment
 		if ( alignments.hasOwnProperty( selectedAlignment.slice(0,selectedAlignment.indexOf(' '))) ) {
 			// Select current alignment if it belongs to filtered alignments
-			$('#pdbFile_select').val(selectedAlignment);
+			jQuery('#pdbFile_select').val(selectedAlignment);
 			
 		} else { 
 			// Select any alignment
 			for ( a in alignments ){
-				$('#pdbFile_select').val(a);
+				jQuery('#pdbFile_select').val(a);
 				break;
 			}
 			this._onAlignmentSelectionChange();
@@ -407,7 +407,7 @@ Biojs.Protein3DUniprot = Biojs.Protein3DWS.extend(
 	},
 
 	getCurrentAlignmentId: function () {
-		var selectedValue = $('#pdbFile_select').val();
+		var selectedValue = jQuery('#pdbFile_select').val();
 		var alignmentId = selectedValue.substring(0, selectedValue.indexOf(' '));
 		//var pdbId = alignmentId.substring(0, pdb.indexOf('.')).toLowerCase();
 		return alignmentId;
