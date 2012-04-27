@@ -1060,7 +1060,7 @@ Biojs.Protein3D = Biojs.extend(
 	    }
 
 	    else if (text == Biojs.Protein3D.STYLE_LIGANDS_POCKET ) {
-	    	return " select within (6.0,true, ligand; cartoon off; wireframe on; backbone off; display selected; " +
+	    	return " select within (6.0, true, ligand); cartoon off; wireframe on; backbone off; display selected; " +
 	    			" select *.FE; spacefill 0.7; color cpk ; " +
 	 				" select *.CU; spacefill 0.7; color cpk ; " +
 	 				" select *.ZN; spacefill 0.7; color cpk ; " +
