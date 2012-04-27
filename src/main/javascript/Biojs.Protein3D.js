@@ -838,16 +838,20 @@ Biojs.Protein3D = Biojs.extend(
 		// 
 		var controlDiv = controlSectionDiv.find("div#controls");
 		
-		controlDiv.css("position","relative")
-			.css("border", 0)
-			.css("margin", 0)
-			.css('background-color', "#000")
-			.css('color', "#fff" )
-			.css('float', 'left')
-			.css("width", controlsWidth )
-			.css("height", controlsHeight)
-			.css("padding", padding)
-			.css("text-align","left")
+		controlDiv.css({
+				"position": "relative",
+				"border": 0,
+				"margin":  0,
+				"background-color": "#000",
+				"color": "#fff",
+				"float": "left",
+				"width": controlsWidth,
+				"height": controlsHeight,
+				"padding": padding,
+				"text-align": "left",
+				"line-height": 1,
+				"text-shadow": 0
+			})
 			.append(
 				'<b> Display: </b><br/>' +
 				'<input id="polarCheck" type="checkbox" name="polarCheck" value="polarCheck"/> Hydrophylic residues<br/>' +
