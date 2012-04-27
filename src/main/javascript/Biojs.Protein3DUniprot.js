@@ -418,14 +418,12 @@ Biojs.Protein3DUniprot = Biojs.Protein3DWS.extend(
 	},
 	
 	/**
-    * Removes the current selection and shows all structures available for the current protein 
-    * in the drop-down box.
+    * Removes selection in the current displayed structure.
     *
-    * 
     * @example
     * instance.removeSelection();
     */ 
 	removeSelection: function() { 
-		this.setSelection(undefined);
+		this.base();
 	}
 });
