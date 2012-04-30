@@ -1,0 +1,56 @@
+@CHARSET "UTF-8";
+
+div.GeneProteinSummary {
+  font-family: "Heveltica Neue", Arial, "sans serif";
+}
+
+div.GeneProteinSummary h1 {
+	font: normal 175% "century gothic", arial;
+	font-weight: 400;
+	margin: 0;
+}
+
+div.GeneProteinSummary h2 {
+	font: normal 100% "century gothic";
+	font-weight: 550;
+	margin: 0;
+}
+
+div.GeneProteinSummary_image {
+  float: right;
+  width: 25%;
+  border: thin silver solid;
+  margin: 0.5em;
+  padding: 0.5em;
+}
+
+div.GeneProteinSummary_image p {
+  text-align: center;
+  font-style: italic;
+  font-size: smaller;
+  text-indent: 0;
+}
+
+/*
+div.GeneProteinSummary_summary a {
+    background-image:url(Rocky32px/link.png);
+    display:block;
+    height:8px;
+    width:8px;
+}*/
+
+div.GeneProteinSummary_summary {
+  margin: 0.5em;
+  padding: 0.5em;
+}
+
+div.GeneProteinSummary_footer {
+  float: left;
+  margin: 0.5em;
+  padding: 0.5em;
+  text-align: left;
+  font-style: italic;
+  font-size: smaller;
+  text-indent: 0;
+  
+}
