@@ -39,7 +39,7 @@ Biojs.GeneProteinSummary = Biojs.extend(
 /** @lends Biojs.GeneProteinSummary# */
 {	
 	constructor: function (options) {
-		Biojs.console.enable();
+		//Biojs.console.enable();
 		
 		this._selector = "#" + this.opt.target;
 		this._container = jQuery(this._selector);
