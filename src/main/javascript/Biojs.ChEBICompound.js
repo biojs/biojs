@@ -6,6 +6,9 @@
  * 
  * @requires <a href=''>Server side proxy</a>
  * 
+ * @requires <a href='../biojs/css/ChEBICompound.css'>ChEBICompound.css</a>
+ * @dependency <link href="../biojs/css/ChEBICompound.css" rel="stylesheet" type="text/css" />
+ * 
  * @param {Object} options An object with the options for the component.
  * 
  * @option {string} [imageUrl="http://www.ebi.ac.uk/chebi/displayImage.do"] 
@@ -36,10 +39,18 @@ Biojs.ChEBICompound = Biojs.extend(
 		Biojs.console.enable();
 		//constructor of Biojs.ChEBICompound
 		
-		jQuery("#"+this.opt.target).css("padding","0px")
-			.css("width",this.opt.width)
-			.css("height",this.opt.height)
-			.css("overflow","hidden");
+		this._selector = "#" + this.opt.target;
+		this._container = jQuery(this._selector);
+		
+		this._container.addClass("ChEBICompound")
+			.css({
+				"width": this.opt.width,
+				"height": this.opt.height,
+				"padding": 0
+			});
+		
+		this._imageContainer = jQuery('<div class="ChEBICompound_image"></div>').appendTo(this._container);
+		this._summaryContainer = jQuery('<div class="ChEBICompound_summary"></div>').appendTo(this._container);
 		
 		if (this.opt.id !== undefined) {
 			this.setId(this.opt.id);
@@ -79,21 +90,21 @@ Biojs.ChEBICompound = Biojs.extend(
   		 * */
   		"onRequestError",
   		/**
-  		 * @name Biojs.ChEBICompound#onLoadedImage
+  		 * @name Biojs.ChEBICompound#onImageLoaded
   		 * @event
   		 * @param {function} actionPerformed An function which receives an {@link Biojs.Event} object as argument.
   		 * @eventData {Object} source The component which did triggered the event.
   		 * @eventData {string} id The identifier of the loaded file.
   		 * 
   		 * @example 
-  		 * instance.onLoadedImage(
+  		 * instance.onImageLoaded(
   		 *    function( e ) {
   		 *       alert( e.id + " loaded." );
   		 *    }
   		 * ); 
   		 * 
   		 * */
-  		"onLoadedImage"
+  		"onImageLoaded"
 	],
 
 	/**
@@ -103,190 +114,130 @@ Biojs.ChEBICompound = Biojs.extend(
     * instance.setId('4991');
     * 
     */
-	setId: function(chebiId) {
+	setId: function( chebiId ) {
+		
 		self = this;
-		self.opt.id = chebiId;
 		
-		var dimension = Math.round(self.opt.width * 0.7);
-		var url = self.opt.imageUrl + '?defaultImage=true&imageIndex='+self.opt.imageIndex+'&chebiId='+chebiId+'&dimensions='+dimension+'&scaleMolecule='+self.opt.scale;
-		var image = '<img id="image_' + chebiId + '" src="'+ url +'" />';
+		this.opt.id = chebiId;
 		
-		jQuery("div#"+this.opt.target).html(
-				'<div id="div'+chebiId+'" style="position:relative; float:right;">'+ image +'</div>'+
-				'<div id="controlSection'+chebiId+'" style="position:relative; float:right;"/>'
-		);
+		var width = this._imageContainer.width(); 
+		var height = this._imageContainer.height(); 
+		var url = this.opt.imageUrl + '?defaultImage=true&imageIndex='+this.opt.imageIndex+'&chebiId='+chebiId+'&dimensions='+width+'&scaleMolecule='+this.opt.scale;
+		var image = '<img id="image_' + chebiId + '" src="'+ url +'" class="ChEBICompound" />';
+		
+		this._imageContainer.html( image );
 		
 		jQuery('#image_' + chebiId ).load(function() {
-			self.raiseEvent('onLoadedImage', {id: chebiId});
+			self.raiseEvent( Biojs.ChEBICompound.EVT_ON_IMAGE_LOADED, {
+				id: chebiId
+			});
+		}).css({
+			'width': width,
+			'height': height
 		});
 		
-		this._requestDetails(chebiId);
+		this._requestDetails( this.opt );
 	},
 	
-	_requestDetails: function(chebiId){
+	_requestDetails: function( opt ){
 		var self = this;
 		
-		Biojs.console.log('url=' + self.opt.chebiDetailsUrl + chebiId);
+		var urlSummary = opt.chebiDetailsUrl + opt.id;
 		
-		jQuery.ajax({
-			url: self.opt.proxyUrl,
-			data: 'url=' + self.opt.chebiDetailsUrl + chebiId,
-			dataType: 'text',
+		Biojs.console.log( "Requesting summary from: " + urlSummary );
+		
+		var httpRequest = {
+			url: urlSummary,
+			method: "GET",
 			success: function(xml){
-				Biojs.console.log("SUCCESS: data received from "+this.data);
-				self._buildPanel(self._parseResponse(xml));
-				self.raiseEvent('onLoadedImage', {id: chebiId});
+				self._dataReceived(xml);
 			},
-			async: false,
-			error: function(qXHR, textStatus, errorThrown){
-				Biojs.console.log(textStatus);
-				self.raiseEvent('onRequestError', {message: textStatus});
+			error: function(qXHR, textStatus, errorThrown) {
+				Biojs.console.log("ERROR requesting summary. Response: " + textStatus);
+				self.raiseEvent( Biojs.ChEBICompound.EVT_ON_REQUEST_ERROR, {
+					message: textStatus
+				});
 			}
-		});
+		};
+		
+		// Using proxy?
+	   	// Redirect using the proxy and encode all params as url data
+	   	if ( opt.proxyUrl != undefined ) {
+	
+	   		 // Redirect to proxy url
+	   		 httpRequest.url = opt.proxyUrl;
+	
+	   		 // Encode both url and parameters under the param url
+	   		 httpRequest.data = [{ name: "url", value: urlSummary }];
+	
+	   		 // Data type 
+	   		 httpRequest.dataType = "text";
+	   	}
+
+		jQuery.ajax(httpRequest);
+		
 	},
 	
 	
 	// parses the xml file from the request and stores the information in an easy to access way
-	_parseResponse: function(xml){
+	_dataReceived: function(xml){
 	    var data = {};
 	    var i = 0;
 		var self = this;
 		
-		xmlDoc = jQuery.parseXML( xml );
-	    xmlResult = jQuery(xmlDoc).find('return');
+		Biojs.console.log("Data received");
 		
-		data.Identifier = xmlResult.find('> chebiId').text();
-		data.Definition = xmlResult.find('> definition').text();
-		data.Name = xmlResult.find(' > chebiAsciiName').text();
-		data.Stars = xmlResult.find(' > entityStar').text();
-		data.SecondaryIds = xmlResult.find(' > SecondaryChEBIIds').text();
-//		data.Synonyms = xmlResult.find(' > Synonyms > data').map(function(){
-//		      return jQuery(this).text();
-//	    	}).get().join(", ");
+		if ( xml.length > 0 ) {
+			xmlDoc = jQuery.parseXML( xml );
+		    xmlResult = jQuery(xmlDoc).find('return');
+			
+		    data.chebiAsciiName = { name: "Name", value: xmlResult.find(' > chebiAsciiName').text() };
+			data.chebiId = { name: "Identifier", value: xmlResult.find('> chebiId').text() };
+			data.definition = { name: "Definition", value: xmlResult.find('> definition').text() };
+			data.SecondaryChEBIIds = { name: "Other Identifiers", value: xmlResult.find(' > SecondaryChEBIIds').text() };
+			data.entityStar = { name: "Stars", value: xmlResult.find(' > entityStar').text() };
+			
+		}
+
+		this._setSummary( data );
 		
-	    Biojs.console.log("Details decoded:");
-	    Biojs.console.log(data);
 	    return data;
 	},
 
 	
-	_buildPanel : function (details) {
-		
-		this._controlsVisible = false;
-		
-		Biojs.console.log("_buildPanel()");
-		
-		var self = this;
-		var width = Math.round(self.opt.width * 0.3); 
-		var height = self.opt.height; 
-		
-		var controlSectionDiv = jQuery("#"+self.opt.target+" > div#controlSection"+self.opt.id);
-		
-		controlSectionDiv.append('<div id="controls" />'+
-				'<div id="controlTab">'+
-				'<span id="hideButton" title="Hide this control panel">&lt;&lt;</span>'+
-				'<span id="showButton" title="Show the control panel">&gt;&gt;</span><br/><br/></div>')
-			.css("border", 0)
-			.css("margin", 0)
-			.css("width",  "auto")
-			.css("height", "auto")
-			.css('float', 'left')
-			.css('font-family','"Heveltica Neue", Arial, "sans serif"')
-			.css('font-size','12px');
-		
-		// Measurements 
-		// 
-		var padding = 5;
-		var tabWidth = 20, tabHeight = height;
-		var controlsWidth = width - (2*padding+tabWidth), controlsHeight = height - (padding*2);
-		
-		//
-		// Panel 
-		// 
-		var controlDiv = controlSectionDiv.find("div#controls");
-		
-		var detailsHTML = '';
-		for (key in details) {
-			if ( details[key].length > 0 ) {
-				detailsHTML += '<b>' + key + ':</b><br/>' + details[key] + '<br/><br/>';
-			}
-		}
+	_setSummary : function ( data ) {
+		Biojs.console.log("_setSummary()");
 
-		controlDiv.css("position","relative")
-			.css("border", 0)
-			.css("margin", 0)
-			.css('background-color', "#000")
-			.css('color', "#fff" )
-			.css('float', 'left')
-			.css("width", controlsWidth )
-			.css("height", controlsHeight)
-			.css("padding", padding)
-			.append( detailsHTML );
-
-		// 
-		// Tab
-		//
-		var showHideTab = controlSectionDiv.find('#controlTab');
-
-		showHideTab.css("border", 0)
-			.css("margin", 0)
-			.css("padding", 0)
-			.css("float", "left")
-			.css("width", tabWidth)
-			.css("height", tabHeight)
-			.css('background-color', "#000");
+		this._summaryContainer.html('');
 		
-		/**
-		 * @private
-		 * @function
-		 */
-		// This function will hide/show the control panel
-		var toggleControls = function (){
+		if ( Biojs.Utils.isEmpty(data) ) {
+			this._summaryContainer.html('Not information available');
 			
-			showHideTab.find("span").toggle();
+		} else {
 			
-			if (self._controlsVisible) {
-				controlDiv.hide();
-				//showHideTab.css('background-color', self.opt.backgroundColor);
-				self._controlsVisible = false;
-			} else {
-				controlDiv.show();
-				//showHideTab.css('background-color', "#000");
-				self._controlsVisible = true;
+			for (key in data) {
+				if ( data[key].value.length > 0 ) {
+					if ( key == 'entityStar' ) {
+						jQuery('<h2>' + data[key].name + '</h2><div class="star"/>')
+							.appendTo(this._summaryContainer)
+							.css( 'width', parseInt(data[key].value) * 16 );
+					} else {
+						this._summaryContainer.append( '<h2>' + data[key].name + '</h2><p>' + data[key].value + '</p>' );
+					}
+				}
 			}
+			
+			this.raiseEvent( Biojs.ChEBICompound.EVT_ON_SUMMARY_LOADED,{
+				id: data.Identifier
+			});
 		}
 		
-		self._toggleControls = toggleControls;
-		
-		showHideTab.find('#hideButton')
-			.click( self._toggleControls )
-			.mouseover(function(){
-				jQuery(this).css("color","#27C0FF");
-			})
-			.mouseout(function(){
-				jQuery(this).css("color","#fff");
-			})
-			.css("color","#fff")
-			.css("display","none")
-			.css("cursor","pointer");
-		
-		showHideTab.find('#showButton')
-			.click( self._toggleControls )
-			.mouseover(function(){
-				jQuery(this).css("color","#27C0FF");
-			})
-			.mouseout(function(){
-				jQuery(this).css("color","#000");
-			})
-			.css("color","#000")
-			.css("cursor","pointer");
-		
-		this._controlsReady = true;
-		
-		Biojs.console.log("_buildPanel done");
+		Biojs.console.log("_setSummary done");
 	}
-
+},{
+	//Events 
+	EVT_ON_IMAGE_LOADED: "onImageLoaded",
+	EVT_ON_SUMMARY_LOADED: "onSummaryLoaded",
+	EVT_ON_REQUEST_ERROR: "onRequestError"
 	
-	
-
 });

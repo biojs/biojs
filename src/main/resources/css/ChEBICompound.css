@@ -1,0 +1,50 @@
+@CHARSET "UTF-8";
+
+div.ChEBICompound {
+	padding: 0px;
+	overflow: hidden;
+}
+
+div.ChEBICompound_image {
+	position: relative;
+	float: right;
+	width: 65%;
+	height:  100%;
+}
+
+div.ChEBICompound_summary {
+	border: solid silver 1px;
+	margin: 0;
+	padding: 7px;
+	width:  30%;
+	height:  100%;
+	position:relative;
+	float: left;
+	font-family: "Heveltica Neue", Arial, "sans serif";
+	font-size: 12px;
+	background: #EEF5F5;
+	color: #066
+}
+
+div.ChEBICompound_summary h2 {
+	font-weight: 600;
+	margin: 0;
+	padding-top: 5px;
+}
+
+div.ChEBICompound_summary p {
+  	text-align: left;
+  	font-style: italic;
+  	text-indent: 0;
+  	line-height: 1.2;
+}
+
+div.ChEBICompound_summary div.star {
+	background-image: url('Rocky32px/star_yellow.png');
+	background-size: 16px 16px;
+	background-repeat: repeat-x;
+	width: 16px;
+	height: 16px;
+}
+
+
