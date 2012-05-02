@@ -15,7 +15,7 @@ div.ChEBICompound_image {
 div.ChEBICompound_summary {
 	border: solid silver 1px;
 	margin: 0;
-	padding: 7px;
+	padding: 5px;
 	width:  30%;
 	height:  100%;
 	position:relative;
@@ -46,5 +46,26 @@ div.ChEBICompound_summary div.star {
 	width: 16px;
 	height: 16px;
 }
+
+div.ChEBICompound_summary div:hover.collapse, div:hover.expand {
+	background-image: url('Rocky32px/iconset_hover.png');
+}
+
+div.ChEBICompound_summary div.collapse, div.expand {
+	background-image: url('Rocky32px/iconset.png');
+}
+
+/*div.ChEBICompound_summary div:hover.collapse {
+	background: url('Rocky32px/iconset_hover.png') no-repeat right -24px;
+}*/
+
+div.ChEBICompound_summary div.collapse { background-position: 0 0; }
+div.ChEBICompound_summary div.expand { background-position: 0 -24px; }
+
+div.ChEBICompound_summary div.toggle {
+	width: 24px;
+	height: 24px;
+}
+
 
 

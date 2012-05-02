@@ -9,6 +9,9 @@
  * @requires <a href='../biojs/css/ChEBICompound.css'>ChEBICompound.css</a>
  * @dependency <link href="../biojs/css/ChEBICompound.css" rel="stylesheet" type="text/css" />
  * 
+ * @requires <a href='http://blog.jquery.com/2011/09/12/jquery-1-6-4-released/'>jQuery Core 1.6.4</a>
+ * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jquery/jquery-1.6.4.js"></script>
+ * 
  * @param {Object} options An object with the options for the component.
  * 
  * @option {string} [imageUrl="http://www.ebi.ac.uk/chebi/displayImage.do"] 
@@ -27,7 +30,7 @@
  * @example
  * var instance = new Biojs.ChEBICompound({
  * 		target: 'YourOwnDivId',
- * 		id: '2922'
+ * 		id: 'CHEBI:2922'
  * });	
  * 
  * 
@@ -51,6 +54,7 @@ Biojs.ChEBICompound = Biojs.extend(
 		
 		this._imageContainer = jQuery('<div class="ChEBICompound_image"></div>').appendTo(this._container);
 		this._summaryContainer = jQuery('<div class="ChEBICompound_summary"></div>').appendTo(this._container);
+		this._buildSummaryTab(this._summaryContainer);
 		
 		if (this.opt.id !== undefined) {
 			this.setId(this.opt.id);
@@ -111,14 +115,16 @@ Biojs.ChEBICompound = Biojs.extend(
     * 
     *
     * @example
-    * instance.setId('4991');
+    * instance.setId('CHEBI:4991');
     * 
     */
 	setId: function( chebiId ) {
 		
-		self = this;
+		var self = this;
 		
-		this.opt.id = chebiId;
+		this.opt.id = chebiId.replace('CHEBI:','');
+		
+		this._requestDetails( this.opt );
 		
 		var width = this._imageContainer.width(); 
 		var height = this._imageContainer.height(); 
@@ -136,7 +142,7 @@ Biojs.ChEBICompound = Biojs.extend(
 			'height': height
 		});
 		
-		this._requestDetails( this.opt );
+		//this._requestDetails( this.opt );
 	},
 	
 	_requestDetails: function( opt ){
@@ -208,21 +214,25 @@ Biojs.ChEBICompound = Biojs.extend(
 	_setSummary : function ( data ) {
 		Biojs.console.log("_setSummary()");
 
-		this._summaryContainer.html('');
+		var container = this._summaryContainer;
+		
+		// Remove all elements in container 
+		// except the toggle buttons 
+		container.children().not('.toggle').remove();
 		
 		if ( Biojs.Utils.isEmpty(data) ) {
-			this._summaryContainer.html('Not information available');
+			container.append('Not information available');
 			
 		} else {
-			
+			 // Add the summary data
 			for (key in data) {
 				if ( data[key].value.length > 0 ) {
 					if ( key == 'entityStar' ) {
 						jQuery('<h2>' + data[key].name + '</h2><div class="star"/>')
-							.appendTo(this._summaryContainer)
+							.appendTo( container )
 							.css( 'width', parseInt(data[key].value) * 16 );
 					} else {
-						this._summaryContainer.append( '<h2>' + data[key].name + '</h2><p>' + data[key].value + '</p>' );
+						container.append( '<h2>' + data[key].name + '</h2><p>' + data[key].value + '</p>' );
 					}
 				}
 			}
@@ -231,9 +241,38 @@ Biojs.ChEBICompound = Biojs.extend(
 				id: data.Identifier
 			});
 		}
-		
+
 		Biojs.console.log("_setSummary done");
+	},
+	
+	_buildSummaryTab: function( container ) {
+		
+		container.html('');	
+		
+		var expand = jQuery('<div style="display: none;" class="toggle expand"></div>').appendTo(container);		
+		var colapse = jQuery('<div class="toggle collapse"/>').appendTo(container);
+		var width = parseInt( jQuery('.toggle').css('width'), 10 ) + 10;
+		
+		container.css( 'left', 0 )
+			.find('.toggle')
+			.click( function(){
+				// Animate show/hide this tab
+				container.animate({ 
+						left: ( parseInt( container.css('left'), 10 ) == 0 ? width - container.outerWidth() : 0 ) + "px"
+					},
+					// to call once the animation is complete 
+					function() {
+						Biojs.console.log('Hiding children')
+						container.children().toggle();
+					}
+				);
+			})
+			.css({
+				'float':'right',
+				'position':'relative'
+			});
 	}
+	
 },{
 	//Events 
 	EVT_ON_IMAGE_LOADED: "onImageLoaded",
