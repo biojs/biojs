@@ -965,7 +965,7 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
                 typeCategory: obj.typeCategory,
                 evidenceText: obj.evidenceText,
                 evidenceCode: obj.evidenceCode,
-                shapeOn: internalShape
+                shape: internalShape
             });
         },
 
@@ -987,7 +987,7 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
                 typeCategory: obj.typeCategory,
                 evidenceText: obj.evidenceText,
                 evidenceCode: obj.evidenceCode,
-                shapeOn: shape
+                shape: shape
             });
         },
 
@@ -1011,7 +1011,7 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
                 typeCategory: obj.typeCategory,
                 evidenceText: obj.evidenceText,
                 evidenceCode: obj.evidenceCode,
-                shapeOn: internalShape
+                shape: internalShape
             });
         },
 
@@ -1033,7 +1033,7 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
                 typeCategory: obj.typeCategory,
                 evidenceText: obj.evidenceText,
                 evidenceCode: obj.evidenceCode,
-                shapeOn: shape
+                shape: shape
             });
         },
 
@@ -1057,7 +1057,7 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
                 typeCategory: obj.typeCategory,
                 evidenceText: obj.evidenceText,
                 evidenceCode: obj.evidenceCode,
-                shapeOn: internalShape
+                shape: internalShape
             });
         },
 
@@ -1079,7 +1079,7 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
                 typeCategory: obj.typeCategory,
                 evidenceText: obj.evidenceText,
                 evidenceCode: obj.evidenceCode,
-                shapeOn: shape
+                shape: shape
             });
         },
 
