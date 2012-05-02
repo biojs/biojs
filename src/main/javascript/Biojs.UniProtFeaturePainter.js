@@ -252,7 +252,10 @@ var Biojs_UniProtFeaturePainter_myself = undefined;
  *    Should the tooltip for features be displayed?
  *
  * @option {boolean} [highlightFeatures=true]
- *    Should the features be highlighted when mouse on?
+ *    Should the features be highlighted when mouse over?
+ *
+ * @option {boolean} [highlightClickFeatures=true]
+ *    Should the features remain highlighted after a mouse click?
  *
  * @option {boolean} [dragSites=true]
  *    Should the sites be draggable?
@@ -261,8 +264,12 @@ var Biojs_UniProtFeaturePainter_myself = undefined;
  *    Web service that creates image files for annotation features as those described in the json option
  *    Note: We recommend to use the same Web service that was used to generate the json file if any.
  *
+ * @option {String} [selectionColor=#ff8c00]
+ *    Color in hexa format so the features on mouse-over and click will change to it.
+ *    Make sure it does not exist at http://wwwdev.ebi.ac.uk/das-srv/uniprot/das/uniprot/stylesheet as those are the reference colours for protein features.
+ *
  * @example      
- * var segment = "a4:human";
+ * var segment = "a4_human";
  * var service = "http://wwwdev.ebi.ac.uk/uniprot/das_uniprot_cartoon/image";
  *
  * jQuery.ajax({
@@ -320,7 +327,8 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
     _LIME: "#00ff00",
     _DARK_ORANGE: "#ff8c00",
     _originalColor: "",
-    _HOVER_COLOR: "#ff8c00",
+    _previousClickedColor: "",
+    _previousClickedShape: "",
 
     /**
      * Default values for the options
@@ -344,7 +352,9 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
      * showPrintButton: true,
      * showFeaturesTooltip: true,
      * highlightFeatures: true,
+     * highlightClickFeatures: true,
      * dragSites: true //beware that dragging implies a click on so the click event will be raised!
+     * selectionColor: "#ff8c00"
      * featureImageWebService: "http://localhost:8080/image"
      * @name Biojs.UniProtFeaturePainter-opt
      */
@@ -355,7 +365,9 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
         showPrintButton: true,
         showFeaturesTooltip: true,
         highlightFeatures: true,
+        highlightClickFeatures: true,
         dragSites: true,
+        selectionColor: "#ff8c00", //make sure it does not exist at http://wwwdev.ebi.ac.uk/das-srv/uniprot/das/uniprot/stylesheet
         featureImageWebService: "http://localhost:8080/image"
     },
 
@@ -370,14 +382,16 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
          * @param {function} actionPerformed A function which receives a {@link Biojs.Event} object as argument.
          * @eventData {Object} source The component which triggered the event.
          * @eventData {string} type The name of the event.
-         * @eventData {int} featureInfo A json object with the information for the selected feature, including id.
+         * @eventData {Object} featureInfo A json object with the information for the selected feature, including id.
          * @example
+         * //It is not recommended to use this event to highlight and sustain that highlight after a click on a
+         * //feature, instead set to ture the options highlightClickFeatures.
          * myPainter.onFeatureClick(
          *    function( obj ) {
          *    var tooltip = obj.featureLabel +
-                    " (" + obj.featureStart + ", " + obj.featureEnd + "; length " + (obj.featureEnd-obj.featureStart+1) + ")" +
-                    "<br/>Type: " + obj.featureTypeLabel + " - " + obj.typeCode + " - " + obj.typeCategory +
-                    "<br/>Evidence: " + obj.evidenceText + " - " + obj.evidenceCode;
+         *          " (" + obj.featureStart + ", " + obj.featureEnd + "; length " + (obj.featureEnd-obj.featureStart+1) + ")" +
+         *          "<br/>Type: " + obj.featureTypeLabel + " - " + obj.typeCode + " - " + obj.typeCategory +
+         *          "<br/>Evidence: " + obj.evidenceText + " - " + obj.evidenceCode;
          *       alert("Clicked: " + tooltip );
          *       Biojs.console.log(obj.shape); //raphaël object
          *    }
@@ -391,7 +405,7 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
          * @param {function} actionPerformed A function which receives a {@link Biojs.Event} object as argument.
          * @eventData {Object} source The component which triggered the event.
          * @eventData {string} type The name of the event.
-         * @eventData {int} featureInfo A json object with the information for the selected feature, including id.
+         * @eventData {Object} featureInfo A json object with the information for the selected feature, including id.
          * @example
          * // It is not recommended to use this event to display a tooltip or highlight the features on mouse over,
          * // instead set to true the options showFeaturesTooltip and highlightFeatures
@@ -408,8 +422,40 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
          * );
          *
          * */
-        "onFeatureOn"
+        "onFeatureOn",
+        /**
+         * @name Biojs.UniProtFeaturePainter#onFeatureOff
+         * @event
+         * @param {function} actionPerformed A function which receives a {@link Biojs.Event} object as argument.
+         * @eventData {Object} source The component which triggered the event.
+         * @eventData {string} type The name of the event.
+         * @eventData {Object} featureInfo A json object with the information for the selected feature, including id.
+         * @example
+         *
+         * myPainter.onFeatureOff(
+         *    function( obj ) {
+         *    var tooltip = obj.featureLabel +
+         *           " (" + obj.featureStart + ", " + obj.featureEnd + "; length " + (obj.featureEnd-obj.featureStart+1) + ")" +
+         *           "<br/>Type: " + obj.featureTypeLabel + " - " + obj.typeCode + " - " + obj.typeCategory +
+         *           "<br/>Evidence: " + obj.evidenceText + " - " + obj.evidenceCode;
+         *       alert("Off feature: " + tooltip );
+         *       Biojs.console.log(obj.shape); //raphaël object
+         *    }
+         * );
+         *
+         * */
+        "onFeatureOff"
     ],
+
+    /**
+     *
+     * @param rdbStyle
+     * @param chkHorizontal
+     * @param chkVertical
+     */
+    setSelectionColor: function(newSelectionColor) {
+        this.opt.selectionColor = newSelectionColor;
+    },
 
     /**
      * Manual customization of vertical and horizontal grid lines as well as style.
@@ -900,6 +946,144 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
     },
 
     /**
+     * Private: over shape (not rectangle) event
+     * @param myself
+     * @param shapeContainer
+     * @param obj
+     * @private
+     */
+    _onShapeEvent: function(myself, shapeContainer, obj) {
+        connection = myself.connections[shapeContainer.connectionIndex-1];
+        internalShape = connection.from;
+        myself.raiseEvent('onFeatureOn', {
+            featureId: obj.featureId,
+            featureLabel: obj.featureLabel,
+            featureStart: obj.featureStart,
+            featureEnd: obj.featureEnd,
+            featureTypeLabel: obj.featureTypeLabel,
+            typeCode: obj.typeCode,
+            typeCategory: obj.typeCategory,
+            evidenceText: obj.evidenceText,
+            evidenceCode: obj.evidenceCode,
+            shapeOn: internalShape
+        });
+    },
+
+    /**
+     * Private: over only rectangle event
+     * @param myself
+     * @param shapeContainer
+     * @param obj
+     * @private
+     */
+    _onRectangleEvent: function(myself, shape, obj) {
+        myself.raiseEvent('onFeatureOn', {
+            featureId: obj.featureId,
+            featureLabel: obj.featureLabel,
+            featureStart: obj.featureStart,
+            featureEnd: obj.featureEnd,
+            featureTypeLabel: obj.featureTypeLabel,
+            typeCode: obj.typeCode,
+            typeCategory: obj.typeCategory,
+            evidenceText: obj.evidenceText,
+            evidenceCode: obj.evidenceCode,
+            shapeOn: shape
+        });
+    },
+
+    /**
+     * Private: over shape (not rectangle) event
+     * @param myself
+     * @param shapeContainer
+     * @param obj
+     * @private
+     */
+    _offShapeEvent: function(myself, shapeContainer, obj) {
+        connection = myself.connections[shapeContainer.connectionIndex-1];
+        internalShape = connection.from;
+        myself.raiseEvent('onFeatureOff', {
+            featureId: obj.featureId,
+            featureLabel: obj.featureLabel,
+            featureStart: obj.featureStart,
+            featureEnd: obj.featureEnd,
+            featureTypeLabel: obj.featureTypeLabel,
+            typeCode: obj.typeCode,
+            typeCategory: obj.typeCategory,
+            evidenceText: obj.evidenceText,
+            evidenceCode: obj.evidenceCode,
+            shapeOn: internalShape
+        });
+    },
+
+    /**
+     * Private: over only rectangle event
+     * @param myself
+     * @param shapeContainer
+     * @param obj
+     * @private
+     */
+    _offRectangleEvent: function(myself, shape, obj) {
+        myself.raiseEvent('onFeatureOff', {
+            featureId: obj.featureId,
+            featureLabel: obj.featureLabel,
+            featureStart: obj.featureStart,
+            featureEnd: obj.featureEnd,
+            featureTypeLabel: obj.featureTypeLabel,
+            typeCode: obj.typeCode,
+            typeCategory: obj.typeCategory,
+            evidenceText: obj.evidenceText,
+            evidenceCode: obj.evidenceCode,
+            shapeOn: shape
+        });
+    },
+
+    /**
+     * Private: click shape (not rectangle) event
+     * @param myself
+     * @param shapeContainer
+     * @param obj
+     * @private
+     */
+    _clickShapeEvent: function(myself, shapeContainer, obj) {
+        connection = myself.connections[shapeContainer.connectionIndex-1];
+        internalShape = connection.from;
+        myself.raiseEvent('onFeatureClick', {
+            featureId: obj.featureId,
+            featureLabel: obj.featureLabel,
+            featureStart: obj.featureStart,
+            featureEnd: obj.featureEnd,
+            featureTypeLabel: obj.featureTypeLabel,
+            typeCode: obj.typeCode,
+            typeCategory: obj.typeCategory,
+            evidenceText: obj.evidenceText,
+            evidenceCode: obj.evidenceCode,
+            shapeOn: internalShape
+        });
+    },
+
+    /**
+     * Private: click only rectangle event
+     * @param myself
+     * @param shapeContainer
+     * @param obj
+     * @private
+     */
+    _clickRectangleEvent: function(myself, shape, obj) {
+        myself.raiseEvent('onFeatureClick', {
+            featureId: obj.featureId,
+            featureLabel: obj.featureLabel,
+            featureStart: obj.featureStart,
+            featureEnd: obj.featureEnd,
+            featureTypeLabel: obj.featureTypeLabel,
+            typeCode: obj.typeCode,
+            typeCategory: obj.typeCategory,
+            evidenceText: obj.evidenceText,
+            evidenceCode: obj.evidenceCode,
+            shapeOn: shape
+        });
+    },
+
+    /**
      * Private: Gets a JSON element representing SVG-features and creates a Raphaël object and paints features;
      * it also adds tooltip and move, mousein, mouseout, and drag events for features.
      * @param {Object} obj SVG representation for features.
@@ -966,23 +1150,129 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
         }
         if (sequenceLineY) {
             var myself = this;
-            shape.click(
-                function() {
-                    myself.raiseEvent('onFeatureClick', {
-                        featureId: obj.featureId,
-                        featureLabel: obj.featureLabel,
-                        featureStart: obj.featureStart,
-                        featureEnd: obj.featureEnd,
-                        featureTypeLabel: obj.featureTypeLabel,
-                        typeCode: obj.typeCode,
-                        typeCategory: obj.typeCategory,
-                        evidenceText: obj.evidenceText,
-                        evidenceCode: obj.evidenceCode,
-                        shapeOn: shape
-                    });
+            if (obj.type != "rect") { //shapes are movable and have a link to the sequence line
+                if (this.opt.highlightClickFeatures) {
+                    if (this.opt.highlightFeatures) { //highlight, select, and raise both over and click events
+                        _clickedShape = false;
+                        shape.click(
+                            function() {
+                                _clickedShape = true;
+                                this.animate({"fill-opacity": 1.0}, 500);
+                                if (this == myself._previousClickedShape) {//the second click will deselect
+                                    if (myself._originalColor == myself.opt.selectionColor) {
+                                        myself._originalColor = myself._previousClickedColor;
+                                        this.attr({stroke: myself._previousClickedColor, fill: myself._previousClickedColor});
+                                        //this.animate({"fill-opacity": 1.0}, 500);
+                                    }//no need to do anything, over already made it orange
+                                } else {
+                                    //deselect the previous feature
+                                    if (myself._previousClickedShape && (myself._previousClickedShape != "")) {
+                                        try {
+                                            myself._previousClickedShape.attr({stroke: myself._previousClickedColor, fill: myself._previousClickedColor});
+                                            myself._previousClickedShape.animate({"fill-opacity": .5}, 500);
+                                        } catch (error) {/*console.log*/}
+                                    }
+                                    //keep the last clicked shape info
+                                    myself._previousClickedColor = myself._originalColor;
+                                    myself._previousClickedShape = this;
+                                    //change colour: it was already done by the hover function
+                                }
+                                //raise CLICK event
+                                myself._clickShapeEvent(myself, this, obj);
+                            }
+                        );
+                        shape.hover(
+                            function() {//on
+                                myself._originalColor = shape.attrs.stroke;
+                                this.attr({stroke: myself.opt.selectionColor, fill: myself.opt.selectionColor});
+                                this.animate({"fill-opacity": 1.0}, 500);
+                                //raise ON event
+                                myself._onShapeEvent(myself, this, obj);
+                            },
+                            function() {//off
+                                if (!_clickedShape) { //return to the original colour
+                                    this.attr({stroke: myself._originalColor, fill: myself._originalColor});
+                                }
+                                this.animate({"fill-opacity": .5}, 500);
+                                _clickedShape = false;
+                                //raise OFF event
+                                myself._offShapeEvent(myself, this, obj);
+                            }
+                        );
+                    } else { //only select, and raise both over and click events
+                        shape.click(
+                            function() {
+                                //deselect the previous feature
+                                if (myself._previousClickedShape && (myself._previousClickedShape != "")) {
+                                    try {
+                                        myself._previousClickedShape.attr({stroke: myself._previousClickedColor, fill: myself._previousClickedColor});
+                                        myself._previousClickedShape.animate({"fill-opacity": .5}, 500);
+                                    } catch (error) {/*console.log*/}
+                                }
+                                //keep the last clicked shape info
+                                myself._previousClickedColor = this.attrs.stroke;
+                                myself._previousClickedShape = this;
+                                //change colour
+                                this.attr({stroke: myself.opt.selectionColor, fill: myself.opt.selectionColor});
+                                this.animate({"fill-opacity": 1.0}, 500);
+                                //raise CLICK event
+                                myself._clickShapeEvent(myself, this, obj);
+                            }
+                        );
+                        shape.hover(
+                            function() {//on
+                                //raise ON event
+                                myself._onShapeEvent(myself, this, obj);
+                            },
+                            function() {//off
+                                //raise OFF event
+                                myself._offShapeEvent(myself, this, obj);
+                            }
+                        );
+                    }
+                } else {
+                    if (this.opt.highlightFeatures) { //only highlight, and raise both over and click events
+                        shape.click(
+                            function() {
+                                //raise CLICK event
+                                myself._clickShapeEvent(myself, this, obj);
+                            }
+                        );
+                        shape.hover(
+                            function() {//on
+                                myself._originalColor = this.attrs.stroke;
+                                this.attr({stroke: myself.opt.selectionColor, fill: myself.opt.selectionColor});
+                                this.animate({"fill-opacity": 1.0}, 500);
+                                //raise ON event
+                                myself._onShapeEvent(myself, this, obj);
+                            },
+                            function() {//off
+                                this.attr({stroke: myself._originalColor, fill: myself._originalColor});
+                                this.animate({"fill-opacity": .5}, 500);
+                                //raise OFF event
+                                myself._offShapeEvent(myself, this, obj);
+                            }
+                        );
+                    } else { //raise both over and click events
+                        shape.click(
+                            function() {
+                                //raise CLICK event
+                                myself._clickShapeEvent(myself, this, obj);
+                            }
+                        );
+                        shape.hover(
+                            function() {//on
+                                //raise ON event
+                                myself._onShapeEvent(myself, this, obj);
+                            },
+                            function() {//off
+                                //raise OFF event
+                                myself._offShapeEvent(myself, this, obj);
+                            }
+                        );
+                    }
                 }
-            );
-            if (obj.type != "rect") { //rectangle are not movable nor have a link to the sequence line
+                //dragging
                 if (this.opt.dragSites) {
                     shape.drag(
                         function (dx, dy) {  //move
@@ -1017,59 +1307,6 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
                         }
                     );
                 }
-                if (this.opt.highlightFeatures) {
-                    shape.hover(
-                        function() {//on
-                            myself._originalColor = this.attrs.stroke;
-                            this.attr({stroke: myself._HOVER_COLOR, fill: myself._HOVER_COLOR});
-                            this.animate({"fill-opacity": 1.0}, 500);
-                            connection = myself.connections[this.connectionIndex-1];
-                            shape = connection.from;
-                            connection.line.attr({fill: "none", stroke: myself._HOVER_COLOR, "stroke-width": 5});//shape.attrs.stroke
-                            myself.raphael.uniprotFeaturePainter_connection(connection);
-
-                            myself.raiseEvent('onFeatureOn', {
-                                featureId: obj.featureId,
-                                featureLabel: obj.featureLabel,
-                                featureStart: obj.featureStart,
-                                featureEnd: obj.featureEnd,
-                                featureTypeLabel: obj.featureTypeLabel,
-                                typeCode: obj.typeCode,
-                                typeCategory: obj.typeCategory,
-                                evidenceText: obj.evidenceText,
-                                evidenceCode: obj.evidenceCode,
-                                shapeOn: shape
-                            });
-                        },
-                        function() {//off
-                            this.attr({stroke: myself._originalColor, fill: myself._originalColor});
-                            this.animate({"fill-opacity": .5}, 500);
-                            connection = myself.connections[this.connectionIndex-1];
-                            shape = connection.from;
-                            connection.line.attr({stroke: "#000", fill: "none", "stroke-width": 1});
-                            myself.raphael.uniprotFeaturePainter_connection(connection);
-                        }
-                    );
-                } else {
-                    shape.hover(
-                        function() {//on
-                            myself.raiseEvent('onFeatureOn', {
-                                featureId: obj.featureId,
-                                featureLabel: obj.featureLabel,
-                                featureStart: obj.featureStart,
-                                featureEnd: obj.featureEnd,
-                                featureTypeLabel: obj.featureTypeLabel,
-                                typeCode: obj.typeCode,
-                                typeCategory: obj.typeCategory,
-                                evidenceText: obj.evidenceText,
-                                evidenceCode: obj.evidenceCode,
-                                shapeOn: shape
-                            });
-                        },
-                        function() {//off
-                        }
-                    );
-                }
                 //dot
                 var dot = this.raphael.circle(obj.x, sequenceLineY, dotRadius);
                 dot.attr({"fill": 1, stroke: obj.stroke, "stroke-width": 1});
@@ -1081,51 +1318,127 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
                     this.connections.push(connectionLine);
                     shape.connectionIndex = this.connections.length;
                 } catch (err) {/*console.log(err)*/}
-            } else {
-                if (this.opt.highlightFeatures) {
-                    shape.hover(
-                        function() { //on
-                            myself._originalColor = this.attrs.stroke;
-                            this.attr({stroke: myself._HOVER_COLOR, fill: myself._HOVER_COLOR});
-                            this.animate({"fill-opacity": 1.0}, 500);
-
-                            myself.raiseEvent('onFeatureOn', {
-                                featureId: obj.featureId,
-                                featureLabel: obj.featureLabel,
-                                featureStart: obj.featureStart,
-                                featureEnd: obj.featureEnd,
-                                featureTypeLabel: obj.featureTypeLabel,
-                                typeCode: obj.typeCode,
-                                typeCategory: obj.typeCategory,
-                                evidenceText: obj.evidenceText,
-                                evidenceCode: obj.evidenceCode,
-                                shapeOn: shape
-                            });
-                        },
-                        function() { //off
-                            this.attr({stroke: myself._originalColor, fill: myself._originalColor});
-                            this.animate({"fill-opacity": .5}, 500);
-                        }
-                    );
+            } else { //rectangle are not movable nor have a link to the sequence line
+                if (this.opt.highlightClickFeatures) {
+                    if (this.opt.highlightFeatures) { //highlight, select, and raise both over and click events
+                        _clickedRect = false;
+                        shape.click(
+                            function() {
+                                _clickedRect = true;
+                                this.animate({"fill-opacity": 1.0}, 500);
+                                if (this == myself._previousClickedShape) {//the second click will deselect
+                                    if (myself._originalColor == myself.opt.selectionColor) {
+                                        myself._originalColor = myself._previousClickedColor;
+                                        this.attr({stroke: myself._previousClickedColor, fill: myself._previousClickedColor});
+                                        //this.animate({"fill-opacity": 1.0}, 500);
+                                    }//no need to do anything, over already made it orange
+                                } else {
+                                    //deselect the previous feature
+                                    if (myself._previousClickedShape && (myself._previousClickedShape != "")) {
+                                        try {
+                                            myself._previousClickedShape.attr({stroke: myself._previousClickedColor, fill: myself._previousClickedColor});
+                                            myself._previousClickedShape.animate({"fill-opacity": .5}, 500);
+                                        } catch (error) {/*console.log*/}
+                                    }
+                                    //keep the last clicked shape info
+                                    myself._previousClickedColor = myself._originalColor;
+                                    myself._previousClickedShape = this;
+                                    //change colour: it will be done by the hover function
+                                }
+                                //raise CLICK event
+                                myself._clickRectangleEvent(myself, this, obj);
+                            }
+                        );
+                        shape.hover(
+                            function() {//on
+                                myself._originalColor = shape.attrs.stroke;
+                                this.attr({stroke: myself.opt.selectionColor, fill: myself.opt.selectionColor});
+                                this.animate({"fill-opacity": 1.0}, 500);
+                                //raise ON event
+                                myself._onRectangleEvent(myself, this, obj);
+                            },
+                            function() {//off
+                                if (!_clickedRect) { //return to the original colour
+                                    this.attr({stroke: myself._originalColor, fill: myself._originalColor});
+                                }
+                                this.animate({"fill-opacity": .5}, 500);
+                                _clickedRect = false;
+                                //raise OFF event
+                                myself._offRectangleEvent(myself, this, obj);
+                            }
+                        );
+                    } else { //select, and raise both over and click events
+                        shape.click(
+                            function() {
+                                //deselect the previous feature
+                                if (myself._previousClickedShape && (myself._previousClickedShape != "")) {
+                                    try {
+                                        myself._previousClickedShape.attr({stroke: myself._previousClickedColor, fill: myself._previousClickedColor});
+                                        myself._previousClickedShape.animate({"fill-opacity": .5}, 500);
+                                    } catch (error) {/*console.log*/}
+                                }
+                                //keep the last clicked shape info
+                                myself._previousClickedColor = this.attrs.stroke;
+                                myself._previousClickedShape = this;
+                                //change colour
+                                this.attr({stroke: myself.opt.selectionColor, fill: myself.opt.selectionColor});
+                                this.animate({"fill-opacity": 1.0}, 500);
+                                //raise CLICK event
+                                myself._clickRectangleEvent(myself, this, obj);
+                            }
+                        );
+                        shape.hover(
+                            function() {//on
+                                //raise ON event
+                                myself._onRectangleEvent(myself, this, obj);
+                            },
+                            function() {//off
+                                //raise OFF event
+                                myself._offRectangleEvent(myself, this, obj);
+                            }
+                        );
+                    }
                 } else {
-                    shape.hover(
-                        function() {//on
-                            myself.raiseEvent('onFeatureOn', {
-                                featureId: obj.featureId,
-                                featureLabel: obj.featureLabel,
-                                featureStart: obj.featureStart,
-                                featureEnd: obj.featureEnd,
-                                featureTypeLabel: obj.featureTypeLabel,
-                                typeCode: obj.typeCode,
-                                typeCategory: obj.typeCategory,
-                                evidenceText: obj.evidenceText,
-                                evidenceCode: obj.evidenceCode,
-                                shapeOn: shape
-                            });
-                        },
-                        function() {//off
-                        }
-                    );
+                    if (this.opt.highlightFeatures) { //highlight, and raise both over and click events
+                        shape.click(
+                            function() {
+                                //raise CLICK event
+                                myself._clickRectangleEvent(myself, this, obj);
+                            }
+                        );
+                        shape.hover(
+                            function() {//on
+                                myself._originalColor = this.attrs.stroke;
+                                this.attr({stroke: myself.opt.selectionColor, fill: myself.opt.selectionColor});
+                                this.animate({"fill-opacity": 1.0}, 500);
+                                //raise ON event
+                                myself._onRectangleEvent(myself, this, obj);
+                            },
+                            function() {//off
+                                this.attr({stroke: myself._originalColor, fill: myself._originalColor});
+                                this.animate({"fill-opacity": .5}, 500);
+                                //raise OFF event
+                                myself._offRectangleEvent(myself, this, obj);
+                            }
+                        );
+                    } else { //raise both over and click events
+                        shape.click(
+                            function() {
+                                //raise CLICK event
+                                myself._clickRectangleEvent(myself, this, obj);
+                            }
+                        );
+                        shape.hover(
+                            function() {//on
+                                //raise ON event
+                                myself._onRectangleEvent(myself, this, obj);
+                            },
+                            function() {//off
+                                //raise OFF event
+                                myself._offRectangleEvent(myself, this, obj);
+                            }
+                        );
+                    }
                 }
             }
         }
