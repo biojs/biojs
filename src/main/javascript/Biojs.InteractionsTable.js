@@ -353,8 +353,10 @@ Biojs.InteractionsTable = Biojs.Table.extend(
 	 * Purpose:  Store the render functions to format values on the table cells.
 	 */
 	_columnRender: {
-		
-		/* 
+
+		/**
+		 * @ignore
+		 * 
 		 * Function: Biojs.InteractionTable._columnRender
 		 * Purpose:  Format the string <KEY>:<VALUE>(DESC) as link to Protein
 		 * Returns: {string} the formatted value
@@ -375,7 +377,9 @@ Biojs.InteractionsTable = Biojs.Table.extend(
 			delete tk;
 			return newValue;
 		},	
-		/* 
+		/**
+		 * @ignore
+		 * 
 		 * Function: Biojs.InteractionTable._columnRender.showInteractionXRef
 		 * Purpose:  Format the string <KEY>:<VALUE>(DESC) as link to Interaction 
 		 * Returns: {string} the formatted value
@@ -396,7 +400,9 @@ Biojs.InteractionsTable = Biojs.Table.extend(
 			delete tk;
 			return newValue;
 		},
-		/* 
+		/**
+		 * @ignore
+		 * 
 		 * Function: Biojs.InteractionTable._columnRender.showValueXRef
 		 * Purpose:  Format the string <KEY>:<VALUE>(DESC) as the VALUE text into a <span>
 		 * Returns: {string} the formatted value
@@ -418,7 +424,9 @@ Biojs.InteractionsTable = Biojs.Table.extend(
 			delete tk;
 			return newValue;
 		},
-		/* 
+		/**
+		 * @ignore
+		 * 
 		 * Function: Biojs.InteractionTable._columnRender.showDescXRef
 		 * Purpose:  Format the string <KEY>:<VALUE>(DESC) as linked DESC to the ontology 
 		 * Returns: {string} the formatted value
@@ -438,7 +446,9 @@ Biojs.InteractionsTable = Biojs.Table.extend(
 			delete tk;
 			return newValue;
 		},
-		/* 
+		/**
+		 * @ignore
+		 * 
 		 * Function: Biojs.InteractionTable._columnRender.showDescXRef
 		 * Purpose:  Format the string <KEY>:<VALUE>(DESC) as the VALUE text 
 		 * Returns: {string} the formatted value
@@ -457,8 +467,9 @@ Biojs.InteractionsTable = Biojs.Table.extend(
 			delete tk;
 			return newValue;
 		},
-		
-		/* 
+		/**
+		 * @ignore
+		 * 
 		 * Function: Biojs.InteractionTable._columnRender.showDescXRef
 		 * Purpose:  Format the string <KEY>:<VALUE>(DESC) as the DESC text 
 		 * Returns: {string} the formatted value
@@ -485,7 +496,9 @@ Biojs.InteractionsTable = Biojs.Table.extend(
 	MITabTxtDecoder: function (str) {
 		this.buffer = ( str != undefined )? str : "" ;
 		this.offset = 0;
-		
+		/**
+		 * @ignore
+		 */
 		this.nextToken = function (delimiter) {
 			var token = "";
 			var index;
@@ -506,11 +519,15 @@ Biojs.InteractionsTable = Biojs.Table.extend(
 			}			
 			return token;
 		}
-		
+		/**
+		 * @ignore
+		 */
 		this.hasNext = function () {
 			return this.offset < this.buffer.length;
 		}
-		
+		/**
+		 * @ignore
+		 */
 		this.decodeXRef = function () {
 			
 			var token = "";
@@ -535,7 +552,9 @@ Biojs.InteractionsTable = Biojs.Table.extend(
 			
 			return xref;
 		}
-		
+		/**
+		 * @ignore
+		 */
 		this.decodeRow = function () {
 			var row = [];
 			if ( this.hasNext() ) {
@@ -543,7 +562,9 @@ Biojs.InteractionsTable = Biojs.Table.extend(
 			}
 			return row;
 		}
-		
+		/**
+		 * @ignore
+		 */
 		this.decodeData = function () {
 			var data = [];
 			

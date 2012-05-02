@@ -155,9 +155,15 @@ Biojs.ChEBICompound = Biojs.extend(
 		var httpRequest = {
 			url: urlSummary,
 			method: "GET",
+			/**
+			 * @ignore
+			 */
 			success: function(xml){
 				self._dataReceived(xml);
 			},
+			/**
+			 * @ignore
+			 */
 			error: function(qXHR, textStatus, errorThrown) {
 				Biojs.console.log("ERROR requesting summary. Response: " + textStatus);
 				self.raiseEvent( Biojs.ChEBICompound.EVT_ON_REQUEST_ERROR, {
