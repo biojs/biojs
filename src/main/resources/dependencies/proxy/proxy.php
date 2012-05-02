@@ -1,26 +1,22 @@
 <?php
 
-/* SPLIT PROXY FROM URL TO QUERY. QUERY: ALL INSIDE THE 'S' PARAMETER */
-        //$url = str_replace(" ", "%20", $_GET['url']);
+/* SPLIT PROXY FROM URL TO QUERY. QUERY: ALL INSIDE THE 'url' PARAMETER */
         $url = ($_POST['url']) ? $_POST['url'] : $_GET['url'];
-		$headers = ($_POST['headers']) ? $_POST['headers'] : $_GET['headers'];
-		$mimeType =($_POST['mimeType']) ? $_POST['mimeType'] : $_GET['mimeType'];
 
 /* SET INTERNAL PROXY */
         $ebiDomainFlag = strpos($_SERVER['SERVER_NAME'], "ebi.ac.uk");
+	$sangerDomainFlag = strpos($_SERVER['SERVER_NAME'], "sanger.ac.uk");
         
         if ( $ebiDomainFlag ) {
         	$proxy = "http://wwwcache.ebi.ac.uk:3128/";
+        } elseif ( $sangerDomainFlag ) {
+        	$proxy = "http://wwwcache.sanger.ac.uk:3128/";
         } else {
-        	$proxy = "";
-        }
+		$proxy = "";
+	}
+	$ch = curl_init();
 		
-        //$proxy = "http://wwwcache.ebi.ac.uk:3128/";
-        //$proxy = "http://wwwcache.sanger.ac.uk:3128/";
-
-		$ch = curl_init();
-		
-// SET DATA 
+/* SET DATA */ 
 		$data = ($_POST['url']) ? $_POST : $_GET;
 		unset($data['url']);
 
@@ -30,7 +26,7 @@
 		   $query .= key($data).'='.$element.'&';
 		   next($data);
 		}
-		
+
 		$query = substr($query,0,strlen($query)-1);
 
 		if ($_POST['url']) {
@@ -39,6 +35,16 @@
 		} else {
 			$url .= ( strpos($url, '?') ) ? '&'.$query : '?'.$query ;
 		}
+
+
+
+
+/* Encoding charachters that are probelmatic for CURL */
+	$url = str_replace('<','%3C',$url); 
+	$url = str_replace('>','%3E',$url); 
+	$url = str_replace('"','%22',$url); 
+	$url = str_replace(' ','%20',$url); 
+
 
 /* CURL CONFIGURARTION */
         
@@ -54,26 +60,25 @@
         }
         /* Don't return HTTP headers. Do return the contents of the call */     
         curl_setopt($ch, CURLOPT_HEADER, 0);
-		$response = curl_exec($ch);
+	$response = curl_exec($ch);
 		
 /* DISPLAY DATA FROM THE ORIGINAL QUERY */
-
-		if ($mimeType == "")
-		{
-			if ( strpos($_SERVER['HTTP_ACCEPT'], "xml") ) {
-				$mimeType = "application/xml";
-			} else if ( strpos($_SERVER['HTTP_ACCEPT'], "json") ) {
-				$mimeType = "application/json";
-			} else {
-				$mimeType = "text/plain";
-			}
-			
-		} 
+	$headers = ($_POST['headers']) ? $_POST['headers'] : $_GET['headers'];
+	$mimeType =($_POST['mimeType']) ? $_POST['mimeType'] : $_GET['mimeType'];
+	if ($mimeType == "")
+	{
+		if ( strpos($_SERVER['HTTP_ACCEPT'], "xml") ) {
+			$mimeType = "application/xml";
+		} else if ( strpos($_SERVER['HTTP_ACCEPT'], "json") ) {
+			$mimeType = "application/json";
+		} else {
+			$mimeType = "text/plain";
+		}
+	} 
+	// The web service returns XML. Set the Content-Type appropriately
+	header("Content-Type: ".$mimeType);
 		
-		// The web service returns XML. Set the Content-Type appropriately
-		header("Content-Type: ".$mimeType);
-		
-		curl_close($ch);
+	curl_close($ch);
 
         echo $response;
 ?>
