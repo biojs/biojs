@@ -248,14 +248,15 @@ var Biojs_UniProtFeaturePainter_myself = undefined;
  * @option {boolean} [showPrintButton=true]
  *    Should the button for printing/exporting to image be displayed?
  *
- * @option {boolean} [showFeaturesTooltip=true]
+ * @option {boolean} [showFeatureTooltipOnMouseOver=true]
  *    Should the tooltip for features be displayed?
  *
- * @option {boolean} [highlightFeatures=true]
+ * @option {boolean} [highlightFeatureOnMouseOver=true]
  *    Should the features be highlighted when mouse over?
  *
- * @option {boolean} [highlightClickFeatures=true]
- *    Should the features remain highlighted after a mouse click?
+ * @option {boolean} [selectFeatureOnMouseClick=true]
+ *    Should the features remain highlighted, i.e. being selected, after a mouse click,
+ *    and deselected after a second click or whenever other feature is selected?
  *
  * @option {boolean} [dragSites=true]
  *    Should the sites be draggable?
@@ -350,9 +351,9 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
          * json: {},
          * showSlider: true,
          * showPrintButton: true,
-         * showFeaturesTooltip: true,
-         * highlightFeatures: true,
-         * highlightClickFeatures: true,
+         * showFeatureTooltipOnMouseOver: true,
+         * highlightFeatureOnMouseOver: true,
+         * selectFeatureOnMouseClick: true,
          * dragSites: true //beware that dragging implies a click on so the click event will be raised!
          * selectionColor: "#ff8c00"
          * featureImageWebService: "http://localhost:8080/image"
@@ -363,9 +364,9 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
             json: {},
             showSlider: true,
             showPrintButton: true,
-            showFeaturesTooltip: true,
-            highlightFeatures: true,
-            highlightClickFeatures: true,
+            showFeatureTooltipOnMouseOver: true,
+            highlightFeatureOnMouseOver: true,
+            selectFeatureOnMouseClick: true,
             dragSites: true,
             selectionColor: "#ff8c00", //make sure it does not exist at http://wwwdev.ebi.ac.uk/das-srv/uniprot/das/uniprot/stylesheet
             featureImageWebService: "http://localhost:8080/image"
@@ -385,7 +386,7 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
          * @eventData {Object} featureInfo A json object with the information for the selected feature, including id.
          * @example
          * //It is not recommended to use this event to highlight and sustain that highlight after a click on a
-         * //feature, instead set to ture the options highlightClickFeatures.
+         * //feature, instead set to ture the options selectFeatureOnMouseClick.
          * myPainter.onFeatureClick(
          *    function( obj ) {
          *    var tooltip = obj.featureLabel +
@@ -408,7 +409,7 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
          * @eventData {Object} featureInfo A json object with the information for the selected feature, including id.
          * @example
          * // It is not recommended to use this event to display a tooltip or highlight the features on mouse over,
-         * // instead set to true the options showFeaturesTooltip and highlightFeatures
+         * // instead set to true the options showFeatureTooltipOnMouseOver and highlightFeatureOnMouseOver
          *
          * myPainter.onFeatureOn(
          *    function( obj ) {
@@ -444,7 +445,51 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
          * );
          *
          * */
-            "onFeatureOff"
+            "onFeatureOff",
+        /**
+         * @name Biojs.UniProtFeaturePainter#onFeatureSelected
+         * @event
+         * @param {function} actionPerformed A function which receives a {@link Biojs.Event} object as argument.
+         * @eventData {Object} source The component which triggered the event.
+         * @eventData {string} type The name of the event.
+         * @eventData {Object} featureInfo A json object with the information for the selected feature, including id.
+         * @example
+         * //Will only be raised if selectFeatureOnMouseClick is true
+         * myPainter.onFeatureSelected(
+         *    function( obj ) {
+         *    var tooltip = obj.featureLabel +
+         *           " (" + obj.featureStart + ", " + obj.featureEnd + "; length " + (obj.featureEnd-obj.featureStart+1) + ")" +
+         *           "<br/>Type: " + obj.featureTypeLabel + " - " + obj.typeCode + " - " + obj.typeCategory +
+         *           "<br/>Evidence: " + obj.evidenceText + " - " + obj.evidenceCode;
+         *       alert("Selected feature: " + tooltip );
+         *       Biojs.console.log(obj.shape); //raphaël object
+         *    }
+         * );
+         *
+         * */
+            "onFeatureSelected",
+        /**
+         * @name Biojs.UniProtFeaturePainter#onFeatureUnselected
+         * @event
+         * @param {function} actionPerformed A function which receives a {@link Biojs.Event} object as argument.
+         * @eventData {Object} source The component which triggered the event.
+         * @eventData {string} type The name of the event.
+         * @eventData {Object} featureInfo A json object with the information for the selected feature, including id.
+         * @example
+         * //Will only be raised if selectFeatureOnMouseClick is true
+         * myPainter.onFeatureUnselected(
+         *    function( obj ) {
+         *    var tooltip = obj.featureLabel +
+         *           " (" + obj.featureStart + ", " + obj.featureEnd + "; length " + (obj.featureEnd-obj.featureStart+1) + ")" +
+         *           "<br/>Type: " + obj.featureTypeLabel + " - " + obj.typeCode + " - " + obj.typeCategory +
+         *           "<br/>Evidence: " + obj.evidenceText + " - " + obj.evidenceCode;
+         *       alert("Unselected feature: " + tooltip );
+         *       Biojs.console.log(obj.shape); //raphaël object
+         *    }
+         * );
+         *
+         * */
+            "onFeatureUnselected"
         ],
 
         /**
@@ -946,130 +991,20 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
         },
 
         /**
-         * Private: over shape (not rectangle) event
-         * @param myself
-         * @param shapeContainer
-         * @param obj
-         * @private
-         */
-        _onShapeEvent: function(myself, shapeContainer, obj) {
-            connection = myself.connections[shapeContainer.connectionIndex-1];
-            internalShape = connection.from;
-            myself.raiseEvent('onFeatureOn', {
-                featureId: obj.featureId,
-                featureLabel: obj.featureLabel,
-                featureStart: obj.featureStart,
-                featureEnd: obj.featureEnd,
-                featureTypeLabel: obj.featureTypeLabel,
-                typeCode: obj.typeCode,
-                typeCategory: obj.typeCategory,
-                evidenceText: obj.evidenceText,
-                evidenceCode: obj.evidenceCode,
-                shape: internalShape
-            });
-        },
-
-        /**
-         * Private: over only rectangle event
-         * @param myself
-         * @param shapeContainer
-         * @param obj
-         * @private
-         */
-        _onRectangleEvent: function(myself, shape, obj) {
-            myself.raiseEvent('onFeatureOn', {
-                featureId: obj.featureId,
-                featureLabel: obj.featureLabel,
-                featureStart: obj.featureStart,
-                featureEnd: obj.featureEnd,
-                featureTypeLabel: obj.featureTypeLabel,
-                typeCode: obj.typeCode,
-                typeCategory: obj.typeCategory,
-                evidenceText: obj.evidenceText,
-                evidenceCode: obj.evidenceCode,
-                shape: shape
-            });
-        },
-
-        /**
-         * Private: over shape (not rectangle) event
-         * @param myself
-         * @param shapeContainer
-         * @param obj
-         * @private
-         */
-        _offShapeEvent: function(myself, shapeContainer, obj) {
-            connection = myself.connections[shapeContainer.connectionIndex-1];
-            internalShape = connection.from;
-            myself.raiseEvent('onFeatureOff', {
-                featureId: obj.featureId,
-                featureLabel: obj.featureLabel,
-                featureStart: obj.featureStart,
-                featureEnd: obj.featureEnd,
-                featureTypeLabel: obj.featureTypeLabel,
-                typeCode: obj.typeCode,
-                typeCategory: obj.typeCategory,
-                evidenceText: obj.evidenceText,
-                evidenceCode: obj.evidenceCode,
-                shape: internalShape
-            });
-        },
-
-        /**
-         * Private: over only rectangle event
-         * @param myself
-         * @param shapeContainer
-         * @param obj
-         * @private
-         */
-        _offRectangleEvent: function(myself, shape, obj) {
-            myself.raiseEvent('onFeatureOff', {
-                featureId: obj.featureId,
-                featureLabel: obj.featureLabel,
-                featureStart: obj.featureStart,
-                featureEnd: obj.featureEnd,
-                featureTypeLabel: obj.featureTypeLabel,
-                typeCode: obj.typeCode,
-                typeCategory: obj.typeCategory,
-                evidenceText: obj.evidenceText,
-                evidenceCode: obj.evidenceCode,
-                shape: shape
-            });
-        },
-
-        /**
-         * Private: click shape (not rectangle) event
-         * @param myself
-         * @param shapeContainer
-         * @param obj
-         * @private
-         */
-        _clickShapeEvent: function(myself, shapeContainer, obj) {
-            connection = myself.connections[shapeContainer.connectionIndex-1];
-            internalShape = connection.from;
-            myself.raiseEvent('onFeatureClick', {
-                featureId: obj.featureId,
-                featureLabel: obj.featureLabel,
-                featureStart: obj.featureStart,
-                featureEnd: obj.featureEnd,
-                featureTypeLabel: obj.featureTypeLabel,
-                typeCode: obj.typeCode,
-                typeCategory: obj.typeCategory,
-                evidenceText: obj.evidenceText,
-                evidenceCode: obj.evidenceCode,
-                shape: internalShape
-            });
-        },
-
-        /**
          * Private: click only rectangle event
-         * @param myself
-         * @param shapeContainer
-         * @param obj
+         * @param myself this object is raising the event.
+         * @param shapeRectangle Shape container for shapes, or the shape itself for rectangles.
+         * @param obj feature object.
+         * @param isShape True if it is a shape different from rectangle.
+         * @param eventName Name of the event
          * @private
          */
-        _clickRectangleEvent: function(myself, shape, obj) {
-            myself.raiseEvent('onFeatureClick', {
+        _raiseEvent: function(myself, shapeRectangle, obj, isShape, eventName) {
+            if (isShape) {
+                connection = myself.connections[shapeRectangle.connectionIndex-1];
+                shapeRectangle = connection.from;
+            }
+            myself.raiseEvent(eventName, {
                 featureId: obj.featureId,
                 featureLabel: obj.featureLabel,
                 featureStart: obj.featureStart,
@@ -1079,7 +1014,7 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
                 typeCategory: obj.typeCategory,
                 evidenceText: obj.evidenceText,
                 evidenceCode: obj.evidenceCode,
-                shape: shape
+                shape: shapeRectangle
             });
         },
 
@@ -1151,31 +1086,36 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
             if (sequenceLineY) {
                 var myself = this;
                 if (obj.type != "rect") { //shapes are movable and have a link to the sequence line
-                    if (this.opt.highlightClickFeatures) {
-                        if (this.opt.highlightFeatures) { //highlight, select, and raise both over and click events
+                    if (this.opt.selectFeatureOnMouseClick) {
+                        if (this.opt.highlightFeatureOnMouseOver) { //highlight, select, and raise both over and click events
                             _clickedShape = false;
                             shape.click(
                                 function() {
                                     _clickedShape = true;
                                     this.animate({"fill-opacity": 1.0}, 500);
                                     if (this == myself._previousClickedShape) {//the second click will deselect
-                                        if (myself._originalColor == myself.opt.selectionColor) {
+                                        if (myself._originalColor == myself.opt.selectionColor) { //it is selected, will be deselected
                                             myself._originalColor = myself._previousClickedColor;
                                             this.attr({stroke: myself._previousClickedColor, fill: myself._previousClickedColor});
                                             //this.animate({"fill-opacity": 1.0}, 500);
-                                        }//no need to do anything, over already made it orange
+                                            myself._raiseEvent(myself, this, obj, true, 'onFeatureUnselected');
+                                        } else { //it is deselected, will be selected
+                                            myself._raiseEvent(myself, this, obj, true, 'onFeatureSelected');
+                                        }
                                     } else {
                                         //deselect the previous feature
                                         if (myself._previousClickedShape && (myself._previousClickedShape != "")) {
                                             try {
                                                 myself._previousClickedShape.attr({stroke: myself._previousClickedColor, fill: myself._previousClickedColor});
                                                 myself._previousClickedShape.animate({"fill-opacity": .5}, 500);
+                                                myself._raiseEvent(myself, myself._previousClickedShape, obj, true, 'onFeatureUnselected');
                                             } catch (error) {Biojs.console.log(error);}
                                         }
                                         //keep the last clicked shape info
                                         myself._previousClickedColor = myself._originalColor;
                                         myself._previousClickedShape = this;
                                         //change colour: it was already done by the hover function
+                                        myself._raiseEvent(myself, this, obj, true, 'onFeatureSelected');
                                     }
                                     //raise CLICK event
                                     myself._clickShapeEvent(myself, this, obj);
@@ -1204,14 +1144,16 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
                                 function() {
                                     myself._originalColor = this.attrs.stroke;
                                     if (this == myself._previousClickedShape) {//the second click will deselect
-                                        if (myself._originalColor == myself.opt.selectionColor) {//it was selected, deselect
+                                        if (myself._originalColor == myself.opt.selectionColor) {//it was selected, will be deselect
                                             myself._originalColor = myself._previousClickedColor;
                                             this.attr({stroke: myself._previousClickedColor, fill: myself._previousClickedColor});
                                             this.animate({"fill-opacity": 1.0}, 500);
-                                        } else { //it was not selected, select
+                                            myself._raiseEvent(myself, this, obj, true, 'onFeatureUnselected');
+                                        } else { //it was not selected, will be select
                                             //change colour
                                             this.attr({stroke: myself.opt.selectionColor, fill: myself.opt.selectionColor});
                                             this.animate({"fill-opacity": 1.0}, 500);
+                                            myself._raiseEvent(myself, this, obj, true, 'onFeatureSelected');
                                         }
                                     } else {
                                         //deselect the previous feature
@@ -1219,6 +1161,7 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
                                             try {
                                                 myself._previousClickedShape.attr({stroke: myself._previousClickedColor, fill: myself._previousClickedColor});
                                                 myself._previousClickedShape.animate({"fill-opacity": .5}, 500);
+                                                myself._raiseEvent(myself, myself._previousClickedShape, obj, true, 'onFeatureUnselected');
                                             } catch (error) {Biojs.console.log(error);}
                                         }
                                         //keep the last clicked shape info
@@ -1227,6 +1170,7 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
                                         //change colour
                                         this.attr({stroke: myself.opt.selectionColor, fill: myself.opt.selectionColor});
                                         this.animate({"fill-opacity": 1.0}, 500);
+                                        myself._raiseEvent(myself, this, obj, true, 'onFeatureSelected');
                                     }
                                     //raise CLICK event
                                     myself._clickShapeEvent(myself, this, obj);
@@ -1245,7 +1189,7 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
                             );
                         }
                     } else {
-                        if (this.opt.highlightFeatures) { //only highlight, and raise both over and click events
+                        if (this.opt.highlightFeatureOnMouseOver) { //only highlight, and raise both over and click events
                             shape.click(
                                 function() {
                                     //raise CLICK event
@@ -1333,31 +1277,36 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
                         shape.connectionIndex = this.connections.length;
                     } catch (err) {Biojs.console.log(err);}
                 } else { //rectangle are not movable nor have a link to the sequence line
-                    if (this.opt.highlightClickFeatures) {
-                        if (this.opt.highlightFeatures) { //highlight, select, and raise both over and click events
+                    if (this.opt.selectFeatureOnMouseClick) {
+                        if (this.opt.highlightFeatureOnMouseOver) { //highlight, select, and raise both over and click events
                             _clickedRect = false;
                             shape.click(
                                 function() {
                                     _clickedRect = true;
                                     this.animate({"fill-opacity": 1.0}, 500);
                                     if (this == myself._previousClickedShape) {//the second click will deselect
-                                        if (myself._originalColor == myself.opt.selectionColor) {
+                                        if (myself._originalColor == myself.opt.selectionColor) { //it was selected, will be deselected
                                             myself._originalColor = myself._previousClickedColor;
                                             this.attr({stroke: myself._previousClickedColor, fill: myself._previousClickedColor});
                                             //this.animate({"fill-opacity": 1.0}, 500);
-                                        }//no need to do anything, over already made it orange
+                                            myself._raiseEvent(myself, this, obj, true, 'onFeatureUnselected');
+                                        } else { //it was unselected, will be selected
+                                            myself._raiseEvent(myself, this, obj, true, 'onFeatureSelected');
+                                        }
                                     } else {
                                         //deselect the previous feature
                                         if (myself._previousClickedShape && (myself._previousClickedShape != "")) {
                                             try {
                                                 myself._previousClickedShape.attr({stroke: myself._previousClickedColor, fill: myself._previousClickedColor});
                                                 myself._previousClickedShape.animate({"fill-opacity": .5}, 500);
+                                                myself._raiseEvent(myself, myself._previousClickedShape, obj, true, 'onFeatureUnselected');
                                             } catch (error) {Biojs.console.log(error);}
                                         }
                                         //keep the last clicked shape info
                                         myself._previousClickedColor = myself._originalColor;
                                         myself._previousClickedShape = this;
                                         //change colour: it will be done by the hover function
+                                        myself._raiseEvent(myself, this, obj, true, 'onFeatureSelected');
                                     }
                                     //raise CLICK event
                                     myself._clickRectangleEvent(myself, this, obj);
@@ -1390,10 +1339,12 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
                                             myself._originalColor = myself._previousClickedColor;
                                             this.attr({stroke: myself._previousClickedColor, fill: myself._previousClickedColor});
                                             this.animate({"fill-opacity": 1.0}, 500);
+                                            myself._raiseEvent(myself, this, obj, true, 'onFeatureUnselected');
                                         } else { //it was not selected, select
                                             //change colour
                                             this.attr({stroke: myself.opt.selectionColor, fill: myself.opt.selectionColor});
                                             this.animate({"fill-opacity": 1.0}, 500);
+                                            myself._raiseEvent(myself, this, obj, true, 'onFeatureSelected');
                                         }
                                     } else {
                                         //deselect the previous feature
@@ -1401,6 +1352,7 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
                                             try {
                                                 myself._previousClickedShape.attr({stroke: myself._previousClickedColor, fill: myself._previousClickedColor});
                                                 myself._previousClickedShape.animate({"fill-opacity": .5}, 500);
+                                                myself._raiseEvent(myself, myself._previousClickedShape, obj, true, 'onFeatureSelected');
                                             } catch (error) {Biojs.console.log(error);}
                                         }
                                         //keep the last clicked shape info
@@ -1409,6 +1361,7 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
                                         //change colour
                                         this.attr({stroke: myself.opt.selectionColor, fill: myself.opt.selectionColor});
                                         this.animate({"fill-opacity": 1.0}, 500);
+                                        myself._raiseEvent(myself, this, obj, true, 'onFeatureSelected');
                                     }
                                     //raise CLICK event
                                     myself._clickRectangleEvent(myself, this, obj);
@@ -1427,7 +1380,7 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
                             );
                         }
                     } else {
-                        if (this.opt.highlightFeatures) { //highlight, and raise both over and click events
+                        if (this.opt.highlightFeatureOnMouseOver) { //highlight, and raise both over and click events
                             shape.click(
                                 function() {
                                     //raise CLICK event
@@ -1471,7 +1424,7 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
                 }
             }
             //tooltip
-            if (this.opt.showFeaturesTooltip == true) {
+            if (this.opt.showFeatureTooltipOnMouseOver == true) {
                 if (obj.featureId) {//only features in the sequence have tooltips
                     //console.log(obj);
                     //console.log(shape);
