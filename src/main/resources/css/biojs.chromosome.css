@@ -75,3 +75,6 @@ div:hover{
 	z-index:10; 
 	position:relative; 
 }
+#YourOwnDivId {
+	padding-bottom: 40px;
+}
