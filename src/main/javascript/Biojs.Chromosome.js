@@ -57,7 +57,7 @@
  *       
  * @example 
  * 					var instance= new Biojs.Chromosome({
- * 					     target: "holder",
+ * 					     target: "YourOwnDivId",
  * 					     dasSource: "http://www.ensembl.org/das/Homo_sapiens.NCBI36.karyotype/",
  * 					     dasSegment: "8"
  * 					});
