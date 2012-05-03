@@ -1,0 +1,42 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+		<title>Chromosome - Test</title>
+		
+		<!--JQuery LIb -->
+		<script src="../../main/resources/dependencies/jquery/jquery-1.4.2.min.js" type="text/javascript"></script>
+		
+		<!-- JSDAS -->
+		<script language="JavaScript" type="text/javascript" src="../../main/resources/dependencies/jsdas.0.1.6.min.js"></script>
+		
+		<!-- CSS -->
+	    <link rel="stylesheet" href="../../main/resources/css/biojs.chromosome.css" />
+		
+		<!-- BIOJS LIB and Chromosome Component -->
+		<script language="JavaScript" type="text/javascript" src="../../main/javascript/Biojs.js"></script>
+		<script language="JavaScript" type="text/javascript" src="../../main/javascript/Biojs.Chromosome.js"></script>
+		    
+		<script language="JavaScript" type="text/javascript">
+			window.onload = function() {
+				var chromosomes = ["1","2"];//,"3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","X","Y"];
+				for (var i in chromosomes){
+					var chr=chromosomes[i];
+					$("#holder").append("<h3>Chromosome "+chr+"</h3><div id='holder_"+chr+"'></div><br/>");
+					//var instance1 = 
+					var instance= new Biojs.Chromosome({
+					     target: "holder_"+chr,
+					     dasSource: "http://www.ensembl.org/das/Homo_sapiens.NCBI36.karyotype/",
+					     dasSegment: chr
+					});
+					instance.onBandSelection(function( objEvent ) {
+						console.debug("The band " + objEvent.band_id + " of the chromosome " + objEvent.chromosome_id + " has been selected\n[" + objEvent.band_start + "," + objEvent.band_stop + "]");
+					}); 
+				}
+			};
+		</script>
+	</head>
+	<body>
+	<div id="holder"></div>
+	</body>
+</html>
