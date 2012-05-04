@@ -39,9 +39,9 @@ Biojs.ChEBICompound = Biojs.extend(
 /** @lends Biojs.ChEBICompound# */
 {
 	constructor: function(options){
-		//Biojs.console.enable();
+		Biojs.console.enable();
 		//constructor of Biojs.ChEBICompound
-		
+		var self = this;
 		this._selector = "#" + this.opt.target;
 		this._container = jQuery(this._selector);
 		
@@ -53,8 +53,15 @@ Biojs.ChEBICompound = Biojs.extend(
 			});
 		
 		this._imageContainer = jQuery('<div class="ChEBICompound_image"></div>').appendTo(this._container);
-		this._summaryContainer = jQuery('<div class="ChEBICompound_summary"></div>').appendTo(this._container);
-		this._buildSummaryTab(this._summaryContainer);
+		this._tabContainer = jQuery('<div class="ChEBICompound_tab"></div>').appendTo(this._container);
+		
+		this._summaryContainer = this._buildTabPanel(
+			this._tabContainer,
+			function ( tabVisible, visibleWidth ) {
+				//Biojs.console.log('Visible width ' + visibleWidth);
+				//self._imageContainer.css( 'width', self._container.width() - visibleWidth );
+			}
+		);
 		
 		if (this.opt.id !== undefined) {
 			this.setId(this.opt.id);
@@ -126,23 +133,29 @@ Biojs.ChEBICompound = Biojs.extend(
 		
 		this._requestDetails( this.opt );
 		
-		var width = this._imageContainer.width(); 
-		var height = this._imageContainer.height(); 
-		var url = this.opt.imageUrl + '?defaultImage=true&imageIndex='+this.opt.imageIndex+'&chebiId='+chebiId+'&dimensions='+width+'&scaleMolecule='+this.opt.scale;
-		var image = '<img id="image_' + chebiId + '" src="'+ url +'" class="ChEBICompound" />';
+		var params = { 
+			defaultImage:	true, 
+			imageIndex: 	this.opt.imageIndex,
+			chebiId: 		chebiId,
+			dimensions: 	this._imageContainer.width(),
+			scaleMolecule: 	this.opt.scale
+		};
 		
-		this._imageContainer.html( image );
-		
-		jQuery('#image_' + chebiId ).load(function() {
+	    var url = this.opt.imageUrl + '?' + jQuery.param(params);
+		//var url = this.opt.imageUrl + '?defaultImage=true&imageIndex='+this.opt.imageIndex+'&chebiId='+chebiId+'&dimensions='+width+'&scaleMolecule='+this.opt.scale;
+		var image = jQuery('<img id="image_' + chebiId + '" src="'+ url +'"/>').appendTo(this._imageContainer);
+
+		image.load(function() {
 			self.raiseEvent( Biojs.ChEBICompound.EVT_ON_IMAGE_LOADED, {
-				id: chebiId
+				id: chebiId,
+				url: url
 			});
 		}).css({
-			'width': width,
-			'height': height
+			'width': self._imageContainer.width(),
+			'height': self._imageContainer.height(),
+			'margin': 'auto'
 		});
-		
-		//this._requestDetails( this.opt );
+
 	},
 	
 	_requestDetails: function( opt ){
@@ -223,8 +236,7 @@ Biojs.ChEBICompound = Biojs.extend(
 		var container = this._summaryContainer;
 		
 		// Remove all elements in container 
-		// except the toggle buttons 
-		container.children().not('.toggle').remove();
+		container.children().remove();
 		
 		if ( Biojs.Utils.isEmpty(data) ) {
 			container.append('Not information available');
@@ -236,7 +248,10 @@ Biojs.ChEBICompound = Biojs.extend(
 					if ( key == 'entityStar' ) {
 						jQuery('<h2>' + data[key].name + '</h2><div class="star"/>')
 							.appendTo( container )
-							.css( 'width', parseInt(data[key].value) * 16 );
+							.css({
+								'width': parseInt(data[key].value) * 16,
+								'padding': 0
+							});
 					} else {
 						container.append( '<h2>' + data[key].name + '</h2><p>' + data[key].value + '</p>' );
 					}
@@ -251,25 +266,34 @@ Biojs.ChEBICompound = Biojs.extend(
 		Biojs.console.log("_setSummary done");
 	},
 	
-	_buildSummaryTab: function( container ) {
+	_buildTabPanel: function( container, onVisibilityChangeCb ) {
 		
 		container.html('');	
 		
+		var content = jQuery('<div class="content"></div>').appendTo(container);
 		var expand = jQuery('<div style="display: none;" class="toggle expand"></div>').appendTo(container);		
-		var colapse = jQuery('<div class="toggle collapse"/>').appendTo(container);
-		var width = parseInt( jQuery('.toggle').css('width'), 10 ) + 10;
+		var collapse = jQuery('<div class="toggle collapse"/>').appendTo(container);
+		
+		var buttonsWidth = parseInt( jQuery('.toggle').css('width'), 10 );
+		var contentWidth = container.width() - buttonsWidth;
 		
 		container.css( 'left', 0 )
 			.find('.toggle')
 			.click( function(){
 				// Animate show/hide this tab
 				container.animate({ 
-						left: ( parseInt( container.css('left'), 10 ) == 0 ? width - container.outerWidth() : 0 ) + "px"
+						left: ( parseInt( container.css('left'), 10 ) == 0 ? buttonsWidth - container.outerWidth() : 0 ) + "px"
 					},
 					// to call once the animation is complete 
 					function() {
-						Biojs.console.log('Hiding children')
-						container.children().toggle();
+						
+						var visibleWidth = parseInt( container.css('left'), 10 ) == 0 ? container.width() : buttonsWidth;
+						
+						container.find('.toggle').toggle();
+
+						if ( "function" == typeof onVisibilityChangeCb ) {
+							onVisibilityChangeCb.call( this, collapse.is(':visible'), visibleWidth );
+						}
 					}
 				);
 			})
@@ -277,6 +301,15 @@ Biojs.ChEBICompound = Biojs.extend(
 				'float':'right',
 				'position':'relative'
 			});
+		
+		Biojs.console.log('content width '+ contentWidth);
+		
+		content.css({ 
+			'width': contentWidth + "px", 
+			'word-wrap': 'break-word'
+		});
+		
+		return content;
 	}
 	
 },{
