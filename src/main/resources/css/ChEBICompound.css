@@ -2,6 +2,7 @@
 
 div.ChEBICompound {
 	padding: 0px;
+	margin: 0px;
 	overflow: hidden;
 }
 
@@ -12,60 +13,71 @@ div.ChEBICompound_image {
 	height:  100%;
 }
 
-div.ChEBICompound_summary {
-	border: solid silver 1px;
-	margin: 0;
-	padding: 5px;
-	width:  30%;
+div.ChEBICompound_tab {
+	width:  35%;
 	height:  100%;
-	position:relative;
+	position: relative;
 	float: left;
+	background-color: #EEF5F5;
+	background-image: url('images/panel1.png');
+	background-repeat: repeat-y;
+	background-position-x: right;
+	color: #066;
+}
+
+div.ChEBICompound_tab div.content {
 	font-family: "Heveltica Neue", Arial, "sans serif";
 	font-size: 12px;
-	background: #EEF5F5;
-	color: #066
+	color: #066;	
+	word-wrap:break-word;
+	position:relative;
+	float: left;
 }
 
-div.ChEBICompound_summary h2 {
+div.ChEBICompound_tab div.content h2 {
 	font-weight: 600;
 	margin: 0;
-	padding-top: 5px;
+	margin: 10px 7px 0 7px;
 }
 
-div.ChEBICompound_summary p {
+div.ChEBICompound_tab div.content p {
   	text-align: left;
   	font-style: italic;
   	text-indent: 0;
   	line-height: 1.2;
+  	padding: 0 7px 0 7px;
 }
 
-div.ChEBICompound_summary div.star {
+div.ChEBICompound_tab div.content div.star {
 	background-image: url('Rocky32px/star_yellow.png');
 	background-size: 16px 16px;
 	background-repeat: repeat-x;
 	width: 16px;
 	height: 16px;
+	margin: 0 7px 0 7px;
 }
 
-div.ChEBICompound_summary div:hover.collapse, div:hover.expand {
-	background-image: url('Rocky32px/iconset_hover.png');
-}
-
-div.ChEBICompound_summary div.collapse, div.expand {
+/* Button to hide/show the left panel */
+div.ChEBICompound_tab div.toggle {
+	width: 24px;
+	height: 24px;
+	position:relative;
+	float: right;
 	background-image: url('Rocky32px/iconset.png');
 }
 
-/*div.ChEBICompound_summary div:hover.collapse {
-	background: url('Rocky32px/iconset_hover.png') no-repeat right -24px;
-}*/
-
-div.ChEBICompound_summary div.collapse { background-position: 0 0; }
-div.ChEBICompound_summary div.expand { background-position: 0 -24px; }
-
-div.ChEBICompound_summary div.toggle {
-	width: 24px;
-	height: 24px;
+div.ChEBICompound_tab div:hover.toggle { 
+	background-image: url('Rocky32px/iconset_hover.png'); 
 }
+
+div.ChEBICompound_tab div.collapse { 
+	background-position: 0 0; 
+}
+
+div.ChEBICompound_tab div.expand { 
+	background-position: 0 -24px; 
+}
+
 
 
 
