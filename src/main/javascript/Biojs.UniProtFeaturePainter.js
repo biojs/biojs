@@ -330,6 +330,7 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
         _originalColor: "",
         _previousClickedColor: "",
         _previousClickedShape: "",
+        _clickCounter: 0,
 
         /**
          * Default values for the options
@@ -1020,11 +1021,14 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
         },
 
         _featureClick: function(onlySelect, myself, raphaelObj, featureObj) {
+            myself._clickCounter = myself._clickCounter + 1;
             if (onlySelect) {
                 myself._originalColor = raphaelObj.attrs.stroke;
-            } //else {//both highlight and select
-                //raphaelObj.animate({"fill-opacity": 1.0}, 500);
-            //}
+            } else {//both highlight and select
+                if (myself._clickCounter > 1) {//mouse has not leave the feature (it is down now but up is true already
+                    myself._originalColor = raphaelObj.attrs.stroke;
+                }
+            }
             raphaelObj.animate({"fill-opacity": 1.0}, 500);
             if (raphaelObj == myself._previousClickedShape) {//the second click will deselect
                 if (myself._originalColor == myself.opt.selectionColor) { //it is selected, will be deselected
@@ -1032,8 +1036,8 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
                     raphaelObj.attr({stroke: myself._previousClickedColor, fill: myself._previousClickedColor});
                     //only select this.animate({"fill-opacity": 1.0}, 500);
                     myself._raiseEvent(myself, raphaelObj, featureObj, 'onFeatureUnselected');
-                } else { //it is deselected, will be selected
-                    if (onlySelect) {
+                } else { //it is deselected (even counter), will be selected
+                    if (onlySelect || (myself._clickCounter%2 != 0)) {
                         raphaelObj.attr({stroke: myself.opt.selectionColor, fill: myself.opt.selectionColor});
                         raphaelObj.animate({"fill-opacity": 1.0}, 500);
                     }
@@ -1152,6 +1156,7 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
                                 }
                                 this.animate({"fill-opacity": .5}, 500);
                                 _clickedShape = false;
+                                myself._clickCounter = 0;
                                 //raise OFF event
                                 myself._raiseEvent(myself, this, obj, 'onFeatureOff');
                             }
