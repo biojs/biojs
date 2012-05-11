@@ -72,8 +72,7 @@ div.band:hover::before{
 	-moz-border-radius: 3px;
 }
 div:hover{ 
-	z-index:10; 
-	position:relative; 
+	z-index:5; 
 }
 #YourOwnDivId {
 	padding-bottom: 40px;

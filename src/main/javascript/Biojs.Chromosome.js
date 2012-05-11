@@ -8,14 +8,32 @@
  * 
  * @author <a href="gustavoadolfo.salazar@gmail.com">Gustavo A. Salazar</a>
  * 
- * @requires <a href='http://code.jquery.com/jquery-1.4.2.js'>jQuery Core 1.4.2</a>
- * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jquery/jquery-1.4.2.min.js"></script>
+ * @requires <a href='http://code.jquery.com/jquery-1.7.2.js'>jQuery Core 1.7.2</a>
+ * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jquery/jquery-1.7.2.min.js"></script>
  * 
  * @requires <a href='http://jsdas.googlecode.com/hg/lib/jsdas.0.1.6.min.js'>jsdas 0.1.6</a>
  * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jsdas.0.1.6.js"></script>
  *  
  * @requires <a href='http://www.ebi.ac.uk/~jgomez/biojs/biojs/css/biojs.chromosome.css'>Chromosome CSS</a>
  * @dependency <link rel="stylesheet" href="../biojs/css/biojs.chromosome.css" />
+ * 
+ * 
+ * @requires <a href='../biojs/Biojs.AreaSelecto.js'>Biojs AreaSelector</a>
+ * @dependency <script src="../biojs/Biojs.AreaSelector.js" type="text/javascript"></script>
+ * 
+ * @requires <a href='http://jqueryui.com/download/jquery-ui-1.8.20.custom.zip'>jQuery UI 1.8.2</a>
+ * @dependency <script src="../biojs/dependencies/jquery/jquery-ui-1.8.2.custom.min.js" type="text/javascript"></script>
+ *
+ * @requires <a href='http://jqueryui.com/download/jquery-ui-1.8.20.custom.zip'>jQuery UI CSS 1.8.2</a>
+ * @dependency <link rel="stylesheet" href="../biojs/dependencies/jquery/jquery-ui-1.8.2.css" />
+ * 
+ * @requires <a href='http://www.west-wind.com/weblog/posts/2008/Sep/12/jQuery-CSS-Property-Monitoring-Plugin-updated'>jquery.watcher.js</a>
+ * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jquery.watcher.js"></script>
+ * 
+ * @requires <a href='http://www.ebi.ac.uk/~jgomez/biojs/biojs/css/biojs.selector.css'>Selector CSS</a>
+ * @dependency <link rel="stylesheet" href="../biojs/css/biojs.selector.css" />
+ * 
+ * 
  * 
  * 
  * @param {Object} options An object with the options for the Chromosome component.
@@ -54,13 +72,16 @@
  *         }
  *     ]
  *    }
+ *    
+ * @option {boolean} [includeSelector]
+ *    Include an area selector that interacts with the coordinate position of the chromosome. default true.
  *       
  * @example 
- * 					var instance= new Biojs.Chromosome({
- * 					     target: "YourOwnDivId",
- * 					     dasSource: "http://www.ensembl.org/das/Homo_sapiens.NCBI36.karyotype/",
- * 					     dasSegment: "8"
- * 					});
+ *					var instance= new Biojs.Chromosome({
+ *						target: "YourOwnDivId",
+ *						dasSource: "http://www.ensembl.org/das/Homo_sapiens.NCBI36.karyotype/",
+ *						dasSegment: "8"
+ *					});
  * 
  */
 Biojs.Chromosome = Biojs.extend (
@@ -68,6 +89,9 @@ Biojs.Chromosome = Biojs.extend (
 {
 	constructor: function (options) {
 		var self = this;
+		$("#"+self.opt.target).html('<div id="'+self.opt.target+'_chr"></div>');
+		self.opt.target += '_chr';
+		$("#"+self.opt.target).css('position','relative');
 		if (self.opt.dasSource!=null){
 			var client = JSDAS.Simple.getClient(self.opt.dasSource);
 			client.features({segment: self.opt.dasSegment}, function(res){ 
@@ -86,7 +110,8 @@ Biojs.Chromosome = Biojs.extend (
 		target: "chromosome",
 		model: null,
 		dasSource: null,
-		dasSegment: null
+		dasSegment: null,
+		includeSelector: true
 	},
 	
 	/**
@@ -115,10 +140,20 @@ Biojs.Chromosome = Biojs.extend (
 		 "onBandSelection"
 	],
 	
+	 /**
+	  * @private
+	  * Private: Callback function in case of an error in the DAS query.
+	  */
 	_error_response: function(){
-		alert('Bad response, Wrong URL?, No XML response?');
+		var self=this;
+		$("#"+self.opt.target).append("ERROR querying the DAS source.");
 	},
 	
+	 /**
+	  * @private
+	  * Private: Callback function when the DAS response is captured. 
+	  * It maps the response into the internal model for bands.
+	  */
 	_modelFromDAS: function(res,parent){
 		if(typeof parent != "undefined")
 			var self=parent;
@@ -140,29 +175,37 @@ Biojs.Chromosome = Biojs.extend (
 			bands.push({start:ann.START.textContent*1,stop:ann.END.textContent*1,label:ann.id,type:type});
 		}
 		model.bands=bands;
+		self.opt.model=model;
 		self._process_model(model,self);
 	},
 	
+	 /**
+	  * @private
+	  * Private: Creates a div element for each band in the model; the width of the band is calculated as a percentage 
+	  * of the relationship between the number of nucleotides in the band and the number of nucleotides of the chromosome. 
+	  */
 	_process_model: function(model,self){
+		//Sorting the bands by the start coordinate
 		model.bands.sort	( function sortfunc(a,b){
 			return a.start-b.start;
 		});
-		var first="first",last="";
+		var first="first",last="",firstid=null;
 		for (var i in model.bands){
 			var band = model.bands[i];
 			if (i*1+1==model.bands.length)
 				last="last";
 			var percentage=100*(band.stop-band.start)/model.stop;
 			var band_id=model.id+"_"+band.label;
-			$("#"+self.opt.target).append("<div id='"+band_id+"' title='"+band.label+"' class='band "+band.type+" "+first+last+"' style='width: "+percentage.toFixed(1)+"%;'></div>");
+			$("#"+self.opt.target).append("<div id='"+band_id+"' title='"+band.label+"' class='band "+band.type+" "+first+last+"' style='width: "+percentage.toFixed(3)+"%;'></div>");
 			band_id=band_id.replace(/\./gi, "\\.");
 			$("#"+band_id).click(function (){
+				//Finding the band in the model
 				var band={}
 				for (var j in model.bands){
 					if ($(this).attr("title")==model.bands[j].label)
 						band=model.bands[j];
-					
 				}
+				//arising an event with the ban info
 				self.raiseEvent('onBandSelection', {
 					chromosome_id : model.id,
 					band_id:	band.label,
@@ -170,9 +213,128 @@ Biojs.Chromosome = Biojs.extend (
 					band_stop:	band.stop,
 					band_type:	band.type
 				});
+				//If the selector is included then its position gets updated to the selected band
+				if (self.opt.includeSelector){
+					self.opt.selector.from=band.start;
+					self.opt.selector.to=band.stop;
+					self._moveSelectorToDivCoordinates($(this).position().left,$(this).position().left+$(this).width());
+				}
 			});
+			if(first!="") firstid=band_id; //id of the first band
 			first="";
 		}
+		//Setting up the selector in case is included
+		if (self.opt.includeSelector){
+			//The selector just allows horizontal interaction and is preseted in the first band
+			self.opt.selector = new Biojs.AreaSelector({
+				target: self.opt.target,
+				resize_top: false,
+				resize_bottom: false,
+				area:[0,-5,$('#'+firstid).width(),20]
+			});
+			//Creating two more attributes in the object to save chromosome coordinates where is visible
+			self.opt.selector.from = null; 
+			self.opt.selector.to = null; 
+			//When the selector change its position the chromosome coordinates have to be updated
+			self.opt.selector.onRegionChanged(function( objEvent ) {
+				self.opt.selector.from	= self._getCoordinateFromLeft(objEvent.region[0]);
+				self.opt.selector.to	= self._getCoordinateFromLeft(objEvent.region[2]);
+			}); 
+			//if the div containing the chromosome is resized or moved the selector is modified with
+			$("#"+self.opt.target).watch("left,top,width,height,display", function() {        
+				if (self.opt.selector.from!=null && self.opt.selector.to!=null )
+				self.moveSelectorToCoordinates(self.opt.selector.from,self.opt.selector.to);
+			}, 100, "_containerMove");
+		}
 		
+	},
+	/**
+	 * AreaSelector component that allows to interact with the chromosome.
+	 * Optional feature, that can be disable in the options object by setting the feature includeSelector to false
+	 * @private
+	 * @name Biojs.Chromosome-selector
+	 */	
+	selector:null,
+	/**
+	 * Move the Selector to a specific place in the chromosome
+	 * 
+	 * @param {integer} from initial chromosome coordinate to locate the selector
+	 * @param {integer} to final chromosome coordinate to locate the selector
+	 * 
+	 * @example
+	 * instance.moveSelectorToCoordinates(10000000,20000000);
+	 * 
+	 */
+	moveSelectorToCoordinates: function(from, to){
+		var self=this;
+		if(self.opt.selector!=null){
+			self.opt.selector.from=from;
+			self.opt.selector.to=to;
+			self._moveSelectorToDivCoordinates(self._getLeftFromCoordinate(from),self._getLeftFromCoordinate(to));
+		}else
+			return false;
+	},
+	
+	/**
+	 * Gives the corresponding value for left in respect of the parent component from a chromosome coordinate
+	 * @private
+	 * @name Biojs.Chromosome-_getLeftFromCoordinate
+	 */	
+	_getLeftFromCoordinate: function(coordinate){
+		var self=this;
+		var band=null
+		for (var j in self.opt.model.bands){
+			var b=self.opt.model.bands[j];
+			if (coordinate>=b.start && coordinate<=b.stop){
+				band=b;
+				break;
+			}
+		}
+		if (band!=null){
+			var band_id=self.opt.model.id+"_"+band.label;
+			band_id=band_id.replace(/\./gi, "\\.");
+			var leftDiv = $("#"+band_id).position().left,
+				widthDiv= $("#"+band_id).width(),
+				leftBand=band.start,
+				widthBand=band.stop-band.start;
+			return  leftDiv+ (((coordinate-leftBand)*widthDiv)/widthBand);
+		}else 
+			return false;
+		
+	},	
+	/**
+	 * Gives the corresponding value for a chromosome coordinate from the left value in respect of the parent component 
+	 * @private
+	 * @name Biojs.Chromosome-_getCoordinateFromLeft
+	 */	
+	_getCoordinateFromLeft: function(left){
+		var self=this;
+		var band=null
+		for (var j in self.opt.model.bands){
+			var b=self.opt.model.bands[j];
+			var band_id=self.opt.model.id+"_"+b.label;
+			band_id=band_id.replace(/\./gi, "\\.");
+			
+			if (left>=$("#"+band_id).position().left && left<=$("#"+band_id).position().left + $("#"+band_id).width()){
+				var leftDiv = $("#"+band_id).position().left,
+				widthDiv= $("#"+band_id).width(),
+				leftBand=b.start,
+				widthBand=b.stop-b.start;
+			return  leftBand+ (((left-leftDiv)*widthBand)/widthDiv);
+			}
+		}
+		return false;
+		
+	},	
+	
+	/**
+	 * moves the selector to a position in the div using the div relative coordinates 
+	 * @private
+	 * @name Biojs.Chromosome-_moveSelectorToDivCoordinates
+	 */	
+	_moveSelectorToDivCoordinates: function(from, to){
+		var self=this;
+		if (self.opt.includeSelector && self.opt.selector!=null)
+			self.opt.selector.setCoveredArea([from,-5,to,20]);
 	}
 });
