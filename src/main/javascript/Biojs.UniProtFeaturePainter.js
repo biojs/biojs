@@ -330,6 +330,7 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
         _originalColor: "",
         _previousClickedColor: "",
         _previousClickedShape: "",
+        _previousClickedFeature: "",
         _clickCounter: 0,
 
         /**
@@ -1035,12 +1036,14 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
                     myself._originalColor = myself._previousClickedColor;
                     raphaelObj.attr({stroke: myself._previousClickedColor, fill: myself._previousClickedColor});
                     //only select this.animate({"fill-opacity": 1.0}, 500);
+                    featureObj.isSelected = false;
                     myself._raiseEvent(myself, raphaelObj, featureObj, 'onFeatureUnselected');
                 } else { //it is deselected (even counter), will be selected
                     if (onlySelect || (myself._clickCounter%2 != 0)) {
                         raphaelObj.attr({stroke: myself.opt.selectionColor, fill: myself.opt.selectionColor});
                         raphaelObj.animate({"fill-opacity": 1.0}, 500);
                     }
+                    featureObj.isSelected = true;
                     myself._raiseEvent(myself, raphaelObj, featureObj, 'onFeatureSelected');
                 }
             } else {
@@ -1049,17 +1052,20 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
                     try {
                         myself._previousClickedShape.attr({stroke: myself._previousClickedColor, fill: myself._previousClickedColor});
                         myself._previousClickedShape.animate({"fill-opacity": .5}, 500);
+                        myself._previousClickedFeature.isSelected = false;
                         myself._raiseEvent(myself, myself._previousClickedShape, featureObj, 'onFeatureUnselected');
-                    } catch (error) {Biojs.console.log(error);}
+                    } catch (error) {console.log(error);}
                 }
                 //keep the last clicked shape info
                 myself._previousClickedColor = myself._originalColor;
                 myself._previousClickedShape = raphaelObj;
+                myself._previousClickedFeature = featureObj;
                 //change colour to highlight colour
                 if (onlySelect) {
                     raphaelObj.attr({stroke: myself.opt.selectionColor, fill: myself.opt.selectionColor});
                     raphaelObj.animate({"fill-opacity": 1.0}, 500);
                 } //else : it was already done by the hover function
+                featureObj.isSelected = true;
                 myself._raiseEvent(myself, raphaelObj, featureObj, 'onFeatureSelected');
             }
             //raise CLICK event
@@ -1073,7 +1079,6 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
          * @param {int} sequenceLineY Y position for the sequence line.
          */
         _paint: function(obj, sequenceLineY) {
-            //console.log(obj);
             var dotRadius = 1;
             var shape;
             if (obj.type == "path") {
@@ -1131,6 +1136,12 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
                 shape = this.raphael.uniprotFeaturePainter_hexagon(obj.cx, obj.cy, obj.r);
                 shape.attr({"fill": obj.fill, "stroke": obj.stroke, "fill-opacity": obj.fillOpacity});
             }
+            if (obj.isSelected) {
+                this._previousClickedShape = shape;
+                this._previousClickedColor = shape.attrs.stroke;
+                this._previousClickedFeature = obj;
+                shape.attr({"fill": this.opt.selectionColor, "stroke": this.opt.selectionColor, "fill-opacity": this.opt.selectionColor});
+            }
             if (sequenceLineY) {
                 var myself = this;
                 if (this.opt.selectFeatureOnMouseClick) {//events are the same for both shapes and rectangles
@@ -1154,9 +1165,9 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
                                 if (!_clickedShape) { //return to the original colour
                                     this.attr({stroke: myself._originalColor, fill: myself._originalColor});
                                 }
-                                this.animate({"fill-opacity": .5}, 500);
                                 _clickedShape = false;
                                 myself._clickCounter = 0;
+                                this.animate({"fill-opacity": .5}, 500);
                                 //raise OFF event
                                 myself._raiseEvent(myself, this, obj, 'onFeatureOff');
                             }
