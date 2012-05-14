@@ -26,7 +26,7 @@
 		
 		<script language="JavaScript" type="text/javascript">
 			window.onload = function() {
-				var chromosomes = ["1","2"];//,"3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","X","Y"];
+				var chromosomes = ["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","X","Y"];
 				inst=[];
 				for (var i in chromosomes){
 					var chr=chromosomes[i];
@@ -37,8 +37,23 @@
 					     dasSource: "http://www.ensembl.org/das/Homo_sapiens.NCBI36.karyotype/",
 					     dasSegment: chr
 					});
+					inst[i].onModelLoaded(function( objEvent ) {
+						$("#holder_"+objEvent.model.id).data("size",1*objEvent.model.stop);
+						adjustSizes(1*objEvent.model.stop)
+					}); 
 				}
-				
+				var maxSize=0;
+				var adjustSizes= function(size){
+					if (maxSize<size)
+						maxSize=size;
+					for (var i in chromosomes){
+						var chr=chromosomes[i];
+						if($("#holder_"+chr).data("size")!=undefined){
+							var size=$("#holder_"+chr).data("size");
+							$("#holder_"+chr).width((size/maxSize)*100 +"%");
+						}
+					}
+				}
 			};
 		</script>
 	</head>

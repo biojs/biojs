@@ -54,6 +54,8 @@
 }
 .stalk {
 	background-color: #666;
+	height: 10px;
+	top:3px;
 }
 div.band:before{ 
 	content:attr(title); 

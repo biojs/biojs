@@ -90,8 +90,7 @@ Biojs.Chromosome = Biojs.extend (
 	constructor: function (options) {
 		var self = this;
 		$("#"+self.opt.target).html('<div id="'+self.opt.target+'_chr"></div>');
-		self.opt.target += '_chr';
-		$("#"+self.opt.target).css('position','relative');
+		$("#"+self.opt.target+'_chr').css('position','relative');
 		if (self.opt.dasSource!=null){
 			var client = JSDAS.Simple.getClient(self.opt.dasSource);
 			client.features({segment: self.opt.dasSegment}, function(res){ 
@@ -135,9 +134,53 @@ Biojs.Chromosome = Biojs.extend (
 		  * 					instance.onBandSelection(function( objEvent ) {
 		  * 						alert("The band " + objEvent.band_id + " of the chromosome " + objEvent.chromosome_id + " has been selected\n[" + objEvent.band_start + "," + objEvent.band_stop + "]");
 		  * 					}); 
-
 		  */
-		 "onBandSelection"
+		 "onBandSelection",
+		 /**
+		  * @name Biojs.Chromosome#onSelectorChanged
+		  * @event
+		  * @param {function} actionPerformed A function which receives an {@link Biojs.Event} 
+		  * object as argument. Is triggered when the the coordinates of the selector have been changed.
+		  * @eventData {Object} source The component which did triggered the event.
+		  * @eventData {string} type The name of the event.
+		  * @eventData {string} chromosome_id Id of the chromosome that the selected band belongs.
+		  * @eventData {integer} selector_start Coordinate of the left side of the selector
+		  * @eventData {integer} selector_stop Coordinate of the right side of the selector
+		  * @example 
+		  * 					instance.onSelectorChanged(function( objEvent ) {
+		  * 						alert("The selector has move to the region \n[" + objEvent.selector_start + "," + objEvent.selector_stop + "]");
+		  * 					}); 
+		  */
+		 "onSelectorChanged",
+		 /**
+		  * @name Biojs.Chromosome#onModelLoaded
+		  * @event
+		  * @param {function} actionPerformed A function which receives an {@link Biojs.Event} 
+		  * object as argument. Triggered when he model has been loaded
+		  * @eventData {Object} source The component which did triggered the event.
+		  * @eventData {string} type The name of the event.
+		  * @eventData {Object} model The model after been displayed
+		  * @example 
+		  * 					instance.onModelLoaded(function( objEvent ) {
+		  * 						alert("The model for the chromosome "+objEvent.model.id+" has been loaded");
+		  * 					}); 
+		  */
+		 "onModelLoaded",
+		 /**
+		  * @name Biojs.Chromosome#onDASLoadFail
+		  * @event
+		  * @param {function} actionPerformed A function which receives an {@link Biojs.Event} 
+		  * object as argument. Triggered when the model couldn't be loaded
+		  * @eventData {Object} source The component which did triggered the event.
+		  * @eventData {string} type The name of the event.
+		  * @eventData {string} dasSource URL of the DAS source queried
+		  * @eventData {string} dasSegment URL of the DAS source queried
+		  * @example 
+		  * 					instance.onDASLoadFail(function( objEvent ) {
+		  * 						alert("The DAS source "+objEvent.dasSource+" with information of the segment "+objEvent.dasSegment+" couldn't be loaded");
+		  * 					}); 
+		  */
+		 "onDASLoadFail"
 	],
 	
 	 /**
@@ -147,6 +190,10 @@ Biojs.Chromosome = Biojs.extend (
 	_error_response: function(){
 		var self=this;
 		$("#"+self.opt.target).append("ERROR querying the DAS source.");
+		self.raiseEvent('onDASLoadFail', {
+			dasSource: self.opt.dasSource,
+			dasSegment: self.opt.dasSegment
+		});
 	},
 	
 	 /**
@@ -189,14 +236,14 @@ Biojs.Chromosome = Biojs.extend (
 		model.bands.sort	( function sortfunc(a,b){
 			return a.start-b.start;
 		});
-		var first="first",last="",firstid=null;
+		var first="first",last="",firstid=null,firstW=null;
 		for (var i in model.bands){
 			var band = model.bands[i];
 			if (i*1+1==model.bands.length)
 				last="last";
 			var percentage=100*(band.stop-band.start)/model.stop;
 			var band_id=model.id+"_"+band.label;
-			$("#"+self.opt.target).append("<div id='"+band_id+"' title='"+band.label+"' class='band "+band.type+" "+first+last+"' style='width: "+percentage.toFixed(3)+"%;'></div>");
+			$("#"+self.opt.target+'_chr').append("<div id='"+band_id+"' title='"+band.label+"' class='band "+band.type+" "+first+last+"' style='width: "+percentage.toFixed(3)+"%;'></div>");
 			band_id=band_id.replace(/\./gi, "\\.");
 			$("#"+band_id).click(function (){
 				//Finding the band in the model
@@ -217,35 +264,56 @@ Biojs.Chromosome = Biojs.extend (
 				if (self.opt.includeSelector){
 					self.opt.selector.from=band.start;
 					self.opt.selector.to=band.stop;
+					self.raiseEvent('onSelectorChanged', {
+						chromosome_id : model.id,
+						selector_start:	band.stop,
+						selector_stop:	band.type
+					});
 					self._moveSelectorToDivCoordinates($(this).position().left,$(this).position().left+$(this).width());
 				}
 			});
-			if(first!="") firstid=band_id; //id of the first band
+			if(first!="") {
+				firstid=band_id; //id of the first band
+				firstW=band.stop;
+			}
 			first="";
 		}
 		//Setting up the selector in case is included
 		if (self.opt.includeSelector){
 			//The selector just allows horizontal interaction and is preseted in the first band
 			self.opt.selector = new Biojs.AreaSelector({
-				target: self.opt.target,
+				target: self.opt.target+'_chr',
 				resize_top: false,
 				resize_bottom: false,
 				area:[0,-5,$('#'+firstid).width(),20]
 			});
-			//Creating two more attributes in the object to save chromosome coordinates where is visible
-			self.opt.selector.from = null; 
-			self.opt.selector.to = null; 
+			//Creating two more attributes in the object to save chromosome coordinates where is visible, starting in the first band
+			self.opt.selector.from = 0; 
+			self.opt.selector.to = firstW; 
+			self.opt.selector.fromWatcher=false;
 			//When the selector change its position the chromosome coordinates have to be updated
 			self.opt.selector.onRegionChanged(function( objEvent ) {
-				self.opt.selector.from	= self._getCoordinateFromLeft(objEvent.region[0]);
-				self.opt.selector.to	= self._getCoordinateFromLeft(objEvent.region[2]);
+				if (!self.opt.selector.fromWatcher){
+					self.opt.selector.from	= self._getCoordinateFromLeft(objEvent.region[0]);
+					self.opt.selector.to	= self._getCoordinateFromLeft(objEvent.region[2]);
+					self.raiseEvent('onSelectorChanged', {
+						chromosome_id : self.opt.model.id,
+						selector_start:	self.opt.selector.from,
+						selector_stop:	self.opt.selector.to
+					});
+				}
 			}); 
 			//if the div containing the chromosome is resized or moved the selector is modified with
-			$("#"+self.opt.target).watch("left,top,width,height,display", function() {        
+			$("#"+self.opt.target).watch("left,top,width,height,display", function() {
+				self.opt.selector.fromWatcher=true;
 				if (self.opt.selector.from!=null && self.opt.selector.to!=null )
-				self.moveSelectorToCoordinates(self.opt.selector.from,self.opt.selector.to);
+					self.moveSelectorToCoordinates(self.opt.selector.from,self.opt.selector.to);
+				self.opt.selector.fromWatcher=false;
 			}, 100, "_containerMove");
 		}
+		self.raiseEvent('onModelLoaded', {
+			model: model
+		});
 		
 	},
 	/**
