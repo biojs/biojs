@@ -116,40 +116,16 @@ Biojs.Sequence = Biojs.extend(
 {	
 	constructor: function (options) {
 		var self = this;
+		var initialize = self._initialize();
 		
-		self._selector = "#" + this.opt.target;
-		self._container = jQuery(self._selector);
+		Biojs.console.enable();
 		
-		// Disable text selection
-		self._container.css({
-			'-moz-user-select':'none',
-			'-webkit-user-select':'none',
-			'user-select':'none'
-        });
+		this._selector = "#" + this.opt.target;
 		
-		// DIV for the format selector
-		self._headerDiv = jQuery('<div></div>').appendTo(self._selector);
-		self._headerDiv.css({
-			'font-family': '"Heveltica Neue", Arial, "sans serif"',
-			'font-size': '14px'
-		})
-		.append('Format: ');
-		
-		// DIV for the sequence
-		self._contentDiv = jQuery('<div></div>').appendTo(self._selector);
-		self._contentDiv.css({
-			'font-family': this.opt.fontFamily,
-			'font-size': this.opt.fontSize
+		// Lazy initialization 
+		jQuery(this._selector).ready(function() {
+			self._initialize();
 		});
-		
-		// Initialize highlighting 
-		self._highlights = options.highlights;
-		
-		// Initialize annotations
-		self._annotations = options.annotations;
-		
-		self._buildFormatSelector();
-		self._redraw();
 	},
 	
 	/**
@@ -246,6 +222,40 @@ Biojs.Sequence = Biojs.extend(
 	
 	// Methods
 
+	_initialize: function () {
+		// Disable text selection
+		
+		this._container = jQuery(this._selector).css({
+			'-moz-user-select':'none',
+			'-webkit-user-select':'none',
+			'user-select':'none'
+        });
+		
+		// DIV for the format selector
+		this._headerDiv = jQuery('<div></div>').appendTo(this._selector);
+		this._headerDiv.css({
+				'font-family': '"Heveltica Neue", Arial, "sans serif"',
+				'font-size': '14px'	
+			}).append('Format: ');
+		
+		// DIV for the sequence
+		this._contentDiv = jQuery('<div></div>').appendTo(this._selector);
+		this._contentDiv.css({
+				'font-family': this.opt.fontFamily,
+				'font-size': this.opt.fontSize
+			});
+		
+		// Initialize highlighting 
+		this._highlights = this.opt.highlights;
+		
+		// Initialize annotations
+		this._annotations = this.opt.annotations;
+		
+		this._buildFormatSelector();
+		this._redraw();
+	},
+	
+	
 	/**
 	 * Shows the columns indicated by the indexes array.
 	 * @param {string} seq The sequence strand.
@@ -261,11 +271,49 @@ Biojs.Sequence = Biojs.extend(
     	this._highlights = [];
 		this._highlightsCount = 0;
 		this.opt.selection = { start: 0, end: 0 };
-		//highlights : [],
 		this._annotations = [];
+		
+		this._headerDiv.show();
+		this._contentDiv.children().remove();
 		this._redraw();
     },
 	
+    /**
+	 * Shows the columns indicated by the indexes array.
+	 * @param {string} [showMessage] Message to be showed.
+	 * @param {string} [icon] Icon to be showed a side of the message
+	 * 
+	 * @example 
+	 * mySequence.clearSequence("No sequence available", "../biojs/css/images/warning_icon.png");
+	 * 
+	 */
+    clearSequence: function ( showMessage, icon ) {
+    	
+    	var message = undefined;
+    		
+    	this.opt.sequence = "";
+    	this.opt.id = ""; 
+    	this._highlights = [];
+		this._highlightsCount = 0;
+		this.opt.selection = { start: 0, end: 0 };
+		this._annotations = [];
+		this._contentDiv.children().remove();
+		
+		this._headerDiv.hide();
+		
+		if ( undefined !== showMessage ) {
+			message = jQuery('<div>' + showMessage + '</div>')
+				.appendTo(this._contentDiv)
+				.addClass("message");
+			
+			if ( undefined !== icon ) {
+				message.css({
+					'background': 'transparent url("' + icon + '") no-repeat center left',
+					'padding-left': '20px'
+				});
+			}
+		}
+    },
 	
 	/**
     * Set the current selection in the sequence causing the event {@link Biojs.Sequence#onSelectionChanged}
@@ -341,12 +389,16 @@ Biojs.Sequence = Biojs.extend(
     * @return {int} representing the id of the highlight on the internal array. Returns -1 on failure  
     */
 	addHighlight : function ( h ) {
-		var id = -1;
+		var id = '-1';
+		var color = "";
+		var background = "";
+		var highlight = {};
 		
 		if ( h instanceof Object && h.start <= h.end ) {
-			color = ("string" == typeof h.color)? h.color : this.opt.highlightFontColor;
-			background = ("string" == typeof h.background)? h.background : this.opt.highlightBackgroundColor;
-			id = ("string" == typeof h.id)? h.id : this._highlightsCount++;
+			
+			color = ( "string" == typeof h.color )? h.color : this.opt.highlightFontColor;
+			background = ( "string" == typeof h.background )? h.background : this.opt.highlightBackgroundColor;
+			id = ( "string" == typeof h.id )? h.id : (new Number(this._highlightsCount++)).toString();
 			
 			highlight = { "start": h.start, "end": h.end, "color": color, "background": background, "id": id };
 			
@@ -459,7 +511,7 @@ Biojs.Sequence = Biojs.extend(
     * // Clear the highlighted characters within the position 100 to 150, included.
     * mySequence.removeHighlight("spin1");
     * 
-    * @param {int} id The id of the highlight on the internal array. This value is returned by method highlight.
+    * @param {string} id The id of the highlight on the internal array. This value is returned by method highlight.
     */
 	removeHighlight : function (id) {	
 		var h = this._highlights;
@@ -660,7 +712,8 @@ Biojs.Sequence = Biojs.extend(
 		var self = this;
 		
 		// Reset the content
-		this._contentDiv.text('');
+		//this._contentDiv.text('');
+		this._contentDiv.children().remove();
 		
 		// Rebuild the spans of the sequence 
 		// according to format
