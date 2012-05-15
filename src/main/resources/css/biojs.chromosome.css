@@ -77,5 +77,6 @@ div:hover{
 	z-index:5; 
 }
 #YourOwnDivId {
+	padding: 10px;
 	padding-bottom: 40px;
 }
