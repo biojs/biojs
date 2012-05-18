@@ -251,6 +251,20 @@ Biojs.Sequence = Biojs.extend(
 		// Initialize annotations
 		this._annotations = this.opt.annotations;
 		
+		//Initialize tooltip
+		jQuery('<div id="sequenceTip' + this.getId() + '"></div>') 
+	        .css({	
+	        	'position': "absolute",
+	        	'z-index': "9999",
+	        	'color': "#fff",
+	        	'font-size': "12px",
+	        	'width': "auto",
+	        	'display': 'none'
+	        })
+	        .addClass("tooltip")
+	        .appendTo("body")
+	        .hide();
+		
 		this._buildFormatSelector();
 		this._redraw();
 	},
@@ -1131,7 +1145,8 @@ Biojs.Sequence = Biojs.extend(
 				});
 			});
 			
-			self._addToolTip( this, function( ) {
+			// Add a tooltip for this sequence base.
+			self._addToolTip.call( self, this, function( ) {
 				if (isMouseDown) {
 	     			return "[" + self.opt.selection.start +", " + self.opt.selection.end + "]";
 	     		} else {
@@ -1143,67 +1158,35 @@ Biojs.Sequence = Biojs.extend(
 		.css('cursor', 'pointer');
 	},
 	/* 
-     * Function: Biojs.Sequence._addSpanEvents
-     * Purpose:  Add a tooltip to any element on the sequence.
+     * Function: Biojs.Sequence._addTooltip
+     * Purpose:  Add a tooltip around the target DOM element provided as argument
      * Returns:  -
-     * Inputs:   target -> {Element} Target element for adding out the tip message.
-     * 			 msgFunction -> {function} Function that return the message to be displayed in the tip.
+     * Inputs:   target -> {Element} DOM element wich is the targeted focus for the tooltip.
+     * 			 cbGetMessageFunction -> {function} A callback function wich returns the message to be displayed in the tip.
      */
-	_addToolTip : function ( target, msgFunction ) {
+	_addToolTip : function ( target, cbGetMessageFunction ) {
 		
- 		var tooltipId = 'tooltip_' + this.getId();
- 		var position = jQuery(this._selector).css('position');
- 		var offsetTop = jQuery(target).offsetTop;
- 		var offsetLeft = jQuery(target).offsetLeft;
+ 		var offset = jQuery(target).offset();
+ 		var tipId = '#sequenceTip' + this.getId();
 		
 		jQuery(target).mouseover(function(e) {
-        	
-			// get the text to be diplayed
-     		var tipText = msgFunction.call( target );
-     		
-     		// Tooltip position will be 
-     		// mouse position plus offsets 
-     		var top = e.pageY + 10;
-        	var left = e.pageX + 20;
-        	
-        	// Correct the position in case of 
-        	// component container be relative positioned
-        	if ( "relative" == position ) {
-     			top -= offsetTop;
-     			left -= offsetLeft/2;
-     		}
-     		
-	        //Append the tooltip template and its value
-	        jQuery('<div id="'+ tooltipId +'"><div class="tipHeader"></div><div class="tipBody">' + tipText + '</div><div class="tipFooter"></div></div>') 
-		        .css({	
-		        	// Position values
-		        	'top': top,
-		        	'left': left,
-		        	// Style values 
-		        	'position': "absolute",
-		        	'z-index': "9999",
-		        	'color': "#fff",
-		        	'font-size': "12px",
-		        	'width': "auto"
-		        	
-		        })
-		        .animate( {opacity: '0.85'}, 10)
-		        .appendTo( target );
 
-	        jQuery('.tipHeader').css('background-color', "#000")
-	        	.css('height', "8px"); 
-	        //.css('background', "images/tipHeader.gif");  
-			
-			jQuery('.tipBody').css('background-color', "#000")
-				.css('padding', "3px 10px 3px 10px");
+			if ( ! jQuery( tipId ).is(':visible') ) {
+		        jQuery( tipId ) 
+		        	.css({
+		        		'background-color': "#000",
+		        		'padding': "3px 10px 3px 10px",
+		        		'top': offset.top + jQuery(target).height(),
+		        		'left': offset.left + jQuery(target).width()
+		        	})
+			        .animate( {opacity: '0.85'}, 10)
+			        .html( cbGetMessageFunction.call( target ) )
+			        .show();
+			}
 
-			jQuery('.tipFooter').css('background-color', "#000")
-	        	.css('height', "8px"); 
-	        //.css('background', "images/tipHeader.gif no-repeat");  
- 
 	    }).mouseout(function() {
 	        //Remove the appended tooltip template
-	        jQuery(this).children("div").remove();	         
+	        jQuery( tipId ).hide();	         
 	    });
 	},
 	
