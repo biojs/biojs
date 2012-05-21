@@ -18,10 +18,13 @@
  *    Identifier of the DIV tag where the component should be displayed.
  * 
  * @option {string} segmentId 
- * 	  Uniprot segment identifier to fetch the Gene Protein summary data
+ * 	  ENSEMBL gene identifier needed to fetch the Gene expression summary data
  *  
  * @option {string} [featuresUrl='http://www.ebi.ac.uk/gxa/das/s4/features']
  * 	  Url of the REST service which provides the summary data.
+ * 
+ * @option {string} [legend=true]
+ *    Option to display the provenance legend.
  *  
  * @option {string} [proxyUrl='../biojs/dependencies/proxy/proxy.php']
  *    Since the same origin policy ({@link http://en.wikipedia.org/wiki/Same_origin_policy}) in the browsers 
@@ -45,9 +48,17 @@ Biojs.GeneProteinSummary = Biojs.extend(
 		this._container = jQuery(this._selector);
 		
 		this._container.addClass("GeneProteinSummary");
-		this._title = jQuery('<h1 class="GeneProteinSummary_title"></h1>').appendTo(this._container);
-		this._imageContainer = jQuery('<div class="GeneProteinSummary_image"></div>').appendTo(this._container);
-		this._summaryContainer = jQuery('<div class="GeneProteinSummary_summary"></div>').appendTo(this._container);
+		this._title = jQuery('<div class="GeneProteinSummary_title"></div>').appendTo(this._container);
+		
+		this._table = jQuery('<table class="GeneProteinSummary_title"></table>').appendTo(this._container);
+		this._row = jQuery("<tr></tr>").appendTo(this._table);
+		this._leftColumn = jQuery("<td></td>").appendTo(this._row);
+		this._rightColumn = jQuery("<td></td>").appendTo(this._row);
+
+		
+		
+		this._imageContainer = jQuery('<div class="GeneProteinSummary_image"></div>').appendTo(this._rightColumn);
+		this._summaryContainer = jQuery('<div class="GeneProteinSummary_summary"></div>').appendTo(this._leftColumn);
 		this._footerContainer = jQuery('<div class="GeneProteinSummary_footer"></div>').appendTo(this._container);
 
 		this.requestFeatures( this.opt.segmentId );
@@ -61,6 +72,7 @@ Biojs.GeneProteinSummary = Biojs.extend(
 		target: "YourOwnDivId",
 		segmentId: undefined,
 		featuresUrl: 'http://www.ebi.ac.uk/gxa/das/s4/features',
+		legend: true,
 		proxyUrl: '../biojs/dependencies/proxy/proxy.php'
 	},
 
@@ -136,7 +148,7 @@ Biojs.GeneProteinSummary = Biojs.extend(
 	   		 httpRequest.url = opt.proxyUrl;
 	
 	   		 // Encode both url and parameters under the param url
-	   		 httpRequest.data = [{ name: "url", value: opt.featuresUrl },{ name: "segment", value: opt.segmentId }];
+	   		 httpRequest.data = [{ name: "url", value: opt.featuresUrl + "?segment="+opt.segmentId }];
 	
 	   		 // Data type 
 	   		 httpRequest.dataType = "text";
@@ -241,30 +253,29 @@ Biojs.GeneProteinSummary = Biojs.extend(
 		this._summaryContainer.text('');
 		this._footerContainer.text('');
 		
+		var self = this;
 		for ( i = 0; i < f.length; i++ ) {
 			var feature = f[i];
-			
 			if ( Biojs.GeneProteinSummary.TYPE_DESCRIPTION == feature.TYPE.id ) {
 				this._title.text( feature.NOTE[0].text );
 				
 			} else if ( Biojs.GeneProteinSummary.TYPE_IMAGE == feature.TYPE.id ) {
-				var image = '<p><img src="'+ feature.LINK.href +'" />';
+				var image = jQuery('<img src="'+ feature.LINK.href +'" />').appendTo(this._imageContainer);
+				image.css("width","100%");
+				image.css("height","auto");
 				var caption = '<p>'+ feature.LINK.text;
-				
-				this._imageContainer.append(image);
 				this._imageContainer.append(caption);
-				
-			} else if ( Biojs.GeneProteinSummary.TYPE_PROVENANCE == feature.TYPE.id ) {
+			} else if ( Biojs.GeneProteinSummary.TYPE_PROVENANCE == feature.TYPE.id && self.opt.legend == true) {
 				var footer = '';
 				for ( n in feature.NOTE ) {
-					footer += feature.NOTE[n].text + '<br/>';
+					footer += feature.NOTE[n].text + ' ';
 				}
 				footer += '<a href="' + feature.LINK.href + '">'+ feature.LINK.href + '</a>';
 				this._footerContainer.append(footer);
 				
 			} else {
-				var summary = '<h2>' + feature.label + '</h2>';
-				summary += '<p>' + feature.NOTE[0].text + ' <a href="' + feature.LINK.href + '">view all</a></p>';
+				var summary = '<div class="GeneProteinSummary_subtitle">' + feature.label + '</div>';
+				summary += '<div class="GeneProteinSummary_feature">' + feature.NOTE[0].text + ' <a href="' + feature.LINK.href + '">view all</a></div>';
 				
 				this._summaryContainer.append(summary);
 			}

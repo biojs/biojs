@@ -45,6 +45,11 @@
 	$url = str_replace('"','%22',$url); 
 	$url = str_replace(' ','%20',$url); 
 
+	if(substr($url, -1) == "&"){
+	  $url = substr($url,0,-1);
+	}
+
+
 
 /* CURL CONFIGURARTION */
         
