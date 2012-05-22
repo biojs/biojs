@@ -128,9 +128,11 @@ Biojs.ChEBICompound = Biojs.extend(
 	setId: function( chebiId ) {
 		
 		var self = this;
+		var url;
+		var image;
 		
+		this._imageContainer.html('');
 		this.opt.id = chebiId.replace('CHEBI:','');
-		
 		this._requestDetails( this.opt );
 		
 		var params = { 
@@ -141,9 +143,8 @@ Biojs.ChEBICompound = Biojs.extend(
 			scaleMolecule: 	this.opt.scale
 		};
 		
-	    var url = this.opt.imageUrl + '?' + jQuery.param(params);
-		//var url = this.opt.imageUrl + '?defaultImage=true&imageIndex='+this.opt.imageIndex+'&chebiId='+chebiId+'&dimensions='+width+'&scaleMolecule='+this.opt.scale;
-		var image = jQuery('<img id="image_' + chebiId + '" src="'+ url +'"/>').appendTo(this._imageContainer);
+		url = this.opt.imageUrl + '?' + jQuery.param(params);
+		image = jQuery('<img id="image_' + chebiId + '" src="'+ url +'"/>').appendTo(this._imageContainer);
 
 		image.load(function() {
 			self.raiseEvent( Biojs.ChEBICompound.EVT_ON_IMAGE_LOADED, {
