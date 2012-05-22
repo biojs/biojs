@@ -47,8 +47,8 @@ Biojs.ChEBICompound = Biojs.extend(
 		
 		this._container.addClass("ChEBICompound")
 			.css({
-				"width": this.opt.width,
-				"height": this.opt.height,
+				"width": self.opt.width,
+				"height": self.opt.height,
 				"padding": 0
 			});
 		
@@ -62,6 +62,8 @@ Biojs.ChEBICompound = Biojs.extend(
 				//self._imageContainer.css( 'width', self._container.width() - visibleWidth );
 			}
 		);
+		
+		this.opt.imageDimension = this._imageContainer.width();
 		
 		if (this.opt.id !== undefined) {
 			this.setId(this.opt.id);
@@ -139,7 +141,7 @@ Biojs.ChEBICompound = Biojs.extend(
 			defaultImage:	true, 
 			imageIndex: 	this.opt.imageIndex,
 			chebiId: 		chebiId,
-			dimensions: 	this._imageContainer.width(),
+			dimensions: 	this.opt.imageDimension,
 			scaleMolecule: 	this.opt.scale
 		};
 		
@@ -152,8 +154,8 @@ Biojs.ChEBICompound = Biojs.extend(
 				url: url
 			});
 		}).css({
-			'width': self._imageContainer.width(),
-			'height': self._imageContainer.height(),
+			'width': self.opt.imageDimension,
+			'height': self.opt.imageDimension,
 			'margin': 'auto'
 		});
 
