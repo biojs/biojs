@@ -39,7 +39,7 @@ Biojs.ChEBICompound = Biojs.extend(
 /** @lends Biojs.ChEBICompound# */
 {
 	constructor: function(options){
-		Biojs.console.enable();
+		//Biojs.console.enable();
 		//constructor of Biojs.ChEBICompound
 		var self = this;
 		this._selector = "#" + this.opt.target;
