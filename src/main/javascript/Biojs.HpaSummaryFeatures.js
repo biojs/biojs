@@ -33,7 +33,7 @@
  *    You can use tour own proxy script by modifying this value. 
  * 
  * @example
- * var instance = new Biojs.GeneProteinSummary({
+ * var instance = new Biojs.HpaSummaryFeatures({
  * 	  target: 'YourOwnDivId',
  * 	  hpaDasUrl: 'http://www.ebi.ac.uk/~rafael/web/copa/Q9NTI5_hpa_summary.xml',
  * 	  width: '590px',
@@ -42,7 +42,9 @@
  * 
  */
 
-Biojs.HpaSummaryFeatures = Biojs.extend ({
+Biojs.HpaSummaryFeatures = Biojs.extend (
+	/** @lends Biojs.HpaSummaryFeatures# */
+	{
 	constructor: function (options) {
 		var self = this;
 		self._componentPrefix = "hpaSummaryFeatures_";
@@ -60,16 +62,24 @@ Biojs.HpaSummaryFeatures = Biojs.extend ({
 		    type: "GET",
 		    url: self._url,
 		    dataType: "xml",
-		    success: processDasHpaXml
+		    success: processDasHpaXml,
+			error: processErrorRequest
 	    });
 		
 		/* process HPA XML */
 		function processDasHpaXml(xml)
 		{
+			Biojs.console.log("SUCCESS: data received");
 			var antibodies = getAntibodiesAccessions(xml);
 			var html = createHtmlContainer(antibodies);
 			jQuery('#'+self.opt.target+'').html(html);
 			displayHpaSummaries(xml,antibodies)
+		}
+		
+		/* Process request error */
+		function processErrorRequest(qXHR, textStatus, errorThrown){
+			Biojs.console.log("ERROR: " + textStatus );
+			self.raiseEvent( Biojs.HpaSummaryFeatures.EVT_ON_REQUEST_ERROR, { message: textStatus } );
 		}
 		
 		/* get antibodies accessions */
@@ -145,6 +155,10 @@ Biojs.HpaSummaryFeatures = Biojs.extend ({
 	
 		}
 	},
+	/**
+	* Default values for the options
+	* @name Biojs.HpaSummaryFeatures-opt
+	*/
 	opt: {
 		target: 'hpaSummaryFeatues',
 		hpaDasUrl: '',
@@ -152,5 +166,32 @@ Biojs.HpaSummaryFeatures = Biojs.extend ({
 		width: '900px',
 		imageWidth: '200px'
 	},
-	eventTypes: []
-	});
+   /**
+    * Array containing the supported event names
+    * @name Biojs.HpaSummaryFeatures-eventTypes
+    */
+	eventTypes: [
+		/**
+		 * @name Biojs.HpaSummaryFeatures#onRequestError
+		 * @event
+		 * @param {function} actionPerformed A function which receives an {@link Biojs.Event} object as argument.
+		 * @eventData {Object} source The component which did triggered the event.
+		 * @eventData {string} file The name of the loaded file.
+		 * @eventData {string} result A string with either value 'success' or 'failure'.
+		 * @eventData {string} message Error message in case of result be 'failure'.
+		 * 
+		 * @example 
+		 * instance.onRequestError(
+		 *    function( e ) {
+		 *       alert( e.message );
+		 *    }
+		 * ); 
+		 * 
+		 **/
+	]
+},{
+	// Some static values
+	
+	// Events
+	EVT_ON_REQUEST_ERROR: "onRequestError",
+});

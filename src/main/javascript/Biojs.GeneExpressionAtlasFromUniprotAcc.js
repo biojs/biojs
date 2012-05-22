@@ -27,14 +27,16 @@
  *    You can use tour own proxy script by modifying this value. 
  * 
  * @example
- * var instance = new Biojs.GeneProteinSummary({
+ * var instance = new Biojs.GeneExpressionAtlasFromUniprotAcc({
  * 	  target: 'YourOwnDivId',
  * 	  segmentId: 'Q61171'
  * });
  * 
  */
 
-Biojs.GeneExpressionAtlasFromUniprotAcc = Biojs.extend ({
+Biojs.GeneExpressionAtlasFromUniprotAcc = Biojs.extend (
+	/** @lends Biojs.GeneExpressionAtlasFromUniprotAcc# */
+	{
 	constructor: function (options) {
 		var self = this;
 		
@@ -54,7 +56,8 @@ Biojs.GeneExpressionAtlasFromUniprotAcc = Biojs.extend ({
 		    type: "GET",
 		    url: self._url,
 			dataType: "text",
-		    success: drawSummary
+		    success: drawSummary,
+			error: processErrorRequest
 	    });
 		
 		/* Draw GXA summary */
@@ -68,8 +71,19 @@ Biojs.GeneExpressionAtlasFromUniprotAcc = Biojs.extend ({
 				  proxyUrl: self.opt.proxyUrl
 			});
 		}
+		
+				
+		/* Process request error */
+		function processErrorRequest(qXHR, textStatus, errorThrown){
+			Biojs.console.log("ERROR: " + textStatus );
+			self.raiseEvent( Biojs.GeneExpressionAtlasFromUniprotAcc.EVT_ON_REQUEST_ERROR, { message: textStatus } );
+		}
 
 	},
+	/**
+	 * Default values for the options
+	 * @name Biojs.GeneExpressionAtlasFromUniprotAcc-opt
+	 */
 	opt: {
 		target: '',
 		uniprotAcc: '',
@@ -77,5 +91,32 @@ Biojs.GeneExpressionAtlasFromUniprotAcc = Biojs.extend ({
 		legend: true,
 		proxyUrl: ''
 	},
-	eventTypes: []
+	/**
+	* Array containing the supported event names
+	* @name Biojs.GeneExpressionAtlasFromUniprotAcc-eventTypes
+	*/
+	eventTypes: [
+		/**
+		 * @name Biojs.GeneExpressionAtlasFromUniprotAcc#onRequestError
+		 * @event
+		 * @param {function} actionPerformed A function which receives an {@link Biojs.Event} object as argument.
+		 * @eventData {Object} source The component which did triggered the event.
+		 * @eventData {string} file The name of the loaded file.
+		 * @eventData {string} result A string with either value 'success' or 'failure'.
+		 * @eventData {string} message Error message in case of result be 'failure'.
+		 * 
+		 * @example 
+		 * instance.onRequestError(
+		 *    function( e ) {
+		 *       alert( e.message );
+		 *    }
+		 * ); 
+		 * 
+		 **/	
+	]
+},{
+	// Some static values
+	
+	// Events
+	EVT_ON_REQUEST_ERROR: "onRequestError",
 });

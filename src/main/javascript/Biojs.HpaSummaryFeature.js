@@ -42,7 +42,7 @@
  * 	  List of points including summary information for this feature
  * 
  * @example
- * var instance = new Biojs.GeneProteinSummary({
+ * var instance = new Biojs.HpaSummaryFeature({
  * 	  target: 'YourOwnDivId',
  * 	  title: 'HPA001012 Normal Tissue immunohistochemistry summary',
  * 	  imageUrl: 'http://www.proteinatlas.org/images/1012/ihc_selected_medium.jpg',
@@ -56,7 +56,9 @@
  * 
  */
 
-Biojs.HpaSummaryFeature = Biojs.extend ({
+Biojs.HpaSummaryFeature = Biojs.extend (
+	/** @lends Biojs.HpaSummaryFeature# */
+	{
 	constructor: function (options) {
 	var self = this;
 	self._componentPrefix = "hpaSummaryFeature_";
@@ -151,6 +153,10 @@ Biojs.HpaSummaryFeature = Biojs.extend ({
 	self._rightColumn.append(self._contentNotes);
 	
 	},
+	/**
+	 * Default values for the options
+	 * @name Biojs.HpaSummaryFeature-opt
+	 */
 	opt: {
 		target: '',
 		title: '',
