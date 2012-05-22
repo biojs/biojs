@@ -7,7 +7,7 @@
  * @requires <a href=''>Server side proxy</a>
  * 
  * @requires <a href='../biojs/css/ChEBICompound.css'>ChEBICompound.css</a>
- * @dependency <link href="../biojs/css/ChEBICompound.css" rel="stylesheet" type="text/css" />
+ * @dependency <link href="../biojs/css/biojs.ChEBICompound.css" rel="stylesheet" type="text/css" />
  * 
  * @requires <a href='http://blog.jquery.com/2011/09/12/jquery-1-6-4-released/'>jQuery Core 1.6.4</a>
  * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jquery/jquery-1.6.4.js"></script>
@@ -249,7 +249,8 @@ Biojs.ChEBICompound = Biojs.extend(
 			for (key in data) {
 				if ( data[key].value.length > 0 ) {
 					if ( key == 'entityStar' ) {
-						jQuery('<h2>' + data[key].name + '</h2><div class="star"/>')
+						jQuery('<h2>' + data[key].name + '</h2>').appendTo( container );
+						jQuery('<div class="star"/>')
 							.appendTo( container )
 							.css({
 								'width': parseInt(data[key].value) * 16,
