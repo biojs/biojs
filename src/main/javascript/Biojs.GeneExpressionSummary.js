@@ -1,5 +1,5 @@
 /** 
- * Gene protein summary 
+ * Gene expression summary 
  * 
  * @class
  * @extends Biojs
@@ -7,8 +7,8 @@
  * @requires <a href='http://blog.jquery.com/2011/09/12/jquery-1-6-4-released/'>jQuery Core 1.6.4</a>
  * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jquery/jquery-1.6.4.js"></script>
  * 
- * @requires <a href='../biojs/css/GeneProteinSummary.css'>GeneProteinSummary.css</a>
- * @dependency <link href="../biojs/css/GeneProteinSummary.css" rel="stylesheet" type="text/css" />
+ * @requires <a href='../biojs/css/GeneExpressionSummary.css'>GeneExpressionSummary.css</a>
+ * @dependency <link href="../biojs/css/GeneExpressionSummary.css" rel="stylesheet" type="text/css" />
  * 
  * @author <a href="mailto:johncar@gmail.com">John Gomez</a>, <a href="mailto:rafael@ebi.ac.uk">Rafael Jimenez</a>
  * 
@@ -18,7 +18,7 @@
  *    Identifier of the DIV tag where the component should be displayed.
  * 
  * @option {string} identifier 
- * 	  ENSEMBL gene identifier needed to fetch the Gene expression summary data
+ * 	  ENSEMBL gene identifier or UniProt Acc needed as input to fetch the Gene expression summary data
  *  
  * @option {string} [featuresUrl='http://www.ebi.ac.uk/gxa/das/s4/features']
  * 	  Url of the REST service which provides the summary data.
@@ -32,14 +32,14 @@
  *    You can use tour own proxy script by modifying this value. 
  * 
  * @example
- * var instance = new Biojs.GeneProteinSummary({
+ * var instance = new Biojs.GeneExpressionSummary({
  * 	  target: 'YourOwnDivId',
  * 	  identifier: 'P99999'
  * });
  * 
  */
-Biojs.GeneProteinSummary = Biojs.extend(
-/** @lends Biojs.GeneProteinSummary# */
+Biojs.GeneExpressionSummary = Biojs.extend(
+/** @lends Biojs.GeneExpressionSummary# */
 {	
 	constructor: function (options) {
 		//Biojs.console.enable();
@@ -47,26 +47,26 @@ Biojs.GeneProteinSummary = Biojs.extend(
 		this._selector = "#" + this.opt.target;
 		this._container = jQuery(this._selector);
 		
-		this._container.addClass("GeneProteinSummary");
-		this._title = jQuery('<div class="GeneProteinSummary_title"></div>').appendTo(this._container);
+		this._container.addClass("GeneExpressionSummary");
+		this._title = jQuery('<div class="GeneExpressionSummary_title"></div>').appendTo(this._container);
 		
-		this._table = jQuery('<table class="GeneProteinSummary_title"></table>').appendTo(this._container);
+		this._table = jQuery('<table class="GeneExpressionSummary_title"></table>').appendTo(this._container);
 		this._row = jQuery("<tr></tr>").appendTo(this._table);
 		this._leftColumn = jQuery("<td></td>").appendTo(this._row);
 		this._rightColumn = jQuery("<td></td>").appendTo(this._row);
 
 		
 		
-		this._imageContainer = jQuery('<div class="GeneProteinSummary_image"></div>').appendTo(this._rightColumn);
-		this._summaryContainer = jQuery('<div class="GeneProteinSummary_summary"></div>').appendTo(this._leftColumn);
-		this._footerContainer = jQuery('<div class="GeneProteinSummary_footer"></div>').appendTo(this._container);
+		this._imageContainer = jQuery('<div class="GeneExpressionSummary_image"></div>').appendTo(this._rightColumn);
+		this._summaryContainer = jQuery('<div class="GeneExpressionSummary_summary"></div>').appendTo(this._leftColumn);
+		this._footerContainer = jQuery('<div class="GeneExpressionSummary_footer"></div>').appendTo(this._container);
 		
 		this._processRequest(this.opt.identifier);	
 	},
 	
 	/**
 	 * Default values for the options
-	 * @name Biojs.GeneProteinSummary-opt
+	 * @name Biojs.GeneExpressionSummary-opt
 	 */
 	opt: {
 		target: "YourOwnDivId",
@@ -78,11 +78,11 @@ Biojs.GeneProteinSummary = Biojs.extend(
 
 	/**
 	 * Array containing the supported event names
-	 * @name Biojs.GeneProteinSummary-eventTypes
+	 * @name Biojs.GeneExpressionSummary-eventTypes
 	 */
 	eventTypes: [
 		/**
-		 * @name Biojs.GeneProteinSummary#onRequestError
+		 * @name Biojs.GeneExpressionSummary#onRequestError
 		 * @event
 		 * @param {function} actionPerformed A function which receives an {@link Biojs.Event} object as argument.
 		 * @eventData {Object} source The component which did triggered the event.
@@ -100,7 +100,7 @@ Biojs.GeneProteinSummary = Biojs.extend(
 		 **/
 		"onRequestError",
 		/**
-		 * @name Biojs.GeneProteinSummary#onDbError
+		 * @name Biojs.GeneExpressionSummary#onDbError
 		 * @event
 		 * @param {function} actionPerformed A function which receives an {@link Biojs.Event} object as argument.
 		 * @eventData {Object} source The component which did triggered the event.
@@ -129,9 +129,9 @@ Biojs.GeneProteinSummary = Biojs.extend(
 	_processRequest: function(id){
 		/* Uniprot or Ensembl ID? */
 		this._identifierDb = this._checkIdentifier(id);
-		if(this._identifierDb == Biojs.GeneProteinSummary.ID_UNIPROT){
+		if(this._identifierDb == Biojs.GeneExpressionSummary.ID_UNIPROT){
 			this._requestFeaturesFromUniprotAcc(id);
-		} else if (this._identifierDb == Biojs.GeneProteinSummary.ID_ENSEMBL){
+		} else if (this._identifierDb == Biojs.GeneExpressionSummary.ID_ENSEMBL){
 			this._requestFeatures(id);	
 		} else {
 			this._processDbError(id);
@@ -141,9 +141,9 @@ Biojs.GeneProteinSummary = Biojs.extend(
 		var self = this;
 		self._re = /^([A-N,R-Z][0-9][A-Z][A-Z, 0-9][A-Z, 0-9][0-9])|([O,P,Q][0-9][A-Z, 0-9][A-Z, 0-9][A-Z, 0-9][0-9])$/;
 		if (id.search(self._re) != -1){
-			return Biojs.GeneProteinSummary.ID_UNIPROT;
+			return Biojs.GeneExpressionSummary.ID_UNIPROT;
 		} else if(id.substring(0,4) == "ENSG"){
-			return Biojs.GeneProteinSummary.ID_ENSEMBL;
+			return Biojs.GeneExpressionSummary.ID_ENSEMBL;
 		}	
 	},
 	_requestFeatures: function( identifier ) {
@@ -156,7 +156,7 @@ Biojs.GeneProteinSummary = Biojs.extend(
 	},
 	
 	/* 
-     * Function: Biojs.GeneProteinSummary._requestFeaturesXML
+     * Function: Biojs.GeneExpressionSummary._requestFeaturesXML
      * Purpose:  Request data to the server
      * Returns:  -
      * Inputs:   opt -> {Object} options object.
@@ -194,7 +194,7 @@ Biojs.GeneProteinSummary = Biojs.extend(
 	},
 	
 	/* 
-     * Function: Biojs.GeneProteinSummary._responseReceived
+     * Function: Biojs.GeneExpressionSummary._responseReceived
      * Purpose:  Parses the xml file from the request and stores the information in an easy to access way
      * Returns:  {object[]} -> decoded features
      * Inputs:   xml -> {string} xml with the features.
@@ -226,7 +226,7 @@ Biojs.GeneProteinSummary = Biojs.extend(
 	},
 	
 	/* 
-     * Function: Biojs.GeneProteinSummary._requestFeaturesXML
+     * Function: Biojs.GeneExpressionSummary._requestFeaturesXML
      * Purpose:  Convert a feature from XML to js object 
      * Returns:  {object} js object containing the data of the feature 
      * Inputs:   featureNode -> {Node} The DOM Node
@@ -257,7 +257,7 @@ Biojs.GeneProteinSummary = Biojs.extend(
 	},
 	
 	/* 
-     * Function: Biojs.GeneProteinSummary._decodeNode
+     * Function: Biojs.GeneExpressionSummary._decodeNode
      * Purpose:  Convert a node to a js object 
      * Returns:  {object} js object containing the data of the node 
      * Inputs:   node -> {Node} The DOM Node
@@ -275,7 +275,7 @@ Biojs.GeneProteinSummary = Biojs.extend(
 	},
 	
 	/* 
-     * Function: Biojs.GeneProteinSummary._setFeatures
+     * Function: Biojs.GeneExpressionSummary._setFeatures
      * Purpose:  Build the HTML in this container using the provided features object.
      * Returns:  -
      * Inputs:   f -> {object} Features to be displayed
@@ -291,16 +291,16 @@ Biojs.GeneProteinSummary = Biojs.extend(
 		var self = this;
 		for ( i = 0; i < f.length; i++ ) {
 			var feature = f[i];
-			if ( Biojs.GeneProteinSummary.TYPE_DESCRIPTION == feature.TYPE.id ) {
+			if ( Biojs.GeneExpressionSummary.TYPE_DESCRIPTION == feature.TYPE.id ) {
 				this._title.text( feature.NOTE[0].text );
 				
-			} else if ( Biojs.GeneProteinSummary.TYPE_IMAGE == feature.TYPE.id ) {
+			} else if ( Biojs.GeneExpressionSummary.TYPE_IMAGE == feature.TYPE.id ) {
 				var image = jQuery('<img src="'+ feature.LINK.href +'" />').appendTo(this._imageContainer);
 				image.css("width","100%");
 				image.css("height","auto");
 				var caption = '<p>'+ feature.LINK.text;
 				this._imageContainer.append(caption);
-			} else if ( Biojs.GeneProteinSummary.TYPE_PROVENANCE == feature.TYPE.id && self.opt.legend == true) {
+			} else if ( Biojs.GeneExpressionSummary.TYPE_PROVENANCE == feature.TYPE.id && self.opt.legend == true) {
 				var footer = '';
 				for ( n in feature.NOTE ) {
 					footer += feature.NOTE[n].text + ' ';
@@ -309,8 +309,8 @@ Biojs.GeneProteinSummary = Biojs.extend(
 				this._footerContainer.append(footer);
 				
 			} else {
-				var summary = '<div class="GeneProteinSummary_subtitle">' + feature.label + '</div>';
-				summary += '<div class="GeneProteinSummary_feature">' + feature.NOTE[0].text + ' <a href="' + feature.LINK.href + '">view all</a></div>';
+				var summary = '<div class="GeneExpressionSummary_subtitle">' + feature.label + '</div>';
+				summary += '<div class="GeneExpressionSummary_feature">' + feature.NOTE[0].text + ' <a href="' + feature.LINK.href + '">view all</a></div>';
 				
 				this._summaryContainer.append(summary);
 			}
@@ -342,14 +342,14 @@ Biojs.GeneProteinSummary = Biojs.extend(
 	/* Process request error */
 	_processErrorRequest: function (qXHR, textStatus, errorThrown){
 		Biojs.console.log("ERROR: " + textStatus );
-		self.raiseEvent( Biojs.GeneProteinSummary.EVT_ON_REQUEST_ERROR, { message: textStatus } );
+		self.raiseEvent( Biojs.GeneExpressionSummary.EVT_ON_REQUEST_ERROR, { message: textStatus } );
 	},
 	/* DB error */
 	_processDbError: function (id){
 		var self = this;
 		self._message = "Not recognize identifier: " + id;
 		Biojs.console.log("ERROR: " + self._message );
-		self.raiseEvent( Biojs.GeneProteinSummary.EVT_ON_DB_ERROR, { message: self._message } );
+		self.raiseEvent( Biojs.GeneExpressionSummary.EVT_ON_DB_ERROR, { message: self._message } );
 	}
 	
 },{
