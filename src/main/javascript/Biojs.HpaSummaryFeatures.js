@@ -41,14 +41,16 @@ Biojs.HpaSummaryFeatures = Biojs.HpaSummaryFeature.extend (
 	{
 	constructor: function (options) {
 		var self = this;
-		self._componentPrefix = "hpaSummaryFeatures_";
-		
+		this.setHpaDasUrl(self.opt.hpaDasUrl);
+	},
+	setHpaDasUrl: function(hpaDasUrl){
+		var self = this;
 		/* URL where to get DAS XML */
 		self._url;
 		if(self.opt.proxyUrl != ""){
-			self._url= self.opt.proxyUrl + "?url=" + self.opt.hpaDasUrl;
+			self._url= self.opt.proxyUrl + "?url=" + hpaDasUrl;
 		} else {
-			self._url= self.opt.hpaDasUrl;	
+			self._url= hpaDasUrl;	
 		}
 
 		/* get XML */
@@ -56,99 +58,99 @@ Biojs.HpaSummaryFeatures = Biojs.HpaSummaryFeature.extend (
 		    type: "GET",
 		    url: self._url,
 		    dataType: "xml",
-		    success: processDasHpaXml,
-			error: processErrorRequest
+		    success: function(a){self._processDasHpaXml(a);},
+			error: function(a){self._processErrorRequest(a);}
 	    });
-		
-		/* process HPA XML */
-		function processDasHpaXml(xml)
-		{
-			Biojs.console.log("SUCCESS: data received");
-			var antibodies = getAntibodiesAccessions(xml);
-			var html = createHtmlContainer(antibodies);
-			jQuery('#'+self.opt.target+'').html(html);
-			displayHpaSummaries(xml,antibodies)
-		}
-		
-		/* Process request error */
-		function processErrorRequest(qXHR, textStatus, errorThrown){
-			Biojs.console.log("ERROR: " + textStatus );
-			self.raiseEvent( Biojs.HpaSummaryFeatures.EVT_ON_REQUEST_ERROR, { message: textStatus } );
-		}
-		
-		/* get antibodies accessions */
-		function getAntibodiesAccessions(xml){
-			var tempSet = new Object();
-			jQuery(xml).find("PARENT").each(function(){
-				var antibodyTextSplit = jQuery(this).attr("id").split("_");
-				if(antibodyTextSplit.length == 2){
-					tempSet[antibodyTextSplit[0]] = true;	
-				}
-			});
-			var antibodies = new Array();
-			for (var a in tempSet){
-				antibodies.push(a);	
-			}
-			return antibodies;
-		}	
-		
-		/* create HTML container to later populate HPA data */
-		function createHtmlContainer(antibodies) {
-			var html = '';
-			for (var a in antibodies) {
-				html += '<div style="width:'+self.opt.width+';" class="'+self._componentPrefix+'antibodyTitle">Antibody '+antibodies[a]+'</div>'
-				html += '<div class="'+self._componentPrefix+'summary" id="'+antibodies[a]+'_cell_line_immunofluorescence_summary"></div>';
-				html += '<div class="'+self._componentPrefix+'summary" id="'+antibodies[a]+'_cell_line_immunohistochemistry_summary"></div>';
-		        html += '<div class="'+self._componentPrefix+'summary" id="'+antibodies[a]+'_cell_line_immunohistochemistry_summary"></div>';
-		        html += '<div class="'+self._componentPrefix+'summary" id="'+antibodies[a]+'_cancer_tissue_immunohistochemistry_summary"></div>';
-		        html += '<div class="'+self._componentPrefix+'summary" id="'+antibodies[a]+'_normal_tissue_immunohistochemistry_summary"></div>';					
-			}
-			return html;
-		}
-		
-		/* Disaply HPA summaries inside the HTML container */
-		function displayHpaSummaries(xml){
-			jQuery(xml).find("FEATURE").each(function(){
-				if (jQuery(this).attr("id").indexOf("_summary") != -1) {
-					/* Get notes */
-					var notes = new Array();
-					var xmlNotes = jQuery(this).find("NOTE");
-					xmlNotes.each(function(){
-						notes.push(jQuery(this).text());
-					});
-					/* Get links */
-					var imageUrl = "";
-					var imageTitle = "";
-					var linkUrl = "";
-					var linkTitle = "";
-					var xmlLinks = jQuery(this).find("LINK");
-					xmlLinks.each(function(){
-						if (jQuery(this).attr("href").indexOf(".jpg") != -1 || jQuery(this).attr("href").indexOf(".png") != -1) {
-							imageUrl = jQuery(this).attr("href");
-							imageTitle = jQuery(this).text();
-						}
-						else 
-							if (jQuery(this).text().indexOf("original source") != -1) {
-								linkUrl = jQuery(this).attr("href");
-								linkTitle = jQuery(this).text();
-							}
-					});
-					new Biojs.HpaSummaryFeature({
-						target: jQuery(this).attr("id"),
-						title: jQuery(this).attr("label"),
-						imageUrl: imageUrl,
-						imageTitle: imageTitle,
-						notes: notes,
-						linkUrl: linkUrl,
-						linkTitle: linkTitle,
-						width: self.opt.width,
-						imageWidth: self.opt.imageWidth
-					});
-				}
-			});
-	
-		}
 	},
+	/* process HPA XML */
+	_processDasHpaXml: function (xml)
+	{
+		var self = this;
+		Biojs.console.log("SUCCESS: data received");
+		var antibodies = this._getAntibodiesAccessions(xml);
+		var html = this._createHtmlContainer(antibodies);
+		jQuery('#'+self.opt.target+'').html(html);
+		this._displayHpaSummaries(xml,antibodies)
+	},
+	/* Process request error */
+	_processErrorRequest: function (qXHR, textStatus, errorThrown){
+		var self = this;
+		Biojs.console.log("ERROR: " + textStatus );
+		self.raiseEvent( Biojs.HpaSummaryFeatures.EVT_ON_REQUEST_ERROR, { message: textStatus } );
+	},
+	/* get antibodies accessions */
+	_getAntibodiesAccessions: function (xml){
+		var tempSet = new Object();
+		jQuery(xml).find("PARENT").each(function(){
+			var antibodyTextSplit = jQuery(this).attr("id").split("_");
+			if(antibodyTextSplit.length == 2){
+				tempSet[antibodyTextSplit[0]] = true;	
+			}
+		});
+		var antibodies = new Array();
+		for (var a in tempSet){
+			antibodies.push(a);	
+		}
+		return antibodies;
+	},	
+	/* create HTML container to later populate HPA data */
+	_createHtmlContainer: function(antibodies) {
+		var self = this;
+		var html = '';
+		for (var a in antibodies) {
+			html += '<div style="width:'+self.opt.width+';" class="'+Biojs.HpaSummaryFeature.COMPONENT_PREFIX+'antibodyTitle">Antibody '+antibodies[a]+'</div>'
+			html += '<div class="'+Biojs.HpaSummaryFeature.COMPONENT_PREFIX+'summary" id="'+antibodies[a]+'_cell_line_immunofluorescence_summary"></div>';
+			html += '<div class="'+Biojs.HpaSummaryFeature.COMPONENT_PREFIX+'summary" id="'+antibodies[a]+'_cell_line_immunohistochemistry_summary"></div>';
+	        html += '<div class="'+Biojs.HpaSummaryFeature.COMPONENT_PREFIX+'summary" id="'+antibodies[a]+'_cell_line_immunohistochemistry_summary"></div>';
+	        html += '<div class="'+Biojs.HpaSummaryFeature.COMPONENT_PREFIX+'summary" id="'+antibodies[a]+'_cancer_tissue_immunohistochemistry_summary"></div>';
+	        html += '<div class="'+Biojs.HpaSummaryFeature.COMPONENT_PREFIX+'summary" id="'+antibodies[a]+'_normal_tissue_immunohistochemistry_summary"></div>';					
+		}
+		return html;
+	},
+	/* Disaply HPA summaries inside the HTML container */
+	_displayHpaSummaries: function(xml){
+		var self = this;
+		jQuery(xml).find("FEATURE").each(function(){
+			if (jQuery(this).attr("id").indexOf("_summary") != -1) {
+				/* Get notes */
+				var notes = new Array();
+				var xmlNotes = jQuery(this).find("NOTE");
+				xmlNotes.each(function(){
+					notes.push(jQuery(this).text());
+				});
+				/* Get links */
+				var imageUrl = "";
+				var imageTitle = "";
+				var linkUrl = "";
+				var linkTitle = "";
+				var xmlLinks = jQuery(this).find("LINK");
+				xmlLinks.each(function(){
+					if (jQuery(this).attr("href").indexOf(".jpg") != -1 || jQuery(this).attr("href").indexOf(".png") != -1) {
+						imageUrl = jQuery(this).attr("href");
+						imageTitle = jQuery(this).text();
+					}
+					else 
+						if (jQuery(this).text().indexOf("original source") != -1) {
+							linkUrl = jQuery(this).attr("href");
+							linkTitle = jQuery(this).text();
+						}
+				});
+				new Biojs.HpaSummaryFeature({
+					target: jQuery(this).attr("id"),
+					title: jQuery(this).attr("label"),
+					imageUrl: imageUrl,
+					imageTitle: imageTitle,
+					notes: notes,
+					linkUrl: linkUrl,
+					linkTitle: linkTitle,
+					width: self.opt.width,
+					imageWidth: self.opt.imageWidth
+				});
+			}
+		});
+
+	},
+
 	/**
 	* Default values for the options
 	* @name Biojs.HpaSummaryFeatures-opt
@@ -186,7 +188,7 @@ Biojs.HpaSummaryFeatures = Biojs.HpaSummaryFeature.extend (
 	]
 },{
 	// Some static values
-	
+	COMPONENT_PREFIX: "hpaSummaryFeatures_",
 	// Events
 	EVT_ON_REQUEST_ERROR: "onRequestError",
 });
