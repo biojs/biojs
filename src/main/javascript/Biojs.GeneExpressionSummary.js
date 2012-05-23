@@ -61,7 +61,7 @@ Biojs.GeneExpressionSummary = Biojs.extend(
 		this._summaryContainer = jQuery('<div class="GeneExpressionSummary_summary"></div>').appendTo(this._leftColumn);
 		this._footerContainer = jQuery('<div class="GeneExpressionSummary_footer"></div>').appendTo(this._container);
 		
-		this._processRequest(this.opt.identifier);	
+		this.setIdentifier(this.opt.identifier);	
 	},
 	
 	/**
@@ -123,10 +123,13 @@ Biojs.GeneExpressionSummary = Biojs.extend(
 	 * @param {string} identifier The segment identifier.
 	 * 
 	 * @example 
-	 * instance.requestFeatures("ENSG00000100867");
+	 * instance.setIdentifier("ENSG00000100867");
+	 * 
+	 * @example 
+	 * instance.setIdentifier("P99999");
 	 * 
 	 */
-	_processRequest: function(id){
+	setIdentifier: function(id){
 		/* Uniprot or Ensembl ID? */
 		this._identifierDb = this._checkIdentifier(id);
 		if(this._identifierDb == Biojs.GeneExpressionSummary.ID_UNIPROT){
@@ -137,6 +140,12 @@ Biojs.GeneExpressionSummary = Biojs.extend(
 			this._processDbError(id);
 		}	
 	},
+	/* 
+     * Function: Biojs.GeneExpressionSummary._checkIdentifier
+     * Purpose:  Check if the indetifier provided by the user is ENSEMBL or UniProt
+     * Returns:  Database name (uniprot or ensembl)
+     * Inputs:   opt -> {Object} options object.
+     */
 	_checkIdentifier: function(id){
 		var self = this;
 		self._re = /^([A-N,R-Z][0-9][A-Z][A-Z, 0-9][A-Z, 0-9][0-9])|([O,P,Q][0-9][A-Z, 0-9][A-Z, 0-9][A-Z, 0-9][0-9])$/;
@@ -146,6 +155,12 @@ Biojs.GeneExpressionSummary = Biojs.extend(
 			return Biojs.GeneExpressionSummary.ID_ENSEMBL;
 		}	
 	},
+	/* 
+     * Function: Biojs.GeneExpressionSummary._requestFeatures
+     * Purpose:  Start a request using an ENSEMBL identifier
+     * Returns:  -
+     * Inputs:   opt -> {Object} options object.
+     */
 	_requestFeatures: function( identifier ) {
 		if ( undefined !== identifier ) {
 			this.opt.identifier = identifier;
@@ -163,11 +178,11 @@ Biojs.GeneExpressionSummary = Biojs.extend(
      */
 	_requestFeaturesXML: function( opt ){
 		var self = this;
-		
 		var httpRequest = {
 			url: opt.featuresUrl,
 			data: "segment=" + opt.identifier,
 			methid: "GET",
+			/** @ignore No need to document this object */
 			success: function(xml){
 				Biojs.console.log("SUCCESS: data received");
 				self._responseReceived(xml);
@@ -317,6 +332,12 @@ Biojs.GeneExpressionSummary = Biojs.extend(
 			
 		}
 	},
+	/* 
+     * Function: Biojs.GeneExpressionSummary._requestFeaturesFromUniprotAcc
+     * Purpose:  Start a request using a UniProt identifier
+     * Returns:  -
+     * Inputs:   f -> {object} Features to be displayed
+     */
 	_requestFeaturesFromUniprotAcc: function(id){
 		var self = this;
 		/* URL where to get the mapping to an EMSEMBL id */	
@@ -339,12 +360,22 @@ Biojs.GeneExpressionSummary = Biojs.extend(
 			error: function(a){self._processErrorRequest(a);}
 	    });
 	},
-	/* Process request error */
+	/* 
+     * Function: Biojs.GeneExpressionSummary._processErrorRequest
+     * Purpose:  Process request error
+     * Returns:  -
+     * Inputs:   f -> {object} Features to be displayed
+     */
 	_processErrorRequest: function (qXHR, textStatus, errorThrown){
 		Biojs.console.log("ERROR: " + textStatus );
 		self.raiseEvent( Biojs.GeneExpressionSummary.EVT_ON_REQUEST_ERROR, { message: textStatus } );
 	},
-	/* DB error */
+	/* 
+     * Function: Biojs.GeneExpressionSummary._processDbError
+     * Purpose:  Process DB error
+     * Returns:  -
+     * Inputs:   f -> {object} Features to be displayed
+     */
 	_processDbError: function (id){
 		var self = this;
 		self._message = "Not recognize identifier: " + id;
