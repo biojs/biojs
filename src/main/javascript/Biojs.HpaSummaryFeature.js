@@ -50,7 +50,7 @@
  * 	  notes: ["Lymphoid tissues showed moderate to strong cytoplasmic positivity. Remaining normal cells were generally negative","Two (or more) antibodies yielding similar staining patterns which are consistent with available gene/protein characterization data","Expression summary: Selective cytoplasmic expression in lymphoid cells","Reliable score: High","Validation score: Supportive","67 normal tissues by immunohistochemistry"],
  * 	  linkUrl:'http://www.proteinatlas.org/ENSG00000089820/normal',
  * 	  linkTitle:'HPA original source',
- * 	  width: '590px',
+ * 	  width: '585px',
  * 	  imageWidth: '150px'
  * });
  * 
@@ -168,5 +168,26 @@ Biojs.HpaSummaryFeature = Biojs.extend (
 		width: '900px',
 		imageWidth: '200px'
 	},
-	eventTypes: []
+   /**
+    * Array containing the supported event names
+    * @name Biojs.HpaSummaryFeature-eventTypes
+    */
+	eventTypes: [
+	/**
+	 * @name Biojs.HpaSummaryFeature#onFeatureSelected
+	 * @event
+	 * @param {function} actionPerformed A function which receives an {@link Biojs.Event} object as argument.
+	 * @eventData {Object} source The component which did triggered the event.
+	 * @eventData {string} type The name of the event.
+	 * @eventData {int} textSelected Selected text.
+	 * @example 
+	 * instance.onTextSelected(
+	 *    function( objEvent ) {
+	 *       alert(objEvent.textSelected);
+	 *    }
+	 * ); 
+	 * 
+	 * */
+     "onTextSelected"    
+	]
 });
