@@ -29,12 +29,12 @@
  * @example
  * var instance = new Biojs.GeneExpressionAtlasFromUniprotAcc({
  * 	  target: 'YourOwnDivId',
- * 	  segmentId: 'Q61171'
+ * 	  uniprotAcc: 'Q61171'
  * });
  * 
  */
 
-Biojs.GeneExpressionAtlasFromUniprotAcc = Biojs.extend (
+Biojs.GeneExpressionAtlasFromUniprotAcc = Biojs.GeneProteinSummary.extend (
 	/** @lends Biojs.GeneExpressionAtlasFromUniprotAcc# */
 	{
 	constructor: function (options) {
@@ -89,7 +89,7 @@ Biojs.GeneExpressionAtlasFromUniprotAcc = Biojs.extend (
 		uniprotAcc: '',
 		featuresUrl: 'http://www.ebi.ac.uk/gxa/das/s4/features',
 		legend: true,
-		proxyUrl: ''
+		proxyUrl: '../biojs/dependencies/proxy/proxy.php'
 	},
 	/**
 	* Array containing the supported event names

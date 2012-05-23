@@ -3,13 +3,7 @@
  * information from a DAS XML
  * 
  * @class
- * @extends Biojs
- * 
- * @requires <a href='http://blog.jquery.com/2011/09/12/jquery-1-6-4-released/'>jQuery Core 1.6.4</a>
- * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jquery/jquery-1.6.4.js"></script>
- * 
- * @requires <a href='../biojs/css/Biojs.HpaSummaryFeature.css'>Biojs.HpaSummaryFeature.css</a>
- * @dependency <link href="../biojs/css/Biojs.HpaSummaryFeature.css" rel="stylesheet" type="text/css" />
+ * @extends Biojs.HpaSummaryFeature
  * 
  * @author <a href="mailto:rafael@ebi.ac.uk">Rafael C Jimenez</a>
  * 
@@ -35,14 +29,14 @@
  * @example
  * var instance = new Biojs.HpaSummaryFeatures({
  * 	  target: 'YourOwnDivId',
- * 	  hpaDasUrl: 'http://www.ebi.ac.uk/~rafael/web/copa/Q9NTI5_hpa_summary.xml',
- * 	  width: '590px',
+ * 	  hpaDasUrl: 'http://www.vuelvelucia.com/hpa_summary.xml',
+ * 	  width: '585px',
  * 	  imageWidth: '150px'
  * });
  * 
  */
 
-Biojs.HpaSummaryFeatures = Biojs.extend (
+Biojs.HpaSummaryFeatures = Biojs.HpaSummaryFeature.extend (
 	/** @lends Biojs.HpaSummaryFeatures# */
 	{
 	constructor: function (options) {
@@ -162,7 +156,7 @@ Biojs.HpaSummaryFeatures = Biojs.extend (
 	opt: {
 		target: 'hpaSummaryFeatues',
 		hpaDasUrl: '',
-		proxyUrl: '',		
+		proxyUrl: '../biojs/dependencies/proxy/proxy.php',		
 		width: '900px',
 		imageWidth: '200px'
 	},
@@ -188,6 +182,7 @@ Biojs.HpaSummaryFeatures = Biojs.extend (
 		 * ); 
 		 * 
 		 **/
+		"onRequestError"
 	]
 },{
 	// Some static values

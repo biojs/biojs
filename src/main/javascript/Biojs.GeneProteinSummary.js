@@ -10,14 +10,14 @@
  * @requires <a href='../biojs/css/GeneProteinSummary.css'>GeneProteinSummary.css</a>
  * @dependency <link href="../biojs/css/GeneProteinSummary.css" rel="stylesheet" type="text/css" />
  * 
- * @author <a href="mailto:johncar@gmail.com">John Gomez</a>
+ * @author <a href="mailto:johncar@gmail.com">John Gomez</a>, <a href="mailto:rafael@ebi.ac.uk">Rafael Jimenez</a>
  * 
  * @param {Object} options An object with the options for Sequence component.
  *    
  * @option {string} target 
  *    Identifier of the DIV tag where the component should be displayed.
  * 
- * @option {string} segmentId 
+ * @option {string} identifier 
  * 	  ENSEMBL gene identifier needed to fetch the Gene expression summary data
  *  
  * @option {string} [featuresUrl='http://www.ebi.ac.uk/gxa/das/s4/features']
@@ -34,7 +34,7 @@
  * @example
  * var instance = new Biojs.GeneProteinSummary({
  * 	  target: 'YourOwnDivId',
- * 	  segmentId: 'ENSG00000135486'
+ * 	  identifier: 'P99999'
  * });
  * 
  */
@@ -60,8 +60,8 @@ Biojs.GeneProteinSummary = Biojs.extend(
 		this._imageContainer = jQuery('<div class="GeneProteinSummary_image"></div>').appendTo(this._rightColumn);
 		this._summaryContainer = jQuery('<div class="GeneProteinSummary_summary"></div>').appendTo(this._leftColumn);
 		this._footerContainer = jQuery('<div class="GeneProteinSummary_footer"></div>').appendTo(this._container);
-
-		this.requestFeatures( this.opt.segmentId );
+		
+		this._processRequest(this.opt.identifier);	
 	},
 	
 	/**
@@ -70,7 +70,7 @@ Biojs.GeneProteinSummary = Biojs.extend(
 	 */
 	opt: {
 		target: "YourOwnDivId",
-		segmentId: undefined,
+		identifier: undefined,
 		featuresUrl: 'http://www.ebi.ac.uk/gxa/das/s4/features',
 		legend: true,
 		proxyUrl: '../biojs/dependencies/proxy/proxy.php'
@@ -84,7 +84,7 @@ Biojs.GeneProteinSummary = Biojs.extend(
 		/**
 		 * @name Biojs.GeneProteinSummary#onRequestError
 		 * @event
-		 * @param {function} actionPerformed An function which receives an {@link Biojs.Event} object as argument.
+		 * @param {function} actionPerformed A function which receives an {@link Biojs.Event} object as argument.
 		 * @eventData {Object} source The component which did triggered the event.
 		 * @eventData {string} file The name of the loaded file.
 		 * @eventData {string} result A string with either value 'success' or 'failure'.
@@ -98,22 +98,60 @@ Biojs.GeneProteinSummary = Biojs.extend(
 		 * ); 
 		 * 
 		 **/
-		"onRequestError"
+		"onRequestError",
+		/**
+		 * @name Biojs.GeneProteinSummary#onDbError
+		 * @event
+		 * @param {function} actionPerformed A function which receives an {@link Biojs.Event} object as argument.
+		 * @eventData {Object} source The component which did triggered the event.
+		 * @eventData {string} file The name of the loaded file.
+		 * @eventData {string} result A string with either value 'success' or 'failure'.
+		 * @eventData {string} message Error message in case of result be 'failure'.
+		 * 
+		 * @example 
+		 * instance.onDbError(
+		 *    function( e ) {
+		 *       alert( e.message );
+		 *    }
+		 * ); 
+		 * 
+		 **/
+		"onDbError"
 	],
 	/**
-	 * Fetch the data by means of segmentId.
-	 * @param {string} segmentId The segment identifier.
+	 * Fetch the data by means of identifier.
+	 * @param {string} identifier The segment identifier.
 	 * 
 	 * @example 
 	 * instance.requestFeatures("ENSG00000100867");
 	 * 
 	 */
-	requestFeatures: function( segmentId ) {
-		if ( undefined !== segmentId ) {
-			this.opt.segmentId = segmentId;
+	_processRequest: function(id){
+		/* Uniprot or Ensembl ID? */
+		this._identifierDb = this._checkIdentifier(id);
+		if(this._identifierDb == Biojs.GeneProteinSummary.ID_UNIPROT){
+			this._requestFeaturesFromUniprotAcc(id);
+		} else if (this._identifierDb == Biojs.GeneProteinSummary.ID_ENSEMBL){
+			this._requestFeatures(id);	
+		} else {
+			this._processDbError(id);
+		}	
+	},
+	_checkIdentifier: function(id){
+		var self = this;
+		self._re = /^([A-N,R-Z][0-9][A-Z][A-Z, 0-9][A-Z, 0-9][0-9])|([O,P,Q][0-9][A-Z, 0-9][A-Z, 0-9][A-Z, 0-9][0-9])$/;
+		if (id.search(self._re) != -1){
+			return Biojs.GeneProteinSummary.ID_UNIPROT;
+		} else if(id.substring(0,4) == "ENSG"){
+			return Biojs.GeneProteinSummary.ID_ENSEMBL;
+		}	
+	},
+	_requestFeatures: function( identifier ) {
+		if ( undefined !== identifier ) {
+			this.opt.identifier = identifier;
 			this._requestFeaturesXML(this.opt);
 		} else {
-			Biojs.console.log("SegmentId value is not valid");
+			Biojs.console.log("identifier value is not valid");
 		}
 	},
 	
@@ -128,16 +166,13 @@ Biojs.GeneProteinSummary = Biojs.extend(
 		
 		var httpRequest = {
 			url: opt.featuresUrl,
-			data: "segment=" + opt.segmentId,
+			data: "segment=" + opt.identifier,
 			methid: "GET",
 			success: function(xml){
 				Biojs.console.log("SUCCESS: data received");
 				self._responseReceived(xml);
 			},
-			error: function(qXHR, textStatus, errorThrown){
-				Biojs.console.log("ERROR: " + textStatus );
-				self.raiseEvent( Biojs.GeneProteinSummary.EVT_ON_REQUEST_ERROR, { message: textStatus } );
-			}
+			error: this._processErrorRequest
 		};
 		
 		// Using proxy?
@@ -148,7 +183,7 @@ Biojs.GeneProteinSummary = Biojs.extend(
 	   		 httpRequest.url = opt.proxyUrl;
 	
 	   		 // Encode both url and parameters under the param url
-	   		 httpRequest.data = [{ name: "url", value: opt.featuresUrl + "?segment="+opt.segmentId }];
+	   		 httpRequest.data = [{ name: "url", value: opt.featuresUrl + "?segment="+opt.identifier }];
 	
 	   		 // Data type 
 	   		 httpRequest.dataType = "text";
@@ -281,14 +316,50 @@ Biojs.GeneProteinSummary = Biojs.extend(
 			}
 			
 		}
+	},
+	_requestFeaturesFromUniprotAcc: function(id){
+		var self = this;
+		/* URL where to get the mapping to an EMSEMBL id */	
+		self._serviceUrl = "http://www.ebi.ac.uk/uniprot/biomart/martservice?query=%3C?xml%20version=%221.0%22%20encoding=%22UTF-8%22?%3E%3C!DOCTYPE%20Query%3E%3CQuery%20%20virtualSchemaName%20=%20%22default%22%20formatter%20=%20%22TSV%22%20header%20=%20%220%22%20uniqueRows%20=%20%221%22%20count%20=%20%22%22%20datasetConfigVersion%20=%20%220.6%22%20%3E%3CDataset%20name%20=%20%22uniprot%22%20interface%20=%20%22default%22%20%3E%3CFilter%20name%20=%20%22accession%22%20value%20=%20%22"
+		self._serviceUrl += id;
+		self._serviceUrl += "%22/%3E%3CAttribute%20name%20=%20%22ensembl_id%22%20/%3E%3C/Dataset%3E%3C/Query%3E";
+		self._url = "";
+		if(self.opt.proxyUrl != ""){
+			self._url= self.opt.proxyUrl + "?url=" + self._serviceUrl;
+		} else {
+			self._url= self._serviceUrl;	
+		}
+		
+		/* process service */
+	    jQuery.ajax({
+		    type: "GET",
+		    url: self._url,
+			dataType: "text",
+		    success: function(a){self._requestFeatures(a);},
+			error: function(a){self._processErrorRequest(a);}
+	    });
+	},
+	/* Process request error */
+	_processErrorRequest: function (qXHR, textStatus, errorThrown){
+		Biojs.console.log("ERROR: " + textStatus );
+		self.raiseEvent( Biojs.GeneProteinSummary.EVT_ON_REQUEST_ERROR, { message: textStatus } );
+	},
+	/* DB error */
+	_processDbError: function (id){
+		var self = this;
+		self._message = "Not recognize identifier: " + id;
+		Biojs.console.log("ERROR: " + self._message );
+		self.raiseEvent( Biojs.GeneProteinSummary.EVT_ON_DB_ERROR, { message: self._message } );
 	}
-	
 	
 },{
 	// Some static values
 	
 	// Events
 	EVT_ON_REQUEST_ERROR: "onRequestError",
+	EVT_ON_DB_ERROR: "onDbError",
+	ID_UNIPROT: "uniprot",
+	ID_ENSEMBL: "ensembl",
 	
 	// Feature types
 	TYPE_IMAGE: "image",
