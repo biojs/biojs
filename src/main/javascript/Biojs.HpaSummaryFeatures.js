@@ -43,6 +43,12 @@ Biojs.HpaSummaryFeatures = Biojs.HpaSummaryFeature.extend (
 		var self = this;
 		this.setHpaDasUrl(self.opt.hpaDasUrl);
 	},
+	/* 
+     * Function: Biojs.HpaSummaryFeatures.setHpaDasUrl
+     * Purpose:  Set an URL with HPA DAS XML to start the query and visualization of HPA summary features
+     * Returns:  -
+     * Inputs:   hpaDasUrl -> {String} DAS XML with HPA summary information
+     */
 	setHpaDasUrl: function(hpaDasUrl){
 		var self = this;
 		/* URL where to get DAS XML */
@@ -62,7 +68,12 @@ Biojs.HpaSummaryFeatures = Biojs.HpaSummaryFeature.extend (
 			error: function(a){self._processErrorRequest(a);}
 	    });
 	},
-	/* process HPA XML */
+	/* 
+     * Function: Biojs.HpaSummaryFeatures._processDasHpaXml
+     * Purpose:  process HPA XML
+     * Returns:  -
+     * Inputs:  xml -> {String} DAS XML with HPA summary information
+     */
 	_processDasHpaXml: function (xml)
 	{
 		var self = this;
@@ -72,13 +83,23 @@ Biojs.HpaSummaryFeatures = Biojs.HpaSummaryFeature.extend (
 		jQuery('#'+self.opt.target+'').html(html);
 		this._displayHpaSummaries(xml,antibodies)
 	},
-	/* Process request error */
-	_processErrorRequest: function (qXHR, textStatus, errorThrown){
+	/* 
+     * Function: Biojs.HpaSummaryFeatures._processErrorRequest
+     * Purpose:  Process request error
+     * Returns:  -
+     * Inputs:   textStatus -> {String} Text satus
+     */
+	_processErrorRequest: function (textStatus){
 		var self = this;
 		Biojs.console.log("ERROR: " + textStatus );
 		self.raiseEvent( Biojs.HpaSummaryFeatures.EVT_ON_REQUEST_ERROR, { message: textStatus } );
 	},
-	/* get antibodies accessions */
+	/* 
+     * Function: Biojs.HpaSummaryFeatures._getAntibodiesAccessions
+     * Purpose:  get antibodies accessions
+     * Returns:  -
+     * Inputs: xml -> {String} DAS XML with HPA summary information
+     */
 	_getAntibodiesAccessions: function (xml){
 		var tempSet = new Object();
 		jQuery(xml).find("PARENT").each(function(){
@@ -93,7 +114,12 @@ Biojs.HpaSummaryFeatures = Biojs.HpaSummaryFeature.extend (
 		}
 		return antibodies;
 	},	
-	/* create HTML container to later populate HPA data */
+	/* 
+     * Function: Biojs.HpaSummaryFeatures._createHtmlContainer
+     * Purpose:  create HTML container to later populate HPA data
+     * Returns:  -
+     * Inputs: antibodies -> {Array} List of antibodies
+     */
 	_createHtmlContainer: function(antibodies) {
 		var self = this;
 		var html = '';
@@ -107,7 +133,12 @@ Biojs.HpaSummaryFeatures = Biojs.HpaSummaryFeature.extend (
 		}
 		return html;
 	},
-	/* Disaply HPA summaries inside the HTML container */
+	/* 
+     * Function: Biojs.HpaSummaryFeatures._displayHpaSummaries
+     * Purpose:  Disaply HPA summaries inside the HTML container
+     * Returns:  -
+     * Inputs:  xml -> {String} DAS XML with HPA summary information
+     */
 	_displayHpaSummaries: function(xml){
 		var self = this;
 		jQuery(xml).find("FEATURE").each(function(){

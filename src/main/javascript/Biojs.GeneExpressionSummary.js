@@ -34,7 +34,7 @@
  * @example
  * var instance = new Biojs.GeneExpressionSummary({
  * 	  target: 'YourOwnDivId',
- * 	  identifier: 'P99999'
+ * 	  identifier: 'ENSG00000139618'
  * });
  * 
  */
@@ -126,7 +126,7 @@ Biojs.GeneExpressionSummary = Biojs.extend(
 	 * instance.setIdentifier("ENSG00000100867");
 	 * 
 	 * @example 
-	 * instance.setIdentifier("P99999");
+	 * instance.setIdentifier("Q61171");
 	 * 
 	 */
 	setIdentifier: function(id){
@@ -144,7 +144,7 @@ Biojs.GeneExpressionSummary = Biojs.extend(
      * Function: Biojs.GeneExpressionSummary._checkIdentifier
      * Purpose:  Check if the indetifier provided by the user is ENSEMBL or UniProt
      * Returns:  Database name (uniprot or ensembl)
-     * Inputs:   opt -> {Object} options object.
+     * Inputs:   id -> {String} Identifier.
      */
 	_checkIdentifier: function(id){
 		var self = this;
@@ -159,7 +159,7 @@ Biojs.GeneExpressionSummary = Biojs.extend(
      * Function: Biojs.GeneExpressionSummary._requestFeatures
      * Purpose:  Start a request using an ENSEMBL identifier
      * Returns:  -
-     * Inputs:   opt -> {Object} options object.
+     * Inputs:   id -> {String} Identifier.
      */
 	_requestFeatures: function( identifier ) {
 		if ( undefined !== identifier ) {
@@ -325,8 +325,10 @@ Biojs.GeneExpressionSummary = Biojs.extend(
 				
 			} else {
 				var summary = '<div class="GeneExpressionSummary_subtitle">' + feature.label + '</div>';
-				summary += '<div class="GeneExpressionSummary_feature">' + feature.NOTE[0].text + ' <a href="' + feature.LINK.href + '">view all</a></div>';
-				
+				summary += '<div class="GeneExpressionSummary_feature">' + feature.NOTE[0].text;
+				if(typeof feature.LINK != 'undefined'){
+					summary += ' <a href="' + feature.LINK.href + '">view all</a></div>';	
+				}
 				this._summaryContainer.append(summary);
 			}
 			
@@ -336,7 +338,7 @@ Biojs.GeneExpressionSummary = Biojs.extend(
      * Function: Biojs.GeneExpressionSummary._requestFeaturesFromUniprotAcc
      * Purpose:  Start a request using a UniProt identifier
      * Returns:  -
-     * Inputs:   f -> {object} Features to be displayed
+     * Inputs:   id -> {String} UniProt identifier.
      */
 	_requestFeaturesFromUniprotAcc: function(id){
 		var self = this;
@@ -364,9 +366,9 @@ Biojs.GeneExpressionSummary = Biojs.extend(
      * Function: Biojs.GeneExpressionSummary._processErrorRequest
      * Purpose:  Process request error
      * Returns:  -
-     * Inputs:   f -> {object} Features to be displayed
+     * Inputs:   textStatus -> {String} Text status
      */
-	_processErrorRequest: function (qXHR, textStatus, errorThrown){
+	_processErrorRequest: function (textStatus){
 		Biojs.console.log("ERROR: " + textStatus );
 		self.raiseEvent( Biojs.GeneExpressionSummary.EVT_ON_REQUEST_ERROR, { message: textStatus } );
 	},
@@ -374,7 +376,7 @@ Biojs.GeneExpressionSummary = Biojs.extend(
      * Function: Biojs.GeneExpressionSummary._processDbError
      * Purpose:  Process DB error
      * Returns:  -
-     * Inputs:   f -> {object} Features to be displayed
+     * Inputs:   id -> {String} Identifier.
      */
 	_processDbError: function (id){
 		var self = this;
