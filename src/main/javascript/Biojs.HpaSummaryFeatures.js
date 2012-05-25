@@ -5,6 +5,9 @@
  * @class
  * @extends Biojs.HpaSummaryFeature
  * 
+ * @requires <a href='../biojs/css/Biojs.HpaSummaryFeatures.css'>Biojs.HpaSummaryFeature.css</a>
+ * @dependency <link href="../biojs/css/Biojs.HpaSummaryFeatures.css" rel="stylesheet" type="text/css" />
+ * 
  * @author <a href="mailto:rafael@ebi.ac.uk">Rafael C Jimenez</a>
  * 
  * @param {Object} options An object with the options for this component.
@@ -29,7 +32,7 @@
  * @example
  * var instance = new Biojs.HpaSummaryFeatures({
  * 	  target: 'YourOwnDivId',
- * 	  hpaDasUrl: 'http://www.vuelvelucia.com/hpa_summary.xml',
+ * 	  hpaDasUrl: 'http://www.ebi.ac.uk/~rafael/web/copa/biojs/src/test/data/P98171_hpa_summary.xml',
  * 	  width: '585px',
  * 	  imageWidth: '150px'
  * });
@@ -49,6 +52,18 @@ Biojs.HpaSummaryFeatures = Biojs.HpaSummaryFeature.extend (
      * Returns:  -
      * Inputs:   hpaDasUrl -> {String} DAS XML with HPA summary information
      */
+	
+	/**
+	 * Set an URL with HPA DAS XML to start the query and visualization of HPA summary features
+	 * @param {string} hpaDasUrl DAS XML with HPA summary information
+	 * 
+	 * @example 
+	 * instance.setHpaDasUrl("http://www.ebi.ac.uk/~rafael/web/copa/biojs/src/test/data/Q9NTI5_hpa_summary.xml");
+	 *
+	 * @example 
+	 * instance.setHpaDasUrl("http://www.ebi.ac.uk/~rafael/web/copa/biojs/src/test/data/unknownsegment.xml");
+	 * 
+	 */
 	setHpaDasUrl: function(hpaDasUrl){
 		var self = this;
 		/* URL where to get DAS XML */
@@ -79,9 +94,14 @@ Biojs.HpaSummaryFeatures = Biojs.HpaSummaryFeature.extend (
 		var self = this;
 		Biojs.console.log("SUCCESS: data received");
 		var antibodies = this._getAntibodiesAccessions(xml);
-		var html = this._createHtmlContainer(antibodies);
-		jQuery('#'+self.opt.target+'').html(html);
-		this._displayHpaSummaries(xml,antibodies)
+		if(antibodies.length > 0){
+			var html = this._createHtmlContainer(antibodies);
+			jQuery('#'+self.opt.target+'').html(html);
+			this._displayHpaSummaries(xml,antibodies)	
+		} else {
+			jQuery('#'+self.opt.target+'').html(Biojs.HpaSummaryFeatures.MESSAGE_NODATA);
+		}
+
 	},
 	/* 
      * Function: Biojs.HpaSummaryFeatures._processErrorRequest
@@ -124,12 +144,12 @@ Biojs.HpaSummaryFeatures = Biojs.HpaSummaryFeature.extend (
 		var self = this;
 		var html = '';
 		for (var a in antibodies) {
-			html += '<div style="width:'+self.opt.width+';" class="'+Biojs.HpaSummaryFeature.COMPONENT_PREFIX+'antibodyTitle">Antibody '+antibodies[a]+'</div>'
-			html += '<div class="'+Biojs.HpaSummaryFeature.COMPONENT_PREFIX+'summary" id="'+antibodies[a]+'_cell_line_immunofluorescence_summary"></div>';
-			html += '<div class="'+Biojs.HpaSummaryFeature.COMPONENT_PREFIX+'summary" id="'+antibodies[a]+'_cell_line_immunohistochemistry_summary"></div>';
-	        html += '<div class="'+Biojs.HpaSummaryFeature.COMPONENT_PREFIX+'summary" id="'+antibodies[a]+'_cell_line_immunohistochemistry_summary"></div>';
-	        html += '<div class="'+Biojs.HpaSummaryFeature.COMPONENT_PREFIX+'summary" id="'+antibodies[a]+'_cancer_tissue_immunohistochemistry_summary"></div>';
-	        html += '<div class="'+Biojs.HpaSummaryFeature.COMPONENT_PREFIX+'summary" id="'+antibodies[a]+'_normal_tissue_immunohistochemistry_summary"></div>';					
+			html += '<div style="width:'+self.opt.width+';" class="'+Biojs.HpaSummaryFeatures.COMPONENT_PREFIX+'antibodyTitle">Antibody '+antibodies[a]+'</div>'
+			html += '<div class="'+Biojs.HpaSummaryFeatures.COMPONENT_PREFIX+'summary" id="'+antibodies[a]+'_cell_line_immunofluorescence_summary"></div>';
+			html += '<div class="'+Biojs.HpaSummaryFeatures.COMPONENT_PREFIX+'summary" id="'+antibodies[a]+'_cell_line_immunohistochemistry_summary"></div>';
+	        html += '<div class="'+Biojs.HpaSummaryFeatures.COMPONENT_PREFIX+'summary" id="'+antibodies[a]+'_cell_line_immunohistochemistry_summary"></div>';
+	        html += '<div class="'+Biojs.HpaSummaryFeatures.COMPONENT_PREFIX+'summary" id="'+antibodies[a]+'_cancer_tissue_immunohistochemistry_summary"></div>';
+	        html += '<div class="'+Biojs.HpaSummaryFeatures.COMPONENT_PREFIX+'summary" id="'+antibodies[a]+'_normal_tissue_immunohistochemistry_summary"></div>';					
 		}
 		return html;
 	},
@@ -220,6 +240,7 @@ Biojs.HpaSummaryFeatures = Biojs.HpaSummaryFeature.extend (
 },{
 	// Some static values
 	COMPONENT_PREFIX: "hpaSummaryFeatures_",
+	MESSAGE_NODATA: "Sorry, we could not find summary data for your request",
 	// Events
 	EVT_ON_REQUEST_ERROR: "onRequestError",
 });
