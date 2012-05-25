@@ -17,20 +17,6 @@
 		<script language="JavaScript" type="text/javascript">
 			window.onload = function() {
 				
-				var nodeSizeMapper = {
-				    continuousMapper: {
-				        attr: {
-				            name: "weight",
-				            min: 0,
-				            max: 100
-				        },
-				        mapped: {
-				            min: 15,
-				            max: 30
-				        }
-				    }
-				}
-				
 				var cyOptions = {
 
 				    // define the elements in the graph
@@ -51,23 +37,40 @@
 				
 				    // define the layout to use
 				    layout: {
-				        name: "preset",
-				        positions: {
-				            "a": { x: 30, y: 30 },
-				            "b": { x: 125, y: 131 },
-				            "c": { x: 200, y: 50 } 
-				        },
-				        fit: false
+				        name: "random"
 				    },
-				
 				    // define the visual style (like css) of the graph
 				    style: {
 				        selectors: {
 				            "node":{
 				                shape: "ellipse",
 				                fillColor: "#888",
-				                height: nodeSizeMapper,
-				                width: nodeSizeMapper,
+				                height: {
+								    continuousMapper: {
+								        attr: {
+								            name: "weight",
+								            min: 0,
+								            max: 100
+								        },
+								        mapped: {
+								            min: 15,
+								            max: 30
+								        }
+								    }
+								},
+				                width: {
+								    continuousMapper: {
+								        attr: {
+								            name: "weight",
+								            min: 0,
+								            max: 100
+								        },
+								        mapped: {
+								            min: 15,
+								            max: 30
+								        }
+								    }
+								},
 				                labelText: {
 				                    passthroughMapper: "id"
 				                }
@@ -104,8 +107,9 @@
 				    }
 				};
 				
-				var instance1 = new Biojs.Cytoscape({
-				     target: "holder", cyOptions: cyOptions });		
+				var instance = new Biojs.Cytoscape({
+				     target: "holder", cyOptions: cyOptions 
+				}); 		
 			};
 		</script>
 	</head>
