@@ -43,24 +43,6 @@ Biojs.GeneExpressionSummary = Biojs.extend(
 {	
 	constructor: function (options) {
 		//Biojs.console.enable();
-		
-		this._selector = "#" + this.opt.target;
-		this._container = jQuery(this._selector);
-		
-		this._container.addClass("GeneExpressionSummary");
-		this._title = jQuery('<div class="GeneExpressionSummary_title"></div>').appendTo(this._container);
-		
-		this._table = jQuery('<table class="GeneExpressionSummary_title"></table>').appendTo(this._container);
-		this._row = jQuery("<tr></tr>").appendTo(this._table);
-		this._leftColumn = jQuery("<td></td>").appendTo(this._row);
-		this._rightColumn = jQuery("<td></td>").appendTo(this._row);
-
-		
-		
-		this._imageContainer = jQuery('<div class="GeneExpressionSummary_image"></div>').appendTo(this._rightColumn);
-		this._summaryContainer = jQuery('<div class="GeneExpressionSummary_summary"></div>').appendTo(this._leftColumn);
-		this._footerContainer = jQuery('<div class="GeneExpressionSummary_footer"></div>').appendTo(this._container);
-		
 		this.setIdentifier(this.opt.identifier);	
 	},
 	
@@ -129,10 +111,14 @@ Biojs.GeneExpressionSummary = Biojs.extend(
 	 * instance.setIdentifier("Q61171");
 	 * 
 	 * @example 
-	 * instance.setIdentifier("ENSG00000100867000");
+	 * instance.setIdentifier("ENSG000000000000");
+	 * 
+	 * @example 
+	 * instance.setIdentifier("P00000");
 	 * 
 	 */
 	setIdentifier: function(id){
+		this._drawTemplate();
 		/* Uniprot or Ensembl ID? */
 		this._identifierDb = this._checkIdentifier(id);
 		if(this._identifierDb == Biojs.GeneExpressionSummary.ID_UNIPROT){
@@ -142,6 +128,31 @@ Biojs.GeneExpressionSummary = Biojs.extend(
 		} else {
 			this._processDbError(id);
 		}	
+	},
+	/* 
+     * Function: Biojs.GeneExpressionSummary._drawTemplate
+     * Purpose:  Draw HTML template used for placing the data afterwards
+     * Returns:  -
+     * Inputs:  -
+     */
+	_drawTemplate: function(){
+		this._selector = "#" + this.opt.target;
+		this._container = jQuery(this._selector);
+		this._container.html("");
+		
+		this._container.addClass("GeneExpressionSummary");
+		this._title = jQuery('<div class="GeneExpressionSummary_title"></div>').appendTo(this._container);
+		
+		this._table = jQuery('<table class="GeneExpressionSummary_title"></table>').appendTo(this._container);
+		this._row = jQuery("<tr></tr>").appendTo(this._table);
+		this._leftColumn = jQuery("<td></td>").appendTo(this._row);
+		this._rightColumn = jQuery("<td></td>").appendTo(this._row);
+
+		
+		
+		this._imageContainer = jQuery('<div class="GeneExpressionSummary_image"></div>').appendTo(this._rightColumn);
+		this._summaryContainer = jQuery('<div class="GeneExpressionSummary_summary"></div>').appendTo(this._leftColumn);
+		this._footerContainer = jQuery('<div class="GeneExpressionSummary_footer"></div>').appendTo(this._container);
 	},
 	/* 
      * Function: Biojs.GeneExpressionSummary._checkIdentifier
@@ -165,11 +176,17 @@ Biojs.GeneExpressionSummary = Biojs.extend(
      * Inputs:   id -> {String} Identifier.
      */
 	_requestFeatures: function( identifier ) {
-		if ( undefined !== identifier ) {
-			this.opt.identifier = identifier;
-			this._requestFeaturesXML(this.opt);
+		if ( undefined !== identifier) {
+			if (identifier.length > 0) {
+				this.opt.identifier = identifier;
+				this._requestFeaturesXML(this.opt);
+			} else {
+				Biojs.console.log("no identifier value available");
+				this._displayNoDataMessage();	
+			}
 		} else {
 			Biojs.console.log("identifier value is not valid");
+			this._displayNoDataMessage();
 		}
 	},
 	
@@ -237,10 +254,16 @@ Biojs.GeneExpressionSummary = Biojs.extend(
 	    		features.push( self._decodeFeature(this) );
 	    	});
 	    
-	    Biojs.console.log("Features decoded:");
-	    Biojs.console.log(features);
-	    
-	    this._setFeatures(features);
+		if (features.length > 0) {
+			Biojs.console.log("Features decoded:");
+			Biojs.console.log(features);
+			this._setFeatures(features);
+		} else {
+			this._displayNoDataMessage();
+		}
+	},
+	_displayNoDataMessage: function(){
+		jQuery('#'+this.opt.target+'').html(Biojs.GeneExpressionSummary.MESSAGE_NODATA);
 	},
 	
 	/* 
@@ -394,8 +417,10 @@ Biojs.GeneExpressionSummary = Biojs.extend(
 	// Events
 	EVT_ON_REQUEST_ERROR: "onRequestError",
 	EVT_ON_DB_ERROR: "onDbError",
+	
 	ID_UNIPROT: "uniprot",
 	ID_ENSEMBL: "ensembl",
+	MESSAGE_NODATA: "Sorry, we could not find summary data for your request",
 	
 	// Feature types
 	TYPE_IMAGE: "image",

@@ -1,0 +1,7 @@
+<?xml version="1.0" standalone="yes"?>
+<?xml-stylesheet type="text/xsl" href="features.xsl"?>
+<!DOCTYPE DASGFF SYSTEM "http://www.biodas.org/dtd/dasgff.dtd">
+<DASGFF>
+  <GFF href="http://das.proteinatlas.org/das/proteinatlas/features">
+<UNKNOWNSEGMENT id="P150568" />  </GFF>
+</DASGFF>
