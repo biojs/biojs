@@ -128,6 +128,9 @@ Biojs.GeneExpressionSummary = Biojs.extend(
 	 * @example 
 	 * instance.setIdentifier("Q61171");
 	 * 
+	 * @example 
+	 * instance.setIdentifier("ENSG00000100867000");
+	 * 
 	 */
 	setIdentifier: function(id){
 		/* Uniprot or Ensembl ID? */
