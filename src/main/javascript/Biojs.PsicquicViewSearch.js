@@ -15,7 +15,7 @@ Biojs.PsicquicViewSearch = Biojs.extend ({
 	Biojs.console.enable();
 	var self = this;
 	self._drawTemplate();
-	self._queryRegistry();
+	self.querySearch(this.opt.miqlQuery, this.opt.checkedServices);
 	
     
  },
@@ -66,34 +66,34 @@ Biojs.PsicquicViewSearch = Biojs.extend ({
      */
  ],
 _registry:{},
-_queryRegistry: function(){
+_queryRegistry: function(doUpdate){
 	var self = this;
-//	alert(this.opt.urlRegistry);
 	/* get XML */
     jQuery.ajax({
 	    type: "GET",
 	    url: this.opt.urlRegistry,
 	    dataType: "xml",
-	    success: function(xml){self._processRegistryXml(xml);},
-		error: function(e){self._processRegistryErrorRequest(e);}
-    });
+    }).done(function( xml ) {
+    	self._registry = jQuery(xml).find("service");
+    	if(doUpdate){
+    		Biojs.console.log("INFO: " + self._registry.length + " services retrieved from the registry! ");
+			self._updateServicesCount(self.opt.miqlQuery, self.opt.checkedServices);
+		}
+	}).fail(function(jqXHR, textStatus) {
+	  	Biojs.console.log("ERROR: " + textStatus );
+	});
 },
-_processRegistryXml: function(xml){
-	this._registry = jQuery(xml).find("service");
-	//this._registry = xml;
-	this._querySearch();
-	// var self = this;
-	// var html = '';
-	// jQuery(xml).find("service").each(function(){	
-		// html += (jQuery(this).find("name").text());	
-	// });
-	// jQuery('#'+self.opt.target+'').html(html);
+querySearch: function(miqlQuery, checkedServices){
+	Biojs.console.log("INFO: miqlQuery: " + miqlQuery);
+	Biojs.console.log("INFO: checkedServices: " + checkedServices);
+	if(jQuery.isEmptyObject(this._registry) && miqlQuery == "*"){
+		this._queryRegistry(false);	
+	} else if (jQuery.isEmptyObject(this._registry) && miqlQuery != "*") {
+		this._queryRegistry(true);	
+	} else {
+		self._updateServicesCount(miqlQuery, checkedServices);
+	}
 },
-_processRegistryErrorRequest: function(e){
-	var self = this;
-	Biojs.console.log("ERROR: " + e );
-},
-
 _drawTemplate: function(){
 	var self = this;
 	// todo: draw regions where we will pouplate the content
@@ -101,54 +101,58 @@ _drawTemplate: function(){
 	self._queryBoxDisplayDiv.css('width','100%');
 	jQuery("#"+self.opt.target).append(self._queryBoxDisplayDiv);
 },
-
-_querySearch: function(miqlQuery, checkedServices){
-	miqlQuery="*";
-	checkedServices=["mint", "intact", "dip"];
+_setMiqlQuery: function(miqlQuery){
+	this.opt.miqlQuery = miqlQuery;
+},
+_setCheckedServices: function(checkedServices){
+	this.opt.checkedServices = checkedServices;
+},
+_updateServicesCount: function(miqlQuery, checkedServices){
 	var self = this;
-	//Biojs.console.log(self._registry.responseText);
+	self._setMiqlQuery(miqlQuery);
+	self._setCheckedServices(checkedServices);
 	self._registry.each(function(){	
-			var url = jQuery(this).find("restUrl").text();
-			//alert(url);
-			var name = jQuery(this).find("name").text();
-			var queryUrl = url + 'query/';
+			var serviceUrl = jQuery(this).find("restUrl").text();
+			var serviceName = jQuery(this).find("name").text().toLowerCase();
+			var queryUrl = serviceUrl + 'query/';
 			queryUrl+=miqlQuery;
 			queryUrl+='?format=count'
 			queryUrl= self.opt.proxyUrl + "?url=" + queryUrl;
-			//alert(url);
 			//Biojs.console.log(url)
-			if('-1' != jQuery.inArray(name.toLowerCase(), checkedServices)){
-				Biojs.console.log(queryUrl);
-				//alert(name);
-				self._queryService(queryUrl)
-				}
+			if('-1' != jQuery.inArray(serviceName, checkedServices)){
+				//Biojs.console.log(serviceName);
+				var count = self._queryService(serviceName,queryUrl);
+			}
 				
-	});
-	// jQuery('#'+self.opt.target+'').html(html);
-	
+	});	
 },
 
-_queryService: function(queryUrl){
+_queryService: function(serviceName, queryUrl){
 	var self = this;
-	
 	jQuery.ajax({
 	    type: "GET",
 	    url: queryUrl,
-	     dataType: "text",
-	    success: function(text){self._processServiceCount(text);},
-		error: function(e){self._processServiceCountErrorRequest(e);}
-    });
-	
-	
-	
+	    dataType: "text",
+    }).done(function( result ) {
+    	//Biojs.console.log("INFO: successful query to " + serviceName + "! ... " + queryUrl);
+		self._updateRegistry(serviceName,result);	
+	}).fail(function(jqXHR, textStatus) {
+	  	Biojs.console.log("ERROR: " + textStatus );
+	});
 },
 
-_processServiceCount: function(text){
-	var self=this;
-	Biojs.console.log(text);
-	var interactions=''; 
+_updateRegistry: function(serviceName,serviceCount){
+	var self = this;
+	self._registry.each(function(){	
+		var name = jQuery(this).find("name").text().toLowerCase();
+		if(name.toLowerCase() == serviceName){
+			var count = jQuery(this).find("count").text();
+			jQuery(this).find("count").text(serviceCount);
+			Biojs.console.log("INFO: " + serviceName + " updated from " + count + " to " + serviceCount + " interactions");
+		}
+		
+	});
 }
-
 
 
 
