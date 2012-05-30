@@ -12,10 +12,11 @@ Biojs.PsicquicViewSearch = Biojs.extend ({
 // Fire onQueryReady
 // Query services (count)
 // Display
+	Biojs.console.enable();
 	var self = this;
 	self._drawTemplate();
 	self._queryRegistry();
-
+	
     
  },
  opt: {
@@ -29,8 +30,8 @@ Biojs.PsicquicViewSearch = Biojs.extend ({
     queryBoxDisplay: true,
     queryFieldsDisplay: true,
     servicesListDisplay: true,
-    checkedServices: []
-    
+    checkedServices: [],
+    proxyUrl: '../biojs/dependencies/proxy/proxy.php' 
     
 
  /* Component Options
@@ -67,7 +68,7 @@ Biojs.PsicquicViewSearch = Biojs.extend ({
 _registry:{},
 _queryRegistry: function(){
 	var self = this;
-	alert(this.opt.urlRegistry);
+//	alert(this.opt.urlRegistry);
 	/* get XML */
     jQuery.ajax({
 	    type: "GET",
@@ -79,6 +80,8 @@ _queryRegistry: function(){
 },
 _processRegistryXml: function(xml){
 	this._registry = jQuery(xml).find("service");
+	//this._registry = xml;
+	this._querySearch();
 	// var self = this;
 	// var html = '';
 	// jQuery(xml).find("service").each(function(){	
@@ -97,7 +100,57 @@ _drawTemplate: function(){
 	self._queryBoxDisplayDiv = jQuery('<div id="queryBoxDisplay"></div>');
 	self._queryBoxDisplayDiv.css('width','100%');
 	jQuery("#"+self.opt.target).append(self._queryBoxDisplayDiv);
+},
+
+_querySearch: function(miqlQuery, checkedServices){
+	miqlQuery="*";
+	checkedServices=["mint", "intact", "dip"];
+	var self = this;
+	//Biojs.console.log(self._registry.responseText);
+	self._registry.each(function(){	
+			var url = jQuery(this).find("restUrl").text();
+			//alert(url);
+			var name = jQuery(this).find("name").text();
+			var queryUrl = url + 'query/';
+			queryUrl+=miqlQuery;
+			queryUrl+='?format=count'
+			queryUrl= self.opt.proxyUrl + "?url=" + queryUrl;
+			//alert(url);
+			//Biojs.console.log(url)
+			if('-1' != jQuery.inArray(name.toLowerCase(), checkedServices)){
+				Biojs.console.log(queryUrl);
+				//alert(name);
+				self._queryService(queryUrl)
+				}
+				
+	});
+	// jQuery('#'+self.opt.target+'').html(html);
+	
+},
+
+_queryService: function(queryUrl){
+	var self = this;
+	
+	jQuery.ajax({
+	    type: "GET",
+	    url: queryUrl,
+	     dataType: "text",
+	    success: function(text){self._processServiceCount(text);},
+		error: function(e){self._processServiceCountErrorRequest(e);}
+    });
+	
+	
+	
+},
+
+_processServiceCount: function(text){
+	var self=this;
+	Biojs.console.log(text);
+	var interactions=''; 
 }
+
+
+
 
 
  /* Your own attributes  
