@@ -1,8 +1,8 @@
 <?php
-
 /* SPLIT PROXY FROM URL TO QUERY. QUERY: ALL INSIDE THE 'url' PARAMETER */
-        $url = ($_POST['url']) ? $_POST['url'] : $_GET['url'];
-
+	//$revert = array('%21'=>'!', '%2A'=>'*', '%27'=>"'", '%28'=>'(', '%29'=>')');
+    $url = $_GET['url'];
+	//$url = strtr(rawurlencode($url), $revert);
 /* SET INTERNAL PROXY */
         $ebiDomainFlag = strpos($_SERVER['SERVER_NAME'], "ebi.ac.uk");
 	$sangerDomainFlag = strpos($_SERVER['SERVER_NAME'], "sanger.ac.uk");
@@ -17,7 +17,7 @@
 	$ch = curl_init();
 		
 /* SET DATA */ 
-		$data = ($_POST['url']) ? $_POST : $_GET;
+		$data = $_GET;
 		unset($data['url']);
 
 		$query = '';
@@ -29,12 +29,12 @@
 
 		$query = substr($query,0,strlen($query)-1);
 
-		if ($_POST['url']) {
-			 curl_setopt ($session, CURLOPT_POST, true);
-			 curl_setopt ($session, CURLOPT_POSTFIELDS, $query);
-		} else {
+//		if ($_POST['url']) {
+//			 curl_setopt ($session, CURLOPT_POST, true);
+//			 curl_setopt ($session, CURLOPT_POSTFIELDS, $query);
+//		} else {
 			$url .= ( strpos($url, '?') ) ? '&'.$query : '?'.$query ;
-		}
+//		}
 
 
 
@@ -68,8 +68,11 @@
 	$response = curl_exec($ch);
 		
 /* DISPLAY DATA FROM THE ORIGINAL QUERY */
-	$headers = ($_POST['headers']) ? $_POST['headers'] : $_GET['headers'];
-	$mimeType =($_POST['mimeType']) ? $_POST['mimeType'] : $_GET['mimeType'];
+	//$headers = ($_POST['headers']) ? $_POST['headers'] : $_GET['headers'];
+	//$headers = $_GET['headers'];
+	//$mimeType =($_POST['mimeType']) ? $_POST['mimeType'] : $_GET['mimeType'];
+	//$mimeType =$_GET['mimeType'];
+	$mimeType = "";
 	if ($mimeType == "")
 	{
 		if ( strpos($_SERVER['HTTP_ACCEPT'], "xml") ) {

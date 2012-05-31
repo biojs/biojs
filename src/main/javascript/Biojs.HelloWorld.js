@@ -15,7 +15,7 @@
  * @option {string} target 
  *    Identifier of the DIV tag where the component should be displayed.
  *    
- * @option {string} [fontFamily=ÔÒAndale monoÓ, courier, monospaceÕ] 
+ * @option {string} [fontFamily=ï¿½ï¿½Andale monoï¿½, courier, monospaceï¿½] 
  *    Font list to be applied to the component content.
  *  
  * @option {string} [fontColor="white"] 
@@ -33,7 +33,7 @@
  * @example 
  * var instance = new Biojs.HelloWorld({
  * 		target : "YourOwnDivId",
- * 		selectionBackgroundColor : '#FFFF00'
+ * 		selectionBackgroundColor : '#99FF00'
  * });	
  * 
  */

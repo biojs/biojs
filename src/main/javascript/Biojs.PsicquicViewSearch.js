@@ -108,40 +108,72 @@ Biojs.PsicquicViewSearch = Biojs.extend({
        },
        _drawQueryFields: function() {
        		var queryFieldsDisplay = jQuery("#queryFieldsDisplay");
-       		var andOrOption = '<select id="queryFieldsDisplay_andOrOption">';
-			andOrOption += '<option selected="" value="0">AND</option>';
-			andOrOption += '<option value="1">OR</option>';
-			andOrOption += '</select>';
-			var notOption = '<span id="queryFieldsDisplay_notOption">';
-			notOption += '<input id="queryFieldsDisplay_notOptionInput" type="checkbox" value="t">';
-			notOption += '<label for="queryFieldsDisplay_notOptionLabel">NOT</label>';
-			notOption += '</span>';
-			var fieldKeyOption = '<select id="newQueryField" class="af_selectOneChoice_content" name="newQueryField">';
-			fieldKeyOption += '<option selected="" value="0">All</option>';
-			fieldKeyOption += '<option value="1">Participant Id</option>';
-			fieldKeyOption += '<option value="2">Interaction Id</option>';
-			fieldKeyOption += '<option value="3">Detection method</option>'; 
-			fieldKeyOption += '<option value="4">Interaction type</option>';
-			fieldKeyOption += '<option value="5">Organism</option>'; 
-			fieldKeyOption += '<option value="6">Pubmed Id</option>'; 
-			fieldKeyOption += '<option value="7">Author</option>'; 
-			fieldKeyOption += '</select>'; 
-			var fieldValueOption = '<input id="queryFieldsDisplay_fieldValueOption" type="text" value="" size="50" name="queryFieldsDisplay_fieldValueOption">';
+       		
+       		var andOr = '<select id="queryFieldsDisplay_andOr">';
+			andOr += '<option selected="" value="AND">AND</>';
+			andOr += '<option value="OR">OR</>';
+			andOr += '</select>';
+			
+			var not = '<span id="queryFieldsDisplay_not">';
+			not += '<input id="queryFieldsDisplay_notInput" type="checkbox" value="NOT">';
+			not += '<label for="queryFieldsDisplay_notLabel">NOT</label>';
+			not += '</span>';
+			
+			var fieldKey = '<select id="newQueryField" class="af_selectOneChoice_content" name="newQueryField">';
+			fieldKey += '<selected="" value="0">All</>';
+			fieldKey += '<option value="identifier">Participant Id</>';
+			fieldKey += '<option value="interaction_id">Interaction Id</>';
+			fieldKey += '<option value="detmethod">Detection method</>'; 
+			fieldKey += '<option value="type">Interaction type</>';
+			fieldKey += '<option value="species">Organism</>'; 
+			fieldKey += '<option value="pubid">Pubmed Id</>'; 
+			fieldKey += '<option value="pubauth">Author</>'; 
+			fieldKey += '</select>'; 
+			
+			var fieldValue = '<input id="queryFieldsDisplay_fieldValue" type="text" value="" size="50" name="queryFieldsDisplay_fieldValue">';
 //onclick="submitForm('mainForm',1,{source:'j_id47'});return false;"
-			var addSearchButtonOption = '<button id="queryFieldsDisplay_addSearchButtonOption" type="button">';
-			addSearchButtonOption += 'Add &amp; Search';
-			addSearchButtonOption += '</button>';
-			var cancelButtonOption = '<button id="queryFieldsDisplay_cancelButtonOption" onclick="alert(\'Cancel!!!!\');" type="button">';
-			cancelButtonOption += 'Cancel';
-			cancelButtonOption += '</button>';
+			var addSearchButton = '<button id="queryFieldsDisplay_addSearchButton" type="button">';
+			addSearchButton += 'Add &amp; Search';
+			addSearchButton += '</button>';
+			addSearchButton = jQuery(addSearchButton).click(function() {
+			
+			var searchBoxVal = jQuery("#searchBox");
+			//alert(jQuery(searchBoxVal).val());
+			var andOrOptValue = jQuery("#queryFieldsDisplay_andOr");
+			//alert(jQuery(andOrOptValue).val());
+			var notOptValue = "";
+			var notOptValue_ = jQuery("#queryFieldsDisplay_not :checked").each(function() {
+       			//alert(jQuery(this).val());
+       			notOptValue = jQuery(this).val();
+       			
+     		});
+     		
+     		//alert(notOptValue); 
+     		var fieldKeyValue = jQuery("#newQueryField");
+     		//alert(jQuery(fieldKeyValue).val());
+			var querytoAdd = jQuery("#queryFieldsDisplay_fieldValue");
+			//alert(jQuery(querytoAdd).val());
+			var completeQuery = jQuery(searchBoxVal).val() + " " + jQuery(andOrOptValue).val() + " " + notOptValue + " " + jQuery(fieldKeyValue).val() + ":" + jQuery(querytoAdd).val(); 
+		
+			searchBoxVal.val(completeQuery);
+			
+			
+			
+			
+     		
+	
+			});
+			var cancelButton = '<button id="queryFieldsDisplay_cancelButton" onclick="alert(\'Cancel!!!!\');" type="button">';
+			cancelButton += 'Cancel';
+			cancelButton += '</button>';
 			
 
-			queryFieldsDisplay.append(andOrOption);
-			queryFieldsDisplay.append(notOption);
-			queryFieldsDisplay.append(fieldKeyOption);
-			queryFieldsDisplay.append(fieldValueOption);
-			queryFieldsDisplay.append(addSearchButtonOption);
-			queryFieldsDisplay.append(cancelButtonOption);
+			queryFieldsDisplay.append(andOr);
+			queryFieldsDisplay.append(not);
+			queryFieldsDisplay.append(fieldKey);
+			queryFieldsDisplay.append(fieldValue);
+			queryFieldsDisplay.append(addSearchButton);
+			queryFieldsDisplay.append(cancelButton);
        	
        },
 
