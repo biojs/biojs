@@ -15,22 +15,27 @@
 		<script language="JavaScript" type="text/javascript" src="../../main/javascript/Biojs.PsicquicViewSearch.js"></script>
 		    		
 		<script language="JavaScript" type="text/javascript">
+			var test;
 			window.onload = function() {
 
-				new Biojs.PsicquicViewSearch({
+				test = new Biojs.PsicquicViewSearch({
 					target: 'YourOwnDivId',
-				    miqlQuery: 'abl1',
+				    //miqlQuery: 'abl1',
+				    miqlQuery: '*',
 				    urlRegistry: 'http://localhost/biojs/src/test/data/psicquicRegistry.xml',
 				    queryBoxDisplay: true,
 				    queryFieldsDisplay: true,
 				    servicesListDisplay: true,
-				    checkedServices: checkedServices=["mint", "intact", "dip"],
+				    checkedServices: ["mint", "intact", "dip"],
 				    proxyUrl: 'http://localhost/biojs/src/main/resources/dependencies/proxy/proxy.php'
 				});
 			};
 		</script>
 	</head>
 	<body>
+		<a href="#" onclick='test.querySearch("abl1",["mint", "intact", "dip"]);'>Test search</a>
+		<br/>
+		<input id="searchBox" type="text" name="searchBox" />
 		<div id="YourOwnDivId"></div>
 	</body>
 </html>
