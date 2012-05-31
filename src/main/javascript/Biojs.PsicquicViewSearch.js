@@ -128,13 +128,12 @@ Biojs.PsicquicViewSearch = Biojs.extend({
 			fieldKeyOption += '</select>'; 
 			var fieldValueOption = '<input id="queryFieldsDisplay_fieldValueOption" type="text" value="" size="50" name="queryFieldsDisplay_fieldValueOption">';
 //onclick="submitForm('mainForm',1,{source:'j_id47'});return false;"
-			var addSearchButtonOption = '<button id="queryFieldsDisplay_addSearchButtonOption" onclick="alert(\'Add and search!!!!\');" type="button">';
+			var addSearchButtonOption = '<button id="queryFieldsDisplay_addSearchButtonOption" type="button">';
 			addSearchButtonOption += 'Add &amp; Search';
 			addSearchButtonOption += '</button>';
 			var cancelButtonOption = '<button id="queryFieldsDisplay_cancelButtonOption" onclick="alert(\'Cancel!!!!\');" type="button">';
 			cancelButtonOption += 'Cancel';
 			cancelButtonOption += '</button>';
-			
 			
 
 			queryFieldsDisplay.append(andOrOption);
