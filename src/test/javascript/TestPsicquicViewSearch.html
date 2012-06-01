@@ -8,25 +8,23 @@
 		<script src="../../main/resources/dependencies/jquery/jquery-1.7.2.min.js" type="text/javascript"></script>
 
 		<!-- CSS -->
-<!-- 	    <link rel="stylesheet" href="../../main/resources/css/biojs.PsicquicViewSearch.css" /> -->
+	    <link rel="stylesheet" href="../../main/resources/css/Biojs.PsicquicViewSearch.css" />
 		
 		<!-- BIOJS LIB and Chromosome Component -->
 		<script language="JavaScript" type="text/javascript" src="../../main/javascript/Biojs.js"></script>
 		<script language="JavaScript" type="text/javascript" src="../../main/javascript/Biojs.PsicquicViewSearch.js"></script>
 		    		
 		<script language="JavaScript" type="text/javascript">
-			var test;
+			var instance;
 			window.onload = function() {
-
-				test = new Biojs.PsicquicViewSearch({
+				instance = new Biojs.PsicquicViewSearch({
 					target: 'YourOwnDivId',
-				    //miqlQuery: 'abl1',
-				    miqlQuery: '*',
+				    miqlQuery: '*:*',
 				    urlRegistry: 'http://localhost/biojs/src/test/data/psicquicRegistry.xml',
 				    queryBoxDisplay: true,
 				    queryFieldsDisplay: true,
 				    servicesListDisplay: true,
-				    checkedServices: ["mint", "intact", "dip"],
+				    defaultCheckedServices: [],
 				    proxyUrl: 'http://localhost/biojs/src/main/resources/dependencies/proxy/proxy.php'
 				});
 			};

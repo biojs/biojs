@@ -94,7 +94,7 @@ Biojs.PsicquicViewSearch = Biojs.extend({
 		self._queryBoxDisplayDiv = jQuery('<div id="queryBoxDisplay"></div>');
 
 		if(jQuery.isEmptyObject(self.opt.miqlQuery)) {
-			self._setMiqlQuery("*");
+			self._setMiqlQuery("*:*");
 		}
 
 		self._queryBoxDisplayDiv.append('<label>Query</label>' + '<input type="text" name="textbox" id="textbox" value=' + self.opt.miqlQuery + '>');
@@ -121,7 +121,7 @@ Biojs.PsicquicViewSearch = Biojs.extend({
 		$('#servicesListDisplay :checked').//attr("src","http://localhost/biojs/src/test/data/greenLight.png").
 		siblings('img').attr("src", "http://localhost/biojs/src/test/data/greenLight.png");
 		//each(function(){Biojs.console.log(this)});
-	//	$('#servicesListDisplay :input:not(:checked)[disabled != disabled]').//attr("src","http://localhost/biojs/src/test/data/greyLight.png").
+		//	$('#servicesListDisplay :input:not(:checked)[disabled != disabled]').//attr("src","http://localhost/biojs/src/test/data/greyLight.png").
 		//siblings('img').attr("src", "http://localhost/biojs/src/test/data/greyLight.png");
 
 		/*refresh hit number*/
@@ -230,7 +230,6 @@ Biojs.PsicquicViewSearch = Biojs.extend({
 		fieldKey += '</select>';
 
 		var fieldValue = '<input id="queryFieldsDisplay_fieldValue" type="text" value="" size="50" name="queryFieldsDisplay_fieldValue">';
-		//onclick="submitForm('mainForm',1,{source:'j_id47'});return false;"
 		var addSearchButton = '<button id="queryFieldsDisplay_addSearchButton" type="button">';
 		addSearchButton += 'Add &amp; Search';
 		addSearchButton += '</button>';
@@ -244,7 +243,7 @@ Biojs.PsicquicViewSearch = Biojs.extend({
 			var notOptValue_ = jQuery("#queryFieldsDisplay_not :checked").each(function() {
 				//alert(jQuery(this).val());
 				notOptValue = jQuery(this).val();
-				
+
 			});
 
 			//alert(notOptValue);
@@ -255,7 +254,7 @@ Biojs.PsicquicViewSearch = Biojs.extend({
 			var completeQuery = jQuery(searchBoxVal).val() + " " + jQuery(andOrOptValue).val() + " " + notOptValue + " " + jQuery(fieldKeyValue).val() + ":" + jQuery(querytoAdd).val();
 
 			searchBoxVal.val(completeQuery);
-			
+
 			self._setMiqlQuery($('#textbox').attr('value'));
 			self.querySearch(self.opt.miqlQuery, self.getCheckedServices());
 		});
@@ -321,9 +320,17 @@ Biojs.PsicquicViewSearch = Biojs.extend({
 				left : "5px",
 				"text-align" : "right"
 			})).each(function() {
-				if(status != "true") {
+				if(status == "false") {
 					//alert(this);
 					jQuery(this).find("#" + serviceName + "Light").attr("src", "http://localhost/biojs/src/test/data/redLight.png", "alt", "redLight");
+					jQuery(this).find("#" + serviceName + "Box").attr("checked", false, "disabled", "disabled");
+					jQuery(this).find("#" + serviceName + "Text").css("color", "grey");
+					jQuery(this).find("#" + serviceName + "Hit").css("color", "grey");
+
+				}
+				if(status == "warning") {
+					//alert(this);
+					jQuery(this).find("#" + serviceName + "Light").attr("src", "http://localhost/biojs/src/test/data/orangeLight.png", "alt", "redLight");
 					jQuery(this).find("#" + serviceName + "Box").attr("checked", false, "disabled", "disabled");
 					jQuery(this).find("#" + serviceName + "Text").css("color", "grey");
 					jQuery(this).find("#" + serviceName + "Hit").css("color", "grey");
