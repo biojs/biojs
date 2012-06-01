@@ -125,13 +125,21 @@ Biojs.PsicquicViewSearch = Biojs.extend({
 		//siblings('img').attr("src", "http://localhost/biojs/src/test/data/greyLight.png");
 
 		/*refresh hit number*/
+		
 		Biojs.console.log(self._registry);
 		Biojs.console.log("browsing");
+		var totalCount=0;
 		self._registry.each(function() {
 			var name = jQuery(this).find("name").text();
 			var count = jQuery(this).find("count").text();
 			Biojs.console.log('#' + name + 'Hit[serviceName=' + name + ']');
+			totalCount+= parseInt(count)
 			$('#servicesListDisplay').find('#' + name + 'Hit').html(count);
+			jQuery('#totalHits').html('');
+			self._totalHitsDiv.html(totalCount).css({
+			"text-align" : "right"
+		});
+			
 			/*if(name.toLowerCase() == serviceName){
 			 *
 			 * ,{id:serviceName + "Hit"}).html(count)
