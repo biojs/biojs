@@ -431,13 +431,21 @@ Biojs.PsicquicViewSearch = Biojs.extend({
 			url : queryUrl,
 			dataType : "text",
 		}).done(function(result) {
-			//Biojs.console.log("INFO: successful query to " + serviceName + "! ... " + queryUrl);
-			self._updateRegistry(serviceName, result);
-			self._serviceCount.done++;
-			if(self._isServiceCountComplete()) {
-				self._draw();
+			//Biojs.console.log("INFO: successful query to " + serviceName + "! ... " + queryUrl);			
+			if(isNaN(parseInt(result, 10))){
+				/* If it is Not a Number the service is not reponding 
+				 * as expected, so this should be consider a warning or failure */	
+				self._updateRegistry(serviceName, "-1", "warning");			
+			} else {
+				/* The result is a number */
+				self._updateRegistry(serviceName, result, "true");
+				self._serviceCount.done++;
+				if(self._isServiceCountComplete()) {
+					self._draw();
+				}				
 			}
 		}).fail(function(jqXHR, textStatus) {
+			self._updateRegistry(serviceName, "-1", "false");
 			Biojs.console.log("ERROR: " + textStatus);
 			self._serviceCount.fail++;
 			if(self._isServiceCountComplete()) {
@@ -445,14 +453,14 @@ Biojs.PsicquicViewSearch = Biojs.extend({
 			}
 		});
 	},
-
-	_updateRegistry : function(serviceName, serviceCount) {
+	_updateRegistry : function(serviceName, serviceCount, serviceActive) {
 		var self = this;
 		self._registry.each(function() {
 			var name = jQuery(this).find("name").text().toLowerCase();
 			if(name.toLowerCase() == serviceName) {
 				var count = jQuery(this).find("count").text();
 				jQuery(this).find("count").text(serviceCount);
+				jQuery(this).find("active").text(serviceActive);
 				Biojs.console.log("INFO: " + serviceName + " updated from " + count + " to " + serviceCount + " interactions");
 			}
 
