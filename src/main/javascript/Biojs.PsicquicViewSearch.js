@@ -69,8 +69,7 @@ Biojs.PsicquicViewSearch = Biojs.extend({
 	 :
 	 .
 	 “<eventNameN>”
-	 */
-	],
+	 */"onDatabaseNameClick"],
 
 	/*
 	 * this draws the upper part of the component which displays the
@@ -125,21 +124,21 @@ Biojs.PsicquicViewSearch = Biojs.extend({
 		//siblings('img').attr("src", "http://localhost/biojs/src/test/data/greyLight.png");
 
 		/*refresh hit number*/
-		
+
 		Biojs.console.log(self._registry);
 		Biojs.console.log("browsing");
-		var totalCount=0;
+		var totalCount = 0;
 		self._registry.each(function() {
 			var name = jQuery(this).find("name").text();
 			var count = jQuery(this).find("count").text();
 			Biojs.console.log('#' + name + 'Hit[serviceName=' + name + ']');
-			totalCount+= parseInt(count)
+			totalCount += parseInt(count)
 			$('#servicesListDisplay').find('#' + name + 'Hit').html(count);
 			jQuery('#totalHits').html('');
 			self._totalHitsDiv.html(totalCount).css({
-			"text-align" : "right"
-		});
-			
+				"text-align" : "right"
+			});
+
 			/*if(name.toLowerCase() == serviceName){
 			 *
 			 * ,{id:serviceName + "Hit"}).html(count)
@@ -319,6 +318,28 @@ Biojs.PsicquicViewSearch = Biojs.extend({
 				width : "35%",
 				top : "5px",
 				left : "5px"
+			}).click(function() {
+					
+					var serviceUrl = "";
+					var queryUrl = "";
+				self._registry.each(function() {
+				
+					
+					if ( jQuery(this).find("name").text().toLowerCase() == serviceName.toLowerCase() ) {
+						serviceUrl = jQuery(this).find("restUrl").text();
+						queryUrl = serviceUrl;
+					}
+					
+				});
+				
+				
+				
+				
+				self.raiseEvent('onDatabaseNameClick', {
+					name : serviceName,
+					url : queryUrl,
+					miqlquery: self.opt.miqlQuery
+				});
 			}), jQuery('<div/>', {
 				id : serviceName + "Hit"
 			}).html(count).css({
