@@ -10,9 +10,21 @@
 		<!-- CSS -->
 	    <link rel="stylesheet" href="../../main/resources/css/Biojs.PsicquicViewSearch.css" />
 		
-		<!-- BIOJS LIB and Chromosome Component -->
+		<!-- BIOJS LIB -->
 		<script language="JavaScript" type="text/javascript" src="../../main/javascript/Biojs.js"></script>
 		<script language="JavaScript" type="text/javascript" src="../../main/javascript/Biojs.PsicquicViewSearch.js"></script>
+		
+		
+		<script language="JavaScript" type="text/javascript" src="src/Biojs.js"></script>
+		<script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jquery/jquery-1.6.4.js"> </script>
+		<script type="text/javascript" src="http://www.ebi.ac.uk/~jgomez/biojs/biojs/dependencies/jquery/jquery-ui-1.8.2.custom.min.js"></script>
+		<script type="text/javascript" src="http://www.ebi.ac.uk/~jgomez/biojs/biojs/dependencies/jquery.dataTables.min.js"></script>
+		<script type="text/javascript" src="http://www.ebi.ac.uk/~jgomez/biojs/biojs/dependencies/jquery.multiselect.min.js"></script>
+		<link href="http://www.ebi.ac.uk/~jgomez/biojs/biojs/css/biojs.Table.css" rel="stylesheet" type="text/css">
+		<link href="http://www.ebi.ac.uk/~jgomez/biojs/biojs/css/smoothness/jquery-ui-1.8.18.custom.css" rel="stylesheet" type="text/css">
+		<script language="JavaScript" type="text/javascript" src="http://www.ebi.ac.uk/~jgomez/biojs/biojs/Biojs.Table.js"></script>
+		<script language="JavaScript" type="text/javascript" src="http://www.ebi.ac.uk/~jgomez/biojs/biojs/Biojs.InteractionsTable.js"></script>
+		
 		    		
 		<script language="JavaScript" type="text/javascript">
 			var instance;
@@ -27,10 +39,33 @@
 				    defaultCheckedServices: [],
 				    proxyUrl: 'http://localhost/biojs/src/main/resources/dependencies/proxy/proxy.php'
 				});
-			};
+				
+				
+				
+				instance.onDatabaseNameClick (function(e) {
+					
+					jQuery("#TheTable").children().remove();
+					
+					new Biojs.InteractionsTable({
+					    target: "TheTable",
+					    dataSet: {
+					        psicquicUrl: e.url + "query",
+					        proxyUrl: 'http://localhost/biojs/src/main/resources/dependencies/proxy/proxy.php',
+					        query: e.miqlquery,
+					        version: "MITAB_VERSION_2_5",
+					        filter: false
+					    },
+					     rowSelection: false
+					});
+					
+					console.log(e);
+				})
+ 
+			}
 		</script>
 	</head>
 	<body>
 		<div id="YourOwnDivId"></div>
+		<div id="TheTable"></div>
 	</body>
 </html>

@@ -88,9 +88,15 @@ Biojs.PsicquicViewSearch = Biojs.extend({
 	},
 
 	_drawHeader : function() {
+
 		var self = this;
+
 		self._searchHeaderDiv = jQuery('<div id="searchHeader"></div>');
 		self._queryBoxDisplayDiv = jQuery('<div id="queryBoxDisplay"></div>');
+		self._queryBoxDisplayDiv.css("position", "relative").css('width', '100%');
+		self._queryFieldsDisplayDiv = jQuery('<div id="queryFieldsDisplay"></div>');
+		self._queryFieldsDisplayDiv.css("position", "relative").css('width', '100%').css('display','none');
+
 
 		if(jQuery.isEmptyObject(self.opt.miqlQuery)) {
 			self._setMiqlQuery("*:*");
@@ -103,9 +109,14 @@ Biojs.PsicquicViewSearch = Biojs.extend({
 			self.querySearch(self.opt.miqlQuery, self.getCheckedServices());
 		});
 
-		self._queryBoxDisplayDiv.css("position", "relative").css('width', '100%');
-		self._queryFieldsDisplayDiv = jQuery('<div id="queryFieldsDisplay"></div>');
-		self._queryFieldsDisplayDiv.css("position", "relative").css('width', '100%');
+		jQuery('<button id = "clearButton">Clear</button>').appendTo(self._queryBoxDisplayDiv).click(function(event) {
+			self._setMiqlQuery($('#textbox').attr('value',''));
+		});
+
+		jQuery('<a href="#">Fields >></a>').appendTo(self._queryBoxDisplayDiv).click(function(event) {
+			self._queryFieldsDisplayDiv.css('display','block');
+		});
+
 
 		jQuery("#" + self.opt.target).append(self._searchHeaderDiv);
 		jQuery(self._searchHeaderDiv).append(self._queryBoxDisplayDiv);
@@ -117,7 +128,7 @@ Biojs.PsicquicViewSearch = Biojs.extend({
 		self = this;
 		Biojs.console.log("updating");
 		/*update traffic lights*/
-		$('#servicesListDisplay :checked').//attr("src","http://localhost/biojs/src/test/data/greenLight.png").
+		jQuery('#servicesListDisplay :checked').//attr("src","http://localhost/biojs/src/test/data/greenLight.png").
 		siblings('img').attr("src", "http://localhost/biojs/src/test/data/greenLight.png");
 		//each(function(){Biojs.console.log(this)});
 		//	$('#servicesListDisplay :input:not(:checked)[disabled != disabled]').//attr("src","http://localhost/biojs/src/test/data/greyLight.png").
@@ -265,10 +276,13 @@ Biojs.PsicquicViewSearch = Biojs.extend({
 			self._setMiqlQuery($('#textbox').attr('value'));
 			self.querySearch(self.opt.miqlQuery, self.getCheckedServices());
 		});
-		var cancelButton = '<button id="queryFieldsDisplay_cancelButton" onclick="alert(\'Cancel!!!!\');" type="button">';
+		var cancelButton = '<button id="queryFieldsDisplay_cancelButton" type="button">';
 		cancelButton += 'Cancel';
 		cancelButton += '</button>';
-
+		cancelButton = jQuery(cancelButton).click(function() {
+				self._queryFieldsDisplayDiv.css('display','none');	
+		});
+		
 		queryFieldsDisplay.append(andOr);
 		queryFieldsDisplay.append(not);
 		queryFieldsDisplay.append(fieldKey);
@@ -285,7 +299,7 @@ Biojs.PsicquicViewSearch = Biojs.extend({
 		self._totalHitsDiv = jQuery('<div id="totalHits"></div>');
 		self._totalHitsDiv.css("position", "relative").css('width', '100%');
 		self._servicesListDisplayDiv = jQuery('<div id="servicesListDisplay"></div>');
-		self._servicesListDisplayDiv.css("position", "relative").css('height', '33%').css('width', '80%');
+		self._servicesListDisplayDiv.css("position", "relative").css('height', '33%').css('width', '80%').css('min-width','700px');
 
 		var totalHits = 0;
 		alert("we must wait a little bit");
@@ -338,7 +352,7 @@ Biojs.PsicquicViewSearch = Biojs.extend({
 				self.raiseEvent('onDatabaseNameClick', {
 					name : serviceName,
 					url : queryUrl,
-					miqlquery: self.opt.miqlQuery
+					miqlquery: self.opt.miqlQuery.replace("//","/")
 				});
 			}), jQuery('<div/>', {
 				id : serviceName + "Hit"

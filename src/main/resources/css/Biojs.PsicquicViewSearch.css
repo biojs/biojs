@@ -6,7 +6,18 @@ div.PsicquicViewSearch {
 	font-family: "Heveltica Neue", Arial, "sans serif";
 	font-size: 12px;
 	color: #066;	
-	word-wrap:break-word;
+	white-space:nowrap;
 	position:relative;
 	float: left;
+	
+}
+
+#TheTable{
+	font-family: "Heveltica Neue", Arial, "sans serif";
+	font-size: 12px;
+	color: #066;	
+	white-space:nowrap;
+	position:relative;
+	float: left;
+	
 }
