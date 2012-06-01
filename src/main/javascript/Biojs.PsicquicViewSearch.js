@@ -15,14 +15,14 @@ Biojs.PsicquicViewSearch = Biojs.extend({
 		Biojs.console.enable();
 		var self = this;
 
+		/* CSS */
 		this._selector = "#" + this.opt.target;
 		this._container = jQuery(this._selector);
-
 		this._container.addClass("PsicquicViewSearch");
 
 		self._drawHeader();
 		self._drawQueryFields();
-		self.querySearch(self.opt.miqlQuery, self.opt.defaultCheckedServices);
+		self.querySearch(self.opt.miqlQuery, self.opt.checkedServices);
 
 	},
 	opt : {
@@ -36,7 +36,7 @@ Biojs.PsicquicViewSearch = Biojs.extend({
 		queryBoxDisplay : true,
 		queryFieldsDisplay : true,
 		servicesListDisplay : true,
-		defaultCheckedServices : [],
+		checkedServices : [],
 		displayedServices : [],
 		proxyUrl : '../biojs/dependencies/proxy/proxy.php'
 
@@ -78,15 +78,14 @@ Biojs.PsicquicViewSearch = Biojs.extend({
 	 *
 	 */
 	_draw : function() {
-		if($('#servicesListDisplay').length == 0) {
-			alert('hoho');
+		if(jQuery('#servicesListDisplay').length == 0) {
 			this._drawTemplate();
 		} else {
-			this._updateTemplate();
+			this._drawTemplate();
+			//this._updateTemplate();
 		}
 		Biojs.console.log("draw wrapper");
 	},
-
 	_drawHeader : function() {
 
 		var self = this;
@@ -95,8 +94,7 @@ Biojs.PsicquicViewSearch = Biojs.extend({
 		self._queryBoxDisplayDiv = jQuery('<div id="queryBoxDisplay"></div>');
 		self._queryBoxDisplayDiv.css("position", "relative").css('width', '100%');
 		self._queryFieldsDisplayDiv = jQuery('<div id="queryFieldsDisplay"></div>');
-		self._queryFieldsDisplayDiv.css("position", "relative").css('width', '100%').css('display','none');
-
+		self._queryFieldsDisplayDiv.css("position", "relative").css('width', '100%').css('display', 'none');
 
 		if(jQuery.isEmptyObject(self.opt.miqlQuery)) {
 			self._setMiqlQuery("*:*");
@@ -105,25 +103,21 @@ Biojs.PsicquicViewSearch = Biojs.extend({
 		self._queryBoxDisplayDiv.append('<label>Query</label>' + '<input type="text" name="textbox" id="textbox" value=' + self.opt.miqlQuery + '>');
 
 		jQuery('<button id = "searchButton">Search</button>').appendTo(self._queryBoxDisplayDiv).click(function(event) {
-			self._setMiqlQuery($('#textbox').attr('value'));
-			self.querySearch(self.opt.miqlQuery, self.getCheckedServices());
+			self._setMiqlQuery(jQuery('#textbox').attr('value'));
+			self._setCheckedServices();
+			self.querySearch(self.opt.miqlQuery, self.opt.checkedServices);
 		});
-
 		jQuery('<button id = "clearButton">Clear</button>').appendTo(self._queryBoxDisplayDiv).click(function(event) {
-			self._setMiqlQuery($('#textbox').attr('value',''));
+			self._setMiqlQuery($('#textbox').attr('value', ''));
 		});
-
 		jQuery('<a href="#">Fields >></a>').appendTo(self._queryBoxDisplayDiv).click(function(event) {
-			self._queryFieldsDisplayDiv.css('display','block');
+			self._queryFieldsDisplayDiv.css('display', 'block');
 		});
-
-
 		jQuery("#" + self.opt.target).append(self._searchHeaderDiv);
 		jQuery(self._searchHeaderDiv).append(self._queryBoxDisplayDiv);
 		jQuery(self._searchHeaderDiv).append(self._queryFieldsDisplayDiv);
 
 	},
-
 	_updateTemplate : function() {
 		self = this;
 		Biojs.console.log("updating");
@@ -160,7 +154,6 @@ Biojs.PsicquicViewSearch = Biojs.extend({
 		});
 		Biojs.console.log("done");
 	},
-
 	_registry : {},
 
 	_queryRegistry : function(countAndDrawOptions) {
@@ -177,18 +170,24 @@ Biojs.PsicquicViewSearch = Biojs.extend({
 		
 		/* get XML */
 		jQuery.ajax({
-			type : "GET",
-			url : registryUrl,
-			dataType : "xml",
+		type : "GET",
+		url : registryUrl,
+		dataType : "xml",
 		}).done(function(xml) {
-			self._registry = jQuery(xml).find("service");
-			if(countAndDrawOptions.doCountUpdate) {
-				Biojs.console.log("INFO: " + self._registry.length + " services retrieved from the registry! ");
-				self._updateServicesCount(self.opt.miqlQuery, self.getCheckedServices());
-			}
-			if(countAndDrawOptions.drawTemplate) {
-				self._draw();
-			}
+		self._registry = jQuery(xml).find("service");
+		if(self.opt.checkedServices.length == 0){
+			self._registry.each(function() {
+			self.opt.checkedServices.push(jQuery(this).find("name").text().toLowerCase());
+		});
+		}
+		if(countAndDrawOptions.doCountUpdate) {
+
+		Biojs.console.log("INFO: " + self._registry.length + " services retrieved from the registry! ");
+		self._updateServicesCount(self.opt.miqlQuery, self.opt.checkedServices);
+		}
+		if(countAndDrawOptions.drawTemplate) {
+		self._draw();
+		}
 		}).fail(function(jqXHR, textStatus) {
 			Biojs.console.log("ERROR: " + textStatus);
 		});
@@ -200,18 +199,18 @@ Biojs.PsicquicViewSearch = Biojs.extend({
 	 *
 	 */
 
-	getCheckedServices : function() {
+	_setCheckedServices : function() {
 		Biojs.console.log("getting checked services..");
 		var servicesList = [];
-		$('#servicesListDisplay').find(':checked').each(function() {
+
+		jQuery('#servicesListDisplay').find(':checked').each(function() {
 			servicesList.push(jQuery(this).attr('serviceName').toLowerCase());
 		});
 		Biojs.console.log(servicesList);
 
 		/* populate array with id element */
-		return servicesList;
+		this.opt.checkedServices = servicesList;
 	},
-
 	querySearch : function(miqlQuery, checkedServices) {
 		Biojs.console.log("INFO: miqlQuery: " + miqlQuery);
 		Biojs.console.log("INFO: checkedServices: " + checkedServices);
@@ -226,11 +225,10 @@ Biojs.PsicquicViewSearch = Biojs.extend({
 				drawTemplate : false
 			});
 		} else {
-			this._updateServicesCount(miqlQuery, this.getCheckedServices());
+			this._updateServicesCount(miqlQuery, checkedServices);
 		}
 		//self._drawTemplate();
 	},
-
 	_drawQueryFields : function() {
 		var self = this;
 		var queryFieldsDisplay = jQuery("#queryFieldsDisplay");
@@ -272,7 +270,6 @@ Biojs.PsicquicViewSearch = Biojs.extend({
 				notOptValue = jQuery(this).val();
 
 			});
-
 			//alert(notOptValue);
 			var fieldKeyValue = jQuery("#newQueryField");
 			//alert(jQuery(fieldKeyValue).val());
@@ -281,17 +278,16 @@ Biojs.PsicquicViewSearch = Biojs.extend({
 			var completeQuery = jQuery(searchBoxVal).val() + " " + jQuery(andOrOptValue).val() + " " + notOptValue + " " + jQuery(fieldKeyValue).val() + ":" + jQuery(querytoAdd).val();
 
 			searchBoxVal.val(completeQuery);
-
-			self._setMiqlQuery($('#textbox').attr('value'));
-			self.querySearch(self.opt.miqlQuery, self.getCheckedServices());
+			self._setMiqlQuery(jQuery('#textbox').attr('value'));
+			self._setCheckedServices();
+			self.querySearch(self.opt.miqlQuery, self.opt.checkedServices);
 		});
 		var cancelButton = '<button id="queryFieldsDisplay_cancelButton" type="button">';
 		cancelButton += 'Cancel';
 		cancelButton += '</button>';
 		cancelButton = jQuery(cancelButton).click(function() {
-				self._queryFieldsDisplayDiv.css('display','none');	
+			self._queryFieldsDisplayDiv.css('display', 'none');
 		});
-		
 		queryFieldsDisplay.append(andOr);
 		queryFieldsDisplay.append(not);
 		queryFieldsDisplay.append(fieldKey);
@@ -300,73 +296,76 @@ Biojs.PsicquicViewSearch = Biojs.extend({
 		queryFieldsDisplay.append(cancelButton);
 
 	},
-
 	_drawTemplate : function() {
-
+		jQuery('#servicesListDisplay').html("");
 		var self = this;
 		// todo: draw regions where we will pouplate the content
 		self._totalHitsDiv = jQuery('<div id="totalHits"></div>');
 		self._totalHitsDiv.css("position", "relative").css('width', '100%');
 		self._servicesListDisplayDiv = jQuery('<div id="servicesListDisplay"></div>');
-		self._servicesListDisplayDiv.css("position", "relative").css('height', '33%').css('width', '80%').css('min-width','700px');
+		self._servicesListDisplayDiv.css("position", "relative").css('height', '33%').css('width', '80%').css('min-width', '700px');
 
 		var totalHits = 0;
-		alert("we must wait a little bit");
+		//alert("we must wait a little bit");
 		Biojs.console.log(this._registry);
 		this._registry.each(function() {
 
-			var serviceName = jQuery(this).find("name").text();
+			var serviceName = jQuery(this).find("name").text().toLowerCase();
 			var count = jQuery(this).find("count").text();
 			var status = jQuery(this).find("active").text();
+			var isChecked = false;
+			if(jQuery.inArray(serviceName, self.opt.checkedServices) != '-1') {
+				isChecked = true;
+			}
 			//alert(serviceName + count + status);
 			totalHits += parseInt(count);
 			self._servicesListDisplayDiv.append(jQuery('<div id=' + serviceName + '></div>').append(jQuery('<img/>', {
-				src : 'http://localhost/biojs/src/test/data/greenLight.png',
-				alt : "greenLight",
-				id : serviceName + "Light",
-				width : "10%"
+			src : 'http://localhost/biojs/src/test/data/greenLight.png',
+			alt : "greenLight",
+			id : serviceName + "Light",
+			width : "10%"
 			}), jQuery('<input/>', {
-				id : serviceName + "Box",
-				type : "checkbox",
-				checked : true,
-				serviceName : serviceName
+			id : serviceName + "Box",
+			type : "checkbox",
+			checked : isChecked,
+			serviceName : serviceName
 			}).css({
-				position : "relative",
-				top : "5px",
-				left : "5px"
+			position : "relative",
+			top : "5px",
+			left : "5px"
 			}), jQuery('<div/>', {
-				id : serviceName + "Text"
+			id : serviceName + "Text"
 			}).html(serviceName).css({
-				position : "relative",
-				width : "35%",
-				top : "5px",
-				left : "5px"
+			position : "relative",
+			width : "35%",
+			top : "5px",
+			left : "5px"
 			}).click(function() {
-					
-					var serviceUrl = "";
-					var queryUrl = "";
-				self._registry.each(function() {
-				
-					
-					if ( jQuery(this).find("name").text().toLowerCase() == serviceName.toLowerCase() ) {
-						serviceUrl = jQuery(this).find("restUrl").text();
-						queryUrl = serviceUrl;
-					}
-					
-				});
-					self.raiseEvent('onDatabaseNameClick', {
-					name : serviceName,
-					url : queryUrl,
-					miqlquery: self.opt.miqlQuery.replace("//","/")
-				});
+
+			var serviceUrl = "";
+			var queryUrl = "";
+			self._registry.each(function() {
+
+			if ( jQuery(this).find("name").text().toLowerCase() == serviceName.toLowerCase() ) {
+			serviceUrl = jQuery(this).find("restUrl").text();
+			queryUrl = serviceUrl;
+			}
+
+			});
+
+			self.raiseEvent('onDatabaseNameClick', {
+			name : serviceName,
+			url : queryUrl,
+			miqlquery: self.opt.miqlQuery.replace("//","/")
+			});
 			}), jQuery('<div/>', {
-				id : serviceName + "Hit"
+			id : serviceName + "Hit"
 			}).html(count).css({
-				position : "relative",
-				width : "35%",
-				top : "5px",
-				left : "5px",
-				"text-align" : "right"
+			position : "relative",
+			width : "35%",
+			top : "5px",
+			left : "5px",
+			"text-align" : "right"
 			})).each(function() {
 				if(status == "false") {
 					//alert(this);
@@ -385,15 +384,14 @@ Biojs.PsicquicViewSearch = Biojs.extend({
 
 				}
 				jQuery(this).css({
-					width : '20%',
-					float : "left"
+				width : '20%',
+				float : "left"
 				}).children().css({
 					float : "left"
 				});
 
 			}));
 		});
-
 		self._totalHitsDiv.html(totalHits).css({
 			"text-align" : "right"
 		});
@@ -404,11 +402,9 @@ Biojs.PsicquicViewSearch = Biojs.extend({
 		jQuery("#" + self.opt.target).append(self._servicesListDisplayDiv);
 
 	},
-
 	_setMiqlQuery : function(miqlQuery) {
 		this.opt.miqlQuery = miqlQuery;
 	},
-
 	_updateServicesCount : function(miqlQuery, checkedServices) {
 		var self = this;
 		this._resetServiceCount();
@@ -452,23 +448,23 @@ Biojs.PsicquicViewSearch = Biojs.extend({
 	_queryService : function(serviceName, queryUrl) {
 		var self = this;
 		jQuery.ajax({
-			type : "GET",
-			url : queryUrl,
-			dataType : "text",
+		type : "GET",
+		url : queryUrl,
+		dataType : "text",
 		}).done(function(result) {
-			//Biojs.console.log("INFO: successful query to " + serviceName + "! ... " + queryUrl);			
-			if(isNaN(parseInt(result, 10))){
-				/* If it is Not a Number the service is not reponding 
-				 * as expected, so this should be consider a warning or failure */	
-				self._updateRegistry(serviceName, "-1", "warning");			
-			} else {
-				/* The result is a number */
-				self._updateRegistry(serviceName, result, "true");
-				self._serviceCount.done++;
-				if(self._isServiceCountComplete()) {
-					self._draw();
-				}				
-			}
+		//Biojs.console.log("INFO: successful query to " + serviceName + "! ... " + queryUrl);
+		if(isNaN(parseInt(result, 10))){
+		/* If it is Not a Number the service is not reponding
+		* as expected, so this should be consider a warning or failure */
+		self._updateRegistry(serviceName, "-1", "warning");
+		} else {
+		/* The result is a number */
+		self._updateRegistry(serviceName, result, "true");
+		self._serviceCount.done++;
+		if(self._isServiceCountComplete()) {
+		self._draw();
+		}
+		}
 		}).fail(function(jqXHR, textStatus) {
 			self._updateRegistry(serviceName, "-1", "false");
 			Biojs.console.log("ERROR: " + textStatus);
