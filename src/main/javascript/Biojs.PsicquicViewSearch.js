@@ -69,7 +69,10 @@ Biojs.PsicquicViewSearch = Biojs.extend({
 	 :
 	 .
 	 “<eventNameN>”
-	 */"onDatabaseNameClick"],
+	 */
+	"onDatabaseNameClick",
+	"onQueryReady"
+	 ],
 
 	/*
 	 * this draws the upper part of the component which displays the
@@ -281,6 +284,7 @@ Biojs.PsicquicViewSearch = Biojs.extend({
 			self._setMiqlQuery(jQuery('#textbox').attr('value'));
 			self._setCheckedServices();
 			self.querySearch(self.opt.miqlQuery, self.opt.checkedServices);
+			
 		});
 		var cancelButton = '<button id="queryFieldsDisplay_cancelButton" type="button">';
 		cancelButton += 'Cancel';
@@ -307,7 +311,13 @@ Biojs.PsicquicViewSearch = Biojs.extend({
 
 		var totalHits = 0;
 		//alert("we must wait a little bit");
+		self.raiseEvent('onQueryReady', {
+					miqlQuery : self.opt.myqlQuery,
+					listOfServices: self.opt.checkedServices
+				});
 		Biojs.console.log(this._registry);
+	
+		
 		this._registry.each(function() {
 
 			var serviceName = jQuery(this).find("name").text().toLowerCase();
