@@ -30,11 +30,11 @@
 				instance = new Biojs.PsicquicViewSearch({
 					target: 'YourOwnDivId',
 				    miqlQuery: '*:*',
-				    urlRegistry: 'http://localhost/biojs/src/test/data/psicquicRegistry.xml',
+				    urlRegistry: 'http://www.ebi.ac.uk/Tools/webservices/psicquic/registry/registry?action=STATUS&format=xml',
 				    queryBoxDisplay: true,
 				    queryFieldsDisplay: true,
 				    servicesListDisplay: true,
-				    defaultCheckedServices: [],
+				    defaultCheckedServices: ['IntAct'],
 				    proxyUrl: 'http://localhost/biojs/src/main/resources/dependencies/proxy/proxy.php'
 				});
 				

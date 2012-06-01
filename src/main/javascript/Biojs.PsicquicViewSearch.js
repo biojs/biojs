@@ -165,11 +165,20 @@ Biojs.PsicquicViewSearch = Biojs.extend({
 
 	_queryRegistry : function(countAndDrawOptions) {
 		//var countAndDrawOptions = {doCountUpdate:false,drawTemplate:true};
-		var self = this;
+		var self = this;	
+		var registryUrl;
+		
+		if(self.opt.proxyUrl==''){
+			registryUrl = this.opt.urlRegistry;
+		}
+		else{
+			registryUrl = self.opt.proxyUrl + "?url="  + this.opt.urlRegistry;	
+		}
+		
 		/* get XML */
 		jQuery.ajax({
 			type : "GET",
-			url : this.opt.urlRegistry,
+			url : registryUrl,
 			dataType : "xml",
 		}).done(function(xml) {
 			self._registry = jQuery(xml).find("service");
@@ -345,11 +354,7 @@ Biojs.PsicquicViewSearch = Biojs.extend({
 					}
 					
 				});
-				
-				
-				
-				
-				self.raiseEvent('onDatabaseNameClick', {
+					self.raiseEvent('onDatabaseNameClick', {
 					name : serviceName,
 					url : queryUrl,
 					miqlquery: self.opt.miqlQuery.replace("//","/")
@@ -407,6 +412,12 @@ Biojs.PsicquicViewSearch = Biojs.extend({
 	_updateServicesCount : function(miqlQuery, checkedServices) {
 		var self = this;
 		this._resetServiceCount();
+		if(self.opt.proxyUrl==''){
+			registryUrl = '';
+		}
+		else{
+			registryUrl = self.opt.proxyUrl + "?url=";	
+		}
 		self._registry.each(function() {
 			var serviceUrl = jQuery(this).find("restUrl").text();
 			var serviceName = jQuery(this).find("name").text().toLowerCase();
