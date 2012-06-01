@@ -180,8 +180,8 @@ Biojs.PsicquicViewSearch = Biojs.extend({
 		self._registry = jQuery(xml).find("service");
 		if(self.opt.checkedServices.length == 0){
 			self._registry.each(function() {
-			self.opt.checkedServices.push(jQuery(this).find("name").text().toLowerCase());
-		});
+				self.opt.checkedServices.push(jQuery(this).find("name").text().toLowerCase());
+			});
 		}
 		if(countAndDrawOptions.doCountUpdate) {
 
@@ -205,7 +205,6 @@ Biojs.PsicquicViewSearch = Biojs.extend({
 	_setCheckedServices : function() {
 		Biojs.console.log("getting checked services..");
 		var servicesList = [];
-
 		jQuery('#servicesListDisplay').find(':checked').each(function() {
 			servicesList.push(jQuery(this).attr('serviceName').toLowerCase());
 		});
@@ -300,14 +299,18 @@ Biojs.PsicquicViewSearch = Biojs.extend({
 		queryFieldsDisplay.append(cancelButton);
 
 	},
-	_drawTemplate : function() {
-		jQuery('#servicesListDisplay').html("");
+	_drawTemplate : function() {		
 		var self = this;
 		// todo: draw regions where we will pouplate the content
+		if(jQuery('#servicesListDisplay').length != 0){
+			self._servicesListDisplayDiv = jQuery('#servicesListDisplay');
+			self._servicesListDisplayDiv.empty();	
+		} else {
+			self._servicesListDisplayDiv = jQuery('<div id="servicesListDisplay"></div>');
+			self._servicesListDisplayDiv.css("position", "relative").css('height', '33%').css('width', '80%').css('min-width', '700px');	
+		}
 		self._totalHitsDiv = jQuery('<div id="totalHits"></div>');
 		self._totalHitsDiv.css("position", "relative").css('width', '100%');
-		self._servicesListDisplayDiv = jQuery('<div id="servicesListDisplay"></div>');
-		self._servicesListDisplayDiv.css("position", "relative").css('height', '33%').css('width', '80%').css('min-width', '700px');
 
 		var totalHits = 0;
 		//alert("we must wait a little bit");
@@ -459,20 +462,22 @@ Biojs.PsicquicViewSearch = Biojs.extend({
 		var self = this;
 		jQuery.ajax({
 		type : "GET",
+		timeout: 2000,
 		url : queryUrl,
 		dataType : "text",
 		}).done(function(result) {
 		//Biojs.console.log("INFO: successful query to " + serviceName + "! ... " + queryUrl);
 		if(isNaN(parseInt(result, 10))){
-		/* If it is Not a Number the service is not reponding
-		* as expected, so this should be consider a warning or failure */
-		self._updateRegistry(serviceName, "-1", "warning");
+			/* If it is Not a Number the service is not reponding
+			* as expected, so this should be consider a warning or failure */
+			self._updateRegistry(serviceName, "-1", "warning");
+			self._serviceCount.fail++;
 		} else {
-		/* The result is a number */
-		self._updateRegistry(serviceName, result, "true");
-		self._serviceCount.done++;
+			/* The result is a number */
+			self._updateRegistry(serviceName, result, "true");
+			self._serviceCount.done++;
 		if(self._isServiceCountComplete()) {
-		self._draw();
+			self._draw();
 		}
 		}
 		}).fail(function(jqXHR, textStatus) {
