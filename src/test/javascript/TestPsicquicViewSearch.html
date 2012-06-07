@@ -35,7 +35,7 @@
 				    queryFieldsDisplay: true,
 				    servicesListDisplay: true,
 				    defaultCheckedServices: ['IntAct'],
-				    proxyUrl: 'http://localhost/biojs/src/main/resources/dependencies/proxy/proxy.php'
+				    proxyUrl: '../../../src/main/resources/dependencies/proxy/proxy.php'
 				});
 				
 				
@@ -48,7 +48,7 @@
 					    target: "TheTable",
 					    dataSet: {
 					        psicquicUrl: e.url + "query",
-					        proxyUrl: 'http://localhost/biojs/src/main/resources/dependencies/proxy/proxy.php',
+					        proxyUrl: '../../../src/main/resources/dependencies/proxy/proxy.php',
 					        query: e.miqlquery,
 					        version: "MITAB_VERSION_2_5",
 					        filter: false

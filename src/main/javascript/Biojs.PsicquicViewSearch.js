@@ -125,11 +125,11 @@ Biojs.PsicquicViewSearch = Biojs.extend({
 		self = this;
 		Biojs.console.log("updating");
 		/*update traffic lights*/
-		jQuery('#servicesListDisplay :checked').//attr("src","http://localhost/biojs/src/test/data/greenLight.png").
-		siblings('img').attr("src", "http://localhost/biojs/src/test/data/greenLight.png");
+		jQuery('#servicesListDisplay :checked').//attr("src","../data/greenLight.png").
+		siblings('img').attr("src", "../data/greenLight.png");
 		//each(function(){Biojs.console.log(this)});
-		//	$('#servicesListDisplay :input:not(:checked)[disabled != disabled]').//attr("src","http://localhost/biojs/src/test/data/greyLight.png").
-		//siblings('img').attr("src", "http://localhost/biojs/src/test/data/greyLight.png");
+		//	$('#servicesListDisplay :input:not(:checked)[disabled != disabled]').//attr("src","../data/greyLight.png").
+		//siblings('img').attr("src", "../data/greyLight.png");
 
 		/*refresh hit number*/
 
@@ -333,7 +333,7 @@ Biojs.PsicquicViewSearch = Biojs.extend({
 			//alert(serviceName + count + status);
 			totalHits += parseInt(count);
 			self._servicesListDisplayDiv.append(jQuery('<div id=' + serviceName + '></div>').append(jQuery('<img/>', {
-			src : 'http://localhost/biojs/src/test/data/greenLight.png',
+			src : '../data/greenLight.png',
 			alt : "greenLight",
 			id : serviceName + "Light",
 			width : "10%"
@@ -382,7 +382,7 @@ Biojs.PsicquicViewSearch = Biojs.extend({
 			})).each(function() {
 				if(status == "false") {
 					//alert(this);
-					jQuery(this).find("#" + serviceName + "Light").attr("src", "http://localhost/biojs/src/test/data/redLight.png", "alt", "redLight");
+					jQuery(this).find("#" + serviceName + "Light").attr("src", "../data/redLight.png", "alt", "redLight");
 					jQuery(this).find("#" + serviceName + "Box").attr("checked", false, "disabled", "disabled");
 					jQuery(this).find("#" + serviceName + "Text").css("color", "grey");
 					jQuery(this).find("#" + serviceName + "Hit").css("color", "grey");
@@ -390,7 +390,7 @@ Biojs.PsicquicViewSearch = Biojs.extend({
 				}
 				if(status == "warning") {
 					//alert(this);
-					jQuery(this).find("#" + serviceName + "Light").attr("src", "http://localhost/biojs/src/test/data/orangeLight.png", "alt", "redLight");
+					jQuery(this).find("#" + serviceName + "Light").attr("src", "../data/orangeLight.png", "alt", "redLight");
 					jQuery(this).find("#" + serviceName + "Box").attr("checked", false, "disabled", "disabled");
 					jQuery(this).find("#" + serviceName + "Text").css("color", "grey");
 					jQuery(this).find("#" + serviceName + "Hit").css("color", "grey");
