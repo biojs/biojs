@@ -233,7 +233,11 @@ Biojs.Chromosome = Biojs.extend (
 	  */
 	_process_model: function(model,self){
 		//Sorting the bands by the start coordinate
-		model.bands.sort	( function sortfunc(a,b){
+		model.bands.sort(
+		/**
+		 * @ignore
+		 **/
+		function sortfunc(a,b){
 			return a.start-b.start;
 		});
 		var first="first",last="",firstid=null,firstW=null;

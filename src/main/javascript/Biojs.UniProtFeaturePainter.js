@@ -1500,6 +1500,9 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
              * x, y: coordinates of the top vertex
              * size: size of the internal square
              */
+        	/**
+        	 * @ignore
+        	 **/
             Raphael.fn.uniprotFeaturePainter_hexagon = function(x, y, size) {
                 x = x - (size/2);
                 var path = ["M", x, y];
@@ -1515,6 +1518,9 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
              * x, y: coordinates of the top vertex
              * size: size of the bottom edge
              */
+        	/**
+        	 * @ignore
+        	 **/
             Raphael.fn.uniprotFeaturePainter_triangle = function(x, y, size) {
                 var path = ["M", x, y];
                 path = path.concat(["L", (x + size / 2), (y + size)]);
@@ -1528,6 +1534,9 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
              * x, y: coordinates of the lowest top centered vertex /\./\
              * size: size of the bottom edge of the sub-triangles /_\
              */
+        	/**
+        	 * @ignore
+        	 **/
             Raphael.fn.uniprotFeaturePainter_wave = function(x, y, size) {
                 var path = ["M", x, y];
                 path = path.concat(["L", x-(size/2), y-size]); // \
@@ -1546,6 +1555,9 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
              * x, y: coordinates of the top vertex
              * r: radius from the center
              */
+        	/**
+        	 * @ignore
+        	 **/
             Raphael.fn.uniprotFeaturePainter_diamond = function(x, y, r) {
                 var path = ["M", x, y];
                 path = path.concat(["L", x-r, y+r]);
@@ -1559,6 +1571,9 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
              * width
              * height
              */
+        	/**
+        	 * @ignore
+        	 **/
             Raphael.fn.uniprotFeaturePainter_NPath = function(x, y, width, height) {
                 var path = ["M", (x-width),(y+height)];
                 path = path.concat(["L", (x-width), y]);
@@ -1572,6 +1587,9 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
              * width
              * height
              */
+        	/**
+        	 * @ignore
+        	 **/
             Raphael.fn.uniprotFeaturePainter_OPath = function(x, y, width, height) {
                 var path = ["M", (x), (y)];
                 path = path.concat(["C", (x-width), (y), (x-width), (y+height), (x), (y+height)]);
@@ -1585,6 +1603,9 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
              * width
              * height
              */
+        	/**
+        	 * @ignore
+        	 **/
             Raphael.fn.uniprotFeaturePainter_CPath = function(x, y, width, height) {
                 var path = ["M", (x+width), (y)];
                 path = path.concat(["C", (x-width), (y), (x-width), (y+height), (x+width), (y+height)]);
@@ -1596,6 +1617,9 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
              * width
              * height
              */
+        	/**
+        	 * @ignore
+        	 **/
             Raphael.fn.uniprotFeaturePainter_CONPath = function(x, y, width, height, space) {
                 //C
                 var path = ["M", (x-width-space), (y)];
@@ -1621,6 +1645,9 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
             /*
              * Creates a dynamic connection (from http://raphaeljs.com/graffle.html)
              */
+        	/**
+        	 * @ignore
+        	 **/
             Raphael.fn.uniprotFeaturePainter_connection = function (obj1, obj2, line, bg) {
                 //console.log('connection');
                 //console.log(obj1);

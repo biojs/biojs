@@ -496,29 +496,31 @@ Biojs.InteractionsTable = Biojs.Table.extend(
 	MITabTxtDecoder: function (str) {
 		this.buffer = ( str != undefined )? str : "" ;
 		this.offset = 0;
-		/**
-		 * @ignore
-		 */
-		this.nextToken = function (delimiter) {
-			var token = "";
-			var index;
-			if ( this.offset < this.buffer.length ) {
-				start = this.offset;
-				index = this.buffer.indexOf(delimiter, start);
-				
-				if ( index != -1 ) {
-					this.offset = index;
-					token = this.buffer.substring(start, index);
-					this.offset += delimiter.length;
+		
+		this.nextToken = 
+			/**
+			 * @ignore
+			 */
+			function (delimiter) {
+				var token = "";
+				var index;
+				if ( this.offset < this.buffer.length ) {
+					start = this.offset;
+					index = this.buffer.indexOf(delimiter, start);
+					
+					if ( index != -1 ) {
+						this.offset = index;
+						token = this.buffer.substring(start, index);
+						this.offset += delimiter.length;
+					} else {
+						this.offset = this.buffer.length;
+						token = this.buffer.substring(start);
+					}
 				} else {
-					this.offset = this.buffer.length;
-					token = this.buffer.substring(start);
-				}
-			} else {
-				// no more tokens
-			}			
-			return token;
-		}
+					// no more tokens
+				}			
+				return token;
+			}
 		/**
 		 * @ignore
 		 */

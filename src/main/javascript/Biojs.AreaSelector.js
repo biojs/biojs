@@ -1,9 +1,7 @@
 /**
- * Selector Component
- * This component visualize a div in a upper layer that can be used to select an area of other component.
- * Although is not biological related component, it is generic enough to be used in other components, 
- * that require to select a region, see chromosome example.
- * Just one selector can be used for a HTML component.
+ * This component visualize a div in a upper layer that can be used to select an area of other component. 
+ * Although is not biological related component, it is generic enough to be used in other components, that 
+ * require to select a region, see chromosome example. Just one selector can be used for a HTML component.
  * <b>WARNING</b>: The CSS value for the position will be changed to relative.
  * 
  * @class

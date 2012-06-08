@@ -575,7 +575,11 @@ Biojs.Table = Biojs.extend (
     	 }
     	 
     	// Wrap the callback function 
-		 httpRequest.success = function ( data ) {
+		 httpRequest.success = 
+			 /**
+			  * @ignore
+			  **/
+			 function ( data ) {
 
 			 // Decode data
 			 jsonData = instance._decodeToJSON( data );
