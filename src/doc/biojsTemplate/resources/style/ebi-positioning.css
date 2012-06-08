@@ -1,0 +1,371 @@
+/*
+ 
+ 	EBI site-wide positioning for generic elements
+ 	
+ 	~ generic masthead rules
+ 	~ masthead menus
+ 	~ global masthead
+ 		~ global menu
+ 		~ global search
+ 	~ local masthead
+ 		~ local menu
+ 		~ local search
+ 	~ local footer
+ 	~ global footer
+ 		(includes global expanded nav)
+ 		
+
+	AUTHOR: Francis Rowland
+	DATE:   Feb 2012
+
+*/
+
+
+/* 
+	SITE-WIDE MASTHEAD LAYOUT AND SIZE
+	Generic rules for global and local mastheads
+===================================================
+ */ 	
+div#global-masthead,
+div#global-masthead nav { height: 30px; }	/* 1.5 lines */
+
+div#local-masthead,
+div#local-masthead nav { height: 120px; }
+div#local-masthead.nomenu,
+div#local-masthead nav { height: 100px; }
+
+
+div#global-footer,
+div#global-footer nav { height: 120px; }
+
+div#local-footer,
+div#local-footer nav { height: 60px; }
+
+
+
+/* 
+	HORIZONTAL MASTHEAD MENUS
+	Generic rules
+====================================
+ */
+div.masthead ul { 
+	margin: 0;
+	padding: 0;
+	float: left;
+	list-style: none;
+}
+
+div.masthead ul li { float: left; }
+
+div.masthead ul a {
+	display: block;
+}
+
+div.masthead ul li a,
+div.masthead ul li a {
+	padding: 0.2em 0.6em;
+}
+
+div.masthead ul li abbr { border-bottom: 0 none; }
+
+
+/*
+	GLOBAL MASTHEAD
+==================================
+*/
+
+div#global-masthead {
+	border-bottom: 1px solid #e3e3e3;
+}
+
+div#global-masthead p {
+	float: left;
+}
+
+div#global-masthead p {
+	/* margin: 4px 0 0 0; */
+	padding: 0 0 0.2em 0.69em;
+}
+
+div#global-masthead p#logo a:link,
+div#global-masthead p#logo a:visited { border: 0 none; }
+
+div#local-footer p {
+	padding-top: 10px;
+	margin: 0;
+}
+
+/* Global menu styling */
+div#global-masthead ul { 
+	float: right;
+	font-size: 93%;	/* 12px */
+}
+
+div#global-masthead ul li a {
+	display: block;
+	border-right: 1px solid #000;
+	border-left: 1px solid #666;
+	padding-top: 5px;
+	height: 23px;
+}
+
+div#global-masthead ul li.first a { border-left: 0 none; }
+div#global-masthead ul li.last a { border-right: 0 none; }
+
+
+div#global-masthead ul li a:link,
+div#global-masthead ul li a:visited { 
+	color: white;
+	border-bottom: 0 none;
+}
+
+div#global-masthead ul li a:hover,
+div#global-masthead ul li a:active,
+div#global-masthead ul li a:focus,
+div#global-masthead ul li.active a { 
+	border-top: 3px solid white; 
+	height: 20px
+}
+
+	/* custom colour for Services */
+	div#global-masthead ul li#services a:hover,
+	div#global-masthead ul li#services a:active,
+	div#global-masthead ul li#services a:focus,
+	div#global-masthead ul li.active#services a { 
+		border-top-color: #207a7a; 
+	}
+	
+	/* custom colour for Research */
+	div#global-masthead ul li#research a:hover,
+	div#global-masthead ul li#research a:active,
+	div#global-masthead ul li#research a:focus,
+	div#global-masthead ul li#research.active a { 
+		border-top-color: #e3823e; 
+	}
+	
+	/* custom colour for Training */
+	div#global-masthead ul li#training a:hover,
+	div#global-masthead ul li#training a:active,
+	div#global-masthead ul li#training a:focus,
+	div#global-masthead ul li#training.active a { 
+		border-top-color: #3776d9; 
+	}
+	
+	/* custom colour for Industry */
+	div#global-masthead ul li#industry a:hover,
+	div#global-masthead ul li#industry a:active,
+	div#global-masthead ul li#industry a:focus,
+	div#global-masthead ul li#industry.active a { 
+		border-top-color: #e5969f; 
+	}
+	
+	/* custom colour for About us */
+	div#global-masthead ul li#about a:hover,
+	div#global-masthead ul li#about a:active,
+	div#global-masthead ul li#about a:focus,
+	div#global-masthead ul li#about.active a { 
+		border-top-color: #71b360; 
+	}
+
+
+/* Customisation for the GLOBAL search */
+form#global-search {
+	float: right;
+	margin: 3px 9px;
+	padding: 0;
+	height: 24px;
+	vertical-align: top;
+}
+
+form#global-search fieldset {
+	padding: 0;
+	margin: 0;
+	border: 0 none;
+	background-color: transparent;
+}
+
+form#global-search label {
+	display: inline;
+}
+
+form#global-search input#global-searchbox {
+	font-size: 100%;
+	margin: 0 0.3em;
+	width:140px;
+}
+
+form#global-search input.submit {
+	/* padding: 0.25em; */
+	width: 24px;
+	height: 24px;
+	margin: 0;
+	font-size: 93%;	
+	display: inline;
+	
+	background: #eee url(../images/search16.png) center center no-repeat;
+	
+	-moz-border-radius: 0;
+	-khtml-border-radius: 0;
+	-webkit-border-radius: 0;
+	border-radius: 0;
+
+}
+
+
+/*
+	LOCAL MASTHEAD
+==================================
+*/
+
+
+div#local-masthead { border-bottom: 3px solid #eee; }
+
+div#local-masthead h1 { margin-bottom: 11px; }
+
+div#skip-to,
+div#local-title-logo h1 { 
+	left: -5000px;
+	top: -5000px;
+	position: absolute;
+}
+
+
+div#local-masthead h1 span {
+	font-size: 49.2%;	/* h1 font-size is 370%, and I want 182%, so 0.492 * 370... */
+	margin-left: 32px;
+	letter-spacing: normal;
+	color: #424242;
+}
+
+
+/* Local menu styling */
+div#local-masthead nav {}
+
+div#local-masthead ul { 
+	margin-top:-5px;
+	height: 25px;
+	width: 100%;
+	background-color: #111111;
+	background-color: rgba(17, 17, 17, 0.6);  
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#111111',EndColorStr='#111111'); 					
+}
+
+div#local-masthead ul li {
+	border-color: transparent;
+	border-right: 1px dotted #f8f8f8;
+}
+
+div#local-masthead ul li.last { border-right: 0 none; }
+
+div#local-masthead ul li a {
+}
+
+div#local-masthead ul li a:link,
+div#local-masthead ul li a:visited { 
+	border-bottom:0 none;
+	color: #f6f6f6;
+}
+
+div#local-masthead ul li a:hover,
+div#local-masthead ul li a:focus,
+div#local-masthead ul li a:active {
+	border-bottom: 3px solid #71b360;
+	color: #fff;
+ 	background-color: #333;
+}
+	
+div#local-masthead ul li a.current:link,
+div#local-masthead ul li a.current:visited {
+	padding-top: 2px;
+	border-bottom: 3px solid  #71b360;
+}	
+
+
+/* Local search */
+
+form#local-search fieldset {
+	background-color: #ffffff;
+	background-color: rgba(255, 255, 255, 0.5);  
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#ffffff',EndColorStr='#ffffff'); 
+}
+
+form#local-search input.submit { display: inline; }
+
+form#local-search input#local-searchbox { font-size: 123.1%; width: 319px; }	/* fontsize = 16px */
+	
+
+
+div#content { padding-bottom: 40px; }	
+	
+	
+	
+
+/* 
+	LOCAL FOOTER
+===============================
+ */
+body.level1 div#local-footer {display: none;}
+
+div#local-footer { border-top: 2px solid #eee; }
+
+
+/* 
+	GLOBAL FOOTER
+================================
+ */
+div#global-footer { 
+	border-top: 5px solid #eee; 
+	height: 100%;
+	/* background-color: #f7f7f7; */
+}
+
+div#global-footer h3 {
+	font-size: 108%;			/* 14px */
+	margin-bottom: 5px;
+	color: #316B63;
+} 
+
+div#global-footer p { 
+	font-size: 100%;			/* 13px */
+	margin-bottom: -10px;
+ }
+
+div#global-footer ul {
+	font-size: 85%;	/* 11px */
+ 
+	padding: 0 0 0 9px;
+	list-style: none;
+}	
+ 
+div#global-footer a { border-bottom: 0 none; }
+
+div#global-footer ul li a,
+div#ebi-footer-meta p a { padding: 2px 4px 2px 0; }
+
+div#ebi-footer-meta p a { margin-left: -4px; }
+
+div#global-footer ul li a:hover,
+div#global-footer ul li a:focus,
+div#global-footer ul li a:active,
+div#ebi-footer-meta p a:hover,
+div#ebi-footer-meta p a:focus,
+div#ebi-footer-meta p a:active {
+	-moz-border-radius: 5px;
+	-khtml-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+	
+	background-color: #e4e4e4;
+}
+
+div#ebi-footer-meta { font-size: 85%;	/* 11px */ }
+
+div#copyright-notice {
+	padding: 10px 0;
+	border-top: 1px solid #ccc;
+}
+
+div#copyright-notice p {
+	margin: 0;
+}
+
