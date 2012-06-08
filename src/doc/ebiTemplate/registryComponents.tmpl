@@ -57,7 +57,7 @@
                             {+ comma +}
                             [
                                 '<a href="{+thisClass.alias+}.html">{+thisClass.name+}</a>', 
-                                '{+ resolveLinks(thisClass.desc).replace('\n','') +}', 
+                                '{+ resolveLinks(thisClass.desc).replace(/(\n|\')/g,'') +}', 
                                 '<if test="thisClass.author">{+ thisClass.author.replace('\n','') +}</if>',
                                 '<if test="thisClass.version">{+ thisClass.version.replace('\n','') +}</if>'
                             ]
