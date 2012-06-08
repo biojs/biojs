@@ -4,13 +4,14 @@
  * @class
  * @extends Biojs
  * 
+ * @author <a href="mailto:secevalliv@gmail.com">Jos&eacute; Villaveces</a>
+ * @version 1.0.0_beta
+ * 
  * @requires <a href='http://code.jquery.com/jquery-1.7.2.js'>jQuery Core 1.7.2</a>
  * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jquery/jquery-1.7.2.min.js"></script>
  * 
  * @requires <a href='https://github.com/downloads/cytoscape/cytoscapeweb/jquery.cytoscapeweb-2.0-prerelease-snapshot-2012.05.14-12.35.01.zip'>Cytoscape web 2</a>
  * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/cytoscape/jquery.cytoscapeweb.all.js"></script>
- * 
- * @author <a href="mailto:secevalliv@gmail.com">Jos&eacute; Villaveces</a>
  * 
  * @param {Object} options An object with the options for the cytoscape component.
  *    

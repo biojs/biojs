@@ -195,6 +195,9 @@ var Biojs_UniProtFeaturePainter_myself = undefined;
  * Please remember to use jQuery in compatibility mode, particularly a good idea if you use other libraries.
  * @class
  * @extends Biojs
+ * 
+ * @author <a href="mailto:ljgarcia@ebi.ac.uk">Leyla Jael García Castro</a>
+ * @version 1.0.0
  *
  * @requires <a href='http://code.jquery.com/jquery-1.6.2.min.js/'>jQuery Core 1.4.2</a>
  * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jquery/jquery-1.4.2.min.js"></script>
@@ -231,8 +234,6 @@ var Biojs_UniProtFeaturePainter_myself = undefined;
  *
  * @requires jQuery UI CSS 1.8.2
  * @dependency <link rel="stylesheet" href="../biojs/dependencies/jquery/jquery-ui-1.8.2.css" />
- *
- * @author <a href="mailto:ljgarcia@ebi.ac.uk">Leyla Jael García Castro</a>
  *
  * @param {Object} options An object with the options for Sequence component.
  *

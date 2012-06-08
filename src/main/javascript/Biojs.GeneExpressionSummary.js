@@ -4,13 +4,14 @@
  * @class
  * @extends Biojs
  * 
+ * @author <a href="mailto:johncar@gmail.com">John Gomez</a>, <a href="mailto:rafael@ebi.ac.uk">Rafael Jimenez</a>
+ * @version 1.0.0
+ * 
  * @requires <a href='http://blog.jquery.com/2011/09/12/jquery-1-6-4-released/'>jQuery Core 1.6.4</a>
  * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jquery/jquery-1.6.4.js"></script>
  * 
  * @requires <a href='../biojs/css/GeneExpressionSummary.css'>GeneExpressionSummary.css</a>
  * @dependency <link href="../biojs/css/GeneExpressionSummary.css" rel="stylesheet" type="text/css" />
- * 
- * @author <a href="mailto:johncar@gmail.com">John Gomez</a>, <a href="mailto:rafael@ebi.ac.uk">Rafael Jimenez</a>
  * 
  * @param {Object} options An object with the options for Sequence component.
  *    

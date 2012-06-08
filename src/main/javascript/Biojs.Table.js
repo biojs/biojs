@@ -5,6 +5,7 @@
  * @extends Biojs
  * 
  * @author <a href="mailto:johncar@gmail.com">John Gomez</a>
+ * @version 1.0.0
  * 
  * @requires <a href='http://blog.jquery.com/2011/09/12/jquery-1-6-4-released/'>jQuery Core 1.6.4</a>
  * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jquery/jquery-1.4.2.min.js"></script>

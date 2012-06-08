@@ -4,6 +4,9 @@
  * @class
  * @extends Biojs.Table
  * 
+ * @author <a href="mailto:johncar@gmail.com">John Gomez</a>
+ * @version 1.0.0
+ * 
  * @option {string[][]|Object} dataSet 
  *    Either 2D string array containing the whole data to be displayed or a plain object defining the data source. 
  *    

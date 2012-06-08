@@ -4,14 +4,14 @@
  * @class
  * @extends Biojs
  * 
+ * @author <a href="mailto:johncar@gmail.com">John Gomez</a>, <a href="mailto:secevalliv@gmail.com">Jose Villaveces</a>
+ * @version 1.0.0
+ * 
  * @requires <a href='http://blog.jquery.com/2011/09/12/jquery-1-6-4-released/'>jQuery Core 1.6.4</a>
  * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jquery/jquery-1.4.2.min.js"></script>
  * 
  * @requires <a href='http://jqueryui.com/download'>jQuery UI 1.8.16</a>
  * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jquery/jquery-ui-1.8.2.custom.min.js"></script>
- * 
- * @author <a href="mailto:johncar@gmail.com">John Gomez</a>, based on the code made 
- * by <a href="mailto:secevalliv@gmail.com">Jose Villaveces</a>
  * 
  * @param {Object} options An object with the options for Sequence component.
  *    

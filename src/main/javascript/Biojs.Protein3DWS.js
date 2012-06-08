@@ -5,6 +5,9 @@
  * @class
  * @extends Biojs.Protein3D
  * 
+ * @author <a href="mailto:johncar@gmail.com">John Gomez</a>
+ * @version 1.0.0
+ * 
  * @requires <a href=''>Server side proxy</a>
  * 
  * @param {Object} options An object with the options for the component.
