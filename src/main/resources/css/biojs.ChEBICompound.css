@@ -4,14 +4,23 @@ div.ChEBICompound {
 	padding: 0px;
 	margin: 0px;
 	overflow: hidden;
+	background-color: white;
 }
 
 div.ChEBICompound_image {
 	position: relative;
 	float: right;
 	width: 65%;
-	height:  100%;
+	height: 100%;
 }
+
+div.ChEBICompound .noImage {
+	background-image: url('images/noImage.png') no-repeat;
+	margin: auto;
+	width: 48px;
+	height: 64px
+}
+
 
 div.ChEBICompound_tab {
 	width:  35%;
@@ -23,6 +32,14 @@ div.ChEBICompound_tab {
 	background-repeat: repeat-y;
 	background-position-x: right;
 	color: #066;
+}
+
+div.ChEBICompound_image img {
+	margin-top: auto;
+	margin-right: auto;
+	margin-bottom: auto;
+	margin-left: auto;
+	display: table-cell;
 }
 
 div.ChEBICompound_tab div.content {
