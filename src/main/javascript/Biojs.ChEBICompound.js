@@ -1,11 +1,8 @@
 /**
- * 
+ *  
  * 
  * @class
  * @extends Biojs
- * 
- * @author <a href="mailto:johncar@gmail.com">John Gomez</a>
- * @version 1.0.0
  * 
  * @requires <a href=''>Server side proxy</a>
  * 
@@ -24,49 +21,72 @@
  * @option {string} id
  *    ChEBI identifier of the compound to be displayed (i.e. '4991'). 
  *     
- * @option {int} [height=400] 
- *    The height in pixels of how big this image should be displayed.
+ * @option {int} [height=undefined] 
+ *    The height in pixels of how big this component should be displayed. If it's not specified, the CSS value will be used instead. 
  * 
- * @option {int} [width=400]
- *    The width in pixels of how big this image should be displayed.
+ * @option {int} [width=undefined]
+ *    The width in pixels of how big this image should be displayed. If it's not specified, the CSS value will be used instead.
  * 
  * @example
  * var instance = new Biojs.ChEBICompound({
- * 		target: 'YourOwnDivId',
- * 		id: 'CHEBI:2922'
+ *    target: 'YourOwnDivId',
+ *    id: 'CHEBI:2922',
+ *    width: 700,
+ *    height: 400
  * });	
- * 
  * 
  */
 Biojs.ChEBICompound = Biojs.extend(
 /** @lends Biojs.ChEBICompound# */
 {
 	constructor: function(options){
-		//Biojs.console.enable();
-		//constructor of Biojs.ChEBICompound
+
 		var self = this;
-		this._selector = "#" + this.opt.target;
-		this._container = jQuery(this._selector);
+		var width = this.opt.width;
+		var height = this.opt.height;
+		var imageWidth, imageHeight;
+
+		if ( "string" == (typeof this.opt.target) ) {
+			this._container = jQuery( "#" + this.opt.target );
 		
-		this._container.addClass("ChEBICompound")
-			.css({
-				"width": self.opt.width,
-				"height": self.opt.height,
-				"padding": 0
-			});
+		} else {
+			
+			this.opt.target = "biojs_ChEBICompound_" + this.getId();
+			this._container = jQuery('<div id="'+ self.opt.target +'"></div>');
+		}
+
+		this._container.html('').addClass("ChEBICompound");
 		
+		if ( width == undefined ) {
+			width = this._container.css('width');
+			
+		} else {
+			this._container.width( width );
+		}
+		
+		if ( height == undefined ) {
+			height = this._container.css('height');
+			
+		} else {
+			this._container.height( height );
+		}
+
+		this._container.html('');
 		this._imageContainer = jQuery('<div class="ChEBICompound_image"></div>').appendTo(this._container);
 		this._tabContainer = jQuery('<div class="ChEBICompound_tab"></div>').appendTo(this._container);
 		
+		// Build the summary left panel 
 		this._summaryContainer = this._buildTabPanel(
 			this._tabContainer,
 			function ( tabVisible, visibleWidth ) {
-				//Biojs.console.log('Visible width ' + visibleWidth);
-				//self._imageContainer.css( 'width', self._container.width() - visibleWidth );
+				// Do nothing on tab visibility change
 			}
 		);
 		
-		this.opt.imageDimension = this._imageContainer.width();
+		// Size of the image for the URL request  
+		imageWidth = this._imageContainer.width();
+		imageHeight = this._imageContainer.height();
+		this.opt.imageDimension = (imageWidth < imageHeight)? imageWidth: imageHeight;
 		
 		if (this.opt.id !== undefined) {
 			this.setId(this.opt.id);
@@ -80,8 +100,8 @@ Biojs.ChEBICompound = Biojs.extend(
 	   chebiDetailsUrl: 'http://www.ebi.ac.uk/webservices/chebi/2.0/test/getCompleteEntity?chebiId=',
 	   proxyUrl: '../biojs/dependencies/proxy/proxy.php',
 	   
-	   height: 400,
-	   width: 597,
+	   height: undefined,
+	   width: undefined,
 	   scale: false,
 	   imageIndex: 0
 	},
@@ -124,10 +144,17 @@ Biojs.ChEBICompound = Biojs.extend(
 	],
 
 	/**
+    * Set the identifier of the chemical component. 
+    * Shows both information and image for the new identifier.
     * 
+    * @param {string} chebiId Chemical EBI's identifier for the compound to be displayed.
     *
     * @example
     * instance.setId('CHEBI:4991');
+    * 
+    * @example
+    * // No image available 
+    * instance.setId('CHEBI:60004');
     * 
     */
 	setId: function( chebiId ) {
@@ -149,18 +176,33 @@ Biojs.ChEBICompound = Biojs.extend(
 		};
 		
 		url = this.opt.imageUrl + '?' + jQuery.param(params);
-		image = jQuery('<img id="image_' + chebiId + '" src="'+ url +'"/>').appendTo(this._imageContainer);
+		image = jQuery('<img id="image_' + chebiId + '"/>');
+		
+		image.attr('src', url)
+        	.load(function() {
+	           if (!this.complete || typeof this.naturalWidth == "undefined" || this.naturalWidth == 0) {
+	        	   self._imageContainer.addClass("noImage");
+	        	   self.raiseEvent( Biojs.ChEBICompound.EVT_ON_REQUEST_ERROR, {
+	        		   id: chebiId,
+	        		   url: url,
+	        		   message: "No image available"
+	   			   });
 
-		image.load(function() {
-			self.raiseEvent( Biojs.ChEBICompound.EVT_ON_IMAGE_LOADED, {
-				id: chebiId,
-				url: url
-			});
-		}).css({
-			'width': self.opt.imageDimension,
-			'height': self.opt.imageDimension,
-			'margin': 'auto'
-		});
+	           } else {
+	        	   self._imageContainer.removeClass("noImage");
+	        	   self._imageContainer.append(image).css({
+	           			'width': self.opt.imageDimension,
+	           			'height': self.opt.imageDimension,
+	           			'margin': 'auto'
+	        	   });
+	        	   
+	        	   self.raiseEvent( Biojs.ChEBICompound.EVT_ON_IMAGE_LOADED, {
+	        		   id: chebiId,
+	        		   url: url
+	   			   });
+	           }
+        	})
+        	
 
 	},
 	
@@ -313,10 +355,15 @@ Biojs.ChEBICompound = Biojs.extend(
 		
 		content.css({ 
 			'width': contentWidth + "px", 
+			'height': container.height() + "px", 
 			'word-wrap': 'break-word'
 		});
 		
 		return content;
+	},
+	
+	getHTML: function () {
+		return this._container;
 	}
 	
 },{
