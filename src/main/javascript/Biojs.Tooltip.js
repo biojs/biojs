@@ -175,7 +175,6 @@ Biojs.Tooltip = Biojs.extend (
 	  this._container.appendTo('body');
 	  
 	  this._initialize();
-	  
   },
 
   /**
@@ -185,7 +184,7 @@ Biojs.Tooltip = Biojs.extend (
   opt: {
      targetSelector: "a",
      cbRender: undefined,
-	 arrowType: "left-top",
+	 arrowType: "left_top",
 	 position: 2, // ELEMENT_POSITION
 	 delay: 200
   },
@@ -317,6 +316,8 @@ Biojs.Tooltip = Biojs.extend (
       }).mouseout( function() {
           timer = setTimeout( 'Biojs.getInstance(' + self.getId()  + ')._hide()' , self.opt.delay );
       });
+      
+      this._hide();
   },
  
   _hide: function() {
@@ -511,18 +512,18 @@ Biojs.Tooltip = Biojs.extend (
   
 },{
 	// Arrows height: 12px width: 7px;
-	ARROW_LEFT_TOP:      "left-top",
-	ARROW_LEFT_MIDDLE:   "left-middle",
-	ARROW_LEFT_BOTTOM:   "left-bottom",
-	ARROW_TOP_LEFT:      "top-left",
-	ARROW_TOP_MIDDLE:    "top-middle",
-	ARROW_TOP_RIGHT:     "top-right",
-	ARROW_RIGHT_TOP:     "right-top",
-	ARROW_RIGHT_MIDDLE:  "right-middle",
-	ARROW_RIGHT_BOTTOM:  "right-bottom",
-	ARROW_BOTTOM_LEFT:   "bottom-left",
-	ARROW_BOTTOM_MIDDLE: "bottom-middle",
-	ARROW_BOTTOM_RIGHT:  "bottom-right",
+	ARROW_LEFT_TOP:      "left_top",
+	ARROW_LEFT_MIDDLE:   "left_middle",
+	ARROW_LEFT_BOTTOM:   "left_bottom",
+	ARROW_TOP_LEFT:      "top_left",
+	ARROW_TOP_MIDDLE:    "top_middle",
+	ARROW_TOP_RIGHT:     "top_right",
+	ARROW_RIGHT_TOP:     "right_top",
+	ARROW_RIGHT_MIDDLE:  "right_middle",
+	ARROW_RIGHT_BOTTOM:  "right_bottom",
+	ARROW_BOTTOM_LEFT:   "bottom_left",
+	ARROW_BOTTOM_MIDDLE: "bottom_middle",
+	ARROW_BOTTOM_RIGHT:  "bottom_right",
 	
 	// Events
 	EVT_ON_SHOW_UP: "onShowUp",
