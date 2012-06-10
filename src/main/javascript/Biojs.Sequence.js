@@ -82,7 +82,7 @@
  *      </ul> 
  *       
  * @example 
- * var theSequence = 'mlpglallllaawtaralevptdgnagllaepqiamfcgrlnmhmnvqngkwdsdpsgtktcidtkegilqycqevypelqitnvveanqpvtiqnwckrgrkqckthphfvipyrclvgefvsdallvpdkckflhqermdvcethlhwhtvaketcsekstnlhdygmllpcgidkfrgvefvccplaeesdnvdsadaeeddsdvwwggadtdyadgsedkvvevaeeeevaeveeeeadddeddedgdeveeeaeepyeeaterttsiatttttttesveevvrevcseqaetgpcramisrwyfdvtegkcapffyggcggnrnnfdteeycmavcgsamsqsllkttqeplardpvklpttaastpdavdkyletpgdenehahfqkakerleakhrermsqvmreweeaerqaknlpkadkkaviqhfqekvesleqeaanerqqlvethmarveamlndrrrlalenyitalqavpprprhvfnmlkkyvraeqkdrqhtlkhfehvrmvdpkkaaqirsqvmthlrviyermnqslsllynvpavaeeiqdevdellqkeqnysddvlanmiseprisygndalmpsltetkttvellpvngefslddlqpwhsfgadsvpantenevepvdarpaadrglttrpgsgltnikteeisevkmdaefrhdsgyevhhqklvffaedvgsnkgaiiglmvggvviatvivitlvmlkkkqytsihhgvvevdaavtpeerhlskmqqngyenptykffeqmqn';
+ * var theSequence = '"METLCQRLNVCQDKILTHYENDSTDLRDHIDYWKHMRLECAIYYKAREMGFKHINHQVVPTLAVSKNKALQAIELQLTLETIYNSQYSNEKWTLQDVSLEVYLTAPTGCIKKHGYTVEVQFDGDICNTMHYTNWTHIYICEEASVTVVEGQVDYYGLYYVHEGIRTYFVQFKDDAEKYSKNKVWEVHAGGQVILCPTSVFSSNEVSSPEIIRQHLANHPAATHTKAVALGTEETQTTIQRPRSEPDTGNPCHTTKLLHRDSVDSAPILTAFNSSHKGRINCNSNTTPIVHLKGDANTLKCLRYRFKKHCTLYTAVSSTWHWTGHNVKHKSAIVTLTYDSEWQRDQFLSQVKIPKTITVSTGFMSI"';
  * var mySequence = new Biojs.Sequence({
  * 		sequence : theSequence,
  * 		target : "YourOwnDivId",
@@ -116,14 +116,11 @@ Biojs.Sequence = Biojs.extend(
 {	
 	constructor: function (options) {
 		var self = this;
-		var initialize = self._initialize();
-		
-		Biojs.console.enable();
-		
-		this._selector = "#" + this.opt.target;
+
+		this._container = jQuery( "#" + this.opt.target );
 		
 		// Lazy initialization 
-		jQuery(this._selector).ready(function() {
+		this._container.ready(function() {
 			self._initialize();
 		});
 	},
@@ -142,6 +139,7 @@ Biojs.Sequence = Biojs.extend(
 		columns: { size: 35, spacedEach: 10 },
 		highlights : [],
 		annotations: [],
+		sequenceUrl: 'http://www.ebi.ac.uk/das-srv/uniprot/das/uniprot/sequence',
 		
 		// Styles 
 		selectionColor : 'Yellow',
@@ -151,8 +149,10 @@ Biojs.Sequence = Biojs.extend(
 		fontFamily: '"Andale mono", courier, monospace',
 		fontSize: '12px',
 		fontColor : 'inherit',
-		backgroundColor : 'inherit'
-		
+		backgroundColor : 'inherit',
+		width: undefined,
+		height: undefined,
+		formatSelectorVisible: true
 	},
 	
 	/**
@@ -223,26 +223,32 @@ Biojs.Sequence = Biojs.extend(
 	// Methods
 
 	_initialize: function () {
+		
+		if ( this.opt.width !== undefined ) {
+			this._container.width( this.opt.width );
+		}
+		
+		if ( this.opt.height !== undefined ) {
+			this._container.height( this.opt.height );
+		}
+		
 		// Disable text selection
 		
-		this._container = jQuery(this._selector).css({
+		this._container.css({
 			'-moz-user-select':'none',
 			'-webkit-user-select':'none',
 			'user-select':'none'
         });
 		
 		// DIV for the format selector
-		this._headerDiv = jQuery('<div></div>').appendTo(this._selector);
-		this._headerDiv.css({
-				'font-family': '"Heveltica Neue", Arial, "sans serif"',
-				'font-size': '14px'	
-			}).append('Format: ');
+		this._buildFormatSelector();
 		
 		// DIV for the sequence
-		this._contentDiv = jQuery('<div></div>').appendTo(this._selector);
+		this._contentDiv = jQuery('<div></div>').appendTo(this._container);
 		this._contentDiv.css({
 				'font-family': this.opt.fontFamily,
-				'font-size': this.opt.fontSize
+				'font-size': this.opt.fontSize,
+				'text-align': 'left'
 			});
 		
 		// Initialize highlighting 
@@ -255,7 +261,7 @@ Biojs.Sequence = Biojs.extend(
 		jQuery('<div id="sequenceTip' + this.getId() + '"></div>') 
 	        .css({	
 	        	'position': "absolute",
-	        	'z-index': "9999",
+	        	'z-index': "999999",
 	        	'color': "#fff",
 	        	'font-size': "12px",
 	        	'width': "auto",
@@ -264,9 +270,17 @@ Biojs.Sequence = Biojs.extend(
 	        .addClass("tooltip")
 	        .appendTo("body")
 	        .hide();
+
+		if ( ! Biojs.Utils.isEmpty(this.opt.sequence) ) {
+			this._redraw();
+			
+		} else if ( ! Biojs.Utils.isEmpty(this.opt.id) ) {
+			this._requestSequence( this.opt.id );
+			
+		} else {
+			this.clearSequence("No sequence available", "../biojs/css/images/warning_icon.png");
+		}
 		
-		this._buildFormatSelector();
-		this._redraw();
 	},
 	
 	
@@ -276,20 +290,53 @@ Biojs.Sequence = Biojs.extend(
 	 * @param {string} [identifier] Sequence identifier.
 	 * 
 	 * @example 
-	 * mySequence.setSequence("METLCQRLNVCQDKILTHYENDSTDLRDHIDYWKHMRLECAIYYKAREMGFKHINHQVVPTLAVSKNKALQAIELQLTLETIYNSQYSNEKWTLQDVSLEVYLTAPTGCIKKHGYTVEVQFDGDICNTMHYTNWTHIYICEEASVTVVEGQVDYYGLYYVHEGIRTYFVQFKDDAEKYSKNKVWEVHAGGQVILCPTSVFSSNEVSSPEIIRQHLANHPAATHTKAVALGTEETQTTIQRPRSEPDTGNPCHTTKLLHRDSVDSAPILTAFNSSHKGRINCNSNTTPIVHLKGDANTLKCLRYRFKKHCTLYTAVSSTWHWTGHNVKHKSAIVTLTYDSEWQRDQFLSQVKIPKTITVSTGFMSI");
+	 * mySequence.setSequence("P99999");
 	 * 
 	 */
     setSequence: function ( seq, identifier ) {
-    	this.opt.sequence = seq;
-    	this.opt.id = identifier; 
-    	this._highlights = [];
-		this._highlightsCount = 0;
-		this.opt.selection = { start: 0, end: 0 };
-		this._annotations = [];
-		
-		this._headerDiv.show();
-		this._contentDiv.children().remove();
-		this._redraw();
+
+    	if ( seq.match(/^[A-z]([0-9])*$/g) ) {
+    		this._requestSequence( arguments[0] );
+    		
+    	} else {
+    		this.opt.sequence = seq;
+        	this.opt.id = identifier; 
+        	this._highlights = [];
+    		this._highlightsCount = 0;
+    		this.opt.selection = { start: 0, end: 0 };
+    		this._annotations = [];
+    		
+    		this._contentDiv.children().remove();
+    		this._redraw();
+    	}
+    },
+    
+    _requestSequence: function ( accession ) {
+		var self = this;
+    	
+    	Biojs.console.log("Requesting sequence for: " + accession );
+
+		jQuery.ajax({ 
+			url: self.opt.sequenceUrl,
+			dataType: "xml",
+			data: { segment: accession },
+			success: function ( xml  ) {
+				try {
+					
+					var sequenceNode = jQuery(xml).find('SEQUENCE:first');
+					self.setSequence( sequenceNode.text(), sequenceNode.attr("id"), sequenceNode.attr("label") );
+					
+				} catch (e) {
+					Biojs.console.log("Error decoding response data: " + e.message );
+					self.clearSequence("No sequence available", "../biojs/css/images/warning_icon.png");
+				}
+
+			},
+			error: function (jqXHR, textStatus, errorThrown) {
+				Biojs.console.log("Error decoding response data: " + textStatus );
+				self.clearSequence("Error requesting the sequence to the server " + this.url , "../biojs/css/images/warning_icon.png");
+			}
+		});
     },
 	
     /**
@@ -359,6 +406,12 @@ Biojs.Sequence = Biojs.extend(
 	_buildFormatSelector: function () {
 		var self = this;
 		
+		this._headerDiv = jQuery('<div></div>').appendTo(this._container);
+		this._headerDiv.css({
+			'font-family': '"Heveltica Neue", Arial, "sans serif"',
+			'font-size': '14px'	
+		}).append('Format: ');
+		
 		this._formatSelector = jQuery('<select> '+
 				'<option value="FASTA">FASTA</option>'+
 				'<option value="CODATA">CODATA</option>'+
@@ -370,7 +423,9 @@ Biojs.Sequence = Biojs.extend(
 			self._redraw();
 		});
 		
-		self._formatSelector.val(self.opt.format);		
+		this._formatSelector.val(self.opt.format);	
+		
+		this.formatSelectorVisible( this.opt.formatSelectorVisible );
 	},
 	
 	/**
@@ -1176,8 +1231,8 @@ Biojs.Sequence = Biojs.extend(
 		        	.css({
 		        		'background-color': "#000",
 		        		'padding': "3px 10px 3px 10px",
-		        		'top': offset.top + jQuery(target).height(),
-		        		'left': offset.left + jQuery(target).width()
+		        		'top': offset.top + jQuery(target).height() + "px",
+		        		'left': offset.left + jQuery(target).width() + "px"
 		        	})
 			        .animate( {opacity: '0.85'}, 10)
 			        .html( cbGetMessageFunction.call( target ) )
