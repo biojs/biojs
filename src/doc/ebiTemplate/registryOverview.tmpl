@@ -284,62 +284,67 @@
 
                     <div class="grid_6">
                         <aside>
-                            <div class="main-right-box-no">
-                                <div class="right_title">
-                                <span class="version">Events</span></div>
-                                <div class="feat_list">
-                                    <ul>	
-                                        <for each="member" in="ownEvents">
-                                            <if test="member.example.length">
-                                                <for each="example" in="member.example">
-                                                    <li>{+member.name+}<pre class="event" id="{+member.name+}"/></li>
-                                                </for>
-                                            </if>
-                                        </for>                            
-                                    </ul>	
-                                </div>
-                            </div>
                             
-                            <div class="main-right-box-no">
-                                <div class="right_title">
-                                <span class="version">Methods</span></div>
-                                <div class="feat_list">
-                                    <ul>	
-                                        <for each="member" in="ownMethods">
-                                            <if test="member.example.length">
-                                                {! 
-                                                    var i=0; 
-                                                    var methodNames = {};
-                                                    var suffix = 1;
-                                                !}
-                                                <for each="example" in="member.example">
+                            <if test="data.events.length">
+                                <div class="main-right-box-no">                                     <div class="right_title">
+                                    <span class="version">Events</span></div>
+                                    <div>
+                                        <ul class="feat_list">	
+                                            <for each="member" in="ownEvents">
+                                                <if test="member.example.length">
+                                                    <for each="example" in="member.example">
+                                                        <li>{+member.name+}<pre class="event" id="{+member.name+}"/></li>
+                                                    </for>
+                                                </if>
+                                            </for>                            
+                                        </ul>	
+                                    </div>
+                                </div>
+                            </if>
+                            
+                            <if test="data.methods.length">
+                                <div class="main-right-box-no">
+                                    <div class="right_title">
+                                    <span class="version">Methods</span></div>
+                                    <div>
+                                        <ul class="feat_list">	
+                                            <for each="member" in="ownMethods">
+                                                <if test="member.example.length">
                                                     {! 
-                                                        i++; 
-                                                        suffix = methodNames.hasOwnProperty(member.name) ? ++suffix : 1;
-                                                        methodNames[member.name] = "";
+                                                        var i=0; 
+                                                        var methodNames = {};
+                                                        var suffix = 1;
                                                     !}
-                                                    <li><a href="#" id="{+member.name+}{+i+}" class="methodExample">
-                                                        {+ member.name + ( suffix > 1 ? ' (' + suffix +')' : '' ) +}</a>
-                                                    </li>
-                                                </for>
-                                            </if>
-                                        </for>                          
-                                    </ul>	
+                                                    <for each="example" in="member.example">
+                                                        {! 
+                                                            i++; 
+                                                            suffix = methodNames.hasOwnProperty(member.name) ? ++suffix : 1;
+                                                            methodNames[member.name] = "";
+                                                        !}
+                                                        <li><a href="#" id="{+member.name+}{+i+}" class="methodExample">
+                                                            {+ member.name + ( suffix > 1 ? ' (' + suffix +')' : '' ) +}</a>
+                                                        </li>
+                                                    </for>
+                                                </if>
+                                            </for>                          
+                                        </ul>	
+                                    </div>
                                 </div>
-                            </div>
+                            </if>
                             
-                            
-                            <div class="main-right-box-no">
-                                <div class="right_title">
+                            <if test="data.requires">
+                                <div class="main-right-box-no">
+                                    <div class="right_title">
                                     <span class="version">Dependencies</span></div>
-                                <div class="feat_list">
-                                    <ul>	
-                                        <for each="item" in="data.requires">
-                                            <li>{+ new Link().toSymbol(item) +}</li>
-                                        </for>                           
-                                    </ul>	
+                                    <div>
+                                        <ul class="feat_list">	
+                                            <for each="item" in="data.requires">
+                                                <li>{+ new Link().toSymbol(item) +}</li>
+                                            </for>                           
+                                        </ul>	
+                                    </div>
                                 </div>
-                            </div>
+                            </if>
                             
                         </aside>
                     </div> <!-- side bar end -->
@@ -555,10 +560,11 @@
                 </div> <!-- methods section end -->
                         
                 <!-- ============================== events ============================ -->
-                        
-                <div id="events" class="grid_24" style="display:none;">
-                    <if test="data.events.length">
-                        {! var ownEvents = data.events.filter(function($){return $.memberOf != "Biojs" }).sort(makeSortby("name")); !}
+                
+                <if test="data.events.length">
+                    {! var ownEvents = data.events.filter(function($){ return $.memberOf != "Biojs" }).sort(makeSortby("name")); !}
+                    {+ownEvents.length+}
+                    <div id="events" class="grid_24" style="display:none;">
                         <if test="ownEvents.length">
                             <for each="member" in="ownEvents">
                                 
@@ -604,8 +610,8 @@
                                 </if><!------------------- End of event -->
                             </for>
                         </if>
-                    </if>
-                </div> <!-- events section end -->
+                    </div> <!-- events section end -->
+                </if>
                 
             </div> <!-- main section end -->
 
