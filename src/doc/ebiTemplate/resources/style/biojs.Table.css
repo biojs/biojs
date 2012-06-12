@@ -1,4 +1,4 @@
-
+@CHARSET "UTF-8";
 /*
  * Table
  */
@@ -73,7 +73,7 @@ table.dataTable tr.even td.sorting_3 { background-color: #F9F9FF; }
  * Filter
  */
 .dataTables_filter {
-	float: left;
+	float: right;
 	text-align: right;
 	margin: 0px 0px 5px 0px;
     
