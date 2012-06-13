@@ -97,7 +97,7 @@ table.dataTable tr.even td.sorting_3 { background-color: #F9F9FF; }
 	-ms-filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#82A9CC', endColorstr='#346998');
 }
 .dataTables_filter label {    
-    margin: 9px;
+    margin: 3px;
 	color: #F6F6F6;
 }
 
