@@ -2103,12 +2103,12 @@ div.entry-child-prot {
 /* CUSTOM BIOJS STYLE --------------------------------------------------------- */
 
 div#example {
-	width: 700px;
+	width: 715px;
 	height: 400px;
 	margin: auto;
 	background: url(images/background_01.gif);
 	overflow: auto;
-	margin: 20px 0 0 10px;
+	margin: 20px 0 0 5px;
 }
 
 #twtr-widget-1 div.twtr-hd a, #twtr-widget-1 div.twtr-hd h2, #twtr-widget-1 div.twtr-hd h3 {
