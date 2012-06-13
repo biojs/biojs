@@ -45,66 +45,66 @@
 
 	<div id="content"> 
     	<div class="accordion">
-	    <if test="data.events.length">
-		{! var ownEvents = data.events.filter(function($){return $.memberOf != "Biojs" }).sort(makeSortby("name")); !}
-			<if test="ownEvents.length">
-				<for each="member" in="ownEvents">
+<if test="data.events.length">
+{! var ownEvents = data.events.filter(function($){return $.memberOf != "Biojs" }).sort(makeSortby("name")); !}
+<if test="ownEvents.length">
+    <for each="member" in="ownEvents">
 
-					<h3 class="method_name"><a href="#"><b>{+member.name+}</b></a></h3>
-					<div class="method_desc"> <!-------------- Begin of event -->
-					
-						{+resolveLinks(member.desc)+}<br/>
-						<if test="member.srcFile != data.srcFile">
-						<br />
-							<i>Defined in: </i> {+new Link().toSrc(member.srcFile)+}.
-						</if>
-						
-						<if test="member.author"><br /><i>Author: </i>{+member.author+}.</if>
-					
-						<if test="member.params.length">
-							<br/>
-							<b>Parameters:</b>
-							<ul>
-							<for each="item" in="member.params">
-								<li>
-									{+((item.type)?"<span class=\"light fixedFont\">{"+(new Link().toSymbol(item.type))+"}</span> " : "")+}<b>{+item.name+}</b>
-									<if test="item.isOptional"><i>Optional<if test="item.defaultValue">, Default: {+item.defaultValue+}</if></i></if>
-									<br/>{+resolveLinks(item.desc)+}
-								</li>
-							</for>
-							</ul>
-						</if>
-						
-						<if test="member.comment.getTag('eventData').length">
-							<br/>
-							<b>Returned data in the Biojs.Event object:</b>
-							<ul>
-							<for each="eventData" in="member.comment.getTag('eventData')">	
-								<li>
-									{+((eventData.type)?""+("<span class=\"light fixedFont\">{"+(new Link().toSymbol(eventData.type)+"}</span> ")) : "")+} 
-									<b>{+eventData.name+}</b>
-									<if test="eventData.isOptional"><i>Optional<if test="eventData.defaultValue">, Default: {+eventData.defaultValue+}</if></i></if>
-									<br/>{+resolveLinks(eventData.desc)+}
-								</li>
-							</for>
-							</ul>
-					    </if>
-						
-						<if test="member.example.length">
-							{! var i = 0; !}
-							<for each="example" in="member.example">
-							   {! var counter = (member.example.length > 1)? (++i) : ""; !}
-							   <br/>
-							   <b>Example {+counter+}:</b>
-							   <pre class="brush: js">{+example+}</pre>
-							</for>
-						</if>
-						
-					</div>	<!------------------- End of event -->
-					
-				</for>
-		     </if>
-		  </if>
+        <h3 class="method_name"><a href="#"><b>{+member.name+}</b></a></h3>
+        <div class="method_desc"> <!-------------- Begin of event -->
+        
+            {+resolveLinks(member.desc)+}<br/>
+            <if test="member.srcFile != data.srcFile">
+            <br />
+                <i>Defined in: </i> {+new Link().toSrc(member.srcFile)+}.
+            </if>
+            
+            <if test="member.author"><br /><i>Author: </i>{+member.author+}.</if>
+        
+            <if test="member.params.length">
+                <br/>
+                <b>Parameters:</b>
+                <ul>
+                <for each="item" in="member.params">
+                    <li>
+                        {+((item.type)?"<span class=\"light fixedFont\">{"+(new Link().toSymbol(item.type))+"}</span> " : "")+}<b>{+item.name+}</b>
+                        <if test="item.isOptional"><i>Optional<if test="item.defaultValue">, Default: {+item.defaultValue+}</if></i></if>
+                        <br/>{+resolveLinks(item.desc)+}
+                    </li>
+                </for>
+                </ul>
+            </if>
+            
+            <if test="member.comment.getTag('eventData').length">
+                <br/>
+                <b>Returned data in the Biojs.Event object:</b>
+                <ul>
+                <for each="eventData" in="member.comment.getTag('eventData')">	
+                    <li>
+                        {+((eventData.type)?""+("<span class=\"light fixedFont\">{"+(new Link().toSymbol(eventData.type)+"}</span> ")) : "")+} 
+                        <b>{+eventData.name+}</b>
+                        <if test="eventData.isOptional"><i>Optional<if test="eventData.defaultValue">, Default: {+eventData.defaultValue+}</if></i></if>
+                        <br/>{+resolveLinks(eventData.desc)+}
+                    </li>
+                </for>
+                </ul>
+            </if>
+            
+            <if test="member.example.length">
+                {! var i = 0; !}
+                <for each="example" in="member.example">
+                   {! var counter = (member.example.length > 1)? (++i) : ""; !}
+                   <br/>
+                   <b>Example {+counter+}:</b>
+                   <pre class="brush: js">{+example+}</pre>
+                </for>
+            </if>
+            
+        </div>	<!------------------- End of event -->
+        
+    </for>
+ </if>
+</if>
     	</div>	
 	</div>	
 	
