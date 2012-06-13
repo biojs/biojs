@@ -119,41 +119,24 @@
             //
             // View the source code in a new window
             //
-            
-            /*
-            var sourceCodeWindow = window.open('','myconsole',
-                'width=350,height=250'
-                +',menubar=0'
-                +',toolbar=0'
-                +',status=0'
-                +',scrollbars=1'
-                +',resizable=1' ); 
-            
+            var sourceCodeWindow; 
             
             jQuery('#viewInWindowButton').click(function() {
             
+                sourceCodeWindow = window.open('', '', "width=700,height=600,menubar=0,toolbar=0,status=0,scrollbars=1,resizable=1,location=0" );
+            
                 // We get it?
-                if (sourceCodeWindow) {
+                if ( sourceCodeWindow ) {
                 
-                // Good, build a blank document into with a DIV 'Biojs.console'
-                sourceCodeWindow.document.writeln(
-                '<html><head><title>BioJS Co</title></head>'
-                    +'<body bgcolor=white onLoad="self.focus()">'
-                        +'<div id="Biojs.console"></div>'
-                        +'</body></html>'
-                );
-                consoleWin.document.close();
-                
-                Biojs.console.domDocument = consoleWin.document;
-                Biojs.console.domDivNode = consoleWin.document.getElementById("Biojs.console");
+                    sourceCodeWindow.document.writeln( unescape(window.exampleCode) );
+                    sourceCodeWindow.document.close();
  
                 } else {
-                alert("Please allow pop-up windows for this page in your browser");
+                    alert("Please allow pop-up windows for this site in your browser");
                 }
+            
             });
-            */
-            
-            
+
 
         };	
 			
@@ -186,7 +169,7 @@
         </div>
 <!-- ============================== main content ============================ -->
         
-        <div class="container_24" id="wrapper">
+        <div class="container_24" id="wrapper"> 
             <!-- ============================== header ================================= -->
             <header>
                 <div class="masthead grid_24" id="global-masthead">
@@ -208,23 +191,6 @@
                         <p><a href="." style="border-bottom-width: 0px;" title=""><img alt="Biojs" class="logo" src="images/logo.png" /></a></p>
                     </div>
                     
-                    <!--
-                    <div class="grid_12 omega">
-                        <form action="search" id="local-search">
-                            <fieldset>
-                                <div class="form">
-                                    <label>
-                                        <input class="field" id="local-searchbox" name="q" onblur="displaySearchInterPro(this);" onfocus="hideSearchInterPro(this);" size="30" type="text" value="" />
-                                    </label>
-                                    <input alt="Search InterPro" class="submit" id="searchsubmit" title="Search InterPro" type="submit" value="Search" />
-                                    
-                                    
-                                </div>
-                            </fieldset>
-                        </form>
-                    </div>
-                     -->
-                    
                     <nav>
                         <ul class="grid_24" id="local-nav">
                             <li class="first"><a href="./index.html" title="">Home</a></li>
@@ -240,7 +206,7 @@
                 <h2 class="strapline title">{+data.alias+} showcase</h2>
                 <ul>
                     <li><a href="#" id="overviewLink" class="selected">Overview</a></li>
-                    <li><a href="#" id="sourceLink">Source</a></li>
+                    <li><a href="#" id="sourceLink">Installation</a></li>
                     <li><a href="#" id="optionsLink">Options</a></li>
                     <li><a href="#" id="methodsLink">Methods</a></li>
                     <li><a href="#" id="eventsLink">Events</a></li>
@@ -252,20 +218,23 @@
 
                 <!-- ============================== overview ============================ -->
 
-                <div id="overview">
+                <div id="overview" class="grid_24">
                     
                     <!-- ============================== component section ============================ -->
 
-                    <div class="grid_18" id="overview"> 
+                    <div class="grid_18 alpha"> 
 
                         <div class="box_3dview" id="example">
                             <div id="YourOwnDivId"></div>
                         </div>
                         <br/>
-                        <!-- <div><a id="viewInWindowButton" class="main_button" href="#">View in window</a>   -->
-                        <br/>
-                        
-                        <p class="warning">PLEASE NOTE: the above example is being affected by the CSS rules of this site. Click on 'view in window' to see the component by using its own CSS stylesheet(s) only.</p>
+                        <div style="text-align:right;">
+                            <p class="warning">
+                                PLEASE NOTE: the above example is being affected by the CSS rules of this site. 
+                                Click on 'view in window' to see the component by using its own CSS stylesheet(s) only.
+                            </p>
+                            <a id="viewInWindowButton" class="main_button" href="#">View in window</a>
+                        </div>
             
                         <div> 
                             <h3>Overview</h3>
@@ -282,12 +251,12 @@
            
                     <!-- ============================== side bar ============================ -->	
 
-                    <div class="grid_6">
+                    <div class="grid_6 omega">
                         <aside>
                             
                             <if test="data.events.length">
-                                <div class="main-right-box-no">                                     <div class="right_title">
-                                    <span class="version">Events</span></div>
+                                <div class="main-right-box-no">                                     
+                                    <div class="right_title"><span class="version">Events</span></div>
                                     <div>
                                         <ul class="feat_list">	
                                             <for each="member" in="ownEvents">
@@ -304,8 +273,7 @@
                             
                             <if test="data.methods.length">
                                 <div class="main-right-box-no">
-                                    <div class="right_title">
-                                    <span class="version">Methods</span></div>
+                                    <div class="right_title"><span class="version">Methods</span></div>
                                     <div>
                                         <ul class="feat_list">	
                                             <for each="member" in="ownMethods">
@@ -334,8 +302,7 @@
                             
                             <if test="data.requires">
                                 <div class="main-right-box-no">
-                                    <div class="right_title">
-                                    <span class="version">Dependencies</span></div>
+                                    <div class="right_title"><span class="version">Dependencies</span></div>
                                     <div>
                                         <ul class="feat_list">	
                                             <for each="item" in="data.requires">
@@ -354,63 +321,67 @@
                 <!-- ============================= installation ======================== -->
                     
                 <div id="source" class="grid_24" style="display:none;"> 
-                    <h3>Installation</h3>
-                    To get the above Biojs.{+data.name+} to work on your page, you need to do the following:
+                    <p>To get the above Biojs.{+data.name+} to work on your page, you need to do the following:</p>
                     
                     <ol>
                         <li>Include the file <a href="src/Biojs.{+data.name+}.js">Biojs.{+data.name+}.js</a> and its dependencies to your page header.
                             {! 
-                            var scripts = ""; 
-                            var links = "";
-                            var others = "";
-                            var biojs = '&lt;script language="JavaScript" type="text/javascript" src="src/Biojs.js"&gt;&lt;/script&gt;\n';
+                                var scripts = ""; 
+                                var links = "";
+                                var others = "";
+                                var biojs = '<script language="JavaScript" type="text/javascript" src="src/Biojs.js"></script>' + "\n";
+                                var exampleCode = "";
                             !}
                             <if test="data.comment.getTag('dependency').length">
                                 <for each="item" in="data.comment.getTag('dependency')">
                                     {! 
-                                    var itemValue = item.desc.toString() + "\n";
-                                    
-                                    if ( itemValue.indexOf( 'script' ) != -1 ){
-                                    
-                                    if ( itemValue.indexOf( 'Biojs' ) != -1 ) {
-                                    biojs += itemValue.replace(60,"&lt;").replace(62,"&gt;");
-                                    
-                                    } else {
-                                    scripts += itemValue.replace(60,"&lt;").replace(62,"&gt;");
-                                    }
-                                    
-                                    } else if ( itemValue.indexOf( 'link' ) != -1 ) {
-                                    links += itemValue.replace(60,"&lt;").replace(62,"&gt;");
-                                    
-                                    } else {
-                                    others += itemValue.replace(60,"&lt;").replace(62,"&gt;");
-                                    }
+                                        var itemValue = item.desc.toString() + "\n";
+                                        
+                                        if ( itemValue.indexOf( 'script' ) != -1 ){
+                                        
+                                            if ( itemValue.indexOf( 'Biojs' ) != -1 ) {
+                                                biojs += itemValue;
+                                            
+                                            } else {
+                                                scripts += itemValue;
+                                            }
+                                            
+                                        } else if ( itemValue.indexOf( 'link' ) != -1 ) {
+                                            links += itemValue;
+                                            
+                                        } else {
+                                            others += itemValue;
+                                        }
                                     
                                     !}
                                 </for>
                             </if>  
                             {! 
-                            biojs += '&lt;script language="JavaScript" type="text/javascript" src="src/Biojs.'+ data.name +'.js"&gt;&lt;/script&gt;'; 
+                                biojs += '<script language="JavaScript" type="text/javascript" src="src/Biojs.'+ data.name +'.js"></script>'; 
                             !}
                             
                             <if test="biojs.length">
                                 <h4>Biojs scripts</h4>
-                                <pre class="brush: html; toolbar: false" >{+biojs+}</pre>
+                                <pre class="brush: html; toolbar: false" >{+biojs.replace('<','&lt;').replace('>','&gt;')+}</pre>
+                                {! exampleCode += biojs; !}
                             </if>
+                            
                             <if test="scripts.length">
                                 <h4>External script(s)</h4>
-                                <pre class="brush: html; toolbar: false" >{+scripts+}</pre>
+                                <pre class="brush: html; toolbar: false" >{+scripts.replace('<','&lt;').replace('>','&gt;')+}</pre>
+                                {! exampleCode += scripts; !}
                             </if>
-                            
-                            
+
                             <if test="links.length">
                                 <h4>CSS stylesheet(s)</h4>
-                                <pre class="brush: html; toolbar: false" >{+links+}</pre>
+                                <pre class="brush: html; toolbar: false" >{+links.replace('<','&lt;').replace('>','&gt;')+}</pre>
+                                {! exampleCode += links; !}
                             </if>
                             
                             <if test="others.length">
                                 <h4>Others</h4>
-                                <pre class="brush: html; toolbar: false" >{+others+}</pre>
+                                <pre class="brush: html; toolbar: false" >{+others.replace('<','&lt;').replace('>','&gt;')+}</pre>
+                                {! exampleCode += others; !}
                             </if>
                         </li>    
                         
@@ -427,25 +398,31 @@
                         <li>Create a code snippet within a &lt;script&gt; tag and instance Biojs.{+data.name+} into.
                             <if test="!data.isBuiltin() && (data.isNamespace || data.is('CONSTRUCTOR'))">
                                 <if test="data.example.length">
-                                    {! var example = data.example[0].toString().replace(60,"&lt;").replace(62,"&gt;"); 
-                                    var snippet = 'window.onload = function() {\n' + example + '\n\n};';
+                                    {! 
+                                        var example = data.example[0].toString(); 
+                                        var snippet = 'window.onload = function() {\n' + example + '\n\n};';
                                     !}
                                     <pre class="brush: js; toolbar: false" >{+snippet+}</pre>
+                                    {! exampleCode += '<script language="JavaScript" type="text/javascript">' + snippet + '</script>'; !}
                                 </if>
                             </if> 
                         </li>
+                        <script language="JavaScript" type="text/javascript">
+                            window.exampleCode = escape('<html><head><title>{+data.alias+}</title>');
+                            window.exampleCode += '{+escape(exampleCode.replace('\n',''))+}';
+                            window.exampleCode += escape('</head><body><div id="YourOwnDivId"></div></body></html>');
+                        </script>
+                        
                     </ol>
                 </div>
                     
-                
-                
                 <!-- ============================== options ============================ -->
                 
                 <div id="options" class="grid_24" style="display:none;">
                     {!
-                        var options = data.comment.getTag('option');
+                        var options = data.comment.getTag("option");
 
-                        for ( var i=0; i < options.length; i++ ) {
+                        for ( var i in options ) {
                             
                             options[i].optional = ( options[i].desc.indexOf("[") != -1  );
 
@@ -463,7 +440,7 @@
                                 }
                             
                             } else {
-                                options[i].name = options[i].desc.substr( 0, options[i].desc.indexOf(' ') );
+                                options[i].name = options[i].desc.substr( 0, options[i].desc.indexOf(" ") );
                                 options[i].desc = options[i].desc.substr( options[i].name.length + 3 );
                             }
                         }
@@ -503,7 +480,7 @@
                                 </if>
                             </for>
                         </if>
-                        <ul>
+                        </ul>
                     </div>
 
                 </div> <!-- options end -->
@@ -563,7 +540,6 @@
                 
                 <if test="data.events.length">
                     {! var ownEvents = data.events.filter(function($){ return $.memberOf != "Biojs" }).sort(makeSortby("name")); !}
-                    {+ownEvents.length+}
                     <div id="events" class="grid_24" style="display:none;">
                         <if test="ownEvents.length">
                             <for each="member" in="ownEvents">
