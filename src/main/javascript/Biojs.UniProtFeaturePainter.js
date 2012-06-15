@@ -1,4 +1,4 @@
-var Biojs_UniProtFeaturePainter_myself = undefined;
+
 
 /**
  * 
@@ -254,11 +254,10 @@ var Biojs_UniProtFeaturePainter_myself = undefined;
  * });
  *
  */
-
 Biojs.UniProtFeaturePainter = Biojs.extend(
     /** @lends Biojs.UniProtFeaturePainter */
     {
-        /**
+        /*
          * Public variables
          */
         raphael: '',
@@ -267,7 +266,7 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
         slider_stop: 0,
         slider_start: 0,
         context: '',
-        /**
+        /*
          * Private variables
          */
         _UP: "up",
@@ -331,126 +330,124 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
          * @name Biojs.UniProtFeaturePainter-eventTypes
          */
         eventTypes: [
-        /**
-         * @name Biojs.UniProtFeaturePainter#onFeatureClick
-         * @event
-         * @param {function} actionPerformed A function which receives a {@link Biojs.Event} object as argument.
-         * @eventData {Object} source The component which triggered the event.
-         * @eventData {string} type The name of the event.
-         * @eventData {Object} featureInfo A json object with the information for the selected feature, including id.
-         * @example
-         * //It is not recommended to use this event to highlight and sustain that highlight after a click on a
-         * //feature, instead set to ture the options selectFeatureOnMouseClick.
-         * myPainter.onFeatureClick(
-         *    function( obj ) {
-         *    var tooltip = obj.featureLabel +
-         *          " (" + obj.featureStart + ", " + obj.featureEnd + "; length " + (obj.featureEnd-obj.featureStart+1) + ")" +
-         *          "<br/>Type: " + obj.featureTypeLabel + " - " + obj.typeCode + " - " + obj.typeCategory +
-         *          "<br/>Evidence: " + obj.evidenceText + " - " + obj.evidenceCode;
-         *       alert("Clicked: " + tooltip );
-         *       Biojs.console.log(obj.shape); //raphaël object
-         *    }
-         * );
-         *
-         * */
+	        /**
+	         * @name Biojs.UniProtFeaturePainter#onFeatureClick
+	         * @event
+	         * @param {function} actionPerformed A function which receives a {@link Biojs.Event} object as argument.
+	         * @eventData {Object} source The component which triggered the event.
+	         * @eventData {string} type The name of the event.
+	         * @eventData {Object} featureInfo A json object with the information for the selected feature, including id.
+	         * @example
+	         * //It is not recommended to use this event to highlight and sustain that highlight after a click on a
+	         * //feature, instead set to ture the options selectFeatureOnMouseClick.
+	         * myPainter.onFeatureClick(
+	         *    function( obj ) {
+	         *    var tooltip = obj.featureLabel +
+	         *          " (" + obj.featureStart + ", " + obj.featureEnd + "; length " + (obj.featureEnd-obj.featureStart+1) + ")" +
+	         *          "<br/>Type: " + obj.featureTypeLabel + " - " + obj.typeCode + " - " + obj.typeCategory +
+	         *          "<br/>Evidence: " + obj.evidenceText + " - " + obj.evidenceCode;
+	         *       alert("Clicked: " + tooltip );
+	         *       Biojs.console.log(obj.shape); //raphaël object
+	         *    }
+	         * );
+	         *
+	         * */
             "onFeatureClick",
-        /**
-         * @name Biojs.UniProtFeaturePainter#onFeatureOn
-         * @event
-         * @param {function} actionPerformed A function which receives a {@link Biojs.Event} object as argument.
-         * @eventData {Object} source The component which triggered the event.
-         * @eventData {string} type The name of the event.
-         * @eventData {Object} featureInfo A json object with the information for the selected feature, including id.
-         * @example
-         * // It is not recommended to use this event to display a tooltip or highlight the features on mouse over,
-         * // instead set to true the options showFeatureTooltipOnMouseOver and highlightFeatureOnMouseOver
-         *
-         * myPainter.onFeatureOn(
-         *    function( obj ) {
-         *    var tooltip = obj.featureLabel +
-         *           " (" + obj.featureStart + ", " + obj.featureEnd + "; length " + (obj.featureEnd-obj.featureStart+1) + ")" +
-         *           "<br/>Type: " + obj.featureTypeLabel + " - " + obj.typeCode + " - " + obj.typeCategory +
-         *           "<br/>Evidence: " + obj.evidenceText + " - " + obj.evidenceCode;
-         *       alert("On feature: " + tooltip );
-         *       Biojs.console.log(obj.shape); //raphaël object
-         *    }
-         * );
-         *
-         * */
+	        /**
+	         * @name Biojs.UniProtFeaturePainter#onFeatureOn
+	         * @event
+	         * @param {function} actionPerformed A function which receives a {@link Biojs.Event} object as argument.
+	         * @eventData {Object} source The component which triggered the event.
+	         * @eventData {string} type The name of the event.
+	         * @eventData {Object} featureInfo A json object with the information for the selected feature, including id.
+	         * @example
+	         * // It is not recommended to use this event to display a tooltip or highlight the features on mouse over,
+	         * // instead set to true the options showFeatureTooltipOnMouseOver and highlightFeatureOnMouseOver
+	         *
+	         * myPainter.onFeatureOn(
+	         *    function( obj ) {
+	         *    var tooltip = obj.featureLabel +
+	         *           " (" + obj.featureStart + ", " + obj.featureEnd + "; length " + (obj.featureEnd-obj.featureStart+1) + ")" +
+	         *           "<br/>Type: " + obj.featureTypeLabel + " - " + obj.typeCode + " - " + obj.typeCategory +
+	         *           "<br/>Evidence: " + obj.evidenceText + " - " + obj.evidenceCode;
+	         *       alert("On feature: " + tooltip );
+	         *       Biojs.console.log(obj.shape); //raphaël object
+	         *    }
+	         * );
+	         *
+	         * */
             "onFeatureOn",
-        /**
-         * @name Biojs.UniProtFeaturePainter#onFeatureOff
-         * @event
-         * @param {function} actionPerformed A function which receives a {@link Biojs.Event} object as argument.
-         * @eventData {Object} source The component which triggered the event.
-         * @eventData {string} type The name of the event.
-         * @eventData {Object} featureInfo A json object with the information for the selected feature, including id.
-         * @example
-         *
-         * myPainter.onFeatureOff(
-         *    function( obj ) {
-         *    var tooltip = obj.featureLabel +
-         *           " (" + obj.featureStart + ", " + obj.featureEnd + "; length " + (obj.featureEnd-obj.featureStart+1) + ")" +
-         *           "<br/>Type: " + obj.featureTypeLabel + " - " + obj.typeCode + " - " + obj.typeCategory +
-         *           "<br/>Evidence: " + obj.evidenceText + " - " + obj.evidenceCode;
-         *       alert("Off feature: " + tooltip );
-         *       Biojs.console.log(obj.shape); //raphaël object
-         *    }
-         * );
-         *
-         * */
+	        /**
+	         * @name Biojs.UniProtFeaturePainter#onFeatureOff
+	         * @event
+	         * @param {function} actionPerformed A function which receives a {@link Biojs.Event} object as argument.
+	         * @eventData {Object} source The component which triggered the event.
+	         * @eventData {string} type The name of the event.
+	         * @eventData {Object} featureInfo A json object with the information for the selected feature, including id.
+	         * @example
+	         *
+	         * myPainter.onFeatureOff(
+	         *    function( obj ) {
+	         *    var tooltip = obj.featureLabel +
+	         *           " (" + obj.featureStart + ", " + obj.featureEnd + "; length " + (obj.featureEnd-obj.featureStart+1) + ")" +
+	         *           "<br/>Type: " + obj.featureTypeLabel + " - " + obj.typeCode + " - " + obj.typeCategory +
+	         *           "<br/>Evidence: " + obj.evidenceText + " - " + obj.evidenceCode;
+	         *       alert("Off feature: " + tooltip );
+	         *       Biojs.console.log(obj.shape); //raphaël object
+	         *    }
+	         * );
+	         *
+	         * */
             "onFeatureOff",
-        /**
-         * @name Biojs.UniProtFeaturePainter#onFeatureSelected
-         * @event
-         * @param {function} actionPerformed A function which receives a {@link Biojs.Event} object as argument.
-         * @eventData {Object} source The component which triggered the event.
-         * @eventData {string} type The name of the event.
-         * @eventData {Object} featureInfo A json object with the information for the selected feature, including id.
-         * @example
-         * //Will only be raised if selectFeatureOnMouseClick is true
-         * myPainter.onFeatureSelected(
-         *    function( obj ) {
-         *    var tooltip = obj.featureLabel +
-         *           " (" + obj.featureStart + ", " + obj.featureEnd + "; length " + (obj.featureEnd-obj.featureStart+1) + ")" +
-         *           "<br/>Type: " + obj.featureTypeLabel + " - " + obj.typeCode + " - " + obj.typeCategory +
-         *           "<br/>Evidence: " + obj.evidenceText + " - " + obj.evidenceCode;
-         *       alert("Selected feature: " + tooltip );
-         *       Biojs.console.log(obj.shape); //raphaël object
-         *    }
-         * );
-         *
-         * */
+	        /**
+	         * @name Biojs.UniProtFeaturePainter#onFeatureSelected
+	         * @event
+	         * @param {function} actionPerformed A function which receives a {@link Biojs.Event} object as argument.
+	         * @eventData {Object} source The component which triggered the event.
+	         * @eventData {string} type The name of the event.
+	         * @eventData {Object} featureInfo A json object with the information for the selected feature, including id.
+	         * @example
+	         * //Will only be raised if selectFeatureOnMouseClick is true
+	         * myPainter.onFeatureSelected(
+	         *    function( obj ) {
+	         *    var tooltip = obj.featureLabel +
+	         *           " (" + obj.featureStart + ", " + obj.featureEnd + "; length " + (obj.featureEnd-obj.featureStart+1) + ")" +
+	         *           "<br/>Type: " + obj.featureTypeLabel + " - " + obj.typeCode + " - " + obj.typeCategory +
+	         *           "<br/>Evidence: " + obj.evidenceText + " - " + obj.evidenceCode;
+	         *       alert("Selected feature: " + tooltip );
+	         *       Biojs.console.log(obj.shape); //raphaël object
+	         *    }
+	         * );
+	         *
+	         * */
             "onFeatureSelected",
-        /**
-         * @name Biojs.UniProtFeaturePainter#onFeatureUnselected
-         * @event
-         * @param {function} actionPerformed A function which receives a {@link Biojs.Event} object as argument.
-         * @eventData {Object} source The component which triggered the event.
-         * @eventData {string} type The name of the event.
-         * @eventData {Object} featureInfo A json object with the information for the selected feature, including id.
-         * @example
-         * //Will only be raised if selectFeatureOnMouseClick is true
-         * myPainter.onFeatureUnselected(
-         *    function( obj ) {
-         *    var tooltip = obj.featureLabel +
-         *           " (" + obj.featureStart + ", " + obj.featureEnd + "; length " + (obj.featureEnd-obj.featureStart+1) + ")" +
-         *           "<br/>Type: " + obj.featureTypeLabel + " - " + obj.typeCode + " - " + obj.typeCategory +
-         *           "<br/>Evidence: " + obj.evidenceText + " - " + obj.evidenceCode;
-         *       alert("Unselected feature: " + tooltip );
-         *       Biojs.console.log(obj.shape); //raphaël object
-         *    }
-         * );
-         *
-         * */
+	        /**
+	         * @name Biojs.UniProtFeaturePainter#onFeatureUnselected
+	         * @event
+	         * @param {function} actionPerformed A function which receives a {@link Biojs.Event} object as argument.
+	         * @eventData {Object} source The component which triggered the event.
+	         * @eventData {string} type The name of the event.
+	         * @eventData {Object} featureInfo A json object with the information for the selected feature, including id.
+	         * @example
+	         * //Will only be raised if selectFeatureOnMouseClick is true
+	         * myPainter.onFeatureUnselected(
+	         *    function( obj ) {
+	         *    var tooltip = obj.featureLabel +
+	         *           " (" + obj.featureStart + ", " + obj.featureEnd + "; length " + (obj.featureEnd-obj.featureStart+1) + ")" +
+	         *           "<br/>Type: " + obj.featureTypeLabel + " - " + obj.typeCode + " - " + obj.typeCategory +
+	         *           "<br/>Evidence: " + obj.evidenceText + " - " + obj.evidenceCode;
+	         *       alert("Unselected feature: " + tooltip );
+	         *       Biojs.console.log(obj.shape); //raphaël object
+	         *    }
+	         * );
+	         *
+	         * */
             "onFeatureUnselected"
         ],
 
         /**
-         *
-         * @param rdbStyle
-         * @param chkHorizontal
-         * @param chkVertical
+         * 
+         * @param {string} newSelectionColor New selection color 
          */
         setSelectionColor: function(newSelectionColor) {
             this.opt.selectionColor = newSelectionColor;
@@ -460,13 +457,13 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
          * Manual customization of vertical and horizontal grid lines as well as style.
          * Depending on the selected values for the style radio buttons and the vertical and horizontal
          * check buttons, this method changes the current style and adds/removes the gridlines.
+         * 
          * @param {string} rdbStyle Radio buttons grouping styles, possible values: nonOverlapping, rows, centered.
          * @param {boolean} chkHorizontal Check button for horizontal grid lines.
          * @param {boolean} chkVertical Check button for vertical grid lines.
          *
          * @example
          * myPainter.customize("centered",true,true);
-         *
          */
         customize: function(rdbStyle, chkHorizontal, chkVertical) {
             var config = this.opt.json.configuration;
@@ -633,7 +630,7 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
         //
         // Private methods
         //
-        /**
+        /*
          * Private: Initializes the component.
          */
         _init: function() {
@@ -677,6 +674,7 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
         /**
          * Private: Clears all divs content.
          * @param {boolean} [withoutZoom=false] When true, it sets to 0 the total count for all feature types.
+         * @ignore
          */
         _clear: function(withoutZoom) {
             this.raphael.clear();
@@ -695,6 +693,7 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
         /**
          * Private: Paints the shapes and rectangles.
          * @param {boolean} [withoutZoom=false] When true, this method recalculates the total for each feature type.
+         * @ignore
          */
         _paintJson: function(withoutZoom) {
             var config = this.opt.json.configuration;
@@ -711,8 +710,7 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
 
         /**
          * Private: Paints the legend (segment and key).
-         *
-         *
+         * @ignore
          */
         _paintKey: function() {
             var legend = this.opt.json.legend;
@@ -733,6 +731,7 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
 
         /**
          * Private: Paints the ruler.
+         * @ignore
          */
         _paintRuler: function() {//holder size, left and right margins of the holder, and number of amino acids
             var config = this.opt.json.configuration;
@@ -787,6 +786,7 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
 
         /**
          * Private: Paints the slider
+         * @ignore
          */
         _paintSlider: function() {//holder size, left and right margins of the holder, and number of amino acids
             if (this.opt.showSlider == true) {
@@ -833,6 +833,7 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
          * @param {boolean} [withoutZoom=false] When false, it zooms according to the slider values.
          * @param {int} [newStart] Zoom from this sequence start value.
          * @param {int} [newStop] Zoom to this sequence end value.
+         * @ignore
          */
         _repaint: function(withoutZoom, newStart, newStop) {
             //recalculate start and stop
@@ -866,6 +867,7 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
          * @param {int} sizeX Width.
          * @param {int} sizeY Height for the features holder.
          * @param {int} sizeYKey Height for the legend.
+         * @ignore
          */
         _withSliderAndButton: function (sizeX, sizeY, sizeYKey) {
             var text =
@@ -898,6 +900,7 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
         /**
          * Private: Function to create slider only.
          * @param {int} sizeX Width.
+         * @ignore
          */
         _withSliderOnly: function(sizeX) {
             var text =
@@ -916,6 +919,7 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
          * @param {int} sizeX Width.
          * @param {int} sizeY Height for the features holder.
          * @param {int} sizeYKey Height for the legend.
+         * @ignore
          */
         _withButtonOnly: function (sizeX, sizeY, sizeYKey) {
             var myself = this;
@@ -950,7 +954,7 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
          * @param shapeRectangle Container for shapes, or the shape itself for rectangles.
          * @param obj feature object.
          * @param eventName Name of the event to be raised.
-         * @private
+         * @ignore
          */
         _raiseEvent: function(myself, shapeRectangle, obj, eventName) {
             connection = myself.connections[shapeRectangle.connectionIndex-1];
@@ -1029,6 +1033,7 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
          * it also adds tooltip and move, mousein, mouseout, and drag events for features.
          * @param {Object} obj SVG representation for features.
          * @param {int} sequenceLineY Y position for the sequence line.
+         * @ignore
          */
         _paint: function(obj, sequenceLineY) {
             var dotRadius = 1;
@@ -1265,6 +1270,7 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
         /**
          * Private: Counts the features per type so they will be correctly displayed on the legend.
          * @param {string} keyName Feature type.
+         * @ignore
          */
         _increaseKeyTotal: function(keyName) {
             //console.log(key);
@@ -1280,6 +1286,7 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
         /**
          * Private: Recalculates (x,y) positions for a particular feature, used when a zoom has been called.
          * @param {Object} el Element whose x, y, and width needs to be recalculated according to the new zoom.
+         * @ignore
          */
         _applyZoomToFeature: function(el) {
             config = this.opt.json.configuration;
@@ -1313,6 +1320,7 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
          * @param {int} rulerY Y position for the ruler.
          * @param {int} sizeX Width.
          * @param {Object} raphael SVG features representation.
+         * @ignore
          */
         _paintHorizontalGridLines: function(horizontalGrid, horizontalGridNumLines, gridLineHeight, nonOverlapping, leftMargin, rightMargin, sequenceLineY, rulerY, sizeX, raphael) {
             //Draw the grid lines
@@ -1354,6 +1362,7 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
          * @param {int} pixelsDivision Pixels between amino acids.
          * @param {int} leftMargin Pixels to left margin.
          * @param {Object} raphael SVG features representation.
+         * @ignore
          */
         _paintVerticalGridLines: function(verticalGridLineLength, stop, start, rulerLength, rulerY, pixelsDivision, leftMargin, raphael) {
             //Draw the vertical grid lines
@@ -1377,6 +1386,7 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
          * Modifies the variables in the configuration JSON element related to the style according to the new style to be applied; it also modifies the (x,y)
          * positions for all features and the legend.
          * @param {string} newStyle New style to be applied
+         * @ignore
          */
         _updateFeaturesToStyle: function (newStyle) {
             if (newStyle == this._ROWS) {
@@ -1444,6 +1454,9 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
             }
         },
 
+        /**
+    	 * @ignore
+    	 **/
         initRaphael: function(){
             //var uniprotFeaturePainter_el;
 
@@ -1673,3 +1686,5 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
             };
         }
     });
+
+var Biojs_UniProtFeaturePainter_myself = undefined;
