@@ -1221,18 +1221,19 @@ Biojs.Sequence = Biojs.extend(
      */
 	_addToolTip : function ( target, cbGetMessageFunction ) {
 		
- 		var offset = jQuery(target).offset();
  		var tipId = '#sequenceTip' + this.getId();
 		
 		jQuery(target).mouseover(function(e) {
+			
+	 		var offset = jQuery(e.target).offset();
 
 			if ( ! jQuery( tipId ).is(':visible') ) {
 		        jQuery( tipId ) 
 		        	.css({
 		        		'background-color': "#000",
 		        		'padding': "3px 10px 3px 10px",
-		        		'top': offset.top + jQuery(target).height() + "px",
-		        		'left': offset.left + jQuery(target).width() + "px"
+		        		'top': offset.top + jQuery(e.target).height() + "px",
+		        		'left': offset.left + jQuery(e.target).width() + "px"
 		        	})
 			        .animate( {opacity: '0.85'}, 10)
 			        .html( cbGetMessageFunction.call( target ) )
