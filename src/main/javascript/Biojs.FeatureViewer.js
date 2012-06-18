@@ -1,9 +1,7 @@
-
-
 /**
  * 
  * This component takes a JSON data object and paints it as a Raphael object. 
- * The expected JSON format is specified under the option 'json' of the UniProtFeaturePainter options.   
+ * The expected JSON format is specified under the option 'json' of the FeatureViewer options.
  *
  * Please remember to use jQuery in <a href="http://docs.jquery.com/Using_jQuery_with_Other_Libraries">compatibility mode</a>, particularly a good idea if you use other libraries.
  * 
@@ -224,7 +222,7 @@
  * var segment = "a4_human";
  * var service = "http://wwwdev.ebi.ac.uk/uniprot/das_uniprot_cartoon/image";
  * 
- * var myPainter = new Biojs.UniProtFeaturePainter({
+ * var myPainter = new Biojs.FeatureViewer({
  *    target: "YourOwnDivId",
  *    featureImageWebService: "http://wwwdev.ebi.ac.uk/uniprot/das_uniprot_cartoon/image"
  * });
@@ -254,8 +252,8 @@
  * });
  *
  */
-Biojs.UniProtFeaturePainter = Biojs.extend(
-    /** @lends Biojs.UniProtFeaturePainter */
+Biojs.FeatureViewer = Biojs.extend(
+    /** @lends Biojs.FeatureViewer */
     {
         /*
          * Public variables
@@ -286,7 +284,7 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
 
         /**
          * Default values for the options
-         * @name Biojs.UniProtFeaturePainter-constructor
+         * @name Biojs.FeatureViewer-constructor
          */
         constructor: function(options) {
             //Biojs.console.enable();
@@ -310,7 +308,7 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
          * dragSites: true //beware that dragging implies a click on so the click event will be raised!
          * selectionColor: "#ff8c00"
          * featureImageWebService: "http://localhost:8080/image"
-         * @name Biojs.UniProtFeaturePainter-opt
+         * @name Biojs.FeatureViewer-opt
          */
         opt: {
             target: "YourOwnDivId",
@@ -327,11 +325,11 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
 
         /**
          * Array containing the supported event names
-         * @name Biojs.UniProtFeaturePainter-eventTypes
+         * @name Biojs.FeatureViewer-eventTypes
          */
         eventTypes: [
 	        /**
-	         * @name Biojs.UniProtFeaturePainter#onFeatureClick
+	         * @name Biojs.FeatureViewer#onFeatureClick
 	         * @event
 	         * @param {function} actionPerformed A function which receives a {@link Biojs.Event} object as argument.
 	         * @eventData {Object} source The component which triggered the event.
@@ -354,7 +352,7 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
 	         * */
             "onFeatureClick",
 	        /**
-	         * @name Biojs.UniProtFeaturePainter#onFeatureOn
+	         * @name Biojs.FeatureViewer#onFeatureOn
 	         * @event
 	         * @param {function} actionPerformed A function which receives a {@link Biojs.Event} object as argument.
 	         * @eventData {Object} source The component which triggered the event.
@@ -378,7 +376,7 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
 	         * */
             "onFeatureOn",
 	        /**
-	         * @name Biojs.UniProtFeaturePainter#onFeatureOff
+	         * @name Biojs.FeatureViewer#onFeatureOff
 	         * @event
 	         * @param {function} actionPerformed A function which receives a {@link Biojs.Event} object as argument.
 	         * @eventData {Object} source The component which triggered the event.
@@ -400,7 +398,7 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
 	         * */
             "onFeatureOff",
 	        /**
-	         * @name Biojs.UniProtFeaturePainter#onFeatureSelected
+	         * @name Biojs.FeatureViewer#onFeatureSelected
 	         * @event
 	         * @param {function} actionPerformed A function which receives a {@link Biojs.Event} object as argument.
 	         * @eventData {Object} source The component which triggered the event.
@@ -422,7 +420,7 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
 	         * */
             "onFeatureSelected",
 	        /**
-	         * @name Biojs.UniProtFeaturePainter#onFeatureUnselected
+	         * @name Biojs.FeatureViewer#onFeatureUnselected
 	         * @event
 	         * @param {function} actionPerformed A function which receives a {@link Biojs.Event} object as argument.
 	         * @eventData {Object} source The component which triggered the event.
@@ -635,7 +633,7 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
          */
         _init: function() {
             //console.log(this.opt);
-            Biojs_UniProtFeaturePainter_myself = this;
+            Biojs_FeatureViewer_myself = this;
             var config = this.opt.json.configuration;
             //First create the slider, button, and holder
             var painter_div = jQuery("#" + this.opt.target);
@@ -878,7 +876,7 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
                     '</td>' +
                     '<td valign="bottom" align="right">' +
                     '<div id="uniprotFeaturePainter-printButton">' +
-                    '<input type="button" value="Export to image" onclick="Biojs_UniProtFeaturePainter_myself.exportFeaturesToImage();"/>' +
+                    '<input type="button" value="Export to image" onclick="Biojs_FeatureViewer_myself.exportFeaturesToImage();"/>' +
                     '</div> ' +
                     '</td>' +
                     '</tr>' +
@@ -928,7 +926,7 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
                     '<tr>' +
                     '<td valign="bottom" align="right">' +
                     '<div id="uniprotFeaturePainter-printButton">' +
-                    '<input type="button" value="Export to image" onclick="Biojs_UniProtFeaturePainter_myself.exportFeaturesToImage();"/>' +
+                    '<input type="button" value="Export to image" onclick="Biojs_FeatureViewer_myself.exportFeaturesToImage();"/>' +
                     '</div> ' +
                     '</td>' +
                     '</tr>' +
@@ -1687,4 +1685,4 @@ Biojs.UniProtFeaturePainter = Biojs.extend(
         }
     });
 
-var Biojs_UniProtFeaturePainter_myself = undefined;
+var Biojs_FeatureViewer_myself = undefined;
