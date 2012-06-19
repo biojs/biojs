@@ -1,0 +1,40 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <title>UniProt Features Painter - Test</title>
+    <!--JQuery LIb and CSS -->
+    <script src="../../main/resources/dependencies/jquery/jquery-1.4.2.min.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        jQuery.noConflict();
+    </script>
+    <!--url parser-->
+    <script src="../../main/resources/dependencies/jquery/jquery.url.js" type="text/javascript"></script>
+    <!--tooltip-->
+    <script src="../../main/resources/dependencies/jquery/jquery.tooltip.js" type="text/javascript"></script>
+    <link rel="stylesheet" href="../../main/resources/dependencies/jquery/jquery.tooltip.css" />
+    <!--UI-->
+    <script src="../../main/resources/dependencies/jquery/jquery-ui-1.8.2.custom.min.js" type="text/javascript"></script>
+    <link rel="stylesheet" href="../../main/resources/dependencies/jquery/jquery-ui-1.8.2.css" />
+    <!--END JQuery LIb and CSS -->
+
+    <!-- RAPHAËL LIB -->
+    <script src="../../main/resources/dependencies/graphics/raphael-min-v2.1.0.js" type="text/javascript" charset="utf-8"></script>
+
+    <!-- BIOJS LIB and CSS -->
+    <script language="JavaScript" type="text/javascript" src="../../main/javascript/Biojs.js"></script>
+    <script language="JavaScript" type="text/javascript" src="../../main/javascript/Biojs.PDBprints.js"></script>
+
+    <!--SVG & CANVAS LIB-->
+    <script language="JavaScript" type="text/javascript" src="../../main/resources/dependencies/graphics/rgbcolor.js"></script>
+    <script language="JavaScript" type="text/javascript" src="../../main/resources/dependencies/graphics/canvg.js"></script>
+    <script>
+function mytest() {
+	var myviewer = new Biojs.Protein3Dastexviewer({ "target": "printsdiv" });
+};
+    </script>
+</head>
+<body onload="mytest();">
+    <div id="printsdiv"></div>
+</body>
+</html>
