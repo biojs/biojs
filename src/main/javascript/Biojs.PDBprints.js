@@ -97,12 +97,13 @@ Biojs.Protein3Dastexviewer = Biojs.extend (
 				var imgurl = printsdata[pid][cat][0], isizeY = printsize, isizeX = printsize;
 				var printsURL = "http://pdbe.org";
 				if(cat=="PDBeLogo") {
-					var pidlink = self.opt.rapha.text(ix,iy+printsize/4,pid).attr({'font-family':'Mono', 'text-anchor':'start', 'font-size':printsize/3});
+					var pidlink = self.opt.rapha.text(ix,iy+printsize/4,pid).attr({'font-family':'Mono', 'text-anchor':'start', 'font-size':printsize/3})
+									.attr({'cursor':'pointer','title':'a tooltip '+pid});
 					pidlink.mouseup( function() { window.open("http://pdbe.org/"+pid); } );
 					imgurl = "http://www.ebi.ac.uk/pdbe-apps/widgets/html/PDBeWatermark_horizontal_128.png"; isizeX = printsize*0.9; isizeY = printsize/2; iy += printsize/2;
 				}
 				else printsURL += "/"+pid+"/"+catsinfo[cat][0];
-				var printsLogo = self.opt.rapha.image(imgurl,ix,iy,isizeX,isizeY);
+				var printsLogo = self.opt.rapha.image(imgurl,ix,iy,isizeX,isizeY).attr({'cursor':'pointer','title':'a tooltip '+cat});
 				printsLogo.data("printsURL", printsURL);
 				printsLogo.mouseup( function() { window.open(this.data("printsURL")); } );
 				printsLogo.mouseover( function() { } );
