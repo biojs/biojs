@@ -1,528 +1,319 @@
-/*
- 
- Custom styling for EBI redesign
- 
- 	~ Typography
- 	~ Forms
- 	~ Tables
- 	~ Colour
- 	~ Tweaks	
+*
+{ margin: 0;
+  padding: 0;}
 
-	AUTHOR: Francis Rowland
-	DATE:   Sep 2011
+body
+{ font-family: 'trebuchet ms', arial, sans-serif;
+  padding: 0px;
+  margin: 0px;
+  font-size: .80em;
+  background: #E9E4C7 url(pattern.png);
+  color: #555;}
 
-*/
+p
+{ margin: 0px;
+  padding: 0px 0px 16px 0px;
+  line-height: 1.7em;}
 
+h1, h2, h3, h4, h5, h6 
+{ color: #362C20;
+  padding: 0 0 5px 0;}
 
-/* Typography
-===================================================*/
+h1, h4
+{ font: normal 175% "century gothic", arial;
+  margin: 0 0 15px 0;
+  padding: 15px 15px 5px 0;
+  color: #444;}
 
-* {
-  font-weight: normal;
-  font-style: normal;
+h2, h5
+{ padding: 0 0 5px 0;
+  font: normal 110% "century gothic";
+  text-transform: uppercase;
+  letter-spacing: 0;}
+
+h3, h6
+{ color: #888;
+  font: normal 95% arial;
+  letter-spacing: 0;
+  padding: 0 0 15px 0;}
+
+h4
+{ color: #362C20;}
+
+h5, h6
+{ color: #129991;}
+
+img
+{ border: 0px; 
+  margin: 0px; 
+  padding: 0px;}
+
+.left
+{ float: left; 
+  border-right: 20px solid #FFF;}
+
+.right
+{ float: right; 
+  border-left: 20px solid #FFF;}
+
+.center
+{ display: block;
+  text-align: center;
+  margin: 0 auto;}
+
+blockquote
+{ margin: 20px 0px 20px 0px; 
+  padding: 10px 20px 0px 20px;
+  border: 1px solid #E5E5DB;
+  background: #F5F5F1;}
+
+ul
+{ margin: 2px 0px 18px 16px;
+  padding: 0px;}
+
+ul li
+{ list-style-type: square;
+  margin: 0px 0px 6px 0px; 
+  padding: 0px;}
+
+ol
+{ margin: 8px 0px 0px 24px;
+  padding: 0px;}
+
+ol li
+{ margin: 0px 0px 11px 0px; 
+  padding: 0px;}
+
+a, a:hover
+{ outline: none;
+  border-bottom: 1px dotted;
   text-decoration: none;
-  text-align: left;
-  text-indent: 0;
-}
+  color: #444;}
 
-body {
-	font-family: Verdana, sans-serif;
-}
+a:hover
+{ border-bottom: 1px solid;}
 
-h1, h2, h3, h4, h5, h6 {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    margin: 20px 0;
-    
-    /* text-shadow: 1px 1px 3px #fff; */ 
-    
-    clear:both;
-}
+#logo, #menubar, #panel, #site_content, #footer
+{ margin-left: auto; 
+  margin-right: auto;}
 
-h1 {
-    font-size: 370%;
-    letter-spacing: -0.05em;	/* tighten things up a wee bit */
-    line-height: 125%;
-}
+#header
+{ background: url(back2.png) repeat-x;}
 
-h1.strapline { font-size: 277% }	/* ~40px */
+#logo
+{ width: 870px;
+  position: relative;
+  height: 88px;}
 
+#logo #logo_text 
+{ position: absolute; 
+  top: 15px;
+  left: 0;}
 
-h2 {
-    font-size: 277%;
-	line-height: 1.11; /* ~40px */
-}
+#logo h1
+{ font: normal 300% "century gothic", arial, sans-serif;
+  border-bottom: 0;
+  text-transform: none;
+  padding: 12px 0 0 26px;
+  color: #FFF;
+  margin: 0;}
 
-h2.strapline { font-size: 182%;	/* 24px */ }
+#menubar
+{ width: 879px;
+  height: 45px;
+  padding-left: 5px;} 
 
-td h2 { font-size: 257%; } /*  36 / 14 * 100  */
+ul#menu{float: right;margin: 0px;}
 
-h3 {
-    font-size: 182%;
-    border-bottom: 1px solid #ccc;
-    /* line-height: 1.63em; */
-    line-height: 163%; /* ~39px... 39px + 1px border = 40px */
-}
+ul#menu li
+{ float: left;
+  margin: 7px 0 0 0;
+  padding: 0 0 0 6px;
+  list-style: none;}
 
-body.services section#overview h3 {
-	font-size: 161.6%;
-}
+ul#menu li a
+{ font-size: 110%;
+  display: block; 
+  float: left; 
+  height: 25px;
+  border-bottom: 0;
+  text-decoration: none; 
+  padding: 8px 32px 5px 26px;
+  text-align: center;
+  color: #FFF;
+  text-transform: uppercase;} 
 
-h4 {
-    font-size: 161.6%;
-}
-h5 {
-    font-size: 138.5%;
-}
-h6 {
-    font-size: 123%;
-    font-variant: small-caps;
-}
+ul#menu li.tab_selected a
+{ height: 25px;
+  padding: 8px 32px 5px 26px;}
 
-p, ul, ol {
-    font-size: 108%;
-    margin:0 0 20px 0;	/* margins will collapse into one another */
-}
+ul#menu li.tab_selected
+{ margin: 7px 0 0 0;
+  background: transparent url(tabs.png) no-repeat 0 0px;}
 
-ul ul,
-ul ul ul,
-ol ol,
-ol ol ol { margin-bottom: 0; }
+ul#menu li.tab_selected a, ul#menu li.tab_selected a:hover
+{ background: url(tabs.png) no-repeat 100% 0px;
+  color: #000;}
 
-p.meta { 
-	font-size: 85%;
-	color: #444;
-}
+ul#menu li a:hover
+{ color: #27C0FF;}
 
-blockquote { 
-	font-size: 123.1%;
-	margin: 20px 9px;
-	padding: 10px 9px;
-	
-	border-left: 3px solid #eee;
-}
+#YourOwnDivId
+{ overflow: auto;} 
 
-div#local-masthead p,
-div#global-footer p {
-    margin: 20px 0;
-}
+#site_content
+{ width: 875px;
+  background: #FFF;
+  overflow: hidden;  padding-top: 20px;} 
 
-form table th,
-form table td,
-td p,
-th p,
-ul ul,
-ol ol,
-ol ul,
-ul ol,
-ul ul ul,
-ol ol ol { font-size: 1em; }
+.sidebar
+{ float: right;
+  width: 178px;
+  padding: 20px 25px 15px 15px;}
 
-ul { list-style-type: circle; }
+.sidebar ul
+{ width: 178px; 
+  padding-top: 4px; 
+  margin: 4px 0px 30px 0px;}
 
-/* Customise the <li> images for different EBI Service activity types */
-body.services section#overview ul li.search { list-style-image: url(); }
-body.services section#overview ul li.retrieve { list-style-image: url(); }
-body.services section#overview ul li.submit { list-style-image: url(); }
-body.services section#overview ul li.analyse { list-style-image: url(); }
+.sidebar li
+{ list-style: none; 
+  padding: 0px 0px 4px 0px;}
 
+.sidebar li a, .sidebar li a:hover
+{ text-decoration: none; 
+  padding: 0px 0px 0px 18px;
+  display: block;
+  background: transparent url(arrow.png) no-repeat left center;
+  color: #555;
+  border: none;} 
 
-code,
-pre {
-	font-size: 108%; /* font-family already declared in boilerplate CSS */
-}
+.sidebar li a.selected, .sidebar li a:hover, .sidebar li a.selected:hover
+{ background: transparent url(arrow_select.png) no-repeat left center;} 
 
+#content
+{ text-align: left;
+  width: 597px;
+  padding: 20px 10px 15px 26px;}
 
-p code,
-li code,
-h1 code,
-h2 code,
-h3 code,
-h4 code,
-h5 code,
-h6 code,
-td code,
-pre code { font-size: 1em; }
+#footer
+{ width: 780px;
+  height: 33px;
+  padding: 20px 20px 4px 20px;
+  margin-bottom: 20px;
+  text-align: center; 
+  background: transparent;
+  color: #444;
+  text-transform: uppercase;}
 
-pre {
-  padding: 3%;
-  border-width: 1px;
-  border-style: dotted;
-  overflow: auto;
-}
+.event
+{ padding: 5px 5px 5px 20px;}
 
+.alternate_colour
+{ color: #27C0FF;}
 
-i, em { font-style: italic; }
+.form_settings
+{ margin: 15px 0 0 0;}
 
-b, strong { font-weight: bold; }
+.form_settings p
+{ padding: 0 0 4px 0;}
 
-abbr,
-acronym { 
-	border-bottom: 1px dashed #ccc;
-	cursor: help;
-}
-
-img {
-  border: 0;
-}
-
-/* Logo images */
-img.logo { margin-bottom: 2px; } /* This was necessary for the InterPro logo... */
-
-img.photo { 
-	border: 1px solid #777777; 
-	margin:0 0 20px 9px;
-}
-
-
-/*
-	Float block level items left or right
-*/
-.float-l {float:left; margin:0 9px 20px 0;}
-
-.float-r {float:right; margin:0 0 20px 9px;}
-
-/* Center images */
-.center { margin: 0 auto; }
-
-.alert,
-.warning { padding: 0.2em 0.3em; }
-
-
-.text-highlight {
-	color: #222;
-	background-color: #f3f3f3;	
-	padding: 0 0.2em;
-}
-
-/* give some block level items 9px padding, to set them in from the edges of divs */
-/* Required when we're applying the 984px layout CSS */
-h1, h2, h3, h4, h5, h6, p,
-form,
-table { padding: 0 9px; }
-
-
-/* --- Links --- */
-a:link,
-a:visited {
-	border-bottom-width: 1px;
-	border-bottom-style: dotted;
-	border-bottom-color: inherit; 
-}
-
-a:hover,
-a:focus,
-a:active { border-bottom-style: solid; }
-
-a.special {
-	font-style: italic; 
-	border-bottom-style:double;
-	border-bottom-width: 3px;
-	padding: 0.1em 0.3em;
-}
-
-h1 a:link,
-h1 a:visited,
-h2 a:link,
-h2 a:visited,
-h3 a:link,
-h3 a:visited,
-h4 a:link, 
-h4 a:visited, 
-h5 a:link,
-h5 a:visited { border-bottom: 0 none; color: inherit; }
-
-
-/* Forms
-===================================================*/
-
-/* Forms aren't the same as general body copy (headings and paragraphs),
-   so we have opted to capture all style rules here, including ones that
-   govern typography and colour */
-
-form {
-	/* font-size:1.4em; */
-	font-size: 108%;
-	font-family: Helvetica, sans-serif;
-	color: #444;
-}
-form p,
-form ul,
-form ol {font-size:1em;}	
-
-form fieldset {
-	/* background-color:#fff; */
-	background-color:#f7f7f7;
-	border:2px solid #eee;
-	padding:0.5em 0.5em 0.5em 1em;
-	margin-top: 1em;
-	margin-bottom: 1em;
-	color: inherit;
-	}
-	
-form legend {
-	font-size: 93%;
-	background-color: #e5e5e5;
-	color:#222;
-	padding:0.1em 0.5em;
-	border:2px solid #d8d8d8;
-	} 
-	
-form legend span {
-	color: #000;
-	font-size: 138.5%;	/* 18px */
-	font-weight: bold;
-	margin: 0 4px;
-}			
-	
-form legend.hide { visibility: hidden; }	
-
-form label {display:inline; margin-right:0.3em;}
-/*
-form label {display:block; margin-bottom:0.2em; color: #111;}
-form label.inline {display:inline; margin-right:0.3em;}
-*/	/* block display looks stupid with elements like radio buttons and check boxes */	
-
-
-form input {
-	margin:0.2em 0.1em 0.2em 0.2em; 
-	font-family: 'Helvetica Neue', Helvetica, sans-serif;
-	vertical-align: middle;
-}
-
-form input.submit {
-	display:block;
-	margin:0.5em 0;
-	padding: 3px 9px;
-	
-	-moz-border-radius: 5px;
-	-khtml-border-radius: 5px;
-	-webkit-border-radius: 5px;
-	border-radius: 5px;
-	font-size: 108%;	/* 12px */
-	border-width: 1px;
-	
-	border-color: #618658;
-	
-	background-color: #71b360;	/* colour P1 */
-	background-image: -moz-linear-gradient(top, #9DD98E, #71b360); 
-	background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #9DD98E),color-stop(1, #71b360)); 
-	background-image: -webkit-linear-gradient(#9DD98E, #71b360); 
-	background-image: linear-gradient(top, #9DD98E, #71b360);
-	filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#9DD98E', EndColorStr='#71b360'); 
-	
-	box-shadow: 0px 2px 2px #adadad;
-	-moz-box-shadow: 0px 2px 2px #adadad;
-	-khtml-box-shadow: 0px 2px 2px #adadad;
-	-webkit-box-shadow: 0px 2px 2px #adadad;
-	
-	color: #111111;
-	text-shadow: #f7f7f7 0 1px 1px;
-	width: auto;
-	
-	/* IE7 */
-	*padding-top: 0px;
-	*padding-bottom: 0px;	
-}	
-
-form input.submit:hover,
-form input.submit:focus,
-form input.submit:active { 
-	background: #71b360;		/* colour C1 */ 
-}
-
-form input.submit:active {	
-	box-shadow: 0 0 0 transparent;
-	-moz-box-shadow: 0 0 0 transparent;
-	-khtml-box-shadow: 0 0 0 transparent;
-	-webkit-box-shadow: 0 0 0 transparent;
-}	
-
-input.submit {
-    /* basic form */
-    /*
-margin-top: 10px;
-    padding: 0.6em;
-	font-size: 123.1%;
-*/	    
-}
-
-div.event {
-    
-}
-
-
-/* Tables
-===================================================*/
-
-/* Tables aren't the same as general body copy (headings and paragraphs),
-   so we have opted to capture all style rules here, including ones that
-   govern typography and colour */
-
-table {
-	border-collapse: collapse;
-	
-	background-color: white;
-	margin: 10px 0 16px 0;
-	border: 5px solid #f1f1f1;
-}
-
-th, td {
-  padding: 8px 5px 5px 5px;
-  border: 1px solid #f1f1f1;
+.form_settings span
+{ float: left; 
+  width: 200px; 
+  text-align: left;}
   
-  border-collapse: collapse;
-  vertical-align: top;
-}
+.form_settings input, .form_settings textarea
+{ padding: 4px; 
+  width: 299px; 
+  font: 100% arial; 
+  border: 1px solid #E5E5DB; 
+  background: #FFF; 
+  color: #47433F;}
+  
+.form_settings .submit
+{ font: 100% arial; 
+  border: 1px solid; 
+  width: 99px; 
+  margin: 0 0 0 210px; 
+  height: 36px;
+  padding: 2px 0 3px 0;
+  cursor: pointer; 
+  background: #3B3B3B; 
+  color: #FFF;}
 
-th,
-td { font-size: 108%; }
+.form_settings textarea, .form_settings select
+{ font: 100% arial; 
+  width: 299px;}
 
-th {
-	font-weight: bold;
-	background-color: #62caaf;
-	
-	border-bottom: 3px solid #f7f7f7;
-	color: black;
-}
+.form_settings select
+{ width: 304px;}
 
-tr:hover td,
-tr:focus td,
-th:focus > col { background-color: #f1f1f1; }
+.form_settings .checkbox
+{ margin: 4px 0; 
+  padding: 0; 
+  width: 14px;
+  border: 0;
+  background: none;}
 
+.separator
+{ width: 100%;
+  height: 0;
+  border-top: 1px solid #D9D5CF;
+  border-bottom: 1px solid #FFF;
+  margin: 0 0 20px 0;}
+  
+table
+{ margin: 10px 0 30px 0;}
 
-/*	Lists
-=================================================== */
+table tr th, table tr td
+{ text-align: left;
+  background: #3B3B3B;
+  color: #FFF;
+  padding: 7px 4px;}
+  
+table tr td
+{ background: #CCCCCC;
+  color: #47433F;
+  border-top: 1px solid #FFF;}
 
-ul, ol { padding: 0 0 0 27px; } /* overrides the padding in the base boilerplate CSS */
+.method_name 
+{
+ background: #E2DCD1;
+ color: #27C0FF;
+ padding:5px 5px 5px 5px;}
+ 
+a.method_name{
+ text-decoration: none;
+ color: #27C0FF;
+ border-bottom: none;}
+ 
+.method_desc 
+{
+ margin: 0 0 20px 0;
+ border: 1px solid;
+ border-color:#E2DCD1;
+ padding: 5px;}
 
+#YourOwnDivId
+{  
+  margin: 0 0 20px 0;
+  padding: 10px;
+  border: 1px solid;
+  border-color:#E2DCD1;}
 
+.event
+{  
+  padding: 10px;
+  border: 1px solid;
+  border-color:#E2DCD1;}
 
-/* Colour
-===================================================*/
-
-body { background: #ffffff url(../images/pale_grey_slight_texture.jpg) top left repeat;  }
-
-div#content { background-color: #ffffff; }
-
-/* Masthead colours  -  to be reset by custom stylesheet */
-div#global-masthead { background-color: #333; color: white; }
-
-div#local-masthead { 
-	/* background: url(../images/stormysky-transparent.png) top left repeat #e4e4e4; */	
-}
-
-
-h1, h2, h3, h4, h5, h6 {
-    color: #222222;
-}
-
-h4 { color: #666666; }
-
-/* --- Links --- */
-a:link { 
-	color:#3e3e3e;
-	}
-	
-a:visited { 
-	color: #666;
-	}
-
-a:hover,
-a:focus,
-a:active {
-	color: #000;
-}
-
-a.special { background-color: #fff; }
-
-/*
-a.special:hover,
-a.special:focus,
-a.special:active {color:#000;}
-*/
-
-
-pre {
-  background-color:#F2F2EC;
-  border-color:#999;
-}
-
-code {
-  background-color:#F2F2EC;
-  border-color:#999;
-}
-
-kbd {
-	-moz-border-radius: 5px;
-	-khtml-border-radius: 5px;
-	-webkit-border-radius: 5px;
-	border-radius: 5px;
-	
-	border:1px solid #777;
-	color: #222;
-	background-color: #ccc;
-	background-image: -moz-linear-gradient(top, #ccc, #666); 
-	background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #ccc),color-stop(1, #666)); 
-	background-image: -webkit-linear-gradient(#ccc, #666); 
-	background-image: linear-gradient(top, #ccc, #666);
-	filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#ccc', EndColorStr='#666'); 
-	
-	padding: 0.2em 0.3em;
-}
-
-.mute { color: #666; }
-
-
-
-/* Table headings */
-th {
-	background-color: #F2F2EC;
-}
-
-
-/*
-	ALERT
-	Text shown to alert the user to an error or a problem
-*/
-div.alert,
-h1.alert,
-h2.alert,
-h3.alert,
-h4.alert {						/* This is likely to be a heading */
-	background-color: #dc6c79;
-	color: white;
-}
-
-p.alert { 
-	/* background-color: #f3f3f3; */
-	border: 3px solid #DC6C79; 
-	color: #85242f;
-}
-
-input.alert,
-select.alert
-label.alert
-textarea.alert {
-	background-color: white;
-	color: inherit;
-	border: 5px solid #dc6c79;
-}
-
-
-/*
-	WARNING
-	Text shown to warn the user of something
-*/
-div.warning,
-h1.warning,
-h2.warning,
-h3.warning,
-h4.warning {
-	background-color: #e5a066;
-	color: white;
-}
-
-p.warning { 
-	background-color: #f3f3f3; 
-	color: #976610;
-}
+#source
+{  
+  margin: 0 0 20px 0;
+  padding: 10px;
+  border: 1px solid;
+  border-color:#E2DCD1;}
+  
+.light 
+{ color: blue; }
