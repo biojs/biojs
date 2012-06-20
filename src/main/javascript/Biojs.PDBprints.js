@@ -33,7 +33,7 @@
  * @example 
  * var myprints = new Biojs.PDBprints({
  * 		targets : [
- *          {'divid':"YourOwbDivId",     pdbids:["1aac","1cbs"]} //, *          {'rapha':aRaphaelObject, pdbids:["2x9t","1o2i","1u9s"]}
+ *          {divid:"YourOwnDivId",     pdbids:["1aac","1cbs"]}
  *      ]
  * });	
  * 
@@ -142,5 +142,44 @@ Biojs.PDBprints = Biojs.extend (
 			if(printsorient == 'v') printstartX += printsize + printsInterval;
 			if(printsorient == 'h') printstartY += printsize + printsInterval;
 		}
-	}
+	},
+  /**
+   * Array containing the supported event names
+   * @name Biojs.PDBprints-eventTypes
+   */
+  eventTypes : [
+	/**
+	 * @name Biojs.PDBprints#onClick
+	 * @event
+	 * @param {function} actionPerformed A function which receives an {@link Biojs.Event} object as argument.
+	 * @eventData {Object} source The component which did triggered the event.
+	 * @eventData {string} type The name of the event.
+	 * @eventData {int} selected Selected character.
+	 * @example 
+	 * instance.onClick(
+	 *    function( objEvent ) {
+	 *       alert("The character " + objEvent.selected + " was clicked.");
+	 *    }
+	 * ); 
+	 * 
+	 * */
+	 "onClick",
+	 
+	/**
+	 * @name Biojs.PDBprints#onHelloSelected
+	 * @event
+	 * @param {function} actionPerformed A function which receives an {@link Biojs.Event} object as argument.
+	 * @eventData {Object} source The component which did triggered the event.
+	 * @eventData {string} type The name of the event.
+	 * @eventData {int} textSelected Selected text, will be 'Hello' obviously.
+	 * @example 
+	 * instance.onHelloSelected(
+	 *    function( objEvent ) {
+	 *       alert("The word " + objEvent.textSelected + " was selected.");
+	 *    }
+	 * ); 
+	 * 
+	 * */
+     "onHelloSelected"      
+  ] 
 });
