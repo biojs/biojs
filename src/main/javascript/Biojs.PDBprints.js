@@ -53,10 +53,18 @@ Biojs.Protein3Dastexviewer = Biojs.extend (
 		var self = this;
 	  
 		// Make Raphael object if not provided already
-		if(self.opt.rapha == null) self.opt.rapha = Raphael(self.opt.target, 600, 300);
-
+		var deldiv = [];
+		for(var ci=0; ci < self.opt.targets.length; ci++) {
+			var config = self.opt.targets[ci];
+			if(!config['rapha']) {
+				config['rapha'] = Raphael(config['divid'], 600, 300); // TODO calculate actual sizes
+			}
+		}
 		var pdbids = '';
-		for(var pi=0; pi < self.opt.pdbids.length; pi++) pdbids += self.opt.pdbids[pi] + ",";
+		for(var rapha in self.opt.targets) {
+			for(var pi=0; pi < self.opt.targets[rapha]['pdbids'].length; pi++)
+			pdbids += self.opt.targets[rapha]['pdbids'][pi]+",";
+		}
 		pdbids = pdbids.replace(/,$/,"");
 
 		jQuery.ajax({
@@ -71,7 +79,24 @@ Biojs.Protein3Dastexviewer = Biojs.extend (
 
 	printsLayout: function(printsdata) {
 		var self = this;
+		for(var ci=0; ci < self.opt.targets.length; ci++) {
+			var config = self.opt.targets[ci];
+			self.printsLayout1(config, printsdata)
+		}
+	},
+	printsLayout1: function(conf, printsdata) {
+		var self = this;
+		var defconf = {size:40, orient:'h', interval:10, startX:10, startY:10};
+		for(var akey in defconf) {
+			if(!conf[akey]) conf[akey] = defconf[akey];
+		}
 		var printsize = 50, printsorient = 'h', printstartX = 10, printstartY = 10, printsInterval = 5;
+		printsize = conf.size;
+		printsorient = conf.orient;
+		printsInterval = conf.interval;
+		printstartX = conf.startX;
+		printstartY = conf.startY;
+
 		var printscats = [ "PDBeLogo", "PrimaryCitation", "Taxonomy", "Expressed", "Experimental", "Protein", "NucleicAcid", "Ligands" ];
 		var catsinfo = {
 			"PDBeLogo":        [""],
@@ -83,9 +108,10 @@ Biojs.Protein3Dastexviewer = Biojs.extend (
 			"NucleicAcid":     ["primary"],
 			"Ligands":         ["ligands"]
 		};
-		//for(var pi=0; pi < self.opt.pdbids.length; pi++) {
-			//var pid = self.opt.pdbids[pi];
-		for(var pid in printsdata) {
+		for(var pi=0; pi < conf['pdbids'].length; pi++) {
+			var pid = conf['pdbids'][pi];
+			if(printsorient == 'v') printstartX += printsize + printsInterval;
+			if(printsorient == 'h') printstartY += printsize + printsInterval;
 			for(var ci=0; ci < printscats.length; ci++) {
 				var cat = printscats[ci];
 				var ix = printstartX + printsize*ci;
@@ -97,13 +123,14 @@ Biojs.Protein3Dastexviewer = Biojs.extend (
 				var imgurl = printsdata[pid][cat][0], isizeY = printsize, isizeX = printsize;
 				var printsURL = "http://pdbe.org";
 				if(cat=="PDBeLogo") {
-					var pidlink = self.opt.rapha.text(ix,iy+printsize/4,pid).attr({'font-family':'Mono', 'text-anchor':'start', 'font-size':printsize/3})
-									.attr({'cursor':'pointer','title':'a tooltip '+pid});
-					pidlink.mouseup( function() { window.open("http://pdbe.org/"+pid); } );
-					imgurl = "http://www.ebi.ac.uk/pdbe-apps/widgets/html/PDBeWatermark_horizontal_128.png"; isizeX = printsize*0.9; isizeY = printsize/2; iy += printsize/2;
+					var pidlink = conf.rapha.text(ix,iy+printsize/4,pid).attr({'font-family':'Mono', 'text-anchor':'start', 'font-size':printsize/3})
+									.attr({'cursor':'pointer','title':'a tooltip '+pid}).data("pdbid",pid);
+					pidlink.mouseup( function() { window.open("http://pdbe.org/"+this.data("pdbid")); } );
+					imgurl = "http://www.ebi.ac.uk/pdbe-apps/widgets/html/PDBeWatermark_horizontal_128.png";
+					isizeX = printsize*0.9; isizeY = printsize/2; iy += printsize/2;
 				}
 				else printsURL += "/"+pid+"/"+catsinfo[cat][0];
-				var printsLogo = self.opt.rapha.image(imgurl,ix,iy,isizeX,isizeY).attr({'cursor':'pointer','title':'a tooltip '+cat});
+				var printsLogo = conf.rapha.image(imgurl,ix,iy,isizeX,isizeY).attr({'cursor':'pointer','title':'a tooltip '+cat});
 				printsLogo.data("printsURL", printsURL);
 				printsLogo.mouseup( function() { window.open(this.data("printsURL")); } );
 				printsLogo.mouseover( function() { } );

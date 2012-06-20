@@ -30,11 +30,16 @@
     <script language="JavaScript" type="text/javascript" src="../../main/resources/dependencies/graphics/canvg.js"></script>
     <script>
 function mytest() {
-	var myviewer = new Biojs.Protein3Dastexviewer({ "target": "printsdiv" });
+	var raphaobj = Raphael('raphadiv', 600, 600);
+	var myviewer = new Biojs.Protein3Dastexviewer({ "targets": [
+		{divid:"printsdiv", pdbids:["1aac","1cbs"], size:40, orient:'v', interval:10},
+		{rapha:raphaobj,    pdbids:["2x9t","1o2i"]}
+	] });
 };
     </script>
 </head>
 <body onload="mytest();">
     <div id="printsdiv"></div>
+    <div id="raphadiv"></div>
 </body>
 </html>
