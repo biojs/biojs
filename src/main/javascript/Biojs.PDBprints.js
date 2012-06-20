@@ -1,49 +1,49 @@
 /** 
- * This is the description of the Protein3Dastexviewer component. Here you can set any HTML text 
- * for putting on the generated documentation.
+ * This is the description of the PDBprints component. This component renders a set of icons to give a quick summary of salient features of a PDB entry.
+ * See more info on PDBprints at http://pdbe.org/prints
  * 
  * @class
  * @extends Biojs
  * 
- * @author <a href="mailto:johncar@gmail.com">John Gomez</a>
+ * @author <a href="mailto:swanand@gmail.com">Swanand Gore</a>
  * @version 1.0.0
+ *
+ * @requires <a href='http://code.jquery.com/jquery-1.6.4.js'>Raphael 2.1.0</a>
+ * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/graphics/raphael-min-v2.1.0.js" charset="utf-8"></script>
  * 
  * @requires <a href='http://code.jquery.com/jquery-1.6.4.js'>jQuery Core 1.6.4</a>
  * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jquery/jquery-1.4.2.min.js"></script>
  * 
- * @param {Object} options An object with the options for Protein3Dastexviewer component.
+ * @param {Object} options An object with the options for PDBprints component.
  *    
- * @option {string} target 
- *    Identifier of the DIV tag where the component should be displayed.
+ * @option {list} targets
+ *    This is a list of configuration options, each corresponding to PDBprints to be rendered in a div.
+ *    Each config consists of following:
+ *    <ul>
+ *    <li>pdbids: PDB entry ids for which prints are to be rendered.</li>
+ *    <li>divid: the id of div in which the prints are to be rendered.</li>
+ *    <li>rapha: A Raphael object instead of div to render PDBprints into.</li>
+ *    <li>startX: X-coordinate of point where rendering the array of PDBprints will start in the Raphael canvas
+ *    <li>startY: Y-coordinate of point point where rendering the array of PDBprints will start in the Raphael canvas
+ *    <li>interval: gap between successive PDBprints in a vertical or horizontal array
+ *    <li>size: length of an icon logo in PDBprints
+ *    <li>orient: vertical or horizontal rendering fo PDBprints
+ *    </ul>
  *    
- * @option {string} [fontFamily=��Andale mono�, courier, monospace�] 
- *    Font list to be applied to the component content.
- *  
- * @option {string} [fontColor="white"] 
- *    HTML color code for the font.
- *    
- * @option {string} [backgroundColor="#7BBFE9"] 
- * 	  Background color for the entire div content.
- * 
- * @option {Object} [selectionFontColor="white"] 
- * 	  This color will be used to change the font color of selected text.
- * 
- * @option {Object} [ selectionBackgroundColor="yellow"] 
- * 	  This color will be used to change the background of selected text.
- *     
  * @example 
- * var instance = new Biojs.Protein3Dastexviewer({
- * 		target : "YourOwnDivId",
- * 		selectionBackgroundColor : '#99FF00'
+ * var myprints = new Biojs.PDBprints({
+ * 		targets : [
+ *          {'divid':"YourOwbDivId",     pdbids:["1aac","1cbs"]} //, *          {'rapha':aRaphaelObject, pdbids:["2x9t","1o2i","1u9s"]}
+ *      ]
  * });	
  * 
  */
-Biojs.Protein3Dastexviewer = Biojs.extend (
-/** @lends Biojs.Protein3Dastexviewer# */
+Biojs.PDBprints = Biojs.extend (
+/** @lends Biojs.PDBprints# */
 {
   /**
    *  Default values for the options
-   *  @name Biojs.Protein3Dastexviewer-opt
+   *  @name Biojs.PDBprints-opt
    */
   opt: {
 	target: "YourOwnDivId", rapha: null, pdbids:['2x9t']
@@ -52,12 +52,22 @@ Biojs.Protein3Dastexviewer = Biojs.extend (
 	constructor: function (options) {
 		var self = this;
 	  
+		var defconf = {size:40, orient:'h', interval:10, startX:10, startY:10};
 		// Make Raphael object if not provided already
 		var deldiv = [];
 		for(var ci=0; ci < self.opt.targets.length; ci++) {
 			var config = self.opt.targets[ci];
+			for(var akey in defconf) {
+				if(!config[akey]) config[akey] = defconf[akey];
+			}
 			if(!config['rapha']) {
-				config['rapha'] = Raphael(config['divid'], 600, 300); // TODO calculate actual sizes
+				var sizex = config.startX + config.size*8;
+				var sizey = config.startY + (config.interval+config.size)*config.pdbids.length;
+				if(config.orient == "v") {
+					sizey = config.startY + config.size*8;
+					sizex = config.startX + (config.interval+config.size)*config.pdbids.length;
+				}
+				config['rapha'] = Raphael(config['divid'], sizex, sizey);
 			}
 		}
 		var pdbids = '';
@@ -86,10 +96,6 @@ Biojs.Protein3Dastexviewer = Biojs.extend (
 	},
 	printsLayout1: function(conf, printsdata) {
 		var self = this;
-		var defconf = {size:40, orient:'h', interval:10, startX:10, startY:10};
-		for(var akey in defconf) {
-			if(!conf[akey]) conf[akey] = defconf[akey];
-		}
 		var printsize = 50, printsorient = 'h', printstartX = 10, printstartY = 10, printsInterval = 5;
 		printsize = conf.size;
 		printsorient = conf.orient;
@@ -110,8 +116,6 @@ Biojs.Protein3Dastexviewer = Biojs.extend (
 		};
 		for(var pi=0; pi < conf['pdbids'].length; pi++) {
 			var pid = conf['pdbids'][pi];
-			if(printsorient == 'v') printstartX += printsize + printsInterval;
-			if(printsorient == 'h') printstartY += printsize + printsInterval;
 			for(var ci=0; ci < printscats.length; ci++) {
 				var cat = printscats[ci];
 				var ix = printstartX + printsize*ci;
@@ -124,7 +128,7 @@ Biojs.Protein3Dastexviewer = Biojs.extend (
 				var printsURL = "http://pdbe.org";
 				if(cat=="PDBeLogo") {
 					var pidlink = conf.rapha.text(ix,iy+printsize/4,pid).attr({'font-family':'Mono', 'text-anchor':'start', 'font-size':printsize/3})
-									.attr({'cursor':'pointer','title':'a tooltip '+pid}).data("pdbid",pid);
+									.attr({'cursor':'pointer','title':'a tooltip '+pid}).data("pdbid",pid); // TODO tooltips
 					pidlink.mouseup( function() { window.open("http://pdbe.org/"+this.data("pdbid")); } );
 					imgurl = "http://www.ebi.ac.uk/pdbe-apps/widgets/html/PDBeWatermark_horizontal_128.png";
 					isizeX = printsize*0.9; isizeY = printsize/2; iy += printsize/2;
@@ -135,6 +139,8 @@ Biojs.Protein3Dastexviewer = Biojs.extend (
 				printsLogo.mouseup( function() { window.open(this.data("printsURL")); } );
 				printsLogo.mouseover( function() { } );
 			}
+			if(printsorient == 'v') printstartX += printsize + printsInterval;
+			if(printsorient == 'h') printstartY += printsize + printsInterval;
 		}
 	}
 });

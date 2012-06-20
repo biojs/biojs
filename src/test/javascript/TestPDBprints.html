@@ -2,20 +2,12 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-    <title>UniProt Features Painter - Test</title>
+    <title>PDBprints - Test</title>
     <!--JQuery LIb and CSS -->
     <script src="../../main/resources/dependencies/jquery/jquery-1.4.2.min.js" type="text/javascript"></script>
     <script type="text/javascript">
         jQuery.noConflict();
     </script>
-    <!--url parser-->
-    <script src="../../main/resources/dependencies/jquery/jquery.url.js" type="text/javascript"></script>
-    <!--tooltip-->
-    <script src="../../main/resources/dependencies/jquery/jquery.tooltip.js" type="text/javascript"></script>
-    <link rel="stylesheet" href="../../main/resources/dependencies/jquery/jquery.tooltip.css" />
-    <!--UI-->
-    <script src="../../main/resources/dependencies/jquery/jquery-ui-1.8.2.custom.min.js" type="text/javascript"></script>
-    <link rel="stylesheet" href="../../main/resources/dependencies/jquery/jquery-ui-1.8.2.css" />
     <!--END JQuery LIb and CSS -->
 
     <!-- RAPHAËL LIB -->
@@ -25,13 +17,10 @@
     <script language="JavaScript" type="text/javascript" src="../../main/javascript/Biojs.js"></script>
     <script language="JavaScript" type="text/javascript" src="../../main/javascript/Biojs.PDBprints.js"></script>
 
-    <!--SVG & CANVAS LIB-->
-    <script language="JavaScript" type="text/javascript" src="../../main/resources/dependencies/graphics/rgbcolor.js"></script>
-    <script language="JavaScript" type="text/javascript" src="../../main/resources/dependencies/graphics/canvg.js"></script>
     <script>
 function mytest() {
 	var raphaobj = Raphael('raphadiv', 600, 600);
-	var myviewer = new Biojs.Protein3Dastexviewer({ "targets": [
+	var myviewer = new Biojs.PDBprints({ "targets": [
 		{divid:"printsdiv", pdbids:["1aac","1cbs"], size:40, orient:'v', interval:10},
 		{rapha:raphaobj,    pdbids:["2x9t","1o2i"]}
 	] });
