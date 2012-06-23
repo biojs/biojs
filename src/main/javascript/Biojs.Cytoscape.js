@@ -1,6 +1,7 @@
 /**
  * Cytoscape Wrapper
  * A Wrapper for cytoscape.js (cytoscape web 2)
+ * For more information go to http://cytoscape.github.com/cytoscape.js/
  * 
  * @class
  * @extends Biojs
@@ -48,7 +49,7 @@ Biojs.Cytoscape = Biojs.extend(
 	/** @lends Biojs.Cytoscape# */
 	{
 		constructor: function (options) {
-			Biojs.console.enable();
+			//Biojs.console.enable();
 			
 			var self = this;
 			self._selector = "#" + options.target;
@@ -61,7 +62,7 @@ Biojs.Cytoscape = Biojs.extend(
 				self.raiseEvent( "onCytoscapeReady", cy);
 			}
 			
-			$(self._selector).cytoscapeweb(options);
+			jQuery(self._selector).cytoscapeweb(options);
 		},
 		/**
 		 * Default values for the options
