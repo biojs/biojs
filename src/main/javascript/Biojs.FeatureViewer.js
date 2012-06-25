@@ -1,13 +1,13 @@
 /**
- * 
- * This component takes a JSON data object and paints it as a Raphael object. 
+ *
+ * This component takes a JSON data object and paints it as a Raphael object.
  * The expected JSON format is specified under the option 'json' of the FeatureViewer options.
  *
  * Please remember to use jQuery in <a href="http://docs.jquery.com/Using_jQuery_with_Other_Libraries">compatibility mode</a>, particularly a good idea if you use other libraries.
- * 
+ *
  * @class
  * @extends Biojs
- * 
+ *
  * @author <a href="mailto:ljgarcia@ebi.ac.uk">Leyla Jael Garcia Castro</a>
  * @version 1.0.0
  *
@@ -62,7 +62,7 @@
  *          <li>configuration | <span class="dataType">{object}</span>
  *              <p>
  *              General configuration used mainly to paint the ruler, grid lines, and slider.
- *              Elements such as XXXNonOverlapping, XXXCentered, and XXXRows are necessary only it you want to enable changing styles without retrieving the data 
+ *              Elements such as XXXNonOverlapping, XXXCentered, and XXXRows are necessary only it you want to enable changing styles without retrieving the data
  *              from the server again.
  *              </p>
  *              <pre class="brush: js" title="Configuration object">
@@ -107,8 +107,8 @@
  *          	</pre>
  *          </li>
  *          <li>featuresArray | <span class="dataType">{Array}</span>
- *              <p>Each element corresponds to an annotation, it includes elements representing the annotation itself as well as elements representing 
- *                 the SVG properties, <em>i.e.</em> those related to the shape. Elements such as XXXNonOverlapping, XXXCentered, and XXXRows are necessary 
+ *              <p>Each element corresponds to an annotation, it includes elements representing the annotation itself as well as elements representing
+ *                 the SVG properties, <em>i.e.</em> those related to the shape. Elements such as XXXNonOverlapping, XXXCentered, and XXXRows are necessary
  *                 only it you want to enable changing styles without retrieving the data from the server again
  *              </p>
  *              <pre class="brush: js" title="featuresArray object">
@@ -142,7 +142,7 @@
  *             </pre>
  *          </li>
  *          <li>legend | <span class="dataType">{object}</span>
- *          	<p>Information to be displayed in the keyElements such as XXXNonOverlapping, XXXCentered, and XXXRows are necessary only it you want to enable changing 
+ *          	<p>Information to be displayed in the keyElements such as XXXNonOverlapping, XXXCentered, and XXXRows are necessary only it you want to enable changing
  *                 styles without retrieving the data from the server again.
  *              </p>
  *              <pre class="brush: js" title="Legend object">
@@ -189,7 +189,7 @@
  *                 yPosRows:&lt;int&gt;, //y position in pixels for the rows style
  *             </pre>
  *          </li>
- *   </ul> 
+ *   </ul>
  *
  * @option {boolean} [showSlider=true]
  *    Should the slider for zooming be displayed?
@@ -221,7 +221,7 @@
  * @example
  * var segment = "a4_human";
  * var service = "http://wwwdev.ebi.ac.uk/uniprot/das_uniprot_cartoon/image";
- * 
+ *
  * var myPainter = new Biojs.FeatureViewer({
  *    target: "YourOwnDivId",
  *    featureImageWebService: "http://wwwdev.ebi.ac.uk/uniprot/das_uniprot_cartoon/image"
@@ -444,8 +444,8 @@ Biojs.FeatureViewer = Biojs.extend(
         ],
 
         /**
-         * 
-         * @param {string} newSelectionColor New selection color 
+         *
+         * @param {string} newSelectionColor New selection color
          */
         setSelectionColor: function(newSelectionColor) {
             this.opt.selectionColor = newSelectionColor;
@@ -455,7 +455,7 @@ Biojs.FeatureViewer = Biojs.extend(
          * Manual customization of vertical and horizontal grid lines as well as style.
          * Depending on the selected values for the style radio buttons and the vertical and horizontal
          * check buttons, this method changes the current style and adds/removes the gridlines.
-         * 
+         *
          * @param {string} rdbStyle Radio buttons grouping styles, possible values: nonOverlapping, rows, centered.
          * @param {boolean} chkHorizontal Check button for horizontal grid lines.
          * @param {boolean} chkVertical Check button for vertical grid lines.
@@ -463,36 +463,8 @@ Biojs.FeatureViewer = Biojs.extend(
          * @example
          * myPainter.customize("centered",true,true);
          */
-        customize: function(rdbStyle, chkHorizontal, chkVertical) {
+        customize: function(selectedStyle, paintHorizontalGrid, paintVerticalGrid) {
             var config = this.opt.json.configuration;
-
-            var style = document.getElementsByName(rdbStyle);
-            var selectedStyle = "";
-            if(style) {
-                var radioLength = style.length;
-                if(radioLength == undefined) {
-                    if(style.checked) {
-                        selectedStyle = style.value;
-                    }
-                }
-                for (var i = 0; i < radioLength; i++) {
-                    if(style[i].checked) {
-                        selectedStyle = style[i].value;
-                    }
-                }
-            }
-
-            var horizontalGrid = document.getElementById(chkHorizontal);
-            var paintHorizontalGrid = false;
-            if (horizontalGrid) {
-                paintHorizontalGrid = horizontalGrid.checked;
-            }
-
-            var verticalGrid = document.getElementById(chkVertical);
-            var paintVerticalGrid = false;
-            if (verticalGrid) {
-                paintVerticalGrid = verticalGrid.checked;
-            }
 
             if ((selectedStyle == "") ||
                 ((selectedStyle != "") && (selectedStyle == config.style)) ) { //Style did not change
@@ -1008,7 +980,7 @@ Biojs.FeatureViewer = Biojs.extend(
                         myself._previousClickedShape.animate({"fill-opacity": .5}, 500);
                         myself._previousClickedFeature.isSelected = false;
                         myself._raiseEvent(myself, myself._previousClickedShape, featureObj, 'onFeatureUnselected');
-                    } catch (error) {console.log(error);}
+                    } catch (error) {Biojs.console.log(error);}
                 }
                 //keep the last clicked shape info
                 myself._previousClickedColor = myself._originalColor;
