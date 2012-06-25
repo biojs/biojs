@@ -13,7 +13,7 @@
  * @option {string} [proteinId]
  *    Uniprot identifier of the protein.
  *
- * @option {string} [alignmentsUrl="http://www.rcsb.org/pdb/rest/das/pdb_uniprot_mapping/alignment?query="]
+ * @option {string} [alignmentsUrl="http://www.ebi.ac.uk/pdbe-apps/widgets/unipdb?uniprot="]
  *    Url to obtain the protein's alignments.
  *
  * @example
@@ -67,7 +67,7 @@ Biojs.Protein3DUniprot = Biojs.Protein3DWS.extend(
 	
 	opt: {
 		proteinId: undefined,
-		alignmentsUrl: 'http://www.rcsb.org/pdb/rest/das/pdb_uniprot_mapping/alignment?query='
+		alignmentsUrl: 'http://www.ebi.ac.uk/pdbe-apps/widgets/unipdb?uniprot='
 	},
 	
 	eventTypes : [
@@ -119,13 +119,16 @@ Biojs.Protein3DUniprot = Biojs.Protein3DWS.extend(
 	// makes an ajax request to get the pdb files for the given uniprot id
 	_requestAligmentsXML: function(){
 		var self = this;
+		self.opt.alignmentsUrl = 'http://www.ebi.ac.uk/pdbe-apps/widgets/unipdb?uniprot=';
 		jQuery.ajax({
-			url: this.opt.proxyUrl,
-			data: 'url=' + self.opt.alignmentsUrl + self.opt.proteinId,
-			dataType: "text",
+			url: self.opt.alignmentsUrl + self.opt.proteinId,
+			data: {biojsmapping:'1', varname:'pdbmappings'},
+			dataType: "script",
+			crossDomain: true,
 			success: function(xml){
 				Biojs.console.log("SUCCESS: data received");
-				self._parseResponse(xml);
+				self._alignments = pdbmappings;
+				self._aligmentsArrived();
 			},
 			async: false,
 			error: function(qXHR, textStatus, errorThrown){
