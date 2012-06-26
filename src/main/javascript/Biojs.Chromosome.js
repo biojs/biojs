@@ -1,5 +1,5 @@
 /**
- * Chromosome Component
+ * <h1>Chromosome Component</h1>
  * This component allow to visualize a chromosome and its bands. 
  * The bands can be recovered from a DAS source or directly from a javascript model.
  * 

@@ -1,0 +1,218 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+		<title>Hello World - Test</title>
+		<!--JQuery LIb -->
+		<script src="../../main/resources/dependencies/jquery/jquery-1.7.2.min.js" type="text/javascript"></script>
+		<!-- UI Jquery -->
+		<script src="../../main/resources/dependencies/jquery/jquery-ui-1.8.2.custom.min.js" type="text/javascript"></script>
+		<link rel="stylesheet" href="../../main/resources/dependencies/jquery/jquery-ui-1.8.2.css" />
+		
+		<!-- CSS -->
+	    <link rel="stylesheet" href="../../main/resources/css/biojs.ruler.css" />
+		<!-- BIOJS LIB and CSS -->
+		<script language="JavaScript" type="text/javascript" src="../../main/javascript/Biojs.js"></script>
+		<script language="JavaScript" type="text/javascript" src="../../main/javascript/Biojs.Ruler.js"></script>
+
+		<script type="text/javascript" src="../../main/resources/dependencies/jquery.miniColors.min.js"></script>
+		<link type="text/css" rel="stylesheet" href="../../main/resources/css/jquery.miniColors.css" />
+		    
+		<style type="text/css">
+html { 
+	height:100%;	
+}
+body {
+	height:100%;
+	line-height:1;
+	font-family:Helvetica, Arial, sans-serif;
+	color:#666;
+}
+h1 {
+	font-size: 20px;
+	letter-spacing: -0.04em;
+	padding: 7px 10px 10px 25¬ßpx;
+}
+h1 .subtitle {
+	color:#999;
+}
+		 
+		</style>
+
+		<script language="JavaScript" type="text/javascript">
+			window.onload = function() {
+				instance1 = new Biojs.Ruler({
+				     target: "holder1",
+				     allowOrdering:true,
+				     rules:{
+				    	    "location": [
+				    	                 "all proteins",
+				    	                 "protein1",
+				    	                 "protein2",
+				    	                 "protein3",
+				    	                 "protein4"
+				    	             ],
+				    	             "action": [
+				    	                 "Show",
+				    	                 "Hide",
+				    	                 "Highlight",
+				    	                 "Color"
+				    	             ],
+				    	             "target": [
+				    	                 {
+				    	                     "name": "Proteins",
+				    	                     "conditions": [
+				    	                         {
+				    	                             "name": "interactions with",
+				    	                             "type": "selects",
+				    	                             "amount": 1,
+				    	                             "values": [
+				    	                                 "protein1",
+				    	                                 "protein2",
+				    	                                 "protein3",
+				    	                                 "protein4"
+				    	                             ]
+				    	                         },
+				    	                         {
+				    	                             "name": "number of interactions",
+				    	                             "type": "numeric_comparison"
+				    	                         },
+				    	                         {
+				    	                             "name": "accession number",
+				    	                             "type": "text_comparison"
+				    	                         }
+				    	                     ]
+				    	                 },
+				    	                 {
+				    	                     "name": "Interactions",
+				    	                     "conditions": [
+				    	                         {
+				    	                             "name": "protein",
+				    	                             "type": "selects",
+				    	                             "amount": 1,
+				    	                             "values": [
+				    	                                 "protein1",
+				    	                                 "protein2",
+				    	                                 "protein3",
+				    	                                 "protein4"
+				    	                             ]
+				    	                         },
+				    	                         {
+				    	                             "name": "proteins",
+				    	                             "type": "selects",
+				    	                             "amount": 2,
+				    	                             "values": [
+				    	                                 "protein1",
+				    	                                 "protein2",
+				    	                                 "protein3",
+				    	                                 "protein4"
+				    	                             ]
+				    	                         },
+				    	                         {
+				    	                             "name": "score",
+				    	                             "type": "numeric_comparison"
+				    	                         }
+				    	                     ]
+				    	                 }
+				    	             ]
+				    	         }
+				});		
+				rules2 ={
+		    	    "location": [
+		    	                 "All Proteins",
+		    	                 "protein10",
+		    	                 "protein20",
+		    	                 "protein30",
+		    	                 "0"
+		    	             ],
+		    	             "action": [
+		    	                 "ADD",
+		    	                 "DELETE",
+		    	                 "UPDATE"
+		    	             ],
+		    	             "target": [
+		    	                 {
+		    	                     "name": "Proteins",
+		    	                     "conditions": [
+		    	                         {
+		    	                             "name": "interactions with",
+		    	                             "type": "selects",
+		    	                             "amount": 1,
+		    	                             "values": [
+		    	                                 "protein1",
+		    	                                 "protein2",
+		    	                                 "protein3",
+		    	                                 "protein4"
+		    	                             ]
+		    	                         },
+		    	                         {
+		    	                             "name": "number of interactions",
+		    	                             "type": "numeric_comparison"
+		    	                         },
+		    	                         {
+		    	                             "name": "accession number",
+		    	                             "type": "text_comparison"
+		    	                         }
+		    	                     ]
+		    	                 },
+		    	                 {
+		    	                     "name": "Interactions",
+		    	                     "conditions": [
+		    	                         {
+		    	                             "name": "protein",
+		    	                             "type": "selects",
+		    	                             "amount": 1,
+		    	                             "values": [
+		    	                                 "protein1",
+		    	                                 "protein2",
+		    	                                 "protein3",
+		    	                                 "protein4"
+		    	                             ]
+		    	                         },
+		    	                         {
+		    	                             "name": "proteins",
+		    	                             "type": "selects",
+		    	                             "amount": 2,
+		    	                             "values": [
+		    	                                 "protein1",
+		    	                                 "protein2",
+		    	                                 "protein3",
+		    	                                 "protein4"
+		    	                             ]
+		    	                         },
+		    	                         {
+		    	                             "name": "score",
+		    	                             "type": "numeric_comparison"
+		    	                         }
+		    	                     ]
+		    	                 }
+		    	             ]
+		    	         };
+				instance1.onRuleCreated(function( objEvent ) {
+					console.debug("Rule created");
+					console.debug(objEvent);
+				}); 
+				instance1.onRuleRemoved(function( objEvent ) {
+					console.debug("Rule removed");
+					console.debug(objEvent);
+				}); 
+				instance1.onOrderChanged(function( objEvent ) {
+					console.debug("order changed");
+					console.debug(objEvent);
+				}); 
+				$("#ruler").click(function(){
+					instance1.changeRules(rules2);
+				});
+			};
+		</script>
+	</head>
+	<body>
+		<header>
+			<h1>Ruler: <span class="subtitle">A generic definer of rules<span></h1>
+		</header>
+	<div id="holder1"></div>
+	<input type="button" onclick="console.debug(instance1.getActiveRules());" value="rules"/>
+	<input type="button" onclick="instance1.setAffectedByRule('holder1_rule_1',58);" value="affected"/>
+	<input type="button" id="ruler" value="change rules"/>
+	</body>
+</html>
