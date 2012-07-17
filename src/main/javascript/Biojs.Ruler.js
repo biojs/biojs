@@ -1,6 +1,5 @@
 /**
- * 
- * <h1>Ruler Component</h1>
+ *
  * Ruler is a component to deal with the definition and interaction of rules that follow the structure:
  * In [LOCATION] [ACTION] the [TARGET] with [CONDITION] [PARAMETERS]	
  * The component receives a JSON structure defining the values of the different parts of the rule and it 
