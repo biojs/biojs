@@ -423,8 +423,10 @@
                         var options = data.comment.getTag("option");
 
                         for ( var i in options ) {
+
+                            var indexOfMark = options[i].desc.indexOf("[");
                             
-                            options[i].optional = ( options[i].desc.indexOf("[") != -1  );
+                            options[i].optional = ( indexOfMark >=0 && indexOfMark <= 3);
 
                             if ( options[i].optional ) {
                                 
