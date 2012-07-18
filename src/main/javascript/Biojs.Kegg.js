@@ -29,7 +29,7 @@ Biojs.Kegg = Biojs.Cytoscape.extend(
 	 },
 	 /**
 	 * Default values for the options
-	 * @name Biojs.InteractionsGraph-opt
+	 * @name Biojs.Kegg-opt
 	 */
 	 opt: {
 	 	proxyUrl: '../biojs/dependencies/proxy/proxy.php',
@@ -37,7 +37,7 @@ Biojs.Kegg = Biojs.Cytoscape.extend(
 	 },
 	 /**
 	 * Array containing the supported event names
-	 * @name Biojs.InteractionsGraph-eventTypes
+	 * @name Biojs.Kegg-eventTypes
 	 */
 	 eventTypes: [],
 	 /**
