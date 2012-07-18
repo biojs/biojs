@@ -30,6 +30,7 @@ Biojs.Protein3DUniprot = Biojs.Protein3DWS.extend(
 	constructor: function(options) {
 		this.base(options);
         var self = this;
+        
         this.onPdbLoaded(function(e) {
             Biojs.console.log(e.result + " loading the pdb file " + e.file);
             Biojs.console.log("self._aligmentsJustArrived= " + self._alignmentsJustArrived);
@@ -41,7 +42,7 @@ Biojs.Protein3DUniprot = Biojs.Protein3DWS.extend(
                 if (jQuery('#' + self.opt.target).find('div#pdbStructures').length == 0) {
                     self._addControl('<div id="pdbStructures"></div>');
                 }
-                jQuery('#' + self.opt.target).find('div#pdbStructures').html('Structures for <b>' + self.opt.proteinId + '</b><br/>' + '<select id="pdbFile_select">' + pdbOptions + '</select>');
+                jQuery('#' + self.opt.target).find('div#pdbStructures').html('<h1>Structures for <b>' + self.opt.proteinId + '</b></h1><br/>' + '<select id="pdbFile_select">' + pdbOptions + '</select>');
                 jQuery('#' + self.opt.target + ' #pdbFile_select').val(pdb);
                 jQuery('#' + self.opt.target + ' #pdbFile_select').change(function() {
                     self._onAlignmentSelectionChange();
@@ -58,6 +59,7 @@ Biojs.Protein3DUniprot = Biojs.Protein3DWS.extend(
                 self._alignmentsJustArrived = false;
             }
         });
+ 
         if (this.opt.proteinId != undefined) {
             var proteinId = this.opt.proteinId;
             this.opt.proteinId = '';
@@ -147,28 +149,34 @@ Biojs.Protein3DUniprot = Biojs.Protein3DWS.extend(
 		
 		Biojs.console.log("Decoding " + xml);
 		
-		xmlDoc = jQuery.parseXML( xml );
-		
-	    jQuery(xmlDoc).find('block').each( function(){
-	        var children = jQuery(this).children();
-	        var segment0 = self._createNode(children[0]);
-	        var segment1 = self._createNode(children[1]);
-	        
-	        var arr = [];
-	        arr.push(segment0);
-	        arr.push(segment1);
-	        
-	        self._alignments[segment0.intObjectId] = arr || [];
-	        i++;
+		try {
+			xmlDoc = jQuery.parseXML( xml );
 			
-		    if (self._minStart > segment1.start) {
-		        self._minStart = segment1.start;
-		    }
-		    
-		    if (self._maxEnd < segment1.end) {
-		        self._maxEnd = segment1.end;
-		    }
-	    });
+			jQuery(xmlDoc).find('block').each( function(){
+		        var children = jQuery(this).children();
+		        var segment0 = self._createNode(children[0]);
+		        var segment1 = self._createNode(children[1]);
+		        
+		        var arr = [];
+		        arr.push(segment0);
+		        arr.push(segment1);
+		        
+		        self._alignments[segment0.intObjectId] = arr || [];
+		        i++;
+				
+			    if (self._minStart > segment1.start) {
+			        self._minStart = segment1.start;
+			    }
+			    
+			    if (self._maxEnd < segment1.end) {
+			        self._maxEnd = segment1.end;
+			    }
+		    });
+			
+		} catch (e) {
+			Biojs.console.log("Error decoding response: " + e.message );
+			this._alignments = {};
+		}
 	    
 	    Biojs.console.log("Alignments decoded:");
 	    Biojs.console.log(self._alignments);
@@ -190,19 +198,24 @@ Biojs.Protein3DUniprot = Biojs.Protein3DWS.extend(
 	// adds all available pdb files to a dropdown box 
 	// or displays the fact that there are no pdb files for the given id
 	_aligmentsArrived: function(){
+		
 		this._alignmentsJustArrived = true;
-        var alignments = this._filterAligmentsBySelection(this._selection);
+        
+		
+		var alignments = this._filterAligmentsBySelection(this._selection);
+        
         if (!Biojs.Utils.isEmpty(alignments)) {
             var pdb = undefined;
             for (pdb in alignments) {
                 break;
             }
+            
             Biojs.console.log("Requesting pdb " + pdb);
             this.requestPdb(pdb.substring(0, pdb.indexOf('.')).toLowerCase());
+            
         } else {
-            jQuery('#' + this.opt.target).find('#pdbStructures').html("None structure for current selection");
-            Biojs.console.log("No structural information available for " + this.opt.proteinId);
-            this.raiseEvent('onRequestError', {message: "No structural information available for " + this.opt.proteinId});
+            this._container.html("No structural information for " + this.opt.proteinId );
+            this.raiseEvent('onRequestError', { message: "No structural information available for " + this.opt.proteinId });
         }
 	},
 	

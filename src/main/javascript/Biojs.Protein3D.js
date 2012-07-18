@@ -3,7 +3,7 @@
  * 
  * @class
  * @extends Biojs
- * 
+ *
  * @author <a href="mailto:johncar@gmail.com">John Gomez</a>, <a href="mailto:christine.jandrasits@gmail.com">Christine Jandrasits</a>
  * @version 1.0.0
  * 
@@ -12,6 +12,9 @@
  * 
  * @requires <a href='http://jmol.sourceforge.net/download/'>jMol 12.0.48</a>
  * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jmol-12.0.48/Jmol.js"></script>
+ * 
+ * @requires <a href='../biojs/css/Protein3D.css'>Protein3D CSS</a>
+ * @dependency <link href="../biojs/css/biojs.Protein3D.css" rel="stylesheet" type="text/css" />
  * 
  * @param {Object} options An object with the options for Biojs.Protein3D component.
  *    
@@ -22,7 +25,7 @@
  *    Width in pixels.
  *    
  * @option {int} [height=400] 
- *    Height in pixels .
+ *    Height in pixels.
  *    
  * @option {string} [jmolFolder="{BIOJS_HOME}/dependencies/jmol-12.0.48"] 
  *    Relative path of the jMol library.
@@ -76,59 +79,50 @@ Biojs.Protein3D = Biojs.extend(
 { 
 	constructor: function (options) {
 
-		//Biojs.console.enable();
-		Biojs.console.log("starting Biojs.Protein3D constructor");
-		
 		var self = this;
 		
-		self.image = '<img id="image_' + self.getId() + '" src="' + self.opt.loadingStatusImage + '" style="display:block; margin: 0 auto;" />';
-		self._appletId = "jmolApplet" + self.getId();
-		self.opt.backgroundColor = (self.opt.backgroundColor)? self.opt.backgroundColor : "white";
+		var width = this.opt.width;
+		var height = this.opt.height;
 		
-		jmolInitialize(self.opt.jmolFolder);
-		jmolSetAppletColor( self.opt.backgroundColor );
-		jmolSetDocument(0);
+		this._appletId = "jmolApplet" + self.getId();
 		
-		Biojs.console.log("registring callback for object " + self.getId());
+		this._container = jQuery('#' + this.opt.target).addClass('Protein3D');
 		
-		// Jmol needs a global function for executing up whenever a pbd is loaded
-		// Name for the function in global scope
-		var loadStructCallbackName = self._appletId + "_pdbLoadCallback";
-		
-		// Register the function _loadStructCallback as global for JmolApplet use 
-		Biojs.registerGlobal(loadStructCallbackName, self._loadStructCallback );
-		
-		// Tell Jmol the name of the function in global scope
-		jmolSetCallback("loadStructCallback", loadStructCallbackName );
-		
-		jQuery("div#"+self.opt.target)
-			.css('display', 'block')
-			.css("padding","0px")
-			.css("width",self.opt.width)
-			.css("height",self.opt.height)
-			.css("overflow","hidden")
-			.html('<div id="div'+self._appletId+'"/><div id="controlSection" />')
-			.find('div')
-			.css('position','relative')
-			.css('float','right')
-			.hide();
-		
-		jQuery("div#"+self.opt.target).append('<div id="loadingImage" />');
-		
-		jQuery('#' + self.opt.target + ' div#loadingImage')
-			.css("padding","0px")
-			.css("width",self.opt.width)
-			.css("height",self.opt.height)
-			.css("overflow","hidden")
-			.css('display','table-cell')
-			.css('vertical-align','middle')
-			.html( self.image );
-		
-		
-		if (jQuery.browser.msie) {
-			jQuery('#' + self.opt.target + ' div#loadingImage').css('display','inline');
-			jQuery('#' + self.opt.target + ' img#image_' + this.getId()).css('vertical-align','middle');
+		// Container Width 
+		if ( width == undefined ) {
+			width = this._container.css('width');
+			
+		} else {
+			this._container.width( width );
 		}
+		
+		// Container Height
+		if ( height == undefined ) {
+			height = this._container.css('height');
+			
+		} else {
+			this._container.height( height );
+		}
+
+		this.opt.backgroundColor = ( this.opt.backgroundColor !== undefined )? this.opt.backgroundColor : this._container.css('background-color');
+
+		this._container.html('');
+		
+		this._controlsContainer = jQuery('<div id="controlSection" class="Protein3D_tab"></div>')
+			.appendTo( this._container );
+		
+		this._appletContainer = jQuery('<div id="div'+self._appletId+'" class="Protein3D_applet"></div>')
+			.appendTo( this._container );
+		
+		this._loadingImage = jQuery('<div class="Protein3D_loadingImage" />')
+			.appendTo( this._container )
+			.hide();
+
+		if (this.opt.loadingStatusImage !== undefined ) {
+			this._loadingImage.css( 'background-image', 'url(' + this.opt.loadingStatusImage + ')' );
+		}
+		
+		this._initializeJmolApplet();
 		
 		Biojs.console.log("ending Biojs.Protein3D constructor");
    },
@@ -150,7 +144,7 @@ Biojs.Protein3D = Biojs.extend(
 	   polarColor: "yellow",
 	   backgroundColor: "white",
 	   enableControls: true,
-	   loadingStatusImage: '../biojs/css/images/ajax-loader-1.gif',
+	   loadingStatusImage: undefined,
 	   surface: "None",
 	   style: "Cartoon",
 	   colorScheme: "By Chain",
@@ -206,7 +200,6 @@ Biojs.Protein3D = Biojs.extend(
    /* Internal members */
    _appletId: undefined,
    _controlsReady: false,
-   _controlsVisible: false,
    _jmoljarfile: "JmolApplet.jar",
    _jmolAppletInitialized: false,
    _selection: undefined,
@@ -222,6 +215,28 @@ Biojs.Protein3D = Biojs.extend(
 	   halos: true
    },
 
+   
+   _initializeJmolApplet: function() {
+	   
+	   var self = this;
+	   
+	   jmolInitialize( self.opt.jmolFolder );
+	   jmolSetAppletColor( self.opt.backgroundColor );
+	   jmolSetDocument(0);
+		
+	   // Jmol needs a global function for executing up whenever a pbd is loaded
+	   // Name for the function in global scope
+	   var functionCbName = self._appletId + "_pdbLoadCb";
+		
+	   Biojs.console.log("registring callback function loadStructCallback " + functionCbName);
+		
+	   // Register the function this._loadStructCallback as global for JmolApplet use 
+	   Biojs.registerGlobal( functionCbName , self._loadStructCallback );
+		
+	   // Tell Jmol the name of the function in global scope
+	   jmolSetCallback("loadStructCallback", functionCbName );
+   },
+   
    /**
     * Shows the form of controls.
     * 
@@ -230,14 +245,7 @@ Biojs.Protein3D = Biojs.extend(
     * 
     */
    showControls: function() {
-	   if (this.opt.enableControls) {
-		   if (!this._controlsReady) {
-			   this._buildControls();
-		   }
-		   if (!this._controlsVisible) {
-			   this._toggleControls();
-		   }
-	   }
+	   this.changeControlsVisiblility(true);
    },
    
    /**
@@ -248,8 +256,27 @@ Biojs.Protein3D = Biojs.extend(
     * 
     */
    hideControls: function() {
-	   if (this.opt.enableControls && this._controlsVisible) {
-		   this._toggleControls();		  
+	   this.changeControlsVisiblility(false);
+   },
+   
+   /**
+    * Shows/Hides the form of controls.
+    * 
+    * @example 
+    * instance.changeControlsVisiblility(true); 
+    * 
+    */
+   changeControlsVisiblility: function( flag ) {
+	   
+	   if (this.opt.enableControls) {
+		   
+		   if (!this._controlsReady) {
+			   this._buildControls();
+		   }
+		   
+		   if ( flag != this._controlsAreVisible() ) {
+			   this._toggleControls();
+		   }
 	   }
    },
    
@@ -285,10 +312,10 @@ Biojs.Protein3D = Biojs.extend(
 		
 		var theTargetDiv = jQuery("#"+this.opt.target);
 		theTargetDiv.find("div#controlSection > div#controls > input[type='checkbox']").attr("checked",false);
-		theTargetDiv.find('#styleSelect').val("Cartoon");
+		theTargetDiv.find('#styleSelect').val( this.opt.style );
 		theTargetDiv.find('#colorSelect').val( this.opt.colorScheme );
 		theTargetDiv.find('#surfaceSelect').val( this.opt.style );
-		
+
 		for (var key in this._display.property) {
 			this._display.property[key] = false;
 		}
@@ -296,10 +323,15 @@ Biojs.Protein3D = Biojs.extend(
 		this.setHalosVisible(true);
 	},
 	
-	showLoadingImage: function(){
-		// Show loading image
-		jQuery('#' + this.opt.target ).find('div').hide();
-		jQuery("#" + this.opt.target + ' div#loadingImage').show();
+	showLoadingImage: function(flag){
+		var visible = (flag === undefined) ? true: flag;
+
+		// Toggle loading image if its status is different than flag
+		if ( this._loadingImage.is(':visible') != visible ) {
+			this._controlsContainer.toggle();
+			this._appletContainer.toggle();
+			this._loadingImage.toggle();
+		}
 	},
 	
    /**
@@ -325,31 +357,27 @@ Biojs.Protein3D = Biojs.extend(
     * 
     */
 	setPdb: function( pdb ){
-		Biojs.console.log("LOADING pdb:");
-		Biojs.console.log(pdb);
+		Biojs.console.log("LOADING pdb content");
+		//Biojs.console.log(pdb);
 		
 		var self = this;
-
 		var surfaceCmd = this._getDisplaySurface( this.opt.surface );
 		var styleCmd = this._getDisplayStyle( this.opt.style );
 		var colorSchemeCmd = this._getDisplayColor( this.opt.colorScheme );
 		
-		var scr = colorSchemeCmd + styleCmd + surfaceCmd + this._getSelectionScript(this._selection); 
+		var scr = colorSchemeCmd + styleCmd + surfaceCmd + this._getSelectionScript( this._selection ); 
 
-		jQuery('#' + self.opt.target ).find('div').show();
-		jQuery("#" + self.opt.target + ' div#loadingImage').hide();
+		this.showLoadingImage(false);
 		
-		if (this._jmolAppletInitialized) {
+		if ( this._jmolAppletInitialized ) {
 			this.reset();	
-		} 
+		}
 		
-		this.jmolHTML = jmolAppletInline([this.opt.width, this.opt.height], pdb, scr, this.getId() );
-		jQuery("div#" + self.opt.target + ' #div' + self._appletId ).html( self.jmolHTML );
-
-		this.hideControls();
-		this.showControls();
+		htmlContent = jmolAppletInline([self._appletContainer.width(), self._appletContainer.height()], pdb, scr, self.getId() );
 		
-		this._jmolAppletInitialized = true;		
+		this._appletContainer.html( htmlContent );
+		this._jmolAppletInitialized = true;
+		
 		Biojs.console.log("setPdb() ending");
 	},
 	
@@ -800,78 +828,95 @@ Biojs.Protein3D = Biojs.extend(
 		return false;
 	},
 	
+	_buildTabPanel: function( container, onVisibilityChangeCb ) {
+		
+		container.html('');	
+		
+		var content = jQuery('<div class="content"></div>').appendTo(container);
+		content.expand = jQuery('<div style="display: none;" class="toggle expand"></div>').appendTo(container);		
+		content.collapse = jQuery('<div class="toggle collapse"/>').appendTo(container);
+		
+		var contentWidth = container.width() - content.expand.outerWidth();
+		
+		container.css( 'left', 0 )
+			.find('.toggle')
+			.click( function(){
+				// Animate show/hide this tab
+				container.animate({ 
+						left: ( parseInt( container.css('left'), 10 ) == 0 ? content.expand.width() - container.outerWidth() : 0 ) + "px"
+					},
+					// to call once the animation is complete 
+					function() {
+						var contentVisible = false;
+						
+						container.find('.toggle').toggle();	
+						contentVisible = content.collapse.is(':visible');
+						
+						// apply callback function if defined
+						if ( "function" == typeof onVisibilityChangeCb ) {
+							var visibleWidth = (contentVisible)? container.outerWidth() : content.expand.outerWidth();
+							onVisibilityChangeCb.call( content, contentVisible, visibleWidth );
+						}
+						
+					}
+				);
+			})
+			.css({
+				'float':'right',
+				'position':'relative'
+			});
+		
+		Biojs.console.log('content width '+ contentWidth);
+		
+		content.css({ 
+			'width': contentWidth + "px", 
+			'height': container.height() + "px", 
+			'word-wrap': 'break-word'
+		});
+		
+		return content;
+	},
+	
 	_buildControls : function () {
+		Biojs.console.log("_buildControls()");
+		
 		if ( this._controlsReady ) {
+			Biojs.console.log("exiting _buildControls(): controls has been built already.");
 			return;
 		}
 		
-		this._controlsVisible = false;
-		
-		Biojs.console.log("_buildControls()");
-		
 		var self = this;
-		var width = Math.round(self.opt.width * 0.3); 
-		var height = self.opt.height; 
 		
-		var controlSectionDiv = jQuery("#"+self.opt.target+" > div#controlSection");
+		jmolResizeApplet([ self._container.width() - self._controlsContainer.outerWidth(), self._container.height()], self.getId());
 		
-		controlSectionDiv.append('<div id="controls" />'+
-				'<div id="controlTab">'+
-				'<span id="hideButton" title="Hide this control panel">&lt;&lt;</span>'+
-				'<span id="showButton" title="Show the control panel">&gt;&gt;</span><br/><br/></div>')
-			.css("border", 0)
-			.css("margin", 0)
-			.css("width",  "auto")
-			.css("height", "auto")
-			.css('float', 'left')
-			.css('font-family','"Heveltica Neue", Arial, "sans serif"')
-			.css('font-size','12px');
-		
-		// Measurements 
-		// 
-		var padding = 3;
-		var tabWidth = 20, tabHeight = height;
-		var controlsWidth = width - (2*padding+tabWidth), controlsHeight = height - (padding*2);
-		
-		//
-		// Panel 
-		// 
-		var controlDiv = controlSectionDiv.find("div#controls");
-		
-		controlDiv.css({
-				"position": "relative",
-				"border": 0,
-				"margin":  0,
-				"background-color": "#000",
-				"color": "#fff",
-				"float": "left",
-				"width": controlsWidth,
-				"height": controlsHeight,
-				"padding": padding,
-				"text-align": "left",
-				"line-height": 1,
-				"text-shadow": 0
-			})
-			.append(
-				'<b> Display: </b><br/>' +
+		this._controlsDiv = this._buildTabPanel( 
+			this._controlsContainer, 
+			function ( isVisible, visibleWidth ) {
+				jmolResizeApplet([ self._container.width() - visibleWidth, self._container.height()], self.getId());
+				self._appletContainer.css("width", self._container.width() - visibleWidth );
+			}
+		);
+
+		var controlDiv = this._controlsDiv.append(
+				'<h1> Display: </h1>' +
 				'<input id="polarCheck" type="checkbox" name="polarCheck" value="polarCheck"/> Hydrophylic residues<br/>' +
 				'<input id="unpolarCheck" type="checkbox" name="unpolarCheck" value="unpolarCheck"/> Hydrophobic residues<br/>' +
 				'<input id="positiveCheck" type="checkbox" name="positiveCheck" value="positiveCheck"/> Basic(+) residues<br/>' +
 				'<input id="negativeCheck" type="checkbox" name="negativeCheck" value="negativeCheck"/> Acidic(-) residues<br/>' +
 				'<input id="antialiasCheck" type="checkbox" name="antialiasCheck" value="antialiasCheck"/> Antialias<br/>'+
 				'<input id="backgroundCheck" type="checkbox" name="backgroundCheck" value="backgroundCheck"/> Black background<br/>'+
-				'<input id="rotationCheck" type="checkbox" name="rotationCheck" value="rotationCheck"/> Rotation<br/><br/>'+
+				'<input id="rotationCheck" type="checkbox" name="rotationCheck" value="rotationCheck"/> Rotation'+
 				
-				'Style: <select id="styleSelect">'+
+				'<h1>Style:</h1><select id="styleSelect">'+
 					'<option selected="selected">' + Biojs.Protein3D.STYLE_CARTOON + '</option>'+
 					'<option >' + Biojs.Protein3D.STYLE_BACKBONE + '</option>'+
 					'<option >' + Biojs.Protein3D.STYLE_CPK + '</option>'+
 					'<option >' + Biojs.Protein3D.STYLE_BALL_STICK + '</option>'+
 					'<option >' + Biojs.Protein3D.STYLE_LIGANDS + '</option>'+
 					'<option >' + Biojs.Protein3D.STYLE_LIGANDS_POCKET + '</option>'+
-				'</select><br/><br/>'+
+				'</select>'+
 				
-				'Color: <select id="colorSelect">'+			
+				'<h1>Color:</h1><select id="colorSelect">'+			
 					'<option selected="selected">' + Biojs.Protein3D.COLOR_BY_CHAIN + '</option>'+
 					'<option >' + Biojs.Protein3D.COLOR_SECONDARY_STRUCTURE + '</option>'+
 					'<option >' + Biojs.Protein3D.COLOR_RAINBOW + '</option>'+					
@@ -879,144 +924,86 @@ Biojs.Protein3D = Biojs.extend(
 					'<option >' + Biojs.Protein3D.COLOR_BY_AMINO_ACID + '</option>'+
 					'<option >' + Biojs.Protein3D.COLOR_BY_TEMPERATURE + '</option>'+
 					'<option >' + Biojs.Protein3D.COLOR_HIDROPHOBICITY + '</option>'+
-				'</select><br/><br/>'+
+				'</select>'+
 
-				'Surface: <select  id="surfaceSelect">'+
+				'<h1>Surface:</h1><select  id="surfaceSelect">'+
 					'<option selected="selected">' + Biojs.Protein3D.SURFACE_NONE + '</option>'+
 					'<option >' + Biojs.Protein3D.SURFACE_ACCESSIBLE + '</option>'+
 					'<option >' + Biojs.Protein3D.SURFACE_EXCLUDED + '</option>'+
 					'<option >' + Biojs.Protein3D.SURFACE_CAVITIES + '</option>'+
-				'</select><br/>'+
+				'</select>'+
 				
-		        '<br/><b> Show selection using: </b><br/>' +
+		        '<h1> Show selection using:</h1>' +
 		        '<input id="translucentRadio" type="radio" name="selection" value="translucentRadio"/> Translucent ' +
-		        '<input id="halosRadio" type="radio" name="selection" value="halosRadio" checked="halosRadio"/> Halos<br/><br/>');
-		
-		controlDiv.find('#polarCheck').click( function( e ) {	
-			self.displayPolar( undefined, e.target.checked );
-		});
+		        '<input id="halosRadio" type="radio" name="selection" value="halosRadio" checked="halosRadio"/> Halos')
+		       
+        .change( function ( e ) {
+        	
+        	var targetId = jQuery(e.target).attr('id');
+        	
+        	switch ( targetId )	{
+	        	case "polarCheck": 
+	        		self.displayPolar( undefined, e.target.checked );
+	        		break;
+	        	case "unpolarCheck":
+	        		self.displayUnPolar( undefined, e.target.checked );
+	        		break;
+	        	case "positiveCheck":
+	        		self.displayPositive( undefined, e.target.checked ); 
+	        		break;
+	        	case "negativeCheck": 
+	        		self.displayNegative( undefined, e.target.checked );
+	        		break;
+	        	case "antialiasCheck":
+	        		self.displayAntialias( event.target.checked );
+	        		break;
+	        	case "rotationCheck":
+	        		self.rotate( event.target.checked );
+	        		break;
+	        	case "backgroundCheck":
+	        		self.changeBackgroundColor( "black", e.target );
+	        		break;
+	        	case "styleSelect":
+	        		self.displayStyle( e.target.value );
+	        		break;
+	        	case "colorSelect":
+	        		self.displayColorScheme( e.target.value );
+	        		break;
+	        	case "surfaceSelect":
+	        		self.displaySurface( e.target.value );
+	        		break;
+	        	case "translucentRadio":
+	        		self.setHalosVisible(false);
+	        		break;
+	        	case "halosRadio":
+	        		self.setHalosVisible(true);
+	        		break;
+	        	default: 
+	        		;
+        	}
+        	
+        });
 
-		controlDiv.find('#unpolarCheck').click(function( e ) {	
-			self.displayUnPolar( undefined, e.target.checked );
-		});
-		
-		controlDiv.find('#positiveCheck').click( function ( e ){
-			self.displayPositive( undefined, e.target.checked );
-		});
-		
-		controlDiv.find('#negativeCheck').click( function ( e ){
-			self.displayNegative( undefined, e.target.checked );
-		});
-		
-		controlDiv.find('#antialiasCheck').click( function(event) {
-			self.displayAntialias( event.target.checked );
-		});
-		
-		controlDiv.find('#rotationCheck').click( function(event) {
-			self.rotate( event.target.checked );
-		});
-
-		controlDiv.find('#backgroundCheck').click( function( e ) {
-			self.changeBackgroundColor( "black", e.target );
-		});
-		
-		controlDiv.find('#styleSelect').change( function( e ){
-			self.displayStyle( e.target.value );
-		});
-		
-		controlDiv.find('#colorSelect').change( function( e ){
-			self.displayColorScheme( e.target.value );
-		});
-		
-		controlDiv.find('#surfaceSelect').change( function( e ){
-			self.displaySurface( e.target.value );
-		});
-		
-		
-//		controlDiv.find('#exportImageButton').click( function(event){
-//			self.applyJmolCommand( 'write IMAGE y '+self.opt.pdbId+'.jpg ;' );
-//		});
-	
-		controlDiv.find('input[name="selection"]').change(function(){
-			var showHalos = ( jQuery('#halosRadio:checked').val() )? true: false;
-	    	self.setHalosVisible(showHalos);
-	    });
-		
-		// 
-		// Tab
-		//
-		var showHideTab = controlSectionDiv.find('#controlTab');
-
-		showHideTab.css("border", 0)
-			.css("margin", 0)
-			.css("padding", 0)
-			.css("float", "left")
-			.css("width", tabWidth)
-			.css("height", tabHeight)
-			.css('background-color', "#000");
-		
-		/**
-		 * @private
-		 * @function
-		 */
-		// This function will hide/show the control panel
-		var toggleControls = function (){
-			
-			showHideTab.find("span").toggle();
-			
-			if (self._controlsVisible) {
-				var appletWidth = self.opt.width - tabWidth;
-				jmolResizeApplet([appletWidth, self.opt.height], self.getId());
-				jQuery('#div'+self._appletId).css("width", appletWidth);
-				controlDiv.hide();
-				showHideTab.css('background-color', self.opt.backgroundColor);
-				self._controlsVisible = false;
-                jQuery('#hideButton').toggle(false);
-                jQuery('#showButton').toggle(true);
-			} else {
-				var appletWidth = self.opt.width - width;
-				jmolResizeApplet([appletWidth, self.opt.height], self.getId());
-				jQuery('#div'+self._appletId).css("width", appletWidth);
-				controlDiv.show();
-				showHideTab.css('background-color', "#000");
-				self._controlsVisible = true;
-                jQuery('#hideButton').toggle(true);
-                jQuery('#showButton').toggle(false);
-			}
-		}
-		
-		self._toggleControls = toggleControls;
-		
-		showHideTab.find('#hideButton')
-			.click( self._toggleControls )
-			.mouseover(function(){
-				jQuery(this).css("color","#27C0FF");
-			})
-			.mouseout(function(){
-				jQuery(this).css("color","#fff");
-			})
-			.css("color","#fff")
-			.css("display","none")
-			.css("cursor","pointer");
-		
-		showHideTab.find('#showButton')
-			.click( self._toggleControls )
-			.mouseover(function(){
-				jQuery(this).css("color","#27C0FF");
-			})
-			.mouseout(function(){
-				jQuery(this).css("color","#000");
-			})
-			.css("color","#000")
-			.css("cursor","pointer");
-		
 		this._controlsReady = true;
 		
 		Biojs.console.log("_buildControls done");
 	}, 
 	
+	_controlsAreVisible: function () {
+		return this._controlsContainer.find('.toggle.collapse').is(':visible');
+	},
+	
+	_toggleControls: function(){
+		
+		if ( this._controlsAreVisible() ) {
+			this._controlsContainer.find('.toggle.collapse').click();
+		} else {
+			this._controlsContainer.find('.toggle.expand').click();
+		}
+	},
+	
 	_addControl: function(html){
-		jQuery('#' + this.opt.target + ' div#controls').append( html );
+		this._controlsDiv.append( html );
 	},
 	
 	_getDisplayStyle: function ( text ) {
@@ -1128,7 +1115,7 @@ Biojs.Protein3D = Biojs.extend(
 		return "Biojs.Protein3D";
 	},
 	/* 
-     * Function: Biojs.Protein3D._loadStructCallback
+     * Function: Biojs.Protein3D._functionCbName
      * Purpose:  enable controls an triggers the loading pdb file event. 
      * 			 It is invoked by JmolApplet. 
      * Returns:  -
@@ -1150,6 +1137,8 @@ Biojs.Protein3D = Biojs.extend(
      */
 	_loadStructCallback: function ( appletId, url, file, title, message, code, formerFrame, frame ) {
 		
+		Biojs.console.log("executing _loadStructCallback for " + appletId);
+		
 		switch (code) {
 			case 3  : result = 'success'; break;		
 			case 0  : result = 'zapped'; break; 
@@ -1162,18 +1151,18 @@ Biojs.Protein3D = Biojs.extend(
 			var instanceId = parseInt( appletId.replace("jmolApplet",'') );
 			var instance = Biojs.getInstance(instanceId);
 	
+			if ( "success" == result ) {
+				instance.showControls();
+				instance.displayAntialias(instance.opt.antialias);
+				instance.rotate(instance.opt.rotate);
+			}
+			
 			instance.raiseEvent(Biojs.Protein3D.EVT_ON_PDB_LOADED, {
 				"file": title,
 				"result": result,
 				"message": message
 			});
 
-		}
-		
-		if ( "success" == result ) {
-			instance.showControls();
-			instance.displayAntialias(instance.opt.antalias);
-			instance.rotate(instance.opt.rotate);
 		} 
 
 	}
