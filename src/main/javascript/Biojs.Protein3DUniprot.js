@@ -13,8 +13,12 @@
  * @option {string} [proteinId]
  *    Uniprot identifier of the protein.
  *
- * @option {string} [alignmentsUrl="http://www.ebi.ac.uk/pdbe-apps/widgets/unipdb?uniprot="]
- *    Url to obtain the protein's alignments.
+ * @option {string} [mapping=Biojs.Protein3DUniprot.ALIGNMENTS_UNIPROT_MAPPING]
+ *    Mapping function to obtain the protein's alignments:
+ *    <ul>
+ *      <li>Biojs.Protein3DUniprot.ALIGNMENTS_UNIPROT_MAPPING</li>
+ *      <li>Biojs.Protein3DUniprot.ALIGNMENTS_PDBe_MAPPING</li>
+ *    </ul>
  *
  * @example
  *
@@ -69,7 +73,8 @@ Biojs.Protein3DUniprot = Biojs.Protein3DWS.extend(
 	
 	opt: {
 		proteinId: undefined,
-		alignmentsUrl: 'http://www.ebi.ac.uk/pdbe-apps/widgets/unipdb?uniprot='
+		mapping: 'http://www.ebi.ac.uk/pdbe-apps/widgets/unipdb?uniprot=',
+		proxyUrl: '../biojs/dependencies/proxy/proxy.php'
 	},
 	
 	eventTypes : [
@@ -114,20 +119,26 @@ Biojs.Protein3DUniprot = Biojs.Protein3DWS.extend(
 			this._minStart = Number.MAX_VALUE;
 			this._maxEnd = 0;
 			this._alignments = undefined;
-			this._requestAligmentsXML();
+
+			if ( this.opt.mapping == Biojs.Protein3DUniprot.ALIGNMENTS_UNIPROT_MAPPING ) {
+			    this._requestAligmentsFromUniprot();
+			} else if ( this.opt.mapping == Biojs.Protein3DUniprot.ALIGNMENTS_PDBe_MAPPING ) {
+                this._requestAligmentsFromPdbe();
+			} else {
+			    throw "Error in mapping function. this.opt.mapping="+this.opt.mapping;
+			}
 		} 
 	},
 	
 	// makes an ajax request to get the pdb files for the given uniprot id
-	_requestAligmentsXML: function(){
+	_requestAligmentsFromUniprot: function(){
 		var self = this;
-		self.opt.alignmentsUrl = 'http://www.ebi.ac.uk/pdbe-apps/widgets/unipdb?uniprot=';
 		jQuery.ajax({
-			url: self.opt.alignmentsUrl + self.opt.proteinId,
+			url: self.opt.mapping + self.opt.proteinId,
 			data: {biojsmapping:'1', varname:'pdbmappings'},
 			dataType: "script",
 			crossDomain: true,
-			success: function(xml){
+			success: function(){
 				Biojs.console.log("SUCCESS: data received");
 				self._alignments = pdbmappings;
 				self._aligmentsArrived();
@@ -139,60 +150,79 @@ Biojs.Protein3DUniprot = Biojs.Protein3DWS.extend(
 			}
 		});
 	},
-	
+
+	// makes an ajax request to get the pdb files for the given uniprot id
+    _requestAligmentsFromPdbe: function(){
+        var self = this;
+
+        jQuery.ajax({
+            url: self.opt.proxyUrl,
+            dataType: "text",
+            data: { url: self.opt.mapping + self.opt.proteinId + '/'},
+            success: function(data){
+                Biojs.console.log("SUCCESS: data received");
+                self._parseResponse(data);
+            },
+            async: false,
+            error: function(qXHR, textStatus, errorThrown){
+                Biojs.console.log("ERROR: requesting "+this.data);
+                self.raiseEvent('onRequestError', { message: textStatus});
+            }
+        });
+    },
 	
 	// parses the xml file from the request and stores the information in an easy to access way
-	_parseResponse: function(xml){
+	_parseResponse: function (text) {
 	    this._alignments = {};
 	    var i = 0;
 		var self = this;
+		var data;
 		
-		Biojs.console.log("Decoding " + xml);
-		
-		try {
-			xmlDoc = jQuery.parseXML( xml );
-			
-			jQuery(xmlDoc).find('block').each( function(){
-		        var children = jQuery(this).children();
-		        var segment0 = self._createNode(children[0]);
-		        var segment1 = self._createNode(children[1]);
-		        
-		        var arr = [];
-		        arr.push(segment0);
-		        arr.push(segment1);
-		        
-		        self._alignments[segment0.intObjectId] = arr || [];
-		        i++;
-				
-			    if (self._minStart > segment1.start) {
-			        self._minStart = segment1.start;
-			    }
-			    
-			    if (self._maxEnd < segment1.end) {
-			        self._maxEnd = segment1.end;
-			    }
-		    });
-			
-		} catch (e) {
-			Biojs.console.log("Error decoding response: " + e.message );
-			this._alignments = {};
+		Biojs.console.log("Decoding " + text);
+
+		if ( !Biojs.Utils.isEmpty(text) ) {
+
+            try {
+		        data = jQuery.parseJSON(text);
+
+		    } catch (e) {
+                Biojs.console.log("Error decoding response: " + e.message );
+            }
+
+            for ( var i in data )  {
+
+                try {
+                    var segments = [];
+
+                    segments.push({
+                        "start": data[i].pdb_range[0],
+                        "end": data[i].pdb_range[1],
+                        "intObjectId": data[i].pdbid + '.' + data[i].chain } );
+
+                    segments.push({
+                        "start": data[i].uniprot_range[0],
+                        "end": data[i].uniprot_range[1],
+                        "intObjectId": data[i].uniprot_acc } );
+
+                    self._alignments[ segments[0].intObjectId ] = segments;
+
+                    if (self._minStart > segment[1].start) {
+                        self._minStart = segment[1].start;
+                    }
+
+                    if (self._maxEnd < segment[1].end) {
+                        self._maxEnd = segment[1].end;
+                    }
+
+                } catch (e) {
+                    Biojs.console.log("Error decoding alignment: " + e.message );
+                }
+            }
 		}
-	    
+
 	    Biojs.console.log("Alignments decoded:");
 	    Biojs.console.log(self._alignments);
 	    this._aligmentsArrived();
-	},
-	
-	// creates a node for the data structure that holds the xml information
-	_createNode: function(segment){
-		var start = parseInt(jQuery(segment).attr('start'));
-	    var end = parseInt(jQuery(segment).attr('end'));
-	    var obj = {
-	        intObjectId: jQuery(segment).attr('intObjectId') || '',
-	        start: start || '',
-	        end: end || ''
-	    }
-	    return obj;
 	},
 	
 	// adds all available pdb files to a dropdown box 
@@ -445,4 +475,10 @@ Biojs.Protein3DUniprot = Biojs.Protein3DWS.extend(
 	removeSelection: function() { 
 		this.base();
 	}
+}, {
+
+    // Mapping services
+    ALIGNMENTS_UNIPROT_MAPPING: 'http://www.ebi.ac.uk/pdbe-apps/widgets/unipdb?uniprot=',
+    ALIGNMENTS_PDBe_MAPPING: 'http://wwwdev.ebi.ac.uk/pdbe-apps/jsonizer/mappings/best/all/'
+
 });
