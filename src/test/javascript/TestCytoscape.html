@@ -21,19 +21,40 @@
 				
 				var instance = new Biojs.Cytoscape({
 				     target: "holder",
-				 	 dataSource:{
-						psiquicUrl: 'http://www.ebi.ac.uk/Tools/webservices/psicquic/intact/webservices/current/search/query',
-						//main/resources/dependencies/proxy/
-						proxyUrl: '../../main/resources/dependencies/proxy/proxy.php',
-						query: "brca2"
-			         },
-			         calculateWeight:true
+				     elements: {
+				        nodes: [
+				            { data: { id: "a", weight: 43 }, classes: "foo" },
+				            { data: { id: "b", weight: 2 }, classes: "bar" },
+				            { data: { id: "c", weight: 88 }, classes: "foo bar" }
+				        ],
+				
+				        edges: [
+				            { data: { id: "ab", source: "a", target: "b", weight: 32 }, classes: "foo" },
+				            { data: { id: "bc", source: "b", target: "c", weight: 12 }, classes: "bar baz" },
+				            { data: { id: "ca", source: "c", target: "a", weight: 96 }, classes: "baz foo" },
+				            { data: { id: "ac", source: "a", target: "c", weight: 65 }, classes: "bar" }
+				        ]
+				    },
+				    ready: function(cy){
+				    	console.log("i'm ready");
+				    	$('button').removeAttr('disabled');
+				    }
 				});
-				 		
+				
+				$('#select').click(function(){
+					instance.elements(".foo").not(".bar").select();
+				});
+					
+					
+				$('#unselect').click(function(){
+					instance.elements().unselect();
+				});	
 			};
 		</script>
 	</head>
 	<body>
 		<div id="holder" style="margin-top:2px;background-color:#EEEEEE;height:200px;width:100%;float:left;border-style:solid;border-width:1px;"></div>
+		<button id='select' type="button" disabled='true'>select</button>
+		<button id ='unselect' type="button" disabled='true'>unselect</button>
 	</body>
 </html>
