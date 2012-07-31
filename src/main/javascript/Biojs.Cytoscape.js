@@ -214,7 +214,7 @@ Biojs.Cytoscape = Biojs.extend(
 	  * @param {Object} options
 	  * 
 	  * @example
-	  * instance.add([ { group: "nodes", data: { id: "n0" }},{ group: "nodes", data: { id: "n1" }},{ group: "edges", data: { id: "e0", source: "n0", target: "n1" }}]));
+	  * instance.add([ { group: "nodes", data: { id: "n0" }},{ group: "nodes", data: { id: "n1" }},{ group: "edges", data: { id: "e0", source: "n0", target: "n1" }}]);
 	  */
 	 add: function(options){
 	 	return  this.cy.add(options);
