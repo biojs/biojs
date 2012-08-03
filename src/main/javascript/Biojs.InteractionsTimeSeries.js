@@ -87,8 +87,13 @@ Biojs.InteractionsTimeSeries = Biojs.Cytoscape.extend(
 				self.cytoscape = cy;
 				self.raiseEvent( "onCytoscapeReady", cy);
 			}
+			//target element id 
+			options.target = "cy";
 			
-			jQuery(self._selector).cytoscapeweb(self.opt);	 	
+			// Calling super with options
+			self.base(options);
+			
+			//jQuery(self._selector).cytoscapeweb(self.opt);	 	
 	 },
 	/**
 	 * Default values for the options
