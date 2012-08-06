@@ -829,53 +829,74 @@ Biojs.Protein3D = Biojs.extend(
 	},
 	
 	_buildTabPanel: function( container, onVisibilityChangeCb ) {
-		
-		container.html('');	
-		
-		var content = jQuery('<div class="content"></div>').appendTo(container);
-		content.expand = jQuery('<div style="display: none;" class="toggle expand"></div>').appendTo(container);		
-		content.collapse = jQuery('<div class="toggle collapse"/>').appendTo(container);
-		
-		var contentWidth = container.width() - content.expand.outerWidth();
-		
-		container.css( 'left', 0 )
-			.find('.toggle')
-			.click( function(){
-				// Animate show/hide this tab
-				container.animate({ 
-						left: ( parseInt( container.css('left'), 10 ) == 0 ? content.expand.width() - container.outerWidth() : 0 ) + "px"
-					},
-					// to call once the animation is complete 
-					function() {
-						var contentVisible = false;
-						
-						container.find('.toggle').toggle();	
-						contentVisible = content.collapse.is(':visible');
-						
-						// apply callback function if defined
-						if ( "function" == typeof onVisibilityChangeCb ) {
-							var visibleWidth = (contentVisible)? container.outerWidth() : content.expand.outerWidth();
-							onVisibilityChangeCb.call( content, contentVisible, visibleWidth );
-						}
-						
-					}
-				);
-			})
-			.css({
-				'float':'right',
-				'position':'relative'
-			});
-		
-		Biojs.console.log('content width '+ contentWidth);
-		
-		content.css({ 
-			'width': contentWidth + "px", 
-			'height': container.height() + "px", 
-			'word-wrap': 'break-word'
-		});
-		
-		return content;
-	},
+
+        container.html('');
+
+        var content = jQuery('<div class="content"></div>').appendTo(container);
+        content.expand = jQuery('<div style="display: none;" class="toggle expand"></div>').appendTo(container);
+        content.collapse = jQuery('<div class="toggle collapse"/>').appendTo(container);
+
+        var contentWidth = container.width() - content.expand.outerWidth();
+
+        container.css( 'left', 0 )
+            .find('.toggle.collapse')
+            .click( function(){
+                // Animate show/hide this tab
+                container.animate({
+                        left: ( content.expand.width() - container.outerWidth() ) + "px"
+                    },
+                    // to call once the animation is complete
+                    function() {
+
+                        container.find('.toggle').toggle();
+
+                        // apply callback function if defined
+                        if ( "function" == typeof onVisibilityChangeCb ) {
+                            onVisibilityChangeCb.call( content, false, content.expand.outerWidth() );
+                        }
+
+                        content.hide();
+                        container.css( {left: '0px', width: 'auto'});
+
+                    }
+                );
+            })
+            .css({
+                'float':'right',
+                'position':'relative'
+            });
+
+        container
+            .find('.toggle.expand')
+            .click( function(){
+
+                container.css({ left: ( -contentWidth ) + "px" });
+                content.show();
+
+                container.animate({
+                        left: '0px'
+                    },
+                    function() {
+                        container.find('.toggle').toggle();
+
+                        // apply callback function if defined
+                        if ( "function" == typeof onVisibilityChangeCb ) {
+                            onVisibilityChangeCb.call( content, true, container.outerWidth() );
+                        }
+                    }
+                );
+            });
+
+        Biojs.console.log('content width '+ contentWidth);
+
+        content.css({
+            'width': contentWidth + "px",
+            'height': container.height() + "px",
+            'word-wrap': 'break-word'
+        });
+
+        return content;
+    },
 	
 	_buildControls : function () {
 		Biojs.console.log("_buildControls()");
