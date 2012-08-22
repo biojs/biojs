@@ -1,4 +1,38 @@
-
+/**
+ * This component uses the D3 library and specifically its implementation of the force algorithm to 
+ * represent a network of protein interactions.  
+ * 
+ * @class
+ * @extends Biojs
+ * 
+ * @author <a href="gustavoadolfo.salazar@gmail.com">Gustavo A. Salazar</a>
+ * @version 0.9.0_alpha
+ * 
+ * @requires <a href='http://code.jquery.com/query-1.7.2.min.js'>jQuery Core 1.7.2</a>
+ * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jquery/jquery-1.7.2.min.js"></script>
+ * 
+ * @requires <a href='http://d3js.org/'>D3</a>
+ * @dependency <script src="http://d3js.org/d3.v2.min.js" type="text/javascript"></script>
+ *
+ * @requires <a href='http://www.ebi.ac.uk/~jgomez/biojs/biojs/css/biojs.InteractionsD3.css'>InteractionsD3 CSS</a>
+ * @dependency <link rel="stylesheet" href="../biojs/css/biojs.InteractionsD3.css" />
+ * 
+ * @param {Object} options An object with the options for the InteractionsD3 component.
+ * 
+ * @option {string} target
+ *    Identifier of the DIV tag where the component should be displayed.
+ * 
+ * @example
+ * 			var instance = new Biojs.InteractionsD3({
+ * 				target: "YourOwnDivId",
+ * 			});	
+ * 			var pid=1;
+ *			instance.addProtein({id:'p'+pid++,group:1});
+ *			instance.addProtein({id:'p'+pid++,group:1});
+ *			instance.addProtein({id:'p'+pid++,group:1});
+ * 			instance.addInteraction("p"+(pid-1),"p"+(pid-2),{id:"p"+(pid-1)+"_p"+(pid-2),feature1:"value"});
+ * 			instance.restart();
+ */
 Biojs.InteractionsD3 = Biojs.extend (
 	/** @lends Biojs.InteractionsD3# */
 	{
@@ -133,17 +167,49 @@ Biojs.InteractionsD3 = Biojs.extend (
 			 * 
 			 * */
 			"proteinClick",
+			/**
+			 * @name Biojs.InteractionsD3#proteinMouseOver
+			 * @event
+			 * @param {function} actionPerformed A function which receives an {@link Biojs.Event} object as argument.
+			 * @eventData {Object} source The component which did triggered the event.
+			 * @eventData {Object} protein the information of the protein that has been mouseover.
+			 * @example 
+			 * instance.proteinMouseOver(
+			 *    function( objEvent ) {
+			 *       alert("The mouse is over the protein " + objEvent.protein.id);
+			 *    }
+			 * ); 
+			 * 
+			 * */
 			"proteinMouseOver",
+			/**
+			 * @name Biojs.InteractionsD3#interactionMouseOver
+			 * @event
+			 * @param {function} actionPerformed A function which receives an {@link Biojs.Event} object as argument.
+			 * @eventData {Object} source The component which did triggered the event.
+			 * @eventData {Object} interaction the information of the interaction that has been mouseover.
+			 * @example 
+			 * instance.interactionMouseOver(
+			 *    function( objEvent ) {
+			 *       alert("The mouse is over the interaction " + objEvent.interaction.id);
+			 *    }
+			 * ); 
+			 * 
+			 * */
 			"interactionMouseOver"
 		], 
 
 		/**
-		 * Change the font size. Do nothing it no value is provided.
+		 * Adds an interaction between 2 proteins that are already in the graphic using their IDs
 		 * 
-		 * @param {string} [size] The new font size in pixels.
+		 * @param {string} proteinId1 Id of the first protein in the interaction
+		 * @param {string} proteinId2 Id of the second protein in the interaction
+		 * @param {Object} [extraAtributes={}] An object containing meta information of the interaction 
+		 * 					to be stored in the interaction itself. useful for triggered events
 		 *
 		 * @example 
-		 * instance.setSize("72px");
+		 * instance.addInteraction("p"+(pid-1),"p"+(pid-2),{id:"p"+(pid-1)+"_p"+(pid-2),feature1:"new"});
+		 * instance.restart();
 		 */
 		addInteraction: function(proteinId1,proteinId2,extraAtributes) {
 			var self=this;
@@ -181,6 +247,15 @@ Biojs.InteractionsD3 = Biojs.extend (
 
 			return n;
 		},
+		/**
+		 * Adds a protein to the graphic
+		 * 
+		 * @param {Object} protein An object containing information of the protein 
+		 *
+		 * @example 
+		 * instance.addProtein({id:'p'+pid++,group:2});
+		 * instance.restart();
+		 */
 		addProtein: function(protein) {
 			var self=this;
 			var n = self.proteins.indexOf(self.proteinsA[protein.id]);
@@ -190,6 +265,16 @@ Biojs.InteractionsD3 = Biojs.extend (
 			self.proteinsA[protein.id]=protein;
 			return n;
 		},
+		/**
+		 * gets the protein object by its id
+		 * 
+		 * @param {string} proteinId The id of the protein
+		 *  
+		 * @return {Object} protein An object containing information of the protein 
+		 *
+		 * @example 
+		 * instance.getProtein('p3');
+		 */
 		getProtein: function(proteinId) {
 			var self=this;
 			return self.proteinsA[proteinId];
@@ -204,10 +289,30 @@ Biojs.InteractionsD3 = Biojs.extend (
 			}
 			return null;
 		},
+		/**
+		 * gets the interaction object by the id of its proteins
+		 * 
+		 * @param {string} proteinId1 The id of the first protein
+		 * @param {string} proteinId2 The id of the second protein
+		 *  
+		 * @return {Object} An object containing information of the interaction 
+		 *
+		 * @example 
+		 * instance.getInteraction('p1','p3');
+		 */
 		getInteraction: function(proteinId1,proteinId2){
 			var self =this;
 			return self.getInteractionIndex(proteinId1,proteinId2);
 		},
+		/**
+		 * removes from the graphic the interaction by the id of its proteins
+		 * 
+		 * @param {string} proteinId1 The id of the first protein
+		 * @param {string} proteinId2 The id of the second protein
+		 *  
+		 * @example 
+		 * instance.removeInteraction('p2','p3');
+		 */
 		removeInteraction: function(proteinId1,proteinId2){
 			var self = this;
 			var intIndex = self.getInteractionIndex(proteinId1,proteinId2);
@@ -222,27 +327,15 @@ Biojs.InteractionsD3 = Biojs.extend (
 			intIndex = self.interactionsA[proteinId2].indexOf(p1);
 			if (intIndex!=-1) self.interactionsA[proteinId2].splice(intIndex--, 1);
 		},
-		removeFreeInteractionsFromProtein: function(proteinId,removeProteins){
-			var self=this;
-			removeProteins = (typeof removeProteins == "undefined")?true:removeProteins;
-			if (typeof self.interactionsA[proteinId] == "undefined"){
-				if (removeProteins) self.removeProtein(proteinId);
-				return;
-			}
-			
-			if (removeProteins){
-				for (var i=0;i<self.interactionsA[proteinId].length;i++){
-					var target = self.interactionsA[proteinId][i];
-					if (self.interactionsA[target.id].length<2){
-						self.removeInteraction(proteinId,target.id);
-						i--;
-						self.removeProtein(target.id);
-					}
-				}
-				if(self.interactionsA[proteinId].length==0)
-					self.removeProtein(proteinId);
-			}
-		},
+		/**
+		 * removes a protein from the graphic with all the interactions unless the interactor 
+		 * is also interacting with another protein that is visible. 
+		 * 
+		 * @param {string} proteinId The id of the protein to delete
+		 *  
+		 * @example 
+		 * instance.removeProtein('p2');
+		 */
 		removeProtein: function(proteinId, excludelist){
 			var self=this;
 			excludelist = (typeof excludelist == "undefined")?[]:excludelist;
@@ -271,6 +364,14 @@ Biojs.InteractionsD3 = Biojs.extend (
 				self.proteinsA[proteinId].fixed=false;
 			}
 		},
+		/**
+		 * 
+		 * Resets the graphic to zero proteins zero interactions
+		 * 
+		 *  
+		 * @example 
+		 * instance.resetGraphic();
+		 */
 		resetGraphic: function(){
 			var self=this;
 			self.proteins=[];
@@ -278,6 +379,13 @@ Biojs.InteractionsD3 = Biojs.extend (
 			self.interactions=[];
 			self.restart();
 		},
+		/**
+		 * Restart the graphic to materialize the changes don on it(e.g. add/remove proteins)
+		 * 
+		 * @example 
+		 * instance.restart();
+		 * 
+		 */
 		restart: function(){
 			var self = this;
 			
@@ -348,24 +456,69 @@ Biojs.InteractionsD3 = Biojs.extend (
 			nodes.exit().remove();
 		    
 		},
+		/**
+		 * Hides the elements on the graphic that match the selector. 
+		 * Check the <a href="http://www.w3.org/TR/css3-selectors/">CSS3 selectors documentation</a> to build a selector string 
+		 * 
+		 * @param {string} selector a string to represent a set of elements. Check the <a href="http://www.w3.org/TR/css3-selectors/">CSS3 selectors documentation</a> to build a selector string
+		 *  
+		 * @example 
+		 * instance.hide("[id = node_p"+(pid-1)+"]");
+		 */
 		hide: function(selector){
 			var self=this;
 			self.vis.selectAll(selector).attr("visibility", 'hidden');
 			self.vis.selectAll(selector+" .legend").attr("visibility", 'hidden');
 		},
+		/**
+		 * Shows the elements on the graphic that match the selector. 
+		 * Check the <a href="http://www.w3.org/TR/css3-selectors/">CSS3 selectors documentation</a> to build a selector string 
+		 * 
+		 * @param {string} selector a string to represent a set of elements. Check the <a href="http://www.w3.org/TR/css3-selectors/">CSS3 selectors documentation</a> to build a selector string
+		 *  
+		 * @example 
+		 * instance.show("[id = node_p"+(pid-1)+"]");
+		 */
 		show: function(selector){
 			var self=this;
 			self.vis.selectAll(selector).attr("visibility", 'visible');
 			self.vis.selectAll(selector+" .legend").attr("visibility",function(d) { return (d.showLegend)?"visible":"hidden";});
 		},
+		/**
+		 * Highlight the elements on the graphic that match the selector. 
+		 * Check the <a href="http://www.w3.org/TR/css3-selectors/">CSS3 selectors documentation</a> to build a selector string 
+		 * 
+		 * @param {string} selector a string to represent a set of elements. Check the <a href="http://www.w3.org/TR/css3-selectors/">CSS3 selectors documentation</a> to build a selector string
+		 *  
+		 * @example 
+		 * instance.highlight("[id = node_p"+(pid-1)+"]");
+		 */
 		highlight: function(selector){
 			var self=this;
 			self.vis.selectAll(selector).style("stroke", '#3d6');
 		},
+		/**
+		 * Set the stroke's color of the elements on the graphic that match the selector. 
+		 * Check the <a href="http://www.w3.org/TR/css3-selectors/">CSS3 selectors documentation</a> to build a selector string 
+		 * 
+		 * @param {string} selector a string to represent a set of elements. Check the <a href="http://www.w3.org/TR/css3-selectors/">CSS3 selectors documentation</a> to build a selector string
+		 * @param {string} color a color in web format eg. #FF0000
+		 *  
+		 * @example 
+		 * instance.setColor("[id = node_p"+(pid-1)+"]","#FF0000");
+		 */
 		setColor: function(selector,color){
 			var self=this;
 			self.vis.selectAll(selector).style("stroke", color);
 		},
+		/**
+		 * If the protein has a fixed position in the graphic it gets released, or viceversa other wise
+		 * 
+		 * @param {string} protein the id of the protein to swap is position on the graphic
+		 *  
+		 * @example 
+		 * instance.swapFixed("p"+(pid-1));
+		 */
 		swapFixed: function(protein){
 			var self=this;
 			var nodes=self.force.nodes();
@@ -374,6 +527,14 @@ Biojs.InteractionsD3 = Biojs.extend (
 				  d.fixed = !d.fixed;
 			});
 		},
+		/**
+		 * Shows/Hide the legend(id) of the protein
+		 * 
+		 * @param {string} protein the id of the protein to swap the visibility of the legend
+		 *  
+		 * @example 
+		 * instance.swapShowLegend("#node_p"+(pid-1)+" .legend");
+		 */
 		swapShowLegend: function(selector){
 			var self=this;
 			self.vis.selectAll(selector).attr("visibility", function(d) {

@@ -25,18 +25,15 @@
  * @option {string} target
  *    Identifier of the DIV tag where the component should be displayed.
  * 
-		minizable:true,
-		draggable:true
-
  * @option {object} features
  *    Object with the features to display, every attribute is displayed as an item in the list. 
  *    The attribute id, is used for the title of the frame. 
  *    The attribute description has a different style at the beggining of the list
  * 
- * @option {boolean} minizable
+ * @option {boolean} [minizable=true]
  *    to indicate if the window is minizable. default value: true
  * 
- * @option {boolean} draggable
+ * @option {boolean} [draggable=true]
  *    to indicate if the window can be draggable. default value: true
  * 
  * @example

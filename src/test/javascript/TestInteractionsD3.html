@@ -31,7 +31,7 @@
 	<input type="button" onclick="instance1.addProtein({id:'protein'+$('#p1').val(),group:group}); instance1.restart();" value="add protein p1"/>
 	<input type="button" onclick="instance1.addInteraction('protein'+$('#p1').val(), 'protein'+$('#p2').val()); instance1.restart();" value="interacts p1-p2"/>
 	<input type="button" onclick="instance1.removeInteraction('protein'+$('#p1').val(),'protein'+$('#p2').val()); instance1.restart();" value="remove interaction p1-p2"/>
-	<input type="button" onclick="instance1.removeFreeInteractionsFromProtein('protein'+$('#p1').val()); instance1.restart();" value="delete interactions with p1"/>
+	<input type="button" onclick="instance1.removeProtein('protein'+$('#p1').val()); instance1.restart();" value="remove p1 and its interactors"/>
 	<input type="button" onclick="instance1.resetGraphic();" value="reset graphic"/>
 	<div id="holder1"></div>
 	</body>
