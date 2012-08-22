@@ -35,7 +35,7 @@
  * 
  * 
  * @example 
- * var instance = new Biojs.InteractionsGraph({
+ * var instance = new Biojs.InteractionsTimeSeries({
  *  	target: "YourOwnDivId",
  *  	dataSource: {
  *  		psicquicUrl: 'http://www.ebi.ac.uk/Tools/webservices/psicquic/intact/webservices/current/search/query',
@@ -97,14 +97,14 @@ Biojs.InteractionsTimeSeries = Biojs.Cytoscape.extend(
 	 },
 	/**
 	 * Default values for the options
-	 * @name Biojs.InteractionsGraph-opt
+	 * @name Biojs.InteractionsTimeSeries-opt
 	 */
 	 opt: {
 	
 	 },
 	/**
 	 * Array containing the supported event names
-	 * @name Biojs.InteractionsGraph-eventTypes
+	 * @name Biojs.InteractionsTimeSeries-eventTypes
 	 */
 	eventTypes: [],
 
