@@ -9,7 +9,7 @@
  * @version 1.0.0
  *
  * @requires <a href='http://code.jquery.com/jquery-1.6.4.js'>Raphael 2.1.0</a>
- * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/graphics/raphael-min-v2.1.0.js" charset="utf-8"></script>
+ * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/graphics/raphael-min-v2.1.0.js"></script>
  * 
  * @requires <a href='http://code.jquery.com/jquery-1.6.4.js'>jQuery Core 1.6.4</a>
  * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jquery/jquery-1.4.2.min.js"></script>
@@ -53,6 +53,7 @@ Biojs.PDBprints = Biojs.extend (
 		var self = this;
 	  
 		var defconf = {size:40, orient:'h', interval:10, startX:10, startY:10};
+
 		// Make Raphael object if not provided already
 		var deldiv = [];
 		for(var ci=0; ci < self.opt.targets.length; ci++) {
