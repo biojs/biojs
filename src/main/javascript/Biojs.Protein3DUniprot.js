@@ -230,8 +230,7 @@ Biojs.Protein3DUniprot = Biojs.Protein3DWS.extend(
 	_aligmentsArrived: function(){
 		
 		this._alignmentsJustArrived = true;
-        
-		
+
 		var alignments = this._filterAligmentsBySelection(this._selection);
         
         if (!Biojs.Utils.isEmpty(alignments)) {
