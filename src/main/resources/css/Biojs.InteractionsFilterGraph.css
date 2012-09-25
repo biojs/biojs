@@ -11,7 +11,7 @@
 			}
 			.miDisplay{
 				margin-top:2px;
-				float:left;
+				/*float:left;*/
 			}
 			#miInformation{
 				font-size: 92%;
@@ -26,6 +26,9 @@
 			.miFilter, .miDisplay{
 				margin-bottom:5px;	
 			}
+            .miFilter{
+                margin-right:-2px;
+            }
 			.miRadioBtnName{
 				padding-right:10px;
 			}

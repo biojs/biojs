@@ -1,5 +1,7 @@
 /**
- * Graph display to highlight molecular interaction data 
+ * Graph display to highlight molecular interaction data. <strong>NOTE:</strong> <i>The selection 
+ * radio button options will just work if the instance of your object is globlal. Example:
+ * "var instance; window.onload = function() {instance = new Biojs.InteractionsFilterGraph(...)};" </i>
  * 
  * @class
  * @extends Biojs
@@ -9,6 +11,9 @@
  * 
  * @requires <a href='../biojs/css/Biojs.InteractionsFilterGraph.css'>Biojs.InteractionsFilterGraph.css</a>
  * @dependency <link href="../biojs/css/Biojs.InteractionsFilterGraph.css" rel="stylesheet" type="text/css" />
+ * 
+ * @requires <a href='http://blog.jquery.com'>jQuery 1.7.2</a>
+ * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jquery/jquery-1.7.2.min.js"></script>
  * 
  * @requires <a href='https://github.com/downloads/cytoscape/cytoscapeweb/jquery.cytoscapeweb-2.0-prerelease-snapshot-2012.05.14-12.35.01.zip'>Cytoscape web 2</a>
  * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/cytoscape/jquery.cytoscapeweb.all.js"></script>
@@ -33,14 +38,18 @@
  * @option {string} filters
  * 	  Filtering options use to highlight interactions in the graph
  *  
- * @option {string} graphHeight [400px]
+ * @option {string} graphHeight [400]
  * 	  Graph height
+ *
+ * @option {string} graphWidth [400]
+ * 	  Graph width
  * 
  * @example
- * var example = new Biojs.InteractionsFilterGraph({
- * 	 	target: "holder",
- *      instanceName: "example",
- *      graphHeight: "250px",
+ * var instance = new Biojs.InteractionsFilterGraph({
+ * 	 	target: "YourOwnDivId",
+ *      instanceName: "instance",
+ *      graphHeight: '350px',
+ *      graphWidth: '100%',
  *      interactions: {
  * 		 "i1": ["P1","P2"],
  * 	 	 "i2": ["P3","P4"],
@@ -66,75 +75,110 @@
  * });
  */
 
+
 Biojs.InteractionsFilterGraph = Biojs.extend(
 /** @lends Biojs.InteractionsFilterGraph# */
 {
 	 constructor: function (options) {
 			//Biojs.console.enable();
+         //this._setExample();
+         if(this._getObjectSize(this.opt.interactions)){
 			this._setHtmlTemplate();
+            this._createFilterOptions();
+            this._setCytoscapeHeight();
 			this._startCytoscape();
-			this._createFilterOptions();
+         }
 	 },
 	/**
 	 * Default values for the options
 	 * @name Biojs.InteractionsFilterGraph-opt
 	 */
 	 opt: {
-	 	target: "miHolder",
+	 	target: "YourOwnDivId",
 	 	instanceName: "instance",
-	 	graphHeight: "250px",
-	 	interactions: {
-			 "i1": ["P1","P2"],
-			 "i2": ["P3","P4"],
-			 "i3": ["P5","P6"],
-			 "i4": ["P2","P6"],
-			 "i5": ["P2","P4"],
-			 "i6": ["P6","P1"],
-			 "i7": ["P2","P6"],
-		},
-	 	filters:{
-	 		timeSeries: {
-				title: "Time after Sendai viral infection (hours)",
-				presentation: "radio",
-				active: true,
-				dataType: "edges",
-				data: {
-				 "2":["i2","i3","i4"],
-				 "6":["i2","i5","i6","i7"],
-				 "12":["i1","i2","i3","i4","i6","i7"]
-				}
-			},
-			interactionTypes: {
-				title: "Interaction types",
-				presentation: "radio",
-				active: true,
-				dataType: "edges",
-				data: {
-				 "association":["i3","i4"],
-				 "physical association":["i2","i5","i6","i7"],
-				 "colocalization":["i1","i2"]
-				}
-			},
-			publications: {
-				title: "Publications",
-				presentation: "checkbox",
-				active: false,
-				dataType: "edges",
-				data: {
-				 "pumned01":["i1","i2","i3","i4","i5","i6","i7"],
-				 "pumned02":["i1","i2","i3","i4","i5","i6"],
-				 "pumned03":["i1","i2","i3","i6"],
-				 "pumned04":["i1","i3"],
-				 "pumned05":["i3"]
-				}
-			}
-		}	 	
+	 	graphHeight: 500,
+        graphWidth: 500,
+	 	interactions: {},
+	 	filters:{}
 	 },
 	/**
 	 * Array containing the supported event names
 	 * @name Biojs.InteractionsFilterGraph-eventTypes
 	 */
 	eventTypes: [],
+
+    _setExample: function(){
+        this.opt.interactions = {
+        			 "i1": ["P1","P2"],
+        			 "i2": ["P3","P4"],
+        			 "i3": ["P5","P6"],
+        			 "i4": ["P2","P6"],
+        			 "i5": ["P2","P4"],
+        			 "i6": ["P6","P1"],
+        			 "i7": ["P2","P6"]
+        		};
+        this.opt.filters = {
+        	 		timeSeries: {
+        				title: "Time after Sendai viral infection (hours)",
+        				presentation: "radio",
+        				active: true,
+        				dataType: "edges",
+        				data: {
+        				 "2":["i2","i3","i4"],
+        				 "6":["i2","i5","i6","i7"],
+        				 "12":["i1","i2","i3","i4","i6","i7"]
+        				}
+        			},
+        			interactionTypes: {
+        				title: "Interaction types",
+        				presentation: "radio",
+        				active: true,
+        				dataType: "edges",
+        				data: {
+        				 "association":["i3","i4"],
+        				 "physical association":["i2","i5","i6","i7"],
+        				 "colocalization":["i1","i2"]
+        				}
+        			},
+        			publications: {
+        				title: "Publications",
+        				presentation: "checkbox",
+        				active: false,
+        				dataType: "edges",
+        				data: {
+        				 "pumned01":["i1","i2","i3","i4","i5","i6","i7"],
+        				 "pumned02":["i1","i2","i3","i4","i5","i6"],
+        				 "pumned03":["i1","i2","i3","i6"],
+        				 "pumned04":["i1","i3"],
+        				 "pumned05":["i3"]
+        				}
+        			}
+                };
+
+    },
+
+    _getObjectSize: function(object){
+        var count = 0;
+        for (i in object) {
+            if (object.hasOwnProperty(i)) {
+                count++;
+            }
+        }
+        return count;
+    },
+
+    _setCytoscapeHeight: function(){
+        this.opt.graphHeight = this.opt.graphHeight.toString();
+        var height = this.opt.graphHeight;
+        if(this.opt.graphHeight.indexOf("px") != -1){
+            height = this.opt.graphHeight.substring(0,this.opt.graphHeight.length - 2);
+        }
+        var filterHeight = jQuery("#"+this._filtersTarget).height();
+        var cytoscapeHeight =  parseInt(this.opt.graphHeight) -  parseInt(filterHeight) - 5;
+        var cytoscape = jQuery("#"+this._cytoscapeTarget);
+        cytoscape.height(cytoscapeHeight);
+        //cytoscape.width(parseInt(cytoscape.width())-1);
+    },
 	
 	/* 
      * Function: Biojs.HpaSummaryFeatures._getCytoscapeElements
@@ -227,7 +271,7 @@ Biojs.InteractionsFilterGraph = Biojs.extend(
 		                fillColor: "#CC0000"
 		            },
 		            "edge:selected":{
-		                lineColor: "#FF9999",
+		                lineColor: "#FF9999"
 		            }
 		        }
 		    },
@@ -408,9 +452,14 @@ Biojs.InteractionsFilterGraph = Biojs.extend(
      * Inputs: -
      */				
 	_setHtmlTemplate: function(){
-		var interactionFilters = jQuery('<div id="'+this._filtersTarget+'"></div>');
-		var cytoscape = jQuery('<div class="miDisplay" id="'+this._cytoscapeTarget+'" style="height:'+this.opt.graphHeight+';width:100%;"></div>');
-		var information = jQuery('<div id="'+this._informationTarget+'"></div>');
+        this.opt.graphWidth = this.opt.graphWidth.toString();
+        var width = this.opt.graphWidth + "px";
+        if(this.opt.graphWidth.indexOf("%") != -1 || this.opt.graphWidth.indexOf("px") != -1){
+            width = this.opt.graphWidth;
+        }
+		var interactionFilters = jQuery('<div id="'+this._filtersTarget+'" style="width:'+width+';"></div>');
+		var cytoscape = jQuery('<div class="miDisplay" id="'+this._cytoscapeTarget+'" style="width:'+width+';"></div>');
+		var information = jQuery('<div id="'+this._informationTarget+'" style="width:'+width+';"></div>');
 		jQuery("#"+this.opt.target).append(interactionFilters);
 		jQuery("#"+this.opt.target).append(cytoscape);
 		jQuery("#"+this.opt.target).append(information);
@@ -427,7 +476,7 @@ Biojs.InteractionsFilterGraph = Biojs.extend(
 	_informationTarget: "miInformation"	
 			
 	
-		
+
 	
 	
 });

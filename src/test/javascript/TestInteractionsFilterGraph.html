@@ -16,7 +16,7 @@
 		
 		<!-- BIOJS LIB and CSS -->
 		<script language="JavaScript" type="text/javascript" src="../../main/javascript/Biojs.js"></script>
-		<script language="JavaScript" type="text/javascript" src="../../main/javascript/Biojs.Cytoscape.js"></script>
+		<!--<script language="JavaScript" type="text/javascript" src="../../main/javascript/Biojs.Cytoscape.js"></script>-->
 		<script language="JavaScript" type="text/javascript" src="../../main/javascript/Biojs.InteractionsFilterGraph.js"></script>
 		    
 		<script language="JavaScript" type="text/javascript">
@@ -26,7 +26,8 @@
 				example = new Biojs.InteractionsFilterGraph({
 				     target: "holder",
 				     instanceName: "example",
-				     graphHeight: "250px",
+				     graphHeight: "500px",
+                     graphWidth: "100%",
 				     interactions: {
 					 "EBI-5237770_001": ["stat6_human","tbk1_human"],
 					 "EBI-5237770_002": ["stat6_human","mavs_human"],
