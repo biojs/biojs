@@ -2,7 +2,7 @@
  * @class
  * @extends Biojs.Cytoscape
  * 
- * @author <a href="mailto:secevalliv@gmail.com">José Villaveces</a>
+ * @author <a href="mailto:secevalliv@gmail.com">Jose Villaveces</a>
  * @version 1.0.0_beta
  * 
  * @option {Object} properties 

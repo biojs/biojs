@@ -59,11 +59,14 @@ Biojs.Cytoscape = Biojs.extend(
         opt.elements = (options.elements === undefined) ? self.opt.elements : options.elements
         opt.ready = function(cy){
   			self.cy = cy;
-  			self.raiseEvent( "onCytoscapeReady", cy);
+  			
+  			if(self.raiseEvent != undefined)
+  				self.raiseEvent( "onCytoscapeReady", cy);
   			
   			if(typeof options.ready === 'function'){
   				options.ready(cy);
   			}
+  			cy.center();
         }
         jQuery(self._selector).cytoscapeweb(opt);
  	},
@@ -87,6 +90,9 @@ Biojs.Cytoscape = Biojs.extend(
 	            { data: { id: "ca", source: "c", target: "a", weight: 96 }, classes: "baz foo" },
 	            { data: { id: "ac", source: "a", target: "c", weight: 65 }, classes: "bar" }
 	        ]
+	    },
+	    ready : function(cy){
+	    	cy.fit();
 	    },
 	    layout: {
 	    	name:"arbor"
