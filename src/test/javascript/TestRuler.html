@@ -45,77 +45,86 @@ h1 .subtitle {
 				     target: "holder1",
 				     allowOrdering:true,
 				     rules:{
-				    	    "location": [
-				    	                 "all proteins",
-				    	                 "protein1",
-				    	                 "protein2",
-				    	                 "protein3",
-				    	                 "protein4"
-				    	             ],
-				    	             "action": [
-				    	                 "Show",
-				    	                 "Hide",
-				    	                 "Highlight",
-				    	                 "Color"
-				    	             ],
-				    	             "target": [
-				    	                 {
-				    	                     "name": "Proteins",
-				    	                     "conditions": [
-				    	                         {
-				    	                             "name": "interactions with",
-				    	                             "type": "selects",
-				    	                             "amount": 1,
-				    	                             "values": [
-				    	                                 "protein1",
-				    	                                 "protein2",
-				    	                                 "protein3",
-				    	                                 "protein4"
-				    	                             ]
-				    	                         },
-				    	                         {
-				    	                             "name": "number of interactions",
-				    	                             "type": "numeric_comparison"
-				    	                         },
-				    	                         {
-				    	                             "name": "accession number",
-				    	                             "type": "text_comparison"
-				    	                         }
-				    	                     ]
-				    	                 },
-				    	                 {
-				    	                     "name": "Interactions",
-				    	                     "conditions": [
-				    	                         {
-				    	                             "name": "protein",
-				    	                             "type": "selects",
-				    	                             "amount": 1,
-				    	                             "values": [
-				    	                                 "protein1",
-				    	                                 "protein2",
-				    	                                 "protein3",
-				    	                                 "protein4"
-				    	                             ]
-				    	                         },
-				    	                         {
-				    	                             "name": "proteins",
-				    	                             "type": "selects",
-				    	                             "amount": 2,
-				    	                             "values": [
-				    	                                 "protein1",
-				    	                                 "protein2",
-				    	                                 "protein3",
-				    	                                 "protein4"
-				    	                             ]
-				    	                         },
-				    	                         {
-				    	                             "name": "score",
-				    	                             "type": "numeric_comparison"
-				    	                         }
-				    	                     ]
-				    	                 }
-				    	             ]
-				    	         }
+			    	    "location": [
+			    	                 "all proteins",
+			    	                 "protein1",
+			    	                 "protein2",
+			    	                 "protein3",
+			    	                 "protein4"
+			    	             ],
+	    	             "target": [
+	    	                 {
+	    	                     "name": "Proteins",
+			    	             "action": [
+					    	                 {name:"Show",type:"single"},
+					    	                 {name:"Hide",type:"single"},
+					    	                 {name:"Highlight",type:"single"},
+					    	                 {name:"Color",type:"color"},
+					    	                 {name:"Color Range",type:"colorRange"},
+					    	                 {name:"Show Label",type:"select",options:["ID","Functional Class","Organism","Gene Name"]}
+					    	             ],
+	    	                     "conditions": [
+	    	                         {
+	    	                             "name": "interactions with",
+	    	                             "type": "selects",
+	    	                             "amount": 1,
+	    	                             "values": [
+	    	                                 "protein1",
+	    	                                 "protein2",
+	    	                                 "protein3",
+	    	                                 "protein4"
+	    	                             ]
+	    	                         },
+	    	                         {
+	    	                             "name": "number of interactions",
+	    	                             "type": "numeric_comparison"
+	    	                         },
+	    	                         {
+	    	                             "name": "accession number",
+	    	                             "type": "text_comparison"
+	    	                         }
+	    	                     ]
+	    	                 },
+	    	                 {
+	    	                     "name": "Interactions",
+			    	             "action": [
+					    	                 "Show",
+					    	                 "Hide",
+					    	                 "Highlight",
+					    	                 "Color",
+					    	                 "do something"
+					    	             ],
+	    	                     "conditions": [
+	    	                         {
+	    	                             "name": "protein",
+	    	                             "type": "selects",
+	    	                             "amount": 1,
+	    	                             "values": [
+	    	                                 "protein1",
+	    	                                 "protein2",
+	    	                                 "protein3",
+	    	                                 "protein4"
+	    	                             ]
+	    	                         },
+	    	                         {
+	    	                             "name": "proteins",
+	    	                             "type": "selects",
+	    	                             "amount": 2,
+	    	                             "values": [
+	    	                                 "protein1",
+	    	                                 "protein2",
+	    	                                 "protein3",
+	    	                                 "protein4"
+	    	                             ]
+	    	                         },
+	    	                         {
+	    	                             "name": "score",
+	    	                             "type": "numeric_comparison"
+	    	                         }
+	    	                     ]
+	    	                 }
+	    	             ]
+	    	         }
 				});		
 				rules2 ={
 		    	    "location": [

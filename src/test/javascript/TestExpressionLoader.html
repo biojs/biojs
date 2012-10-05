@@ -1,0 +1,50 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<title>Protein details - Test</title>
+	<!-- BIOJS LIB and CSS -->
+	<script language="JavaScript" type="text/javascript" src="../../main/javascript/Biojs.js"></script>
+	<script language="JavaScript" type="text/javascript" src="../../main/javascript/Biojs.ExpressionLoader.js"></script>
+	
+	<!--JQuery LIb -->
+	<script src="../../main/resources/dependencies/jquery/jquery-1.7.2.min.js" type="text/javascript"></script>
+	
+	<!-- UI Jquery -->
+	<script src="../../main/resources/dependencies/jquery/jquery-ui-1.8.2.custom.min.js" type="text/javascript"></script>
+	<link rel="stylesheet" href="../../main/resources/dependencies/jquery/jquery-ui-1.8.2.css" />
+
+	<!-- MiniColors -->
+	<script type="text/javascript" src="../../main/resources/dependencies/jquery.miniColors.min.js"></script>
+	<link type="text/css" rel="stylesheet" href="../../main/resources/css/jquery.miniColors.css" />
+
+	<!-- CSS -->
+	<link rel="stylesheet" href="../../main/resources/css/biojs.expressionLoader.css" />
+	
+	<script language="JavaScript" type="text/javascript">
+				window.onload = function() {
+					var instance1 = new Biojs.ExpressionLoader({
+					     target: "holder1"
+					});	
+					instance1.onFileLoaded(function( objEvent ) {
+						var expression =objEvent.expressions,
+							color=objEvent.colorData;
+						var i=0;
+						$('output').append("<br/><br/>");
+						for (var p in expression){
+							if (i++==40) break;
+							var value=1*expression[p][objEvent.column*1];
+							$('output').append("<br/>"+p+" (<span style='color:"+instance1.getRGBString(value)+"'>"+value+"</span>)");
+						}						
+					}); 
+					instance1.onFileRemoved(function( objEvent ) {
+						$('output').html("");
+					}); 
+					
+				};
+			</script>
+	</head>
+	<body>
+		<div id="holder1"></div>
+	</body>
+</html>

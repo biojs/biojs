@@ -3,7 +3,7 @@
 	line-height:1;
 	font-family:Helvetica, Arial, sans-serif;
 	color:#666;
-	font-size: 14px;
+	font-size: 12px;
 }
 
 .ruler .active_rules, .rules_editor{
@@ -41,7 +41,7 @@
 	background-position: 10px 4px; 
 }
 .rule {
-	width:90%;
+	width:80%;
 }
 .rights {
 	text-align:right;
@@ -93,7 +93,7 @@ table {
 .styled-select {
 	background-color: transparent;
 	font-family:Helvetica, Arial, sans-serif;
-	font-size: 14px;
+	font-size: 12px;
 	text-decoration: underline;
 	border: 0px ;
 	overflow: hidden;
@@ -106,9 +106,11 @@ table {
 	text-align:right;
 	margin-top:10px;
 	text-decoration: underline;
+}
+.add_rule a{
 	font-weight:bold;
 }
-.add_rule:hover {
+.add_rule a:hover {
 	color: #898;
 	cursor: pointer;
 }

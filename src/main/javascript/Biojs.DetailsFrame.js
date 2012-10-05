@@ -147,7 +147,7 @@ Biojs.DetailsFrame = Biojs.extend (
 	  * instance.updateFeatures({id:"newId",description:"new description",newFeature:"its value",otherFeature:"another value"});
 	  * 
 	  */ 
-	updateFeatures: function(features){
+	updateFeatures: function(features,order){
 		var self=this;
 		if (typeof features != "undefined")
 			self.opt.features = features;
@@ -155,10 +155,15 @@ Biojs.DetailsFrame = Biojs.extend (
 		var html = 	'';
 		if (typeof self.opt.features["description"] != "undefined")
 			html +=	'			<li class="protein-description"><h2>'+self.opt.features["description"]+'</h2></li>';
-		for (var i in self.opt.features){
-			if ((i!="description") && (i!='id'))
-				html +=	'			<li><b>'+i+':</b>'+self.opt.features[i]+'</li>';
-		}
+		if (typeof order == "undefined")
+			for (var i in self.opt.features){
+				if ((i!="description") && (i!='id'))
+					html +=	'			<li><b>'+i+':</b>'+self.opt.features[i]+'</li>';
+			}
+		else
+			for (var i=0; i<order.length; i++){
+				html +=	'			<li><b>'+order[i]+':</b>'+self.opt.features[order[i]]+'</li>';
+			}
 		$("#"+self.opt.target+" ul").html(html);
 		self.raiseEvent('onFeaturesUpdated', {});
 	}

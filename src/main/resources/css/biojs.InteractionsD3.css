@@ -17,3 +17,7 @@ div.graph {
 	border: 1px solid #000;
 	background-color: #E5E5EF;
 }
+
+.figure {
+	fill: #46D;
+}

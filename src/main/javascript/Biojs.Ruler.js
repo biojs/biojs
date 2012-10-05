@@ -11,7 +11,7 @@
  * @extends Biojs
  * 
  * @author <a href="gustavoadolfo.salazar@gmail.com">Gustavo A. Salazar</a>
- * @version 1.0.0
+ * @version 1.0.1
  * 
  * 
  * @requires <a href='http://code.jquery.com/jquery-1.7.2.js'>jQuery Core 1.7.2</a>
@@ -77,15 +77,17 @@
  *				    	                 "protein3",
  *				    	                 "protein4"
  *				    	             ],
- *				    	             "action": [
- *				    	                 "Show",
- *				    	                 "Hide",
- *				    	                 "Highlight",
- *				    	                 "Color"
- *				    	             ],
  *				    	             "target": [
  *				    	                 {
  *				    	                     "name": "Proteins",
+ *						    	             "action": [
+ *						    	                 {name:"Show",type:"single"},
+ *						    	                 {name:"Hide",type:"single"},
+ *					    		                 {name:"Highlight",type:"single"},
+ *						    	                 {name:"Color",type:"color"},
+ *						    	                 {name:"Color Range",type:"colorRange"},
+ *						    	                 {name:"Show Label",type:"select",options:["ID","Functional Class","Organism","Gene Name"]}
+ *						    	             ],
  *				    	                     "conditions": [
  *				    	                         {
  *				    	                             "name": "interactions with",
@@ -110,6 +112,12 @@
  *				    	                 },
  *				    	                 {
  *				    	                     "name": "Interactions",
+ *						    	             "action": [
+ *						    	                 {name:"Show",type:"single"},
+ *						    	                 {name:"Hide",type:"single"},
+ *					    		                 {name:"Highlight",type:"single"},
+ *						    	                 {name:"Color",type:"color"},
+ *						    	             ],
  *				    	                     "conditions": [
  *				    	                         {
  *				    	                             "name": "protein",
@@ -159,7 +167,7 @@ Biojs.Ruler = Biojs.extend (
 		innerCode		+='			</section>';
 		innerCode		+='			<section class="rules_editor">';
 		innerCode		+='				<header>New Rule</header>';
-		innerCode		+='				<div id="'+target+'_add_rule" class="add_rule">+ Add Rule</div>';
+		innerCode		+='				<div id="'+target+'_add_rule" class="add_rule"><a>+ Add Rule</a></div>';
 		innerCode		+='				<ul id="'+target+'_list_to_add">';
 		innerCode		+='				</ul>';
 		innerCode		+='			</section>';
@@ -177,7 +185,7 @@ Biojs.Ruler = Biojs.extend (
 		}else
 			$( ".sortable" ).removeClass("sortable");
 			
-		$( "#"+target+"_add_rule" ).click(function(){
+		$( "#"+target+"_add_rule a" ).click(function(){
 			self.addRule();
 		});
 	},
@@ -334,15 +342,23 @@ Biojs.Ruler = Biojs.extend (
 		var self = this;
 		var target =self.opt.target;
 		var number = self._number;
-		var code_rule =	'	<li id="rule_'+number+'"  class="rule_item"><table><tr><td class="rule">In'; 
+		var code_rule =	'	<li id="rule_'+number+'"  class="rule_item"><table><tr><td class="rule">'; 
 		var gotRule =!(typeof rule=="undefined");
-		code_rule+=	self._getSelect('location_'+number,self.opt.rules.location,"",
-				gotRule?rule.location:rule
-				);
-		code_rule+=	self._getSelect('action_'+number,self.opt.rules.action,"",
-				gotRule?rule.action:rule
-		);
-		code_rule+= '		<span id="action_parameters_'+number+'" > </span>';
+		var selectedTarget=0;
+		
+		if (typeof self.opt.rules.location !='undefined' && self.opt.rules.location.length>0){
+			code_rule+= "In";
+			code_rule+=	self._getSelect('location_'+number,self.opt.rules.location,"",
+					gotRule?rule.location:rule
+					);
+		}
+
+		if (gotRule)
+			for (var i in self.opt.rules.target)
+				if (self.opt.rules.target[i].name==rule.target)
+					selectedTarget=i;
+		
+		code_rule+= '		<span id="action_span_'+number+'" >'+ self._getActionSpan(number,selectedTarget,rule)+'</span>';
 		code_rule+=	'		the ';
 		code_rule+=	self._getSelect('target_'+number,self.opt.rules.target,"name",
 				gotRule?rule.target:rule
@@ -367,8 +383,6 @@ Biojs.Ruler = Biojs.extend (
 			self._applyRule($(this));
 		});
 		
-		if (gotRule && rule.action=="Color") 
-			self.addColorSelector(number,rule.color);
 		
 		//Visualizing the right inputs for the selected target
 		$( "#target_"+number ).change(function(){
@@ -381,17 +395,13 @@ Biojs.Ruler = Biojs.extend (
 			$("#target_"+n+" option:selected").each(function () {
 				$("#conditions_"+n+"_"+$(this).text()).css("display","inline");
 				$("#condition_params_"+n+"_"+$(this).text()+"_"+($("#condition_"+n+"_"+$(this).text()).val().replace(/ /g,""))).css("display","inline");
+				$('#action_span_'+n).html(self._getActionSpan(n,$(this).parent()[0].selectedIndex));
+				self._enableAction(n);
+
 			});
 		});
 		
-		//Visualizing the right inputs for the selected action... particularly for the color selector
-		$( "#action_"+number ).change(function(){
-			var n= $(this)[0].id.substr($(this)[0].id.lastIndexOf("_")+1);
-			$("#action_parameters_"+n).html('');
-			if ($("#action_"+n).val()=="Color"){
-				self.addColorSelector(n);
-			}
-		});
+		self._enableAction(number,rule);
 		
 		//Visualizing the right attributes for the selected condition
 		for (var i in self.opt.rules.target){
@@ -408,13 +418,6 @@ Biojs.Ruler = Biojs.extend (
 			});
 		}
 		self._number++;		
-	},
-	addColorSelector: function(n,color){
-		color  = (typeof color!="undefined")?color:'#56992F';
-		$("#action_parameters_"+n).html('<input type="hidden" id="action_parameters_color_'+n+'" name="color4" class="color-picker" size="6" />')
-		$("#action_parameters_color_"+n).miniColors({
-			letterCase: 'uppercase'
-		}).miniColors('value',color);
 	},
 	/**
 	  * Add a rule to the active rules' set. this method can be invoked from an external script, be careful when using by 
@@ -433,9 +436,23 @@ Biojs.Ruler = Biojs.extend (
 			rule.id =target+'_rule_'+n;
 		}
 
-		var color_span= (rule.action=="Color")?'<span style="color: '+rule.color+'; background-color: '+rule.color+';">_</span>':"";
+		var parameter_span="";
+		switch (rule.action.type){
+			case "color":
+				parameter_span = '<span style="color: '+rule.actionParameters[0]+'; background-color: '+rule.actionParameters[0]+';">_</span>';
+				break;
+			case "colorRange":
+				parameter_span = '<span style="color: '+rule.actionParameters[0]+'; background-color: '+rule.actionParameters[0]+';">_</span>';
+				parameter_span += '<span style="color: '+rule.actionParameters[1]+'; background-color: '+rule.actionParameters[1]+';">_</span>';
+				break;
+			case "select":
+				parameter_span = '<i>'+rule.actionParameters[0]+'</i>';
+				break;
+		}
 
-		$("#"+target+'_list').append('<li id="'+target+'_rule_'+n+'" class="rule_item"><table><tr><td class="rule">In <i>'+rule.location+'</i> <i>'+rule.action+'</i> '+color_span+' the <i>'+rule.target+'</i> with <i>'+rule.condition+' '+rule.parameters.join(" ")+' </i>  </td> <td><span class="action remove">remove</span> <span class="action edit">edit</span></td> <td class="rights"><span class="affected">0</span></td></tr></table></li>');
+		var locText = (typeof rule.location == 'undefined')?'':'In <i>'+rule.location+'</i> ';
+		$("#"+target+'_list').append('<li id="'+target+'_rule_'+n+'" class="rule_item"><table><tr><td class="rule"'+locText+'<i>'+rule.action.name+'</i> '+parameter_span+' the <i>'+rule.target+'</i> with <i>'+rule.condition+' '+rule.parameters.join(" ")+' </i>  </td> <td><span class="action remove">remove</span> <span class="action edit">edit</span></td> <td class="rights"><span class="affected">0</span></td></tr></table></li>');
+		
 		$('#'+target+'_rule_'+n).data("rule",rule);//{location:location,action:action,target:target1,condition:condition,parameters:parameters,id:target+'_rule_'+n, color:color})
 		$('#'+target+'_rule_'+n+' span.remove').click(function(){
 			var removed = $(this).parent().parent().parent().parent().parent().data("rule");
@@ -465,9 +482,9 @@ Biojs.Ruler = Biojs.extend (
 		var target =self.opt.target;
 		var n= clicked[0].id.substr(clicked[0].id.lastIndexOf("_")+1);
 		var location = $('#location_'+n).val();
-		var action= $('#action_'+n).val();
-		var color =$("#action_parameters_color_"+n).val();
+		var actionName= $('#action_'+n).val();
 		var target1= $('#target_'+n).val();
+		var action=self._getAction(target1,actionName);
 		var condition= $('#condition_'+n+'_'+target1.replace(/ /g,"")).val();
 		var parameters= new Array();
 		var par=0;
@@ -475,7 +492,20 @@ Biojs.Ruler = Biojs.extend (
 			parameters.push($('#condition_params_'+n+'_'+target1+'_'+condition.replace(/ /g,"")+'_'+par).val());
 			par++;
 		}
-		var rule = {location:location,action:action,target:target1,condition:condition,parameters:parameters,id:target+'_rule_'+n, color:color};
+		var actionPar=[];
+		switch (action.type){
+			case "color":
+				actionPar.push($("#action_parameters_0_"+n).val());
+				break;
+			case "colorRange":
+				actionPar.push($("#action_parameters_0_"+n).val());
+				actionPar.push($("#action_parameters_1_"+n).val());
+				break;
+			case "select":
+				actionPar.push($("#action_parameters_0_"+n).val());
+				break
+		}
+		var rule = {location:location,action:action,actionParameters:actionPar,target:target1,condition:condition,parameters:parameters,id:target+'_rule_'+n};
 		self.addActiveRule(rule,n);
 		clicked.parent().parent().parent().parent().parent().remove();
 
@@ -533,6 +563,18 @@ Biojs.Ruler = Biojs.extend (
 				var value = gotRule?rule.parameters[1]:"";
 				code_rule += '		<input type="text" id="condition_params_'+n+'_'+target_id+'_'+condition_id+'_1"  value="'+value+'">';
 				break;
+			case "feature_comparison":
+				code_rule+=self._getSelect('condition_params_'+n+'_'+target_id+'_'+condition_id+'_0',condition.values,"",
+						gotRule?rule.parameters[0]:rule
+				);
+				code_rule+=self._getSelect('condition_params_'+n+'_'+target_id+'_'+condition_id+'_1',["equals","contains","different","not contains"],"",
+						gotRule?rule.parameters[1]:rule
+				);
+				var value = gotRule?rule.parameters[2]:"";
+				code_rule += '		<input type="text" id="condition_params_'+n+'_'+target_id+'_'+condition_id+'_2"  value="'+value+'">';
+				break;
+			case "all":
+				break;
 		}
 		code_rule +=	' 	</span>';
 		return code_rule;
@@ -547,5 +589,68 @@ Biojs.Ruler = Biojs.extend (
 		}
 		code  +=	'		</select> ';
 		return code;
+	},
+	_getActionSpan: function(number,selectedTarget,rule){
+		var self=this;
+		var gotRule =!(typeof rule=="undefined");
+		var code =	self._getSelect('action_'+number,self.opt.rules.target[selectedTarget].action,"name",
+				gotRule?rule.action.name:rule
+		);
+		code+= '		<span id="action_parameters_'+number+'" > </span>';
+		return code;
+	},
+	_enableAction: function(number,rule){
+		var self=this;
+		var gotRule =!(typeof rule=="undefined");
+		//Visualizing the right inputs for the selected action
+		$( "#action_"+number ).change(function(){
+			var n= $(this)[0].id.substr($(this)[0].id.lastIndexOf("_")+1);
+			self._enableActionParameters(n);
+		});
+		self._enableActionParameters(number, rule);
+
+	},
+	_enableActionParameters: function(number,rule){
+		var self=this;
+		var gotRule =!(typeof rule=="undefined");
+		var action = (gotRule)?self._getAction(rule.target,rule.action.name):self._getAction($('#target_'+number).val(),$('#action_'+number).val());
+		$("#action_parameters_"+number).html('');
+		switch (action.type){
+			case "color":
+				self._addColorSelector(number,0,(gotRule)?rule.actionParameters[0]:rule);
+				break;
+			case "colorRange":
+				self._addColorSelector(number,1,(gotRule)?rule.actionParameters[0]:"#F00");
+				self._addColorSelector(number,0,(gotRule)?rule.actionParameters[1]:"#0F0");
+				break;
+			case "select":
+				$("#action_parameters_"+number).html(self._getSelect('action_parameters_0_'+number,action.options,"",
+						gotRule?rule.actionParameters[0]:rule
+				));
+				break
+			case "single": default:
+				$("#action_parameters_"+number).html('');
+		}
+	},
+	_addColorSelector: function(n,parameter,color){
+		color  = (typeof color!="undefined")?color:'#56992F';
+		$("#action_parameters_"+n).append('<input type="hidden" id="action_parameters_'+parameter+'_'+n+'" name="color4" class="color-picker" size="6" />')
+		$("#action_parameters_"+parameter+"_"+n).miniColors({
+			letterCase: 'uppercase'
+		}).miniColors('value',color);
+	},
+	_getAction: function(targetName,actionName){
+		var self=this;
+		for (var i=0; i< self.opt.rules.target.length; i++){
+		    var target = self.opt.rules.target[i];
+		    if (target.name==targetName){
+		    	for (var j=0; j< target.action.length; j++){
+		    		var action=target.action[j];
+		    		if (action.name==actionName)
+		    			return action;
+		    	}
+		    }
+		}
 	}
+
 });

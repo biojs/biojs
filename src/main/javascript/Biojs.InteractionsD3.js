@@ -44,6 +44,8 @@ Biojs.InteractionsD3 = Biojs.extend (
 		proteinsA:[],
 		node_drag:null,
 		color: null,
+		foci: [],
+		organisms: {},
 		
 		constructor: function (options) {
 			var self 	= this;
@@ -55,15 +57,32 @@ Biojs.InteractionsD3 = Biojs.extend (
 			self.proteinsA=[];
 			self.node_drag=null;
 			self.color= null;
+			self.foci=[];
+			self.organisms={};
 
 			this._container = $("#"+self.opt.target);
 			this._container.empty();
 			$(this._container).addClass("graph");
 			
-			var width = $(this._container).width(),
-				height = 500,
-				r=6;
-			self.color= d3.scale.category20();
+			var	width = $(this._container).width(),
+				height = $(this._container).height(),
+				r=self.opt.radius;
+
+			if (self.opt.width.indexOf("%")!=-1)
+				width = width*(self.opt.width.substring(0, self.opt.width.length-1)*1)/100.0;
+			else
+				width=self.opt.width*1;
+			self.opt.width=width;
+			
+			if (self.opt.height.indexOf("%")!=-1)
+				height = height*(self.opt.height.substring(0, self.opt.height.length-1)*1)/100.0;
+			else
+				height=self.opt.height*1;
+			self.opt.height=height;
+			
+			self.color = function() {
+			    return d3.scale.ordinal().range(self.colors);
+			  }();
 			
 			self.vis = d3.select("#"+self.opt.target).append("svg")
 			    .attr("width", width)
@@ -79,21 +98,17 @@ Biojs.InteractionsD3 = Biojs.extend (
 			    .attr('stroke','grey')
 			    .attr("stroke-dasharray","5,5");
 
-			
 			function redraw() {
 				  trans=d3.event.translate;
 				  scale=d3.event.scale;
-
 				  self.vis.attr("transform",
 				      "translate(" + trans + ")"
 				      + " scale(" + scale + ")");
-				};
+			};
+			
 			self.force = d3.layout.force()
-			    .distance(30)
 			    .nodes(self.proteins)
 			    .links(self.interactions)
-				.charge(-40)
-				.linkDistance(20)
 			    .size([width, height]);
 			
 			
@@ -111,28 +126,38 @@ Biojs.InteractionsD3 = Biojs.extend (
 				d.py += d3.event.dy;
 				d.x += d3.event.dx;
 				d.y += d3.event.dy; 
-				tick(); // this is the key to make it work together with updating both px,py,x,y on d !
+				tick(d3.event); // this is the key to make it work together with updating both px,py,x,y on d !
 			}
 
 			function dragend(d, i) {
 				d.fixed = true; // of course set the node to fixed so the force doesn't include the node in its auto positioning stuff
-				tick();
+				tick(d3.event);
 				self.force.resume();
 			}
 			
 			self.force.on("tick", tick);
-			function tick() {
-				self.vis.selectAll(".figure")
+			function tick(e) {
+				if (e.type=="tick"){
+					var k = .1 * e.alpha;
+					self.proteins.forEach(function(o, i) {
+						o.y += (self.foci[self.organisms[o.organism]].y - o.y) * k;
+						o.x += (self.foci[self.organisms[o.organism]].x - o.x) * k;
+					});
+				}
+				self.vis.selectAll("circle.figure")
 					.attr("cx", function(d) { return d.x = Math.max(r, Math.min(width - r, d.x)); })
 					.attr("cy", function(d) { return d.y = Math.max(r, Math.min(height - r, d.y)); });
+				self.vis.selectAll("rect.figure")
+					.attr("x", function(d) { return d.x = Math.max(r, Math.min(width - r, d.x)); })
+					.attr("y", function(d) { return d.y = Math.max(r, Math.min(height - r, d.y)); });
 				self.vis.selectAll(".legend")
 					.attr("x", function(d) { return d.x = Math.max(r, Math.min(width - r, d.x)); })
 					.attr("y", function(d) { return d.y = Math.max(r, Math.min(height - r, d.y)); });
 				self.vis.selectAll("line.link")
-					.attr("x1", function(d) { return d.source.x; })
-					.attr("y1", function(d) { return d.source.y; })
-					.attr("x2", function(d) { return d.target.x; })
-					.attr("y2", function(d) { return d.target.y; });
+					.attr("x1", function(d) { return (self.organisms[d.source.organism]==0)?d.source.x:d.source.x+r; })
+					.attr("y1", function(d) { return (self.organisms[d.source.organism]==0)?d.source.y:d.source.y+r; })
+					.attr("x2", function(d) { return (self.organisms[d.target.organism]==0)?d.target.x:d.target.x+r; })
+					.attr("y2", function(d) { return (self.organisms[d.target.organism]==0)?d.target.y:d.target.y+r; });
 			};
 			//Binding the _resize method when resizing the window! 
 			d3.select(window).on("resize", function(){self._resize(self);});
@@ -145,6 +170,9 @@ Biojs.InteractionsD3 = Biojs.extend (
 		 */
 		opt: {
 			target: "YourOwnDivId",
+			width: "100%",
+			height: "500", 
+			radius: 10
 		},
 
 		/**
@@ -182,6 +210,21 @@ Biojs.InteractionsD3 = Biojs.extend (
 			 * 
 			 * */
 			"proteinMouseOver",
+			/**
+			 * @name Biojs.InteractionsD3#interactionClick
+			 * @event
+			 * @param {function} actionPerformed A function which receives an {@link Biojs.Event} object as argument.
+			 * @eventData {Object} source The component which did triggered the event.
+			 * @eventData {Object} interaction the information of the interaction that has been clicked.
+			 * @example 
+			 * instance.interactionClick(
+			 *    function( objEvent ) {
+			 *       alert("Click on the interaction " + objEvent.interaction.id);
+			 *    }
+			 * ); 
+			 * 
+			 * */
+			"interactionClick",
 			/**
 			 * @name Biojs.InteractionsD3#interactionMouseOver
 			 * @event
@@ -263,6 +306,14 @@ Biojs.InteractionsD3 = Biojs.extend (
 				return n;
 			n= self.proteins.push(protein);
 			self.proteinsA[protein.id]=protein;
+			if (typeof self.organisms[protein.organism] == 'undefined'){
+				var numberOfOrganism =Object.keys(self.organisms).length;
+				self.organisms[protein.organism] = numberOfOrganism++;
+				self.foci=[];
+				for (var i=0; i<numberOfOrganism; i++){
+					self.foci.push({x: (self.opt.width/(numberOfOrganism+1))*(i+1), y:self.opt.height/2});
+				}
+			}
 			return n;
 		},
 		/**
@@ -390,11 +441,10 @@ Biojs.InteractionsD3 = Biojs.extend (
 			var self = this;
 			
 			self.force
-			    .distance(30)
 			    .nodes(self.proteins)
 			    .links(self.interactions)
-				.charge(-40)
-				.linkDistance(20).start();
+				.charge(-self.opt.radius*20)
+				.linkDistance(self.opt.radius*5).start();
 
 			var link =self.vis.selectAll("line.link")
 				.data(self.interactions, function(d) { return d.source.id + "-" + d.target.id; });
@@ -404,6 +454,11 @@ Biojs.InteractionsD3 = Biojs.extend (
 				.attr("id", function(d) { return "link_"+d.source.id+"_"+d.target.id; })
 				.on("mouseover", function(d){ 
 					self.raiseEvent('interactionMouseOver', {
+						interaction: d
+					});
+				})
+				.on("click", function(d){ 
+					self.raiseEvent('interactionClick', {
 						interaction: d
 					});
 				})
@@ -421,9 +476,10 @@ Biojs.InteractionsD3 = Biojs.extend (
 				.enter().append("g")
 				.attr("class", "node")
 				.attr("id", function(d) { return "node_"+d.id; })
+				.attr("organism", function(d) { return d.organism; })
 				.call(self.node_drag);
 			
-			node.append("circle")
+			node.filter(function(d) { return self.organisms[d.organism] == 1; }).append("rect")
 				.attr("class", "figure")
 				.attr("id", function(d) { return "figure_"+d.id; })
 				.on("click", function(d){ 
@@ -436,22 +492,51 @@ Biojs.InteractionsD3 = Biojs.extend (
 						protein: d
 					});
 				})
-				.attr("cx", function(d) { return d.x; })
-				.attr("cy", function(d) { return d.y; })
-				.attr("r", 4.5)
-				.style("fill", function(d) {       	
-					return self.color(d.group);   
-				});
+				.attr("width", self.opt.radius*2)
+				.attr("height", self.opt.radius*2)
+				.attr("stroke-width",self.opt.radius*0.3);
+//				.style("fill", function(d) {       	
+//					return self.color(d.group);   
+//				});
 			
+			node.filter(function(d) { return self.organisms[d.organism] == 0; }).append("circle")
+				.attr("class", "figure")
+				.attr("id", function(d) { return "figure_"+d.id; })
+				.on("click", function(d){ 
+					self.raiseEvent('proteinClick', {
+						protein: d
+					});
+				})
+				.on("mouseover", function(d){ 
+					self.raiseEvent('proteinMouseOver', {
+						protein: d
+					});
+				})
+				.attr("r", self.opt.radius)
+				.attr("stroke-width",self.opt.radius*0.3);
+//				.style("fill", function(d) {       	
+//					return self.color(d.group);   
+//				});
+				
 			node
 				.append("svg:text")
 				.attr("class", "legend")
 				.attr("id", function(d) { return "legend_"+d.id; })
-				.text(function(d) { return d.id; })
+				.text(function(d) { 
+					if (d.typeLegend=="id") 
+						return d.id;
+					else if (d.typeLegend.indexOf("features.")==0)
+						return d.features[d.typeLegend.substr(9)];
+					else
+						return d[d.typeLegend];
+					})
 				.attr("stroke","#901")
+				.style("font-size", self.opt.radius+"px")
 				.attr("stroke-width","0")
 				.attr("visibility",function(d) { return (d.showLegend)?"visible":"hidden";})
-				.attr("transform","translate(5,4)");
+				.attr("transform",function(d) {
+					return (self.organisms[d.organism] == 0)?"translate(-"+(self.opt.radius*1.9)+","+(self.opt.radius*0.4)+")":"translate(-"+(self.opt.radius*0.9)+","+(self.opt.radius*1.3)+")";
+				});
 
 			nodes.exit().remove();
 		    
@@ -498,6 +583,20 @@ Biojs.InteractionsD3 = Biojs.extend (
 			self.vis.selectAll(selector).style("stroke", '#3d6');
 		},
 		/**
+		 * Set the fill's color of the elements on the graphic that match the selector. 
+		 * Check the <a href="http://www.w3.org/TR/css3-selectors/">CSS3 selectors documentation</a> to build a selector string 
+		 * 
+		 * @param {string} selector a string to represent a set of elements. Check the <a href="http://www.w3.org/TR/css3-selectors/">CSS3 selectors documentation</a> to build a selector string
+		 * @param {string} color a color in web format eg. #FF0000
+		 *  
+		 * @example 
+		 * instance.setFillColor("[id = node_p"+(pid-1)+"]","#FF0000");
+		 */
+		setFillColor: function(selector,color){
+			var self=this;
+			self.vis.selectAll(selector).style("fill", color);
+		},
+		/**
 		 * Set the stroke's color of the elements on the graphic that match the selector. 
 		 * Check the <a href="http://www.w3.org/TR/css3-selectors/">CSS3 selectors documentation</a> to build a selector string 
 		 * 
@@ -535,6 +634,39 @@ Biojs.InteractionsD3 = Biojs.extend (
 		 * @example 
 		 * instance.swapShowLegend("#node_p"+(pid-1)+" .legend");
 		 */
+		showLegend: function(selector,typeLegend){
+			var self=this;
+			self.vis.selectAll(selector).selectAll(".legend").attr("visibility", "visible").text(function(d) {
+				d.typeLegend=typeLegend;
+				if (d.typeLegend=="id") 
+					return d.id;
+				else if (d.typeLegend.indexOf("features.")==0)
+					return d.features[d.typeLegend.substr(9)];
+				else
+					return d[d.typeLegend];
+				});
+//			self.restart();
+		}, 
+		/**
+		 * Shows/Hide the legend(id) of the protein
+		 * 
+		 * @param {string} protein the id of the protein to swap the visibility of the legend
+		 *  
+		 * @example 
+		 * instance.swapShowLegend("#node_p"+(pid-1)+" .legend");
+		 */
+		hideLegend: function(selector){
+			var self=this;
+			self.vis.selectAll(selector).selectAll(".legend").attr("visibility", "hidden");
+		},
+		/**
+		 * Shows/Hide the legend(id) of the protein
+		 * 
+		 * @param {string} protein the id of the protein to swap the visibility of the legend
+		 *  
+		 * @example 
+		 * instance.swapShowLegend("#node_p"+(pid-1)+" .legend");
+		 */
 		swapShowLegend: function(selector){
 			var self=this;
 			self.vis.selectAll(selector).attr("visibility", function(d) {
@@ -552,7 +684,12 @@ Biojs.InteractionsD3 = Biojs.extend (
 			var width = window.innerWidth, height = window.innerHeight;
 			self.vis.attr("width", width).attr("height", height);
 			self.force.size([width, height]).resume();
-		}
+		},
+		colors: [ "#1f77b4", "#aec7e8", "#ff7f0e", "#ffbb78", "#2ca02c", "#98df8a", "#d62728", "#ff9896", "#9467bd", "#c5b0d5", "#8c564b", "#c49c94", "#e377c2", "#f7b6d2", "#7f7f7f", "#c7c7c7", "#bcbd22", "#dbdb8d", "#17becf", "#9edae5",
+		          "#0077b4", "#11c7e8", "#227f0e", "#33bb78", "#44a02c", "#55df8a", "#662728", "#779896", "#8867bd", "#99b0d5", "#AA564b", "#BB9c94", "#CC77c2", "#DDb6d2", "#EE7f7f", "#FFc7c7", "#00bd22", "#11db8d", "#22becf", "#33dae5",
+		          "#1f00b4", "#ae11e8", "#ff220e", "#ff3378", "#2c442c", "#98558a", "#d66628", "#ff7796", "#9488bd", "#c599d5", "#8cAA4b", "#c4BB94", "#e3CCc2", "#f7DDd2", "#7fEE7f", "#c7FFc7", "#bc0022", "#db118d", "#1722cf", "#9e33e5",
+		          "#1f7700", "#aec711", "#ff7f22", "#ffbb33", "#2ca044", "#98df55", "#d62766", "#ff9877", "#946788", "#c5b099", "#8c56AA", "#c49cBB", "#e377FC", "#f7b6FD", "#7f7fEE", "#c7c7FF", "#bcbd00", "#dbdb11", "#17be22", "#9eda33"
+		          ]
 	});
 
 

@@ -6,7 +6,7 @@
  * @extends Biojs
  * 
  * @author <a href="gustavoadolfo.salazar@gmail.com">Gustavo A. Salazar</a>
- * @version 1.0.0
+ * @version 1.0.1
  * 
  * @requires <a href='http://code.jquery.com/jquery-1.7.2.js'>jQuery Core 1.7.2</a>
  * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jquery/jquery-1.7.2.min.js"></script>
@@ -245,7 +245,7 @@ Biojs.Chromosome = Biojs.extend (
 			var band = model.bands[i];
 			if (i*1+1==model.bands.length)
 				last="last";
-			var percentage=100*(band.stop-band.start)/model.stop;
+			var percentage=94*(band.stop-band.start)/model.stop;// no using the 100% of the width, so there is an extra space for the borders
 			var band_id=model.id+"_"+band.label;
 			$("#"+self.opt.target+'_chr').append("<div id='"+band_id+"' title='"+band.label+"' class='band "+band.type+" "+first+last+"' style='width: "+percentage.toFixed(3)+"%;'></div>");
 			band_id=band_id.replace(/\./gi, "\\.");
