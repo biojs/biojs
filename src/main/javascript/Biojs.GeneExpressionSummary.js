@@ -35,7 +35,7 @@
  * @example
  * var instance = new Biojs.GeneExpressionSummary({
  * 	  target: 'YourOwnDivId',
- * 	  identifier: 'ENSG00000139618'
+ * 	  identifier: 'ENSG00000066279'
  * });
  * 
  */
