@@ -23,21 +23,31 @@
  * @option {string} uniProtDasUrl
  * 	  Url pointing to an XML including UniProt infomration in DAS format
  * 
- * @option {string} width [100%]
- * 	  Defines the width of the component
- * 
- * @option {string} referencesColumnWidth [200px]
- * 	  Defines the width of the columns with reference links
+ * @option {string} keywordFiltereing [['cancer','brain']]
+ * 	  List of keywords to filter disease information
  * 
  * @option {string} [proxyUrl='../biojs/dependencies/proxy/proxy.php']
  *    Since the same origin policy ({@link http://en.wikipedia.org/wiki/Same_origin_policy}) in the browsers 
  *    Biojs include a proxy script in PHP which redirects Ajax requests from local to any other domain.
  *    You can use tour own proxy script by modifying this value. 
  * 
+ * @option {string} width [100%]
+ * 	  Defines the width of the component
+ * 
+ * @option {string} referencesColumnWidth [200px]
+ * 	  Defines the width of the columns with reference links
+ * 
+ * @option {boolean} tableHeader
+ * 	  Boolean value to control the display of the table header
+ * 
+ * @option {boolean} componentTitle
+ * 	  Boolean value to control the display of the title of the component
+ * 
  * @example
  * var instance = new Biojs.UniProtDiseaseSummary({
  * 	  target: 'YourOwnDivId',
  *		uniProtDasUrl: 'http://www.ebi.ac.uk/das-srv/uniprot/das/uniprot/features?segment=P08123;type=BS:01019',
+ *		keywordFiltereing: ['osteogenesis','lipoblastoma'],
  *		proxyUrl: '../biojs/dependencies/proxy/proxy.php',		
  *		width: '100%',
  *		referencesColumnWidth: '150px',
@@ -110,6 +120,8 @@ Biojs.UniProtDiseaseSummary = Biojs.extend (
 		var _selector = "#" + this.opt.target;
 		var _container = jQuery(_selector);
 		var _tableTitle = jQuery('<div style="width:' + this.opt.width + '" id="'+this._component_wrapper_id+'"></div>').appendTo(_container);
+		jQuery("<div id='UDS_info'></div>").appendTo(_tableTitle);
+		jQuery("<div id='UDS_warnings'></div>").appendTo(_tableTitle);
 	},
 	/* 
      * Function: Biojs.UniProtDiseaseSummary._clearHtmlTemplate
@@ -141,44 +153,83 @@ Biojs.UniProtDiseaseSummary = Biojs.extend (
      * Inputs:  -
      */
 	_drawComments: function (){
-		var _selector = "#" + this._component_wrapper_id;
-		var _container = jQuery(_selector);
-		var _tableWrapper = jQuery("<div class='UDS_table_wrapper'></div>").appendTo(_container);
+		var _container = jQuery("#UDS_info");
+		var _tableWrapper = jQuery("<div class='UDS_table_wrapper'></div>");
 		var _table = jQuery('<table class="UDS_table"></table>').appendTo(_tableWrapper);
 		if(this.opt.tableHeader){
 			var _fisrtRow = jQuery("<tr class='UDS_header'></tr>").appendTo(_table);
 			jQuery("<td>Notes</td>").appendTo(_fisrtRow);
 			jQuery("<td>References</td>").appendTo(_fisrtRow);			
 		}
+		/* Print table */
+		var isVisible = true;
 		var rowType = "UDS_even";
+		var commmentsDisplayed = 0;
 		for(i=0; i<this._comments.length; i++){
-			if(rowType == "UDS_odd"){rowType = "UDS_even";}else{rowType = "UDS_odd";}
-			var _row = jQuery("<tr class='"+rowType+"'></tr>").appendTo(_table);
-			jQuery("<td class='UDS_notes'>"+this._comments[i].notes[0]+"</td>").appendTo(_row);
-			var reference = "";
-			var omimAccs = "";
-			var pubmedAccs = "";
-			/* Display OMIM */
-			for (j = 0; j < this._comments[i].omimAccs.length; j++) {
-				omimAccs += '<a target="_blank" href="http://www.omim.org/entry/' + this._comments[i].omimAccs[j] + '">' + this._comments[i].omimAccs[j] + '</a>, ';
+			/* Check keywords */
+			isVisible = true;
+			if (this.opt.keywordFiltereing.length > 0) {
+				isVisible = this._isAnyKewordInText(this.opt.keywordFiltereing, this._comments[i].notes[0]);
 			}
-			if(omimAccs.length > 0){
-				omimAccs = omimAccs.substring(0, omimAccs.length-2);
-				omimAccs = "<span class='UDS_omim_title'>Links to OMIM:</span><div class='UDS_accs'>" + omimAccs + "</div>";
-				
+			/* Print table */
+			if (isVisible) {
+				if (rowType == "UDS_odd") {
+					rowType = "UDS_even";
+				}
+				else {
+					rowType = "UDS_odd";
+				}
+				var _row = jQuery("<tr class='" + rowType + "'></tr>").appendTo(_table);
+				jQuery("<td class='UDS_notes'>" + this._comments[i].notes[0] + "</td>").appendTo(_row);
+				var reference = "";
+				var omimAccs = "";
+				var pubmedAccs = "";
+				/* Display OMIM */
+				for (j = 0; j < this._comments[i].omimAccs.length; j++) {
+					omimAccs += '<a target="_blank" href="http://www.omim.org/entry/' + this._comments[i].omimAccs[j] + '">' + this._comments[i].omimAccs[j] + '</a>, ';
+				}
+				if (omimAccs.length > 0) {
+					omimAccs = omimAccs.substring(0, omimAccs.length - 2);
+					omimAccs = "<span class='UDS_omim_title'>Links to OMIM:</span><div class='UDS_accs'>" + omimAccs + "</div>";
+					
+				}
+				/* Display Pubmed */
+				for (k = 0; k < this._comments[i].pubmedAccs.length; k++) {
+					pubmedAccs += '<a target="_blank" href="http://www.ncbi.nlm.nih.gov/pubmed/' + this._comments[i].pubmedAccs[k] + '">' + this._comments[i].pubmedAccs[k] + '</a>, ';
+				}
+				if (pubmedAccs.length > 0) {
+					pubmedAccs = pubmedAccs.substring(0, pubmedAccs.length - 2);
+					pubmedAccs = "<span class='UDS_pubmed_title'>Links to Pubmed:</span><div class='UDS_accs'>" + pubmedAccs + "</div>";
+					
+				}
+				jQuery("<td class='UDS_references' style='width:" + this.opt.referencesColumnWidth + "'>" + omimAccs + pubmedAccs + "</td>").appendTo(_row);
+				commmentsDisplayed++;
 			}
-			/* Display Pubmed */
-			for (k = 0; k < this._comments[i].pubmedAccs.length; k++) {
-				pubmedAccs += '<a target="_blank" href="http://www.ncbi.nlm.nih.gov/pubmed/' + this._comments[i].pubmedAccs[k] + '">' + this._comments[i].pubmedAccs[k] + '</a>, ';
-			}
-			if(pubmedAccs.length > 0){
-				pubmedAccs = pubmedAccs.substring(0, pubmedAccs.length-2);
-				pubmedAccs = "<span class='UDS_pubmed_title'>Links to Pubmed:</span><div class='UDS_accs'>" + pubmedAccs + "</div>";
-				
-			}
-			jQuery("<td class='UDS_references' style='width:"+this.opt.referencesColumnWidth+"'>"+omimAccs+pubmedAccs+"</td>").appendTo(_row);
+		}
+		if (commmentsDisplayed == 0) {
+			jQuery("#UDS_warnings").html("No disease notes found for this query");
+		} else {
+			_tableWrapper.appendTo(_container);
 		}
 		
+	},
+	/* 
+     * Function: Biojs.UniProtDiseaseSummary._isAnyKewordInText
+     * Purpose:  Check if a keyword from a list is present in a text
+     * Returns:  -
+     * Inputs:  -
+     */	
+	_isAnyKewordInText: function (keywords, text){
+		/* Check keywords */
+		var found = false;
+		keyword_loop:
+		for(j=0; j<keywords.length; j++){
+			if (text.toLowerCase().indexOf(keywords[j].toLowerCase()) != -1) {
+				found = true;
+				break keyword_loop; 	
+			}
+		}
+		return found;
 	},
 	/* 
      * Function: Biojs.UniProtDiseaseSummary._drawKeywords
@@ -187,17 +238,32 @@ Biojs.UniProtDiseaseSummary = Biojs.extend (
      * Inputs:  -
      */	
 	_drawKeywords: function (){
-		var _selector = "#" + this._component_wrapper_id;
-		var _container = jQuery(_selector);
+		var _container = jQuery("#UDS_info");
 		var links = "";
+		var isVisible = true;
 		for (i = 0; i < this._keywords.length; i++) {
-			links += "<a target='_blank' href='"+this._keywords[i].link+"'>"+this._keywords[i].label+"</a>, "
-		}
-		if(links.length > 0){
-			links = links.substring(0, links.length-2);
+			/* Check keywords */
+			isVisible = true;
+			if (this.opt.keywordFiltereing.length > 0) {
+				isVisible = this._isAnyKewordInText(this.opt.keywordFiltereing, this._keywords[i].label);
+			}
+			if (isVisible) {
+				links += "<a target='_blank' href='"+this._keywords[i].link+"'>"+this._keywords[i].label+"</a>, ";
+			}
+		}	
+		if (links.length > 0) {
+			links = links.substring(0, links.length - 2);
 			links = "<div class='UDS_keywords_wrapper'><span class='UDS_keywords_title'>Keywords: </span><span class='UDS_keywords'>" + links + "</span></div>";
+			jQuery(links).appendTo(_container);
+		} else {
+			var _info = jQuery("#UDS_info").html();
+			if(_info.length > 0){
+				jQuery("#UDS_warnings").html("No disease keywords or notes found for this query");
+			} else {
+				jQuery("#UDS_warnings").html("No disease keywords found for this query");	
+			}
 		}
-		jQuery(links).appendTo(_container);
+		
 	},
 
 
@@ -293,6 +359,7 @@ Biojs.UniProtDiseaseSummary = Biojs.extend (
 	opt: {
 		target: 'uniprotDiseaseSummary',
 		uniProtDasUrl: 'http://www.ebi.ac.uk/das-srv/uniprot/das/uniprot/features?segment=P08123;type=BS:01019',
+		keywordFiltereing: [],
 		proxyUrl: '../biojs/dependencies/proxy/proxy.php',		
 		width: '100%',
 		referencesColumnWidth: '150px',
