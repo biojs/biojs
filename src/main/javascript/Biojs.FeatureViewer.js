@@ -47,7 +47,7 @@
  * @requires jQuery UI CSS 1.8.2
  * @dependency <link rel="stylesheet" href="../biojs/dependencies/jquery/jquery-ui-1.8.2.css" />
  *
- * @param {Object} options An object with the options for Sequence component.
+ * @param {Object} options An object with the options for FeatureViewer component.
  *
  * @option {string} target
  *    Identifier of the DIV tag where the component should be displayed.
@@ -219,36 +219,78 @@
  *    Make sure it does not exist at http://wwwdev.ebi.ac.uk/das-srv/uniprot/das/uniprot/stylesheet as those are the reference colours for protein features.
  *
  * @example
- * var segment = "a4_human";
- * var service = "http://wwwdev.ebi.ac.uk/uniprot/das_uniprot_cartoon/image";
+ * var json = {
+ *     "featuresArray":[
+ *         {
+ *             "nonOverlappingStyle":{"heightOrRadius":10,"y":56},"type":"rect","featureEnd":73,"fillOpacity":0.5
+ *             ,"evidenceText":"UniProt","stroke":"#9B7057","height":10,"path":"","typeLabel":"Propeptide"
+ *             ,"featureLabel":"Propeptide","featureStart":1,"strokeWidth":1,"text":""
+ *             ,"centeredStyle":{"heightOrRadius":44,"y":73},"fill":"#9B7057","width":495
+ *             ,"typeCategory":"Molecule processing","typeCode":"SO:0001062","cy":56,"cx":27,"evidenceCode":""
+ *             ,"r":10,"featureId":"UNIPROTKB_Q8LAX3_PROPEP_1_73","rowsStyle":{"heightOrRadius":10,"y":169}
+ *             ,"featureTypeLabel":"propeptide","y":56,"x":27
+*          }
+ *         ,{
+ *             "nonOverlappingStyle":{"heightOrRadius":10,"y":56},"type":"rect","featureEnd":96,"fillOpacity":0.5
+ *             ,"evidenceText":"UniProt","stroke":"#7DBAA4","height":10,"path":"","typeLabel":"Peptide"
+ *             ,"featureLabel":"Elicitor peptide 3","featureStart":74,"strokeWidth":1,"text":""
+ *             ,"centeredStyle":{"heightOrRadius":40,"y":75},"fill":"#7DBAA4","width":151
+ *             ,"typeCategory":"Molecule processing","typeCode":"SO:0001064","cy":56,"cx":529,"evidenceCode":""
+ *             ,"r":10,"featureId":"UNIPROTKB_Q8LAX3_PEPTIDE_74_96","rowsStyle":{"heightOrRadius":10,"y":157}
+ *             ,"featureTypeLabel":"active_peptide","y":56,"x":529
+ *         }
+ *     ]
+ *     ,"segment":"Q8LAx3"
+ *     ,"legend":{
+ *         "segment":{"yPosCentered":190,"text":"Q8LAX3","yPos":106,"xPos":15,"yPosNonOverlapping":106,"yPosRows":290}
+ *         ,"key":[
+ *             {
+ *                 "label":{
+ *                     "total":"1","yPosCentered":210,"text":"Peptide","yPos":126,"xPos":50
+ *                     ,"yPosNonOverlapping":126,"yPosRows":310
+ *                 }
+ *                 ,"shape":{
+ *                     "centeredStyle":{"heightOrRadius":5,"y":208},"text":""
+ *                     ,"nonOverlappingStyle":{"heightOrRadius":5,"y":121},"width":30,"fill":"#7DBAA4"
+ *                     ,"cy":121,"cx":15,"type":"rect","fillOpacity":0.5,"stroke":"#7DBAA4","height":5,"r":10
+ *                     ,"path":"","rowsStyle":{"heightOrRadius":5,"y":305},"typeLabel":"Peptide","y":121
+ *                     ,"strokeWidth":1,"x":15
+ *                 }
+ *             }
+ *             ,{
+ *                 "label":{
+ *                     "total":"1","yPosCentered":210,"text":"Propeptide","yPos":126,"xPos":205
+ *                     ,"yPosNonOverlapping":126,"yPosRows":310
+ *                 }
+ *                 ,"shape":{
+ *                     "centeredStyle":{"heightOrRadius":5,"y":208},"text":""
+ *                     ,"nonOverlappingStyle":{"heightOrRadius":5,"y":121},"width":30,"fill":"#9B7057"
+ *                     ,"cy":121,"cx":170,"type":"rect","fillOpacity":0.5,"stroke":"#9B7057","height":5,"r":10
+ *                     ,"path":"","rowsStyle":{"heightOrRadius":5,"y":305},"typeLabel":"Propeptide","y":121
+ *                     ,"strokeWidth":1,"x":170
+ *                 }
+ *             }
+ *         ]
+ *     }
+ *     ,"configuration":{
+ *         "requestedStop":96,"horizontalGridNumLines":2,"sequenceLineYCentered":95,"requestedStart":1
+ *         ,"gridLineHeight":12,"rightMargin":20,"belowRuler":30,"sequenceLength":96
+ *         ,"horizontalGridNumLinesNonOverlapping":2,"horizontalGridNumLinesCentered":6
+ *         ,"verticalGridLineLengthRows":284,"unitSize":6.875,"sizeYNonOverlapping":76,"style":"nonOverlapping"
+ *         ,"sequenceLineYRows":155,"sequenceLineY":54,"verticalGrid":false,"rulerY":20
+ *         ,"dasSources":"http://www.ebi.ac.uk/das-srv/uniprot/das/uniprot","horizontalGrid":false
+ *         ,"pixelsDivision":50,"sizeY":76,"sizeX":700
+ *         ,"dasReference":"http://www.ebi.ac.uk/das-srv/uniprot/das/uniprot","sizeYRows":260,"aboveRuler":10
+ *         ,"rulerLength":660,"verticalGridLineLengthNonOverlapping":66,"sizeYKey":210,"sizeYCentered":160
+ *         ,"sequenceLineYNonOverlapping":54,"verticalGridLineLength":66,"horizontalGridNumLinesRows":8
+ *         ,"leftMargin":20,"nonOverlapping":true,"verticalGridLineLengthCentered":172
+ *     }
+ * };
  *
  * var myPainter = new Biojs.FeatureViewer({
  *    target: "YourOwnDivId",
- *    featureImageWebService: "http://wwwdev.ebi.ac.uk/uniprot/das_uniprot_cartoon/image"
- * });
- *
- *
- * jQuery.ajax({
- * 		//url: 'data/uniprotFeaturesJSON.js',
- * 	    url: '../biojs/dependencies/proxy/proxy.php',
- * 	    data: 'url=' + service + '?segment=' + segment + '&style=nonOverlapping&width=580',
- *      dataType: 'json',
- *      success: function(response) {
- *          //You may have to use jQuery.parseJSON(response) with some jQuery versions
- *          Biojs.console.log(response);
- *      	try {
- *      		myPainter.paintFeatures(response);
- *      	} catch (err) {
- *      		Biojs.console.log(err);
- *          	document.getElementById('YourOwnDivId').innerHTML = '';
- *          	document.getElementById('YourOwnDivId').innerHTML = 'No image available. Did you provide a valid UniProt accession or identifier, and valid limits?';
- *     		}
- *      },
- *      error: function(response, callOptions) {
- *          Biojs.console.log(response);
- *          document.getElementById('YourOwnDivId').innerHTML = '';
- *          document.getElementById('YourOwnDivId').innerHTML = 'No image available. Did you provide a valid UniProt accession or identifier, and valid limits?';
- *      }
+ *    json: json,
+ *    featureImageWebService: "http://wwwdev.ebi.ac.uk/uniprot/featureViewer/image"
  * });
  *
  */
@@ -595,6 +637,36 @@ Biojs.FeatureViewer = Biojs.extend(
 //        printWin.focus();
 //        printWin.print();
 //        printWin.close();
+        },
+
+        /**
+         * Opens a new window/tab in the browser with the graphical representation as a plain image.
+         * Note: For IE it does not reflect the drags/drops on sites
+         *
+         * @example
+         * myPainter.showGeneralLegend();
+         *
+         */
+        showGeneralLegend: function() {
+            var config = this.opt.json.configuration;
+            var dataURL = this.opt.featureImageWebService + "?";
+            window.open(dataURL); //open generated image in new tab/window
+        },
+
+        /**
+         * Applies a zoom in or zoom out; it should not be used if the slider is available.
+         * @param init
+         * @param end
+         *
+         * @example
+         * myPainter.zoom(2,10);
+         */
+        zoom: function(init, end) {
+            var config = this.opt.json.configuration;
+            var sequenceLength = config.sequenceLength;
+            if ((init >= 1) && (end <= sequenceLength)) {
+                this._repaint(undefined, init, end);
+            }
         },
 
         //
