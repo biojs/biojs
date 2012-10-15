@@ -8,6 +8,7 @@
  * 
  * @author <a href="mailto:rafael@ebi.ac.uk">Rafael Jimenez</a>
  * @version 1.0.0
+ * @category 2
  * 
  * @requires <a href='../biojs/css/Biojs.InteractionsFilterGraph.css'>Biojs.InteractionsFilterGraph.css</a>
  * @dependency <link href="../biojs/css/Biojs.InteractionsFilterGraph.css" rel="stylesheet" type="text/css" />

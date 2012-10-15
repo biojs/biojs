@@ -7,6 +7,7 @@
  * 
  * @author <a href="mailto:johncar@gmail.com">John Gomez</a>
  * @version 1.0.0
+ * @category 1
  * 
  * @requires <a href='http://code.jquery.com/jquery-1.6.4.js'>jQuery Core 1.6.4</a>
  * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jquery/jquery-1.6.4.min.js"></script>

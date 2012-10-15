@@ -7,6 +7,7 @@
  * 
  * @author <a href="mailto:johncar@gmail.com">John Gomez-Carvajal</a>
  * @version 1.0.0
+ * @category 2
  *
  * @requires <a href='http://code.jquery.com/jquery-1.6.4.js'>Raphael 2.1.0</a>
  * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/graphics/raphael-2.1.0.js"></script>

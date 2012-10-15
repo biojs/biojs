@@ -7,6 +7,7 @@
  * 
  * @author <a href="mailto:swanand@gmail.com">Swanand Gore</a>
  * @version 1.0.0
+ * @category 0
  *
  * @requires <a href='http://code.jquery.com/jquery-1.6.4.js'>Raphael 2.1.0</a>
  * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/graphics/raphael-min-v2.1.0.js"></script>

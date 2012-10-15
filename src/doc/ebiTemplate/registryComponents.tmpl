@@ -42,13 +42,15 @@
             
                 var myTable = new Biojs.Table({
                     target: "biojsTable",
-                    orderBy:  [ [0,'asc'] ],
+                    orderBy:  [ [4,'desc'], [0,'asc'] ],
+                    hideColumns: [4],
                     
                     columns: [
                         { name:"Component", width: "230px" },
                         { name:"Description", width: "480px" },
                         { name:"Author(s)", width: "100px" },
-                        { name:"Current Version", width: "80px", render: renderCenteredText }
+                        { name:"Current Version", width: "80px", render: renderCenteredText },
+                        { name:"Category", width: "40px", render: renderCenteredText }
                     ],
                     
                     dataSet: [
@@ -59,7 +61,8 @@
                                 '<a href="{+thisClass.alias+}.html">{+thisClass.name+}</a>', 
                                 '{+ resolveLinks(thisClass.desc).replace(/(\n|\')/g,'') +}', 
                                 '<if test="thisClass.author">{+ thisClass.author.replace('\n','') +}</if>',
-                                '<if test="thisClass.version">{+ thisClass.version.replace('\n','') +}</if>'
+                                '<if test="thisClass.version">{+ thisClass.version.replace('\n','') +}</if>',
+                                '<if test="thisClass.comment.getTag('category')">{+ thisClass.comment.getTag('category') +}</if>'
                             ]
                             {! comma = ','; !}
                         </for>

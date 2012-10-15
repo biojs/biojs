@@ -4,8 +4,9 @@
  * @class
  * @extends Biojs
  * 
- * @author <a href="mailto:johncar@gmail.com">John Gomez</a>, <a href="mailto:rafael@ebi.ac.uk">Rafael Jimenez</a>
+ * @author <a href="mailto:johncar@gmail.com">John Gomez-Carvajal</a>, <a href="mailto:rafael@ebi.ac.uk">Rafael Jimenez</a>
  * @version 1.0.0
+ * @category 3
  * 
  * @requires <a href='http://blog.jquery.com/2011/09/12/jquery-1-6-4-released/'>jQuery Core 1.6.4</a>
  * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jquery/jquery-1.6.4.js"></script>

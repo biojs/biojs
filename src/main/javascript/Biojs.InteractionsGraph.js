@@ -4,6 +4,7 @@
  * 
  * @author <a href="mailto:secevalliv@gmail.com">Jose Villaveces</a>
  * @version 1.0.0_beta
+ * @category 1
  * 
  * @option {Object} properties 
  * <pre class="brush: js" title="Syntax of the plain object:">

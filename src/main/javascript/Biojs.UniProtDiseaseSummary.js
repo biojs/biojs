@@ -6,6 +6,7 @@
  * 
  * @author <a href="mailto:rafael@ebi.ac.uk">Rafael C Jimenez</a>
  * @version 1.0.0
+ * @category 2
  * 
  * @requires <a href='http://blog.jquery.com'>jQuery 1.7.2</a>
  * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jquery/jquery-1.7.2.min.js"></script>

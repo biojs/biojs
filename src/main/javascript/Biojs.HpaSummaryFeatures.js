@@ -7,6 +7,7 @@
  * 
  * @author <a href="mailto:rafael@ebi.ac.uk">Rafael C Jimenez</a>
  * @version 1.0.0
+ * @category 2
  * 
  * @requires <a href='../biojs/css/Biojs.HpaSummaryFeatures.css'>Biojs.HpaSummaryFeature.css</a>
  * @dependency <link href="../biojs/css/Biojs.HpaSummaryFeatures.css" rel="stylesheet" type="text/css" />

@@ -6,6 +6,7 @@
  * 
  * @author <a href="mailto:johncar@gmail.com">John Gomez</a>
  * @version 1.0.0
+ * @category 2
  * 
  * @requires <a href=''>Server side proxy</a>
  * 

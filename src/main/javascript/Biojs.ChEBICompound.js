@@ -4,6 +4,10 @@
  * @class
  * @extends Biojs
  * 
+ * @author <a href="mailto:johncar@gmail.com">John Gomez-Carvajal</a>
+ * @version 1.0.0
+ * @category 2
+ * 
  * @requires <a href=''>Server side proxy</a>
  * 
  * @requires <a href='../biojs/css/ChEBICompound.css'>ChEBICompound.css</a>

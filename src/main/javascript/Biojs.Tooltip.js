@@ -6,6 +6,7 @@
  * 
  * @author <a href="mailto:johncar@gmail.com">John Gomez</a>
  * @version 1.0.0
+ * @category 1
  * 
  * @requires <a href="../biojs/css/biojs.Tooltip.css">Tooltip CSS</a>
  * @dependency <link href="../biojs/css/biojs.Tooltip.css" rel="stylesheet" type="text/css"></link>
