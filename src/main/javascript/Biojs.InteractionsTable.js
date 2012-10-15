@@ -68,7 +68,7 @@
  *  		psicquicUrl: 'http://www.ebi.ac.uk/Tools/webservices/psicquic/intact/webservices/current/search/query',
  *  		proxyUrl: '../biojs/dependencies/proxy/proxy.php',
  *  		query: "brca2",
- *          version: "MITAB_VERSION_2_5_EXT",
+ *          version: "MITAB_VERSION_2_5",
  *          filter: false
  *      },
  *      rowSelection: true
@@ -81,7 +81,9 @@ Biojs.InteractionsTable = Biojs.Table.extend(
 	constructor: function (options) {
 		//Biojs.console.enable();
 		
-		this._useVersion ( options.dataSet.version | Biojs.InteractionsTable.MITAB_VERSION_2_5_EXT );
+		options.dataSet.version = (options.dataSet.version != undefined) ? options.dataSet.version : Biojs.InteractionsTable.MITAB_VERSION_2_5
+		
+		this._useVersion ( options.dataSet.version );
 
 		// Calling super's constructor
 		this.base(options);
@@ -95,7 +97,7 @@ Biojs.InteractionsTable = Biojs.Table.extend(
 	opt: {
 		target: "YourOwnDivId",
 		rowSelection: false,
-		version: "MITAB_VERSION_2_5_EXT",
+		version: "MITAB_VERSION_2_5",
 		psiquicUrl: 'http://www.ebi.ac.uk/Tools/webservices/psicquic/intact/webservices/current/search/query',
 		proxyUrl: '../biojs/dependencies/proxy/proxy.php'
 	},
@@ -174,7 +176,7 @@ Biojs.InteractionsTable = Biojs.Table.extend(
      * 		psicquicUrl: 'http://www.ebi.ac.uk/Tools/webservices/psicquic/intact/webservices/current/search/query',
      *  	proxyUrl: '../biojs/dependencies/proxy/proxy.php',
      *  	query: "pubid:(10837477 OR 12029088)",
-     *      version: "MITAB_VERSION_2_5_EXT",
+     *      version: "MITAB_VERSION_2_5",
      *      filter: false
 	 * });
      * 
