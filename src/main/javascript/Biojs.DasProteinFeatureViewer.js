@@ -6,6 +6,7 @@
  *
  * @author <a href="mailto:ljgarcia@ebi.ac.uk">Leyla Jael Garcia Castro</a>
  * @version 1.0.0
+ * @category 3
  *
  * @requires <a href='http://code.jquery.com/jquery-1.6.2.min.js/'>jQuery Core 1.4.2</a>
  * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jquery/jquery-1.4.2.min.js"></script>
