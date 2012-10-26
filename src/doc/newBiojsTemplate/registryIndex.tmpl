@@ -9,15 +9,31 @@
         <title>BioJs: JavaScript components for biological data < EMBL-EBI</title>
         
         <meta content="width=device-width,initial-scale=1" name="viewport" />
+        
+<!-- START - EBI classic Template -->
+	<!-- InstanceEndEditable -->
+	<link rel="stylesheet"  href="http://www.ebi.ac.uk/inc/css/contents.css"     type="text/css" />
+	<link rel="stylesheet"  href="http://www.ebi.ac.uk/inc/css/userstyles.css"   type="text/css" />
+	<script  src="http://www.ebi.ac.uk/inc/js/contents.js" type="text/javascript"></script>
+	<link rel="SHORTCUT ICON" href="http://www.ebi.ac.uk/bookmark.ico" />
+	<style type="text/css">
+	@media print { 
+		body, .contents, .header, .contentsarea, .head { 
+			position: relative;
+		}  
+	} 
+	</style>
+	<!-- InstanceBeginEditable name="head" -->
+<!-- END - EBI classic Template -->		
             
         <!-- EBI's style sheets -->
         <link href="style/normalize.css" rel="stylesheet" />
         <link href="style/boilerplate-style.css" rel="stylesheet" />
-        <link href="style/ebi-custom.css" media="screen" rel="stylesheet" type="text/css" />
         <link href="style/984-24-col-fixed.css" media="screen" rel="stylesheet" type="text/css" />
         <link href="style/ebi-positioning.css" media="screen" rel="stylesheet" type="text/css" />
         <link href="style/biojs.css" rel="stylesheet" type="text/css" />
         <link href="style/biojs-colours_blue.css" rel="stylesheet" type="text/css" />
+        <link href="style/ebi-custom.css" media="screen" rel="stylesheet" type="text/css" />
         
 		<script language="JavaScript" type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 		<script src="scripts/shCore.js" type="text/javascript"></script>
@@ -28,9 +44,24 @@
 		</script>
         
 		
-	</head>
-
-	<body class="level2" id="biojs" >
+<!-- START - EBI classic Template -->		
+<!-- InstanceEndEditable -->
+</head>
+<body class="level2" id="biojs" onload="if(navigator.userAgent.indexOf('MSIE') != -1) {document.getElementById('head').allowTransparency = true;}">
+	<div class="headerdiv" id="headerdiv" style="position:absolute; z-index: 1;">
+		<iframe src="/inc/head.html" name="head" id="head" frameborder="0" marginwidth="0px" marginheight="0px" scrolling="no"  width="100%" style="position:absolute; z-index: 1; height: 57px;">Your browser does not support inline frames or is currently configured not to display inline frames. Content can be viewed at actual source page: http://www.ebi.ac.uk/inc/head.html</iframe>
+	</div>
+	<div class="contents" id="contents">
+			<table class="contentspane" id="contentspane" summary="The main content pane of the page"   style="width: 100%">
+				<tr>
+				  <td class="leftmargin"><img src="http://www.ebi.ac.uk/inc/images/spacer.gif" class="spacer" alt="spacer"  /></td>
+				  <td class="leftmenucell" id="leftmenucell">
+				  	<div class="leftmenu" id="leftmenu"><img src="http://www.ebi.ac.uk/inc/images/spacer.gif" class="spacer" alt="spacer"  /></div>
+				  </td>
+				  <td class="contentsarea" id="contentsarea">
+					<!-- InstanceBeginEditable name="contents" -->
+                    <!-- start contents here -->
+<!-- END - EBI classic Template -->	
     
         <div id="skip-to">
             <ul>
@@ -54,7 +85,10 @@
                 <div class="masthead grid_24" id="local-masthead">
                     <div class="grid_12 alpha" id="local-title-logo">
                         <h1>BioJs | Home</h1>
-                        <p><a href="." style="border-bottom-width: 0px;" title=""><img alt="Biojs" class="logo" src="images/logo.png" /></a></p>
+                        <div id="biojsHeader">
+                        	<a href="." style="border-bottom-width: 0px;" title=""><img alt="Biojs" class="logo" src="images/biojs_logo.gif" /></a>
+                        	<div id="biojsTitle">Reusable component for visualizing Biological data</div>
+                        </div>
                     </div>
                     
                     <!--
@@ -80,8 +114,6 @@
                         <ul class="grid_24" id="local-nav">
                             <li class="first"><a href="./index.html" title="">Home</a></li>
                             <li><a href="./components.html" title="">Components</a></li>
-                            <li><a href="./download.html" title="">Download</a></li>
-                            <li class="last"><a href="./about.html" title="">About BioJs</a></li>
                         </ul>
                     </nav>
                 </div>
@@ -99,21 +131,27 @@
                         <!-- <h2 class="strapline">Reusable Components for Visualizing Biological Data</h2> -->
                         <div class="grid_6 alpha">
                             <h2 class="strapline">USE</h2>
-                            <p>Reuse and integrate components into web applications very easily.
-                                <br/><a href="components.html">Search components</a></p>
+                            <p>Reuse and integrate components into web applications.
+                                <div class="viewLinks"><a class="nodecor" href="components.html">
+                                ... view components
+                                </a></div></p>
                         </div>
                         <div class="grid_6">
                             <h2 class="strapline">DEVELOP</h2>
-                            <p>Follow our guidelines to develop, extend and maintain the components.
-                                <br/><a target="_blank" href="https://docs.google.com/document/d/1Uk4-hBT5YSGGs91FVNvZPQ15QBihivKzYusBJ2GVNn8/edit?hl=en_US">Read tutorial</a></p>
+                            <p>Follow our guidelines and tutorials to develop new components.
+                                <div class="viewLinks"><a class="nodecor" target="_blank" href="http://code.google.com/p/biojs/wiki/Documentation">
+                                ... view documentation
+                                </a></div></p>
                         </div>
                         <div class="grid_6 omega">
                             <h2 class="strapline">COMBINE</h2>
-                            <p>Different libraries can be combined to build a component.
-                                <br/><a href="Biojs.UniProtFeaturePainter.html">See example</a></p>
+                            <p>Combine components that can interact with each other.
+                                <div class="viewLinks"><a class="nodecor" href="">
+                                ... view example
+                                </a></div></p>
                         </div>
                         <div class="grid_18">
-                            <img src="images/example.png"/>
+                            <div id="biojsExample"><img src="images/example.png"/></div>
                         </div>
                     </section>
                         
@@ -124,8 +162,9 @@
                 <div class="grid_6">
                     <aside>
                         <div class="main-right-box-no">
-                            <p class="version">Reusable Components for Visualizing Biological Data.</p>
-                            <a href="components.html">Components</a>
+                        	<div class="componentsLink">
+                            	<a class="nodecor" href="components.html">Components</a>
+                            </div>
                         </div>
                         <div class="main-right-box-no">
                             <div class="right_title">
@@ -137,11 +176,13 @@
                                             <li><a href="{+thisClass.alias+}.html">{+thisClass.name+}</a></li>
                                         </for>
                                          -->
-                                        <li><a href="Biojs.Sequence.html">Sequence</a></li>
-                                        <li><a href="Biojs.Protein3D.html">Protein3D</a></li>
-                                        <li><a href="Biojs.InteractionsTable.html">InteractionsTable</a></li>                  
+                                        <li><a class="nodecor" href="Biojs.Sequence.html">Sequence</a></li>
+                                        <li><a class="nodecor" href="Biojs.GeneExpressionSummary.html">Gene expression summary</a></li>
+                                        <li><a class="nodecor" href="Biojs.Biojs.DasProteinFeatureViewer.html">Protein feature viewer</a></li>
+                                        <li><a class="nodecor" href="Biojs.Protein3D.html">Protein 3D structure</a></li>
+                                        <li><a class="nodecor" href="Biojs.InteractionsTable.html">Table of protein interactions</a></li>                  
                                     </ul>	
-                                    <a href="components.html">See all</a>
+                                    <a class="nodecor" href="components.html">See all</a>
                                 </div>
                         </div>
                     </aside>
@@ -153,40 +194,125 @@
                         <section>
                             <div class="main_bottom_hlight">
                                 
-                                <div class="grid_8 alpha">
+                                <div class="grid_9 alpha">
                                     
                                     <div class="bloc_doc">
-                                        <h3><a href="">Documentation</a></h3>
+                                        <h2 class="strapline">Documentation</h2>
                                         <p class="about">
-                                            <a target="_blank" href="https://docs.google.com/document/d/1oS4M0EKAMre4IDERV61VVTDXJH9F-HGbHxKwNXqjWuo/edit">How to install</a>: put the biojs repository in your ocal machine. <br/><br/>
-                                            <a target="_blank" href="https://docs.google.com/document/d/1Uk4-hBT5YSGGs91FVNvZPQ15QBihivKzYusBJ2GVNn8/edit">How to create</a>: a tutorial which shows you how to create your own component. <br/><br/>
-                                            <a target="_blank" href="https://docs.google.com/document/d/1HKwAr8bIqqGklAiAmDoAshzbZrIYs8Q8mbrSDHobudg/edit">How to document</a>: follow this tutorial to document your code and generate the working examples automatically. <br/><br/>
-                                            <a target="_blank" href="https://docs.google.com/document/d/1gG036Bvwl4i-KX5BTHddGzeE_5eospL-864BrnsAS_s/edit?hl=en_US">Reference Specification</a>: a document which brings a detailed information about Biojs as well as its technical details. <br/> <br/>
-                                            <a href="../jsdoc/index.html">JsDoc</a>: up-to-date API documentation for developers.
-                                            
+                                        <ul>
+                                            <li>
+	                                            <a class="nodecor" target="_blank" href="https://docs.google.com/document/d/1gG036Bvwl4i-KX5BTHddGzeE_5eospL-864BrnsAS_s/edit?hl=en_US">
+	                                            <strong>BioJS specification</strong>
+	                                            </a>
+	                                            <br/>Documention and requirements for the BioJS componenets<br/>
+                                            </li>
+                                            <li>
+	                                            <a class="nodecor" href="../jsdoc/index.html">
+	                                            <strong>API documentation</strong>
+	                                            </a>
+	                                            <br/>API documentation to BioJS source code.
+                                            </li>
+                                            <li>
+	                                            <a class="nodecor" href="http://code.google.com/p/biojs/wiki/Documentation?ts=1351263154&updated=Documentation#Requirements">
+	                                            <strong>Requirements</strong>
+	                                            </a>
+	                                            <br/>Examples of requirements gathered before developing a component.
+                                            </li>
+                                        </ul>    
+                                        </p>
+                                    </div> 
+                                    
+                                    <div class="bloc_doc">
+                                        <h2 class="strapline">Tutorials</h2>
+                                        <p class="about">
+                                        <ul>
+                                            <li>
+	                                            <a class="nodecor" target="_blank" href="https://docs.google.com/document/d/1oS4M0EKAMre4IDERV61VVTDXJH9F-HGbHxKwNXqjWuo/edit">
+	                                            <strong>How to install the registry</strong>
+	                                            </a>
+                                            	<br/>Tutorial about how to install the biojs repository in your local machine. <br/>
+                                            </li>
+                                            <li>
+	                                            <a class="nodecor" target="_blank" href="https://docs.google.com/document/d/1Uk4-hBT5YSGGs91FVNvZPQ15QBihivKzYusBJ2GVNn8/edit">
+	                                            <strong>How to create a component</strong>
+	                                            </a>
+												<br/>Tutorial about how to create your own component. <br/>
+											</li>
+                                            <li>
+	                                            <a class="nodecor" target="_blank" href="https://docs.google.com/document/d/1HKwAr8bIqqGklAiAmDoAshzbZrIYs8Q8mbrSDHobudg/edit">
+	                                            <strong>How to document a component</strong>
+	                                            </a>
+	                                            <br/>Tutorial about how to document the code of your component and get it working in your local registry. <br/>
+                                            </li>
+                                        </ul>    
                                         </p>
                                     </div> 
                                     
                                 </div>
                                 
-                                <div class="grid_8">
-                                    
+                                <div class="grid_9">
+                                
                                     <div class="bloc_foc">
-                                        <h3><a href="/interpro/protein_focus.html">Get involved</a></h3>
+                                        <h2 class="strapline">Get involved</h2>
                                         <p class="about">
-                                            
-                                            <a target="_blank" href="http://code.google.com/p/biojs/issues/entry?template=Feature">Features</a>: feel free to send us feature requests and/or ideas which should be considered in the development of BioJS. This information will be automatically shared in our BioJS mailing list. <br/> <br/>
-                                            <a target="_blank" href="mailto:biojs@googlegroups.com">Mailing list</a>: lets subscribe to the BioJS mailing list if you would like to participate or provide feedback about the project. 
+                                            <ul>
+	                                            <li>
+	                                            	<a class="nodecor" target="_blank" href="http://code.google.com/p/biojs/issues/entry?template=Feature">
+	                                            	<strong>Feature request</strong>
+	                                            	</a>
+	                                            	<br/>Send us feature requests and/or ideas to consider in BioJS.<br/> 
+	                                            </li>
+	                                            <li>
+	                                            	<a class="nodecor" target="_blank" href="http://code.google.com/p/biojs/issues/entry?template=Defect%20report%20from%20user">
+	                                            	<strong>Report a bug</strong>
+	                                            	</a>
+	                                            	<br/>Please let us know if you have problems with BioJS<br/> 
+	                                            </li>
+	                                            <li><a class="nodecor" target="_blank" href="mailto:biojs@googlegroups.com">
+	                                            	<strong>Mailing list</strong></a>
+	                                            	<br/>Project mailing list open to anybody interested in BioJS. 
+	                                            </li>
+	                                            <li>
+	                                            	<a class="nodecor" target="_blank" href="http://code.google.com/p/biojs/">
+	                                            	<strong>Community project</strong>
+	                                            	</a>
+	                                            	<br/>Community project site with more information about BioJS<br/> 
+	                                            </li>
+	                                            <li>
+	                                            	<a class="nodecor" target="_blank" href="http://code.google.com/p/biojs/source/checkout">
+	                                            	<strong>Source code</strong>
+	                                            	</a>
+	                                            	<br/>BioJS is an open source project, feel free to join us!<br/> 
+	                                            </li>
+                                        	</ul>
                                         </p>
-                                        
+                                    </div>
+                                    <div class="bloc_foc">
+                                        <h2 class="strapline">Presentations</h2>
+                                        <p class="about">
+                                            <ul>
+	                                            <li>
+	                                            	<a class="nodecor" target="_blank" href="http://www.ebi.ac.uk/~rafael/talks/2012-07-15_talk_ismb_biojs/biojs_rjimenez_ismb_02.pdf">
+	                                            	<strong>BioJS for representing biological information</strong>
+	                                            	</a>
+	                                            	<br/>Rafael's talk at the ISMB 2012<br/> 
+	                                            </li>
+	                                            <li>
+	                                            	<a class="nodecor" target="_blank" href="http://www.flickr.com/photos/francisrowland/7407095724/sizes/o/in/set-72157630205678288/">
+	                                            	<strong>Reusable components for visualizing biological data</strong>
+	                                            	</a>
+	                                            	<br/>Francis' sketchnote summarizing a BioJS presentation<br/> 
+	                                            </li>
+                                        	</ul>
+                                        </p>
                                     </div>
                                     
                                 </div>
                                 
-                                <div class="grid_8 omega">
+                                <div class="grid_6 omega">
                                     
                                     <div class="bloc_pub" id="last">
-                                        <h3><a href="">Follow us</a></h3>
+                                        <h3><a class="nodecor" href="">Follow us in twitter</a></h3>
                                         <div>
                                             <script charset="utf-8" src="http://widgets.twimg.com/j/2/widget.js"></script>
                                             <script>
@@ -199,12 +325,12 @@
                                                     height: 300,
                                                     theme: {
                                                         shell: {
-                                                        background: '#408DD2',
+                                                        background: '#D9DADC',
                                                         color: '#ffffff'
                                                     },
                                                     tweets: {
                                                         background: '#ffffff',
-                                                        color: '#949494',
+                                                        color: '#404040',
                                                         links: '#000000'
                                                         }
                                                     },
@@ -232,11 +358,33 @@
         
 <!-- ============================== footer ======================================= -->
 
-            <footer>
-                <div style="text-align: center; font-size: 0.75em;">
+            <footer> 
+                <div id="biojsFooter">
                     Registry generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> {+JSDOC.VERSION+} on {+new Date()+}
                 </div>
             </footer>
         </div> <!-- div class="container_24" id="wrapper" -->
-    </body>
+
+<!-- START - EBI classic Template -->
+<!-- InstanceEndEditable -->
+					<img src="http://www.ebi.ac.uk/inc/images/spacer.gif" class="spacer"  alt="spacer" /></td>
+					<td class="rightmenucell" id="rightmenucell">
+					  <div class="rightmenu" id="rightmenu"><img src="http://www.ebi.ac.uk/inc/images/spacer.gif" class="spacer" alt="spacer" /></div>
+				  	</td>
+				</tr>
+				</table>
+				<table class="footerpane" id="footerpane" summary="The main footer pane of the page">
+				<tr>
+				  <td colspan ="4" class="footerrow">
+					<div class="footerdiv" id="footerdiv"  style="z-index:2;">
+						<iframe src="/inc/foot.html" name="foot" frameborder="0" marginwidth="0px" marginheight="0px" scrolling="no"  height="22px" width="100%"  style="z-index:2;">Your browser does not support inline frames or is currently configured not to display inline frames. Content can be viewed at actual source page: http://www.ebi.ac.uk/inc/foot.html</iframe>
+					</div>
+				  </td>
+				</tr>
+	  </table>
+	  <script  src="http://www.ebi.ac.uk/inc/js/footer.js" type="text/javascript"></script>
+	</div>
+</body>
+<!-- InstanceEnd -->
+<!-- END - EBI classic Template -->
 </html>
