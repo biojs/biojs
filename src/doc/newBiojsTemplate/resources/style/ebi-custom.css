@@ -213,12 +213,11 @@ a:visited {
 	border-bottom-width: 1px;
 	border-bottom-style: dotted;
 	border-bottom-color: inherit; 
-	text-decoration:none;
 }
 
 a:hover,
 a:focus,
-a:active { border-bottom-style: solid; text-decoration:none; }
+a:active { border-bottom-style: solid; }
 
 a.special {
 	font-style: italic; 
@@ -390,11 +389,10 @@ th {
 	color: black;
 }
 
-/*
 tr:hover td,
 tr:focus td,
 th:focus > col { background-color: #f1f1f1; }
-*/
+
 
 /*	Lists
 =================================================== */
@@ -406,10 +404,7 @@ ul, ol { padding: 0 0 0 27px; } /* overrides the padding in the base boilerplate
 /* Colour
 ===================================================*/
 
-/*
 body { background: #ffffff url(images/pale_grey_slight_texture.jpg) top left repeat;  }
-*/
-body { background: #ffffff}
 
 div#content { background-color: #ffffff; }
 
@@ -536,136 +531,3 @@ p.warning {
 	color: #976610;
 }
 
-/* Adapt to the classic EBI template */
-
-#wrapper{
-	border-left: 1px solid #707070;
-    border-right: 1px solid #707070;
-    margin-left: 5px;
-}
-.grid_24{
-	/* margin-left:0px; */
-}
-#global-masthead{
-	display:none;
-}
-
-#contentspane{
-	margin-top: 0px;
-	border:0px;
-	border-spacing:0;
-    border-collapse:collapse;
-	margin-bottom:0px;
-
-}
-
-#contentsarea{
-	padding:0px;
-	border-width:0px;
-	background-color: #f1f1f1;
-	
-}
-table td.leftmargin{
-	display:none;
-}
-
-table td.leftmenucell{
-	display:none;
-}
-
-#local-masthead{
-	margin-right:0px;
-	margin-left:0px;
-	width:100%;
-}
-
-#tabmenu{
-	padding-left:5px;
-	width:970px;	
-}
-
-
-#viewInWindowButton{
-	color: #FFFFFF;
-    text-decoration:none;
-}
-
-#overview, #options, #methods, #events{
-	margin-left:5px;
-}
-
-#footerpane{
-	margin: 0px 0 16px;
-}
-
-#local-nav li a {
-	text-decoration:none;	
-}
-
-span.version{
-	color:#006666;
-}
-
-
-div.twtr-ft div a {
-	display:none;
-}
-
-div.twtr-ft div span {
-	display:none;
-}
-
-div.content div{
-	margin-left:5px;
-}
-.componentsLink{
-	font-size:24pt;
-	text-decoration:none;
-	text-align:center;
-	font-weight:bold;
-}
-
-
-a.nodecor:link,
-a.nodecor:visited,
-a.nodecor:hover,
-a.nodecor:focus,
-a.nodecor:active { text-decoration:none; border-bottom-style:none;}
-
-
-div#local-masthead {
-    background-color: #AFCECE;
-}
-div#biojsHeader {
- 	margin-bottom: 18px;
-    margin-left: 13px;
-    margin-top: 13px;
-}
-
-div#biojsTitle{
-
-}
-
-.dataTables_filter {
-    background: -moz-linear-gradient(center top , #AFCECE, #006666) repeat scroll 0 0 transparent;
-    border: 1px solid #006666;
-}
-#biojsFooter{
-	text-align: center;
-	font-size: 0.75em;
-	background-color:#AFCECE;
-}
-
-#biojsExample{
-	margin-left:20px;
-	margin-top:20px;	
-}
-
-table.dataTable thead tr th {
-    background: none repeat scroll 0 0 #404040;
-}
-
-div.viewLinks{
-	text-align:right;
-	margin-right: 15px;
-}
