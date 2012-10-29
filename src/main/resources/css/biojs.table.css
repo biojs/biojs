@@ -112,7 +112,7 @@ table.dataTable tr.even td.sorting_3 { background-color: #F9F9FF; }
 	border: 0px;
 	-webkit-border-radius: 3px;
 	-moz-border-radius: 3px;
-	border-radius 3px;
+	border-radius: 3px;
 	padding: 2px 5px;
 	margin: 0 1px;
 	cursor: pointer;
