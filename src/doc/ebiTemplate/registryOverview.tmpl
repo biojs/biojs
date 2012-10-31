@@ -421,30 +421,24 @@
                 <div id="options" class="grid_24" style="display:none;">
                     {!
                         var options = data.comment.getTag("option");
-
+                    
                         for ( var i in options ) {
-
-                            var indexOfMark = options[i].desc.indexOf("[");
-                            
-                            options[i].optional = ( indexOfMark >=0 && indexOfMark <= 3);
-
+                    
+                            options[i].optional = options[i].defaultValue ? true : options[i].name.indexOf('\u005B') >= 0;
+                    
                             if ( options[i].optional ) {
-                                
-                                options[i].name = options[i].desc.match(/^\[.+\]/g)[0].replace(/[\[\]]/g,"");
-                                options[i].desc = options[i].desc.substr( options[i].name.length + 3 );
-                                
-                                var chuncks = options[i].name.split("=");
-                            
+                    
+                                options[i].name = options[i].name.replace(/(^\s*\[)|(\]\s*$)/g,'');
+                    
+                                chuncks = options[i].name.split("=");
+                    
                                 if ( chuncks.length > 1 ) {
-                                    
+                    
                                     options[i].name = chuncks[0];
                                     options[i].defaultValue = chuncks[1];
                                 }
-                            
-                            } else {
-                                options[i].name = options[i].desc.substr( 0, options[i].desc.indexOf(" ") );
-                                options[i].desc = options[i].desc.substr( options[i].name.length + 3 );
                             }
+                    
                         }
                     !}
                     

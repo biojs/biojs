@@ -8,6 +8,9 @@
  * @version 1.0.0
  * @category 3
  * 
+ * @param {Object} options 
+ *    An object with the options for InteractionTable' component.
+ *    
  * @option {string[][]|Object} dataSet 
  *    Either 2D string array containing the whole data to be displayed or a plain object defining the data source. 
  *    

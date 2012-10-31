@@ -25,7 +25,7 @@
  * 
  * @param {Object} options 
  *    An object with the options for HelloWorld component.
- *    
+ * 
  * @option {string} target 
  *    Identifier of the DIV tag where the component should be displayed.
  *    
@@ -62,7 +62,7 @@
  * 		paramsMap: { "iDisplayStart": "firstResult", "iDisplayLength": "maxResults" },
  * 		filter: false
  *    }
- *    </pre>  
+ *    </pre> 
  *  
  *    <pre class="brush: js" title="Example of 2D array of data: ">
  *    [
@@ -125,11 +125,11 @@
  *    ]
  *    </pre>
  *     
- * @option {int[]} [hideColumns=[]] 
+ * @option {int[]} [hideColumns=[]]
  *    Indexes (0-based) of the columns to be hided.
  *    
  * @option {array[][int,string]} [orderBy=[]] 
- *    2D array to tell how to order the columns. Each 1D array must contains both column index and ordering direction.
+ *    A 2D array to tell how to order the columns. Each 1D array must contains both column index and ordering direction.
  *    
  *    <pre class="brush: js" title="Example:">
  *    // order column 0 in ascending direction and column 3 in descending direction
@@ -145,10 +145,10 @@
  * @option {bool} [paginate=true] 
  *    Enable/disable the pagination, so whole the data will be displayed. 
  *    
- * @option {int} [width=597]
+ * @option {int} [width=597] 
  *    Horizontal size of the general container. 
  * 
- * @option {int} [height=400]
+ * @option {int} [height=400] 
  *    Vertical size of the general container.
  * 
  * @example 
@@ -194,7 +194,6 @@
  *       ]
  *       
  *    });
- * 
  */
 Biojs.Table = Biojs.extend (
 /** @lends Biojs.Table# */
