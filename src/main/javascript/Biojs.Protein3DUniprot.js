@@ -142,7 +142,15 @@ Biojs.Protein3DUniprot = Biojs.Protein3DWS.extend(
 			success: function(){
 				Biojs.console.log("SUCCESS: data received");
 				self._alignments = pdbmappings;
-				self._aligmentsArrived();
+                //change proteinId to the one retrieved from pdbmappings (in case it is a protein id rather than an accession)
+                //Warning: Here we suppose that position [0] always give the info for the pdb and position [1] always give the info for the accession
+                for (obj in pdbmappings) {
+                    if ( pdbmappings[obj][1].intObjectId != self.opt.proteinId ) {
+                        self.opt.proteinId = pdbmappings[obj][1].intObjectId;
+                    }
+                    break;
+                }
+                self._aligmentsArrived();
 			},
 			async: false,
 			error: function(qXHR, textStatus, errorThrown){
