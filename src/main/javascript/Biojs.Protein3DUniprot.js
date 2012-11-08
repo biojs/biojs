@@ -4,7 +4,7 @@
  *
  * @class
  * @extends Biojs.Protein3DWS
- * 
+ *
  * @author <a href="mailto:johncar@gmail.com">John Gomez</a>
  * @version 1.0.0
  * @category 2
@@ -35,7 +35,7 @@ Biojs.Protein3DUniprot = Biojs.Protein3DWS.extend(
 	constructor: function(options) {
 		this.base(options);
         var self = this;
-        
+
         this.onPdbLoaded(function(e) {
             Biojs.console.log(e.result + " loading the pdb file " + e.file);
             Biojs.console.log("self._aligmentsJustArrived= " + self._alignmentsJustArrived);
@@ -64,20 +64,20 @@ Biojs.Protein3DUniprot = Biojs.Protein3DWS.extend(
                 self._alignmentsJustArrived = false;
             }
         });
- 
+
         if (this.opt.proteinId != undefined) {
             var proteinId = this.opt.proteinId;
             this.opt.proteinId = '';
             this.setProtein(proteinId);
         }
 	},
-	
+
 	opt: {
 		proteinId: undefined,
 		mapping: 'http://www.ebi.ac.uk/pdbe-apps/widgets/unipdb?uniprot=',
 		proxyUrl: '../biojs/dependencies/proxy/proxy.php'
 	},
-	
+
 	eventTypes : [
   		/**
   		 * @name Biojs.Protein3DUniprot#onPdbSelected
@@ -88,30 +88,30 @@ Biojs.Protein3DUniprot = Biojs.Protein3DWS.extend(
   		 * @eventData {string} alignmentId Alignment identifier.
   		 * @eventData {string} start Starting base index.
   		 * @eventData {string} end Ending base index.
-  		 * 
-  		 * @example 
+  		 *
+  		 * @example
   		 * instance.onPdbSelected(
   		 *    function( e ) {
   		 *       alert( "Alignment " + e.alignmentId + " selected. Start: " + e.start + " End: " + e.end );
   		 *    }
-  		 * ); 
-  		 * 
+  		 * );
+  		 *
   		 * */
   		"onPdbSelected"
 	],
-	
+
 	_aligments: undefined,
-	
-	
+
+
 	/**
     * Get all pdb files for a given uniprot id.
     * Also triggers the event that a new pdb file was loaded.
     *
     * @option {string} proteinId Uniprot identifier of the protein.
     *
-    * @example 
+    * @example
     * instance.setProtein("P99999");
-    * 
+    *
     */
 	setProtein: function(proteinId){
 		if (proteinId != this.opt.proteinId) {
@@ -128,9 +128,9 @@ Biojs.Protein3DUniprot = Biojs.Protein3DWS.extend(
 			} else {
 			    throw "Error in mapping function. this.opt.mapping="+this.opt.mapping;
 			}
-		} 
+		}
 	},
-	
+
 	// makes an ajax request to get the pdb files for the given uniprot id
 	_requestAligmentsFromUniprot: function(){
 		var self = this;
@@ -179,14 +179,14 @@ Biojs.Protein3DUniprot = Biojs.Protein3DWS.extend(
             }
         });
     },
-	
+
 	// parses the xml file from the request and stores the information in an easy to access way
 	_parseResponse: function (text) {
 	    this._alignments = {};
 	    var i = 0;
 		var self = this;
 		var data;
-		
+
 		Biojs.console.log("Decoding " + text);
 
 		if ( !Biojs.Utils.isEmpty(text) ) {
@@ -233,109 +233,143 @@ Biojs.Protein3DUniprot = Biojs.Protein3DWS.extend(
 	    Biojs.console.log(self._alignments);
 	    this._aligmentsArrived();
 	},
-	
-	// adds all available pdb files to a dropdown box 
+
+	// adds all available pdb files to a dropdown box
 	// or displays the fact that there are no pdb files for the given id
 	_aligmentsArrived: function(){
-		
+
 		this._alignmentsJustArrived = true;
 
 		var alignments = this._filterAligmentsBySelection(this._selection);
-        
+
         if (!Biojs.Utils.isEmpty(alignments)) {
             var pdb = undefined;
             for (pdb in alignments) {
                 break;
             }
-            
+
             Biojs.console.log("Requesting pdb " + pdb);
             this.requestPdb(pdb.substring(0, pdb.indexOf('.')).toLowerCase());
-            
+
         } else {
             this._container.html("No structural information for " + this.opt.proteinId );
             this.raiseEvent('onRequestError', { message: "No structural information available for " + this.opt.proteinId });
         }
 	},
-	
+
 	_onAlignmentSelectionChange: function(){
 		var pdb = jQuery('#pdbFile_select').val();
-		
+
 		if ( pdb != undefined ) {
-			
+
 			var alignmentId = pdb.substring(0, pdb.indexOf(' '));
 			var pdbId = alignmentId.substring(0, pdb.indexOf('.')).toLowerCase();
-			
+
 			var alignment = this.getAlignmentsByPdb(alignmentId);
-			
+
 			if ( alignment.hasOwnProperty( alignmentId ) ) {
 				var start = alignment[alignmentId][1].start;
 				var end = alignment[alignmentId][1].end;
-				
-				this.raiseEvent('onPdbSelected', { 
+
+				this.raiseEvent('onPdbSelected', {
 					"pdbId": pdbId,
 					"alignmentId": alignmentId,
 					"start": start,
 					"end": end
 				});
 			}
-			
+
 			this.requestPdb(pdbId);
-			
+
 		} else {
 			Biojs.console.log("No structural information available for "+this.opt.proteinId);
 		}
 	},
-	
+
 	/**
+         * Request and display a pdb file by means of its identifier.
+         *
+         * @param {string} pdbId Pdb file identifier.
+         *
+         * @example
+         * instance.requestPdb('3t6f');
+         *
+         */
+        requestPdb: function(pdbId) {
+            var self = this;
+
+            self.showLoadingImage();
+            self.opt.id = pdbId;
+
+            jQuery.ajax({
+                url: self.opt.proxyUrl,
+                data: 'url='+self.opt.pdbUrl+'/'+pdbId+'.pdb',
+                dataType: 'text',
+                success: function (pdbContent) {
+                    Biojs.console.log("DATA ARRIVED");
+                    //reset the PDB selected area if a uniprot selection has been made already
+                    if (self._uniprotSelection != undefined) {
+                        self._selection = self._translateSelection(self._uniprotSelection);
+                    }
+                    self.setPdb(pdbContent);
+                },
+                error: function(qXHR, textStatus, errorThrown){
+                    self.raiseEvent('onRequestError', {message: textStatus});
+                }
+            });
+        },
+
+
+        /**
     * Get the available alignments for the current protein filtered by selection (PDB files containing a part of the requested region).
-    * 
-    * @example 
+    *
+    * @example
     * // Selection of the region in the interval [100,150].
     * instance.setSelection({start: 120, end: 150});
-    * 
+    *
     * @example
     * // Get the alignments matching with bases 4, 8 and 100.
     * alert ( instance.filterAlignments([4,8,100]) );
-    * 
-    * @param {Object|Array} selection Can be either a plain object or an array.  
+    *
+    * @param {Object|Array} selection Can be either a plain object or an array.
     *        If object, it must have the fields start and end; Where "start" is greater than or equal to "end".
     *        If array, it must contain numbers representing the positions to be selected.
-    */ 
+    */
 	getAlignmentsBySelection: function ( selection ) {
-		
+
 		var alignments = this._alignments;
-		
+
 		if ( selection != undefined ) {
 			this._filterAligmentsBySelection(selection);
 		}
-		
+
 		return alignments;
 	},
-	
+
 	/**
     * Get the available alignments for the current protein filtered by selection (PDB files containing a part of the requested region).
-    * 
+    *
     * @example
     * // Get the alignments matching with bases 4, 8 and 100.
     * alert ( instance.getAlignmentsByPdb("2F73") );
-    * 
-    * @param {string} pdb identifier.  
-    * @returns {Object} .  
-    * 
-    */ 
+    *
+    * @param {string} pdb identifier.
+    * @returns {Object} .
+    *
+    */
 	getAlignmentsByPdb: function ( pdbId ) {
-		
+
 		var alignments = {};
-		
+
 		for (al in this._alignments) {
 			if (  this._alignments[al][0].intObjectId.indexOf( pdbId ) != -1 ) {
 				alignments[this._alignments[al][0].intObjectId] = this._alignments[al];
 			}
 		}
-		
+
 		Biojs.console.log("Alignments for pdb " + pdbId );
 		Biojs.console.log(alignments);
-		
+
 		return alignments;
 	},
 
@@ -343,28 +377,28 @@ Biojs.Protein3DUniprot = Biojs.Protein3DWS.extend(
     * Filters the alignments available for the current protein: Only PDB files containing a part of the requested region
     * are selectable. The specified region is highlighted in the displayed PDB file.
     *
-    * @example 
+    * @example
     * // Selection of the region in the interval [100,150].
     * instance.filterAlignments({start: 120, end: 150});
-    * 
-    * @param {Object|Array} selection Can be either a plain object or an array.  
+    *
+    * @param {Object|Array} selection Can be either a plain object or an array.
     *        If object, it must have the fields start and end; Where "start" is greater than or equal to "end".
     *        If array, it must contain numbers representing the positions to be selected.
-    */ 
-	filterAlignments: function ( selection ) { 
-		
+    */
+	filterAlignments: function ( selection ) {
+
 		var alignments = this._filterAligmentsBySelection(selection);
 		var selectedAlignment = jQuery('#pdbFile_select').val();
-		
+
 		// Update the drop-down box showing the filtered alignments
 		jQuery('#pdbFile_select').html(this._createOptions(alignments));
-		
+
 		// Select an alignment
 		if ( alignments.hasOwnProperty( selectedAlignment.slice(0,selectedAlignment.indexOf(' '))) ) {
 			// Select current alignment if it belongs to filtered alignments
 			jQuery('#pdbFile_select').val(selectedAlignment);
-			
-		} else { 
+
+		} else {
 			// Select any alignment
 			for ( a in alignments ){
 				jQuery('#pdbFile_select').val(a);
@@ -372,8 +406,8 @@ Biojs.Protein3DUniprot = Biojs.Protein3DWS.extend(
 			}
 			this._onAlignmentSelectionChange();
 		}
-		
-		// invoke setSelection on the parent 
+
+		// invoke setSelection on the parent
 		this.base(selection);
 	},
 
@@ -386,7 +420,7 @@ Biojs.Protein3DUniprot = Biojs.Protein3DWS.extend(
         Biojs.console.log("_createOptions: " + pdbOptions);
         return pdbOptions;
     },
-	
+
 	_filterAligmentsBySelection: function(selection) {
         var alignments = undefined;
         if (selection instanceof Array) {
@@ -417,51 +451,82 @@ Biojs.Protein3DUniprot = Biojs.Protein3DWS.extend(
         Biojs.console.log(alignments);
         return alignments;
     },
-    
+
 	/**
     * Selection of a region using the uniprot positions.
     *
-    * @example 
+    * @example
     * // Selection of the region in the interval [100,150].
     * instance.setSelection({start: 100, end: 150});
-    * 
+    *
     * @example
     * // Selection of the positions 4, 8 and 100.
     * instance.setSelection([4,8,100]);
-    * 
-    * @param {Object|Array} selection Can be either a plain object or an array.  
+    *
+    * @param {Object|Array} selection Can be either a plain object or an array.
     *        If object, it must have the fields start and end; Where "start" is greater than or equal to "end".
     *        If array, it must contain numbers representing the positions to be selected.
-    */ 
+    */
 	setSelection: function ( s ) {
-		
-		var selection = Biojs.Utils.clone(s);
-		var alignmentId = this.getCurrentAlignmentId();
-		var proteinId = this.getCurrentProteinId();
-		var segment = this.getAlignmentsByPdb(alignmentId)[alignmentId];
-		var offset = 0;
-		
-		for ( i in segment ) {
-			if ( segment[i].intObjectId == alignmentId ) {
-				pdbSegment = segment[i];
-			} else if ( segment[i].intObjectId == proteinId ) {
-				uniprotSegment = segment[i];
-			}
-		}
-		
-		offset = uniprotSegment.start - pdbSegment.start;
-		
-		if ( selection instanceof Array ) {
-			for ( i in selection ) {
-				selection[i] -= offset;
-			}
-		} else if ( selection instanceof Object && selection.start <= selection.end ){
-			selection.start -= offset;
-			selection.end -= offset;
-		}
-		
-		this.base(selection);
-	},
+            this._uniprotSelection = Biojs.Utils.clone(s);
+            var selection = this._translateSelection(s);
+            this.base(selection);
+        },
+
+        _translateSelection: function (s) {
+            //Selection in Uniprot regions needs to be translated into PDB regions
+            var selection = Biojs.Utils.clone(s);
+            var alignmentId = this.getCurrentAlignmentId();
+            var proteinId = this.getCurrentProteinId();
+            var segment = this.getAlignmentsByPdb(alignmentId)[alignmentId];
+            var offset = 0;
+            for ( i in segment ) {
+                if ( segment[i].intObjectId == alignmentId ) {
+                    pdbSegment = segment[i];
+                } else if ( segment[i].intObjectId == proteinId ) {
+                    uniprotSegment = segment[i];
+                }
+            }
+            offset = uniprotSegment.start - pdbSegment.start;
+            if ( selection instanceof Array ) {
+                var toDelete = new Array[selection.length];
+                for ( i in selection ) {
+                    if ( (uniprotSegment.start <= selection[i]) && (selection[i] <= uniprotSegment.end) ) {
+                        selection[i] -= offset;
+                        toDelete[i] = false;
+                    } else {
+                        toDelete[i] = true;
+                    }
+                }
+                var deleted = 0;
+                for (j in toDelete) {
+                    if (toDelete[j] == true) {
+                        selection.splice(j-deleted,j-deleted);
+                        deleted += 1;
+                    }
+                }
+            } else if ( selection instanceof Object && selection.start <= selection.end ){
+                if ( (selection.start > uniprotSegment.end) || (selection.end < uniprotSegment.start) ){
+                    //we first check whether it is completely out of the range
+                    selection.start = 0;
+                    selection.end = 0;
+                    this.removeSelection();
+                } else if ( (selection.start >= uniprotSegment.start) && (selection.end <= uniprotSegment.end) ){
+                    selection.start -= offset;
+                    selection.end -= offset;
+                } else if ( (selection.start < uniprotSegment.start) && (selection.end <= uniprotSegment.end) ){
+                    selection.start = pdbSegment.start - 0;
+                    selection.end -= offset;
+                } else if ( (selection.start >= uniprotSegment.start) && (selection.end > uniprotSegment.end) ){
+                    selection.start -= offset;
+                    selection.end = pdbSegment.end - 0;
+                } else if ( (selection.start < uniprotSegment.start) && (selection.end > uniprotSegment.end) ){
+                    selection.start = pdbSegment.start - 0
+                    selection.end = pdbSegment.end - 0;
+                }
+            }
+            return (selection);
+        },
 
 	getCurrentAlignmentId: function () {
 		var selectedValue = jQuery('#pdbFile_select').val();
@@ -469,18 +534,18 @@ Biojs.Protein3DUniprot = Biojs.Protein3DWS.extend(
 		//var pdbId = alignmentId.substring(0, pdb.indexOf('.')).toLowerCase();
 		return alignmentId;
 	},
-	
+
 	getCurrentProteinId: function () {
 		return this.opt.proteinId;
 	},
-	
+
 	/**
     * Removes selection in the current displayed structure.
     *
     * @example
     * instance.removeSelection();
-    */ 
-	removeSelection: function() { 
+    */
+	removeSelection: function() {
 		this.base();
 	}
 }, {
