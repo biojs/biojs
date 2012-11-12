@@ -7,7 +7,8 @@ function publish(symbolSet) {
 		symbolsDir:  "symbols/",
 		srcDir:      "symbols/src/",
 		registryDir:  "registry/",
-		registrySrcDir: "registry/src/"
+		registrySrcDir: "registry/src/",
+		biojsDir: ""
 	};
 	
 	// is source output is suppressed, just display the links to the source file
@@ -152,6 +153,16 @@ function publish(symbolSet) {
 	var registryIndex = registryIndexTemplate.process(components);
 	IO.saveFile(publish.conf.outDir + publish.conf.registryDir, "index"+publish.conf.ext, registryIndex);
     
+	// create BioJS index page redirecting to the registry index page
+	try {
+		var biojsIndexTemplate = new JSDOC.JsPlate(publish.conf.templatesDir+"biojsIndex.tmpl");
+	}
+	catch(e) { print(e.message); quit(); }
+	
+	var biojsIndex = biojsIndexTemplate.process(components);
+	IO.saveFile(publish.conf.outDir + publish.conf.biojsDir, "index"+publish.conf.ext, biojsIndex);
+    	
+	
     // create the Components page
 	try {
 		var registryComponentsTemplate = new JSDOC.JsPlate(publish.conf.templatesDir+"registryComponents.tmpl");
