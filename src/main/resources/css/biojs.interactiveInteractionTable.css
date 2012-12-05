@@ -1,0 +1,38 @@
+/* Default style for interativeDataTable */
+
+div.dataTables_paginate {
+    float: right;
+    
+}
+
+div.dataTables_filter {
+    float: right;
+    margin-top:10px;
+    margin-right:5px;    
+    margin-bottom:5px;    
+}
+
+div.dataTables_length {
+    float: left;
+    margin-top:10px;
+    margin-left:5px;
+    margin-bottom:5px;    
+}
+
+.dataTables_cellWrapper {
+    white-space:nowrap;
+    text-overflow:ellipsis;
+    overflow:hidden;
+    display:block;
+    width:80px; /*80px*/
+    /*text-align: left;*/
+    /*background: #91c5d4;*/
+}
+
+.ellipsis {
+   white-space:nowrap;
+   text-overflow:ellipsis;
+   overflow:hidden;
+   width:25px;
+   display:block;
+}
