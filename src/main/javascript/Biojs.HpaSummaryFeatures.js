@@ -35,7 +35,7 @@
  * @example
  * var instance = new Biojs.HpaSummaryFeatures({
  * 	  target: 'YourOwnDivId',
- * 	  hpaDasUrl: 'http://www.ebi.ac.uk/~rafael/web/copa/biojs/src/test/data/P98171_hpa_summary.xml',
+ * 	  hpaDasUrl: 'http://das.proteinatlas.org/das/proteinatlas/features?segment=Q9NTI5',
  * 	  width: '585px',
  * 	  imageWidth: '150px'
  * });
