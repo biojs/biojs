@@ -1207,7 +1207,7 @@ Biojs.InteractiveInteractionTable =  Biojs.extend (
 	    
 	    var oTable = this._contentTable.dataTable();
 	    oTable.fnClearTable();
-	    alert (typeof opt.interactionSetObject);
+	    //alert (typeof opt.interactionSetObject);
 	    oTable.fnAddData(opt.interactionSetObject.aaData);
 	    this._formatCells ();
 
