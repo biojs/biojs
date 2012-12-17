@@ -143,19 +143,19 @@ Biojs.HpaSummaryFeatures = Biojs.HpaSummaryFeature.extend (
      * Returns:  -
      * Inputs: antibodies -> {Array} List of antibodies
      */
-	_createHtmlContainer: function(antibodies) {
-		var self = this;
-		var html = '';
-		for (var a in antibodies) {
-			html += '<div style="width:'+self.opt.width+';" class="'+Biojs.HpaSummaryFeatures.COMPONENT_PREFIX+'antibodyTitle">Antibody '+antibodies[a]+'</div>'
-			html += '<div class="'+Biojs.HpaSummaryFeatures.COMPONENT_PREFIX+'summary" id="'+antibodies[a]+'_cell_line_immunofluorescence_summary"></div>';
-			html += '<div class="'+Biojs.HpaSummaryFeatures.COMPONENT_PREFIX+'summary" id="'+antibodies[a]+'_cell_line_immunohistochemistry_summary"></div>';
-	        html += '<div class="'+Biojs.HpaSummaryFeatures.COMPONENT_PREFIX+'summary" id="'+antibodies[a]+'_cell_line_immunohistochemistry_summary"></div>';
-	        html += '<div class="'+Biojs.HpaSummaryFeatures.COMPONENT_PREFIX+'summary" id="'+antibodies[a]+'_cancer_tissue_immunohistochemistry_summary"></div>';
-	        html += '<div class="'+Biojs.HpaSummaryFeatures.COMPONENT_PREFIX+'summary" id="'+antibodies[a]+'_normal_tissue_immunohistochemistry_summary"></div>';					
-		}
-		return html;
-	},
+        _createHtmlContainer: function(antibodies) {
+            var self = this;
+            var html = '';
+            jQuery.each(antibodies, function(key, value){
+                html += '<div style="width:'+self.opt.width+';" class="'+Biojs.HpaSummaryFeatures.COMPONENT_PREFIX+'antibodyTitle">Antibody '+value+'</div>'
+                html += '<div class="'+Biojs.HpaSummaryFeatures.COMPONENT_PREFIX+'summary" id="'+value+'_cell_line_immunofluorescence_summary"></div>';
+                html += '<div class="'+Biojs.HpaSummaryFeatures.COMPONENT_PREFIX+'summary" id="'+value+'_cell_line_immunohistochemistry_summary"></div>';
+                html += '<div class="'+Biojs.HpaSummaryFeatures.COMPONENT_PREFIX+'summary" id="'+value+'_cell_line_immunohistochemistry_summary"></div>';
+                html += '<div class="'+Biojs.HpaSummaryFeatures.COMPONENT_PREFIX+'summary" id="'+value+'_cancer_tissue_immunohistochemistry_summary"></div>';
+                html += '<div class="'+Biojs.HpaSummaryFeatures.COMPONENT_PREFIX+'summary" id="'+value+'_normal_tissue_immunohistochemistry_summary"></div>';
+            });
+            return html;
+        },
 	/* 
      * Function: Biojs.HpaSummaryFeatures._displayHpaSummaries
      * Purpose:  Disaply HPA summaries inside the HTML container
