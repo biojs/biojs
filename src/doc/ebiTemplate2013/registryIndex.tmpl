@@ -1,0 +1,511 @@
+<!doctype html>
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!--[if lt IE 7]> <html class="no-js ie6 oldie" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js ie7 oldie" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js ie8 oldie" lang="en"> <![endif]-->
+<!-- Consider adding an manifest.appcache: h5bp.com/d/Offline -->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+
+  <meta charset="utf-8">
+
+  <!-- Use the .htaccess and remove these lines to avoid edge case issues.
+       More info: h5bp.com/b/378 -->
+  <!-- <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"> --> <!-- Not yet implemented -->
+
+<!-- BIOJS meta tags -->  
+  <meta http-equiv="content-type" content="text/html; charset={+IO.encoding+}" />
+  {! Link.base = "../"; /* all generated links will be relative to this */ !}
+  <title>Home &lt; BioJs &lt; EMBL-EBI</title>
+  <meta http-equiv="content-type" content="text/html; charset={+IO.encoding+}" />
+  <meta name="description" content="JavaScript components for biological data"><!-- Describe what this page is about -->
+  <meta name="keywords" content="bioinformatics, javascript, components"><!-- A few keywords that relate to the content of THIS PAGE (not the whol project) -->
+  <meta name="author" content="John Gomez Carvajal et all">
+<!-- /BIOJS meta tags -->  
+
+  <!-- Mobile viewport optimized: j.mp/bplateviewport -->
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+  <!-- Place favicon.ico and apple-touch-icon.png in the root directory: mathiasbynens.be/notes/touch-icons -->
+
+  <!-- CSS: implied media=all -->
+  <!-- CSS concatenated and minified via ant build script-->
+  <link rel="stylesheet" href="//www.ebi.ac.uk/web_guidelines/css/compliance/develop/boilerplate-style.css">
+  <link rel="stylesheet" href="//www.ebi.ac.uk/web_guidelines/css/compliance/develop/ebi-global.css" type="text/css" media="screen">
+  <link rel="stylesheet" href="//www.ebi.ac.uk/web_guidelines/css/compliance/develop/ebi-visual.css" type="text/css" media="screen">
+  <link rel="stylesheet" href="//www.ebi.ac.uk/web_guidelines/css/compliance/develop/984-24-col-fluid.css" type="text/css" media="screen">
+  
+  <!-- you can replace this with [projectname]-colours.css. See http://frontier.ebi.ac.uk/web/style/colour for details of how to do this -->
+  <!-- also inform ES so we can host your colour palette file -->
+  <!-- <link rel="stylesheet" href="//www.ebi.ac.uk/web_guidelines/css/compliance/develop/embl-petrol-colours.css" type="text/css" media="screen"> -->
+
+<!-- BIOJS color css -->  
+  <link href="style/biojs-colours_blue.css" rel="stylesheet" type="text/css" />
+<!-- /BIOJS color css -->  
+  
+  <!-- for production the above can be replaced with -->
+  <!--
+  <link rel="stylesheet" href="//www.ebi.ac.uk/web_guidelines/css/compliance/mini/ebi-fluid-embl.css">
+  -->
+
+  <style type="text/css">
+  	/* You have the option of setting a imum width for your page, and making sure everything is centered */
+  	body { max-width: 1070px; min-width: 1070px; margin: 0 auto; }
+  </style>
+  
+  <!-- end CSS-->
+
+
+  <!-- All JavaScript at the bottom, except for Modernizr / Respond.
+       Modernizr enables HTML5 elements & feature detects; Respond is a polyfill for min/max-width CSS3 Media Queries
+       For optimal performance, use a custom Modernizr build: www.modernizr.com/download/ -->
+  
+  <!-- Full build -->
+  <!-- <script src="//www.ebi.ac.uk/web_guidelines/js/libs/modernizr.minified.2.1.6.js"></script> -->
+  
+  <!-- custom build (lacks most of the "advanced" HTML5 support -->
+  <script src="//www.ebi.ac.uk/web_guidelines/js/libs/modernizr.custom.49274.js"></script>	
+  
+<!-- BIOJS css -->
+  <link href="style/biojs.css" rel="stylesheet" type="text/css" />  
+<!-- /BIOJS css -->	
+
+</head>
+
+<body class="level2" id="biojs"><!-- add any of your classes or IDs -->
+	<div id="skip-to">
+		<ul>
+			<li><a href="#content">Skip to main content</a></li>
+			<li><a href="#local-nav">Skip to local navigation</a></li>
+			<li><a href="#global-nav">Skip to EBI global navigation menu</a></li>
+			<li><a href="#global-nav-expanded">Skip to expanded EBI global navigation menu (includes all sub-sections)</a></li>
+		</ul>
+	</div>
+
+  <div id="wrapper" class="container_24">
+    <header>
+    	<div id="global-masthead" class="masthead grid_24">
+      <!--This has to be one line and no newline characters-->
+			<a href="//www.ebi.ac.uk/" title="Go to the EMBL-EBI homepage"><img src="//www.ebi.ac.uk/web_guidelines/images/logos/EMBL-EBI/EMBL_EBI_Logo_white.png" alt="EMBL European Bioinformatics Institute"></a>
+
+			<nav>
+				<ul id="global-nav">
+          <!-- set active class as appropriate -->
+          <li class="first active" id="services"><a href="//www.ebi.ac.uk/services">Services</a></li>
+					<li id="research"><a href="//www.ebi.ac.uk/research">Research</a></li>
+					<li id="training"><a href="//www.ebi.ac.uk/training">Training</a></li>
+					<li id="industry"><a href="//www.ebi.ac.uk/industry">Industry</a></li>
+					<li id="about" class="last"><a href="//www.ebi.ac.uk/about">About us</a></li>
+				</ul>
+			</nav>
+			
+		</div>
+		
+		<div id="local-masthead" class="masthead grid_24 nomenu">
+			
+      <!-- local-title -->
+      <!-- NB: for additional title style patterns, see http://frontier.ebi.ac.uk/web/style/patterns -->
+
+			<div class="grid_12 alpha" id="local-title">
+				<div class="biojsLocalTitle">
+					<a href="./index.html" title="Back to BioJS homepage"><img class="logo" src="images/biojs.png" alt="Biojs"></a>
+					<div id="biojsTitle">Reusable component for visualizing Biological data</div>
+				</div>
+			</div>
+      
+      <!-- /local-title -->
+
+      <!-- local-search -->
+      <!-- NB: if you do not have a local-search, delete the following div, and drop the class="grid_12 alpha" class from local-title above -->
+      		<!--
+			<div class="grid_12 omega">
+				<form id="local-search" name="local-search" action="[search-action]" method="post">
+								
+					<fieldset>
+					
+					<div class="left">
+						<label>
+						<input type="text" name="first" id="local-searchbox">
+						</label>
+						<span class="examples">Examples: <a href="[search-url-1]">[search-text-1]</a>, <a href="[search-url-1]">[search-text-2]</a>, <a href="[search-url-1]">[search-text-3]</a></span>
+					</div>
+					
+					<div class="right">
+						<input type="submit" name="submit" value="Search" class="submit">					
+						<span class="adv"><a href="../search" id="adv-search" title="Advanced">Advanced</a></span>
+					</div>									
+					
+					</fieldset>
+					
+				</form>
+			</div>
+			-->
+      <!-- /local-search -->
+
+      <!-- local-nav -->
+
+			<nav>
+				<ul class="grid_24" id="local-nav">
+					<li class="first active"><a href="./index.html" title="">Home</a></li>
+                    <li><a href="./components.html" title="">Components</a></li>
+					<li><a href="http://code.google.com/p/biojs/">About BioJS</a></li>
+					<li class="last"><a href="http://www.ebi.ac.uk/support">Contact us</a></li>
+				</ul>
+			</nav>		      
+
+      <!-- /local-nav -->
+
+    </div>
+    </header>
+               
+    <div id="content" role="main" class="grid_24 clearfix">
+    
+    <!-- If you require a breadcrumb trail, its root should be your service.
+     	   You don't need a breadcrumb trail on the homepage of your service... -->
+    <!--
+    <nav id="breadcrumb">
+     	<p>
+		    <a href="[service-url]">[service-name]</a> &gt; 
+		    [page-title]
+			</p>
+  	</nav>
+  	-->
+    	
+
+
+
+
+                <!-- ============================== main section ============================ -->
+                
+                
+                    
+                    <section>
+                        <!-- <h2 class="strapline">Reusable Components for Visualizing Biological Data</h2> -->
+                        <div class="grid_18">
+	                        <div class="grid_8 alpha">
+	                            <h3 class="strapline">USE</h3>
+	                            <div class="biojsColumn">Reuse and integrate components into web applications.
+	                                <div class="viewLinks"><a class="nodecor" href="components.html">
+	                                ... view components
+	                                </a></div></div>
+	                        </div>
+	                        <div class="grid_8">
+	                            <h3 class="strapline">DEVELOP</h3>
+	                            <div class="biojsColumn">Follow our guidelines and tutorials to develop new components.
+	                                <div class="viewLinks"><a class="nodecor" target="_blank" href="http://code.google.com/p/biojs/wiki/Documentation">
+	                                ... view documentation
+	                                </a></div></div>
+	                        </div>
+	                        <div class="grid_8 omega">
+	                            <h3 class="strapline">COMBINE</h3>
+	                            <div class="biojsColumn">Combine components that can interact with each other.
+	                                <div class="viewLinks"><a class="nodecor" href="">
+	                                ... view example
+	                                </a></div></div>
+	                        </div>
+	                        <div class="grid_24 alpha omega">
+	                            <div id="biojsExample" class="biojsColumn"><img src="images/example.png"/></div>
+	                        </div>
+	                        
+                            <div class="grid_12 alpha">
+                                    
+                                    <div class="bloc_doc biojsColumn">
+                                        <h3 class="strapline">Documentation</h3>
+                                   
+                                        <ul>
+                                            <li>
+	                                            <a class="nodecor" target="_blank" href="https://docs.google.com/document/d/1gG036Bvwl4i-KX5BTHddGzeE_5eospL-864BrnsAS_s/edit?hl=en_US">
+	                                            <strong>BioJS specification</strong>
+	                                            </a>
+	                                            <br/>Documentation and requirements for the BioJS components<br/>
+                                            </li>
+                                            <li>
+	                                            <a class="nodecor" href="../jsdoc/index.html">
+	                                            <strong>API documentation</strong>
+	                                            </a>
+	                                            <br/>API documentation to BioJS source code.
+                                            </li>
+                                            <li>
+	                                            <a class="nodecor" href="http://code.google.com/p/biojs/wiki/Documentation?ts=1351263154&updated=Documentation#Requirements">
+	                                            <strong>Requirements</strong>
+	                                            </a>
+	                                            <br/>Examples of requirements gathered before developing a component.
+                                            </li>
+                                        </ul>    
+                                        
+                                    </div> 
+                                    
+                                    <div class="bloc_doc biojsColumn">
+                                        <h3 class="strapline">Tutorials</h3>
+                                        
+                                        <ul>
+                                            <li>
+	                                            <a class="nodecor" target="_blank" href="https://docs.google.com/document/d/1oS4M0EKAMre4IDERV61VVTDXJH9F-HGbHxKwNXqjWuo/edit">
+	                                            <strong>How to install the registry</strong>
+	                                            </a>
+                                            	<br/>Tutorial about how to install the biojs repository in your local machine. <br/>
+                                            </li>
+                                            <li>
+	                                            <a class="nodecor" target="_blank" href="https://docs.google.com/document/d/1Uk4-hBT5YSGGs91FVNvZPQ15QBihivKzYusBJ2GVNn8/edit">
+	                                            <strong>How to create a component</strong>
+	                                            </a>
+												<br/>Tutorial about how to create your own component. <br/>
+											</li>
+                                            <li>
+	                                            <a class="nodecor" target="_blank" href="https://docs.google.com/document/d/1HKwAr8bIqqGklAiAmDoAshzbZrIYs8Q8mbrSDHobudg/edit">
+	                                            <strong>How to document a component</strong>
+	                                            </a>
+	                                            <br/>Tutorial about how to document the code of your component and get it working in your local registry. <br/>
+                                            </li>
+                                        </ul>    
+                                        
+                                    </div> 
+                                    
+                                </div>
+                                
+                            <div class="grid_12 omega">
+                                
+                                    <div class="bloc_foc biojsColumn">
+                                        <h3 class="strapline">Get involved</h3>
+                                            <ul>
+	                                            <li>
+	                                            	<a class="nodecor" target="_blank" href="http://code.google.com/p/biojs/issues/entry?template=Feature">
+	                                            	<strong>Feature request</strong>
+	                                            	</a>
+	                                            	<br/>Send us feature requests and/or ideas to consider in BioJS.<br/> 
+	                                            </li>
+	                                            <li>
+	                                            	<a class="nodecor" target="_blank" href="http://code.google.com/p/biojs/issues/entry?template=Defect%20report%20from%20user">
+	                                            	<strong>Report a bug</strong>
+	                                            	</a>
+	                                            	<br/>Please let us know if you have problems with BioJS<br/> 
+	                                            </li>
+	                                            <li><a class="nodecor" target="_blank" href="mailto:biojs@googlegroups.com">
+	                                            	<strong>Mailing list</strong></a>
+	                                            	<br/>Project mailing list open to anybody interested in BioJS. 
+	                                            </li>
+	                                            <li>
+	                                            	<a class="nodecor" target="_blank" href="http://code.google.com/p/biojs/">
+	                                            	<strong>Community project</strong>
+	                                            	</a>
+	                                            	<br/>Community project site with more information about BioJS<br/> 
+	                                            </li>
+	                                            <li>
+	                                            	<a class="nodecor" target="_blank" href="http://code.google.com/p/biojs/source/checkout">
+	                                            	<strong>Source code</strong>
+	                                            	</a>
+	                                            	<br/>BioJS is an open source project, feel free to join us!<br/> 
+	                                            </li>
+                                        	</ul>
+                                    </div>
+                                    <div class="bloc_foc biojsColumn">
+                                        <h3 class="strapline">Presentations</h3>
+                                            <ul>
+	                                            <li>
+	                                            	<a class="nodecor" target="_blank" href="http://www.ebi.ac.uk/~rafael/talks/2012-07-15_talk_ismb_biojs/biojs_rjimenez_ismb_02.pdf">
+	                                            	<strong>BioJS for representing biological information</strong>
+	                                            	</a>
+	                                            	<br/>Rafael's talk at the ISMB 2012<br/> 
+	                                            </li>
+	                                            <li>
+	                                            	<a class="nodecor" target="_blank" href="http://www.flickr.com/photos/francisrowland/7407095724/sizes/o/in/set-72157630205678288/">
+	                                            	<strong>Reusable components for visualizing biological data</strong>
+	                                            	</a>
+	                                            	<br/>Francis' sketchnote summarizing a BioJS presentation<br/> 
+	                                            </li>
+                                        	</ul>
+                                        </p>
+                                    </div>
+                                    
+                                </div>
+                        </div>        
+
+	                        
+	                    <div class="grid_6">
+			                <div class="grid_24 omega">
+			                    <aside>
+			                        <div class="main-right-box-no">
+			                        	<div class="componentsLink">
+			                            	<a class="nodecor" href="components.html">Components</a>
+			                            </div>
+			                        </div>
+			                        <div class="main-right-box-no biojsColumn">
+			                            <div class="right_title">
+			                                <span class="version">Showcase</span></div>
+			                                <div class="feat_list">
+			                                    <ul>
+			                                        <!--
+			                                        <for each="thisClass" in="data">
+			                                            <li><a href="{+thisClass.alias+}.html">{+thisClass.name+}</a></li>
+			                                        </for>
+			                                         -->
+			                                        <li><a class="nodecor" href="Biojs.Sequence.html">Sequence</a></li>
+			                                        <li><a class="nodecor" href="Biojs.GeneExpressionSummary.html">Gene expression summary</a></li>
+			                                        <li><a class="nodecor" href="Biojs.Biojs.DasProteinFeatureViewer.html">Protein feature viewer</a></li>
+			                                        <li><a class="nodecor" href="Biojs.Protein3D.html">Protein 3D structure</a></li>
+			                                        <li><a class="nodecor" href="Biojs.InteractionsTable.html">Table of protein interactions</a></li>                  
+			                                    </ul>	
+			                                    <br/>
+			                                    <a class="nodecor" href="components.html">See all</a>
+			                                </div>
+			                        </div>
+			                    </aside>
+			                </div> 
+	                   
+                            <div class="grid_24 omega">
+                                    <a href="http://www.ebi.ac.uk/Tools/biojs/registry/">Follow us on twitter</a>
+                                    <div class="bloc_pub" id="last">
+                                        <div>
+                                            <script charset="utf-8" src="http://widgets.twimg.com/j/2/widget.js"></script>
+                                            <script>
+                                                new TWTR.Widget({
+                                                    version: 2,
+                                                    type: 'profile',
+                                                    rpp: 5,
+                                                    interval: 30000,
+                                                    width: 'auto',
+                                                    height: 300,
+                                                    theme: {
+                                                        shell: {
+                                                        background: '#D9DADC',
+                                                        color: '#ffffff'
+                                                    },
+                                                    tweets: {
+                                                        background: '#ffffff',
+                                                        color: '#404040',
+                                                        links: '#000000'
+                                                        }
+                                                    },
+                                                    features: {
+                                                        scrollbar: false,
+                                                        loop: false,
+                                                        live: false,
+                                                        behavior: 'all'
+                                                    }
+                                                }).render().setUser('biojsLibrary').start();
+                                            </script>
+                                        </div>
+                                        
+                                    </div>  
+                            </div>
+                            
+	                    </div>	
+                    </section>
+                        
+               
+                    
+
+                    
+                    
+                
+
+                
+
+
+
+
+
+			
+    </div>
+    
+    
+    <footer>
+    <!-- Optional local footer (insert citation / project-specific copyright / etc here -->
+		  
+      <div id="local-footer" class="grid_24 clearfix">
+			    <div id="biojsFooter">
+                    Registry generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> {+JSDOC.VERSION+} on {+new Date()+}
+                </div>
+		  </div>
+      
+		<!-- End optional local footer -->
+		
+		<div id="global-footer" class="grid_24">
+						
+			<nav id="global-nav-expanded">
+				
+				<div class="grid_4 alpha">
+					<h3 class="embl-ebi"><a href="//www.ebi.ac.uk/" title="EMBL-EBI">EMBL-EBI</a></h3>
+				</div>
+				
+				<div class="grid_4">
+					<h3 class="services"><a href="//www.ebi.ac.uk/services">Services</a></h3>
+				</div>
+				
+				<div class="grid_4">
+					<h3 class="research"><a href="//www.ebi.ac.uk/research">Research</a></h3>
+				</div>
+				
+				<div class="grid_4">
+					<h3 class="training"><a href="//www.ebi.ac.uk/training">Training</a></h3>
+				</div>
+				
+				<div class="grid_4">
+					<h3 class="industry"><a href="//www.ebi.ac.uk/industry">Industry</a></h3>
+				</div>
+				
+				<div class="grid_4 omega">
+					<h3 class="about"><a href="//www.ebi.ac.uk/about">About us</a></h3>
+				</div>
+
+			</nav>
+			
+			<section id="ebi-footer-meta">
+				<p class="address">EMBL-EBI, Wellcome Trust Genome Campus, Hinxton, Cambridgeshire, CB10 1SD, UK &nbsp; &nbsp; +44 (0)1223 49 44 44</p>
+				<p class="legal">Copyright &copy; EMBL-EBI 2013 | EBI is an Outstation of the <a href="http://www.embl.org">European Molecular Biology Laboratory</a> | <a href="/about/privacy">Privacy</a> | <a href="/about/cookies">Cookies</a> | <a href="/about/terms-of-use">Terms of use</a></p>	
+			</section>
+
+		</div>
+		
+    </footer>
+  </div> <!--! end of #wrapper -->
+
+
+  <!-- JavaScript at the bottom for fast page loading -->
+
+  <!-- Grab Google CDN's jQuery, with a protocol relative URL; fall back to local if offline -->
+  <!--
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+  <script>window.jQuery || document.write('<script src="../js/libs/jquery-1.6.2.min.js"><\/script>')</script>
+  -->
+
+
+  <!-- Your custom JavaScript file scan go here... change names accordingly -->
+<!-- BIOJS javascript -->  
+		<script language="JavaScript" type="text/javascript" src="scripts/jquery-1.7.2.min.js"></script>
+		<script src="scripts/shCore.js" type="text/javascript"></script>
+		<script src="scripts/shBrushJScript.js" type="text/javascript"></script>
+		
+		<script language="JavaScript" type="text/javascript">
+		  	SyntaxHighlighter.all();
+		</script>
+<!-- /BIOJS javascript -->  
+  <!--
+  <script defer="defer" src="//www.ebi.ac.uk/web_guidelines/js/plugins.js"></script>
+  <script defer="defer" src="//www.ebi.ac.uk/web_guidelines/js/script.js"></script>
+  -->
+  <script defer="defer" src="//www.ebi.ac.uk/web_guidelines/js/cookiebanner.js"></script>  
+  <script defer="defer" src="//www.ebi.ac.uk/web_guidelines/js/foot.js"></script>
+  <!-- end scripts-->
+
+  <!-- Google Analytics details... -->		
+  <!-- Change UA-XXXXX-X to be your site's ID -->
+  <!--
+  <script>
+    window._gaq = [['_setAccount','UAXXXXXXXX1'],['_trackPageview'],['_trackPageLoadTime']];
+    Modernizr.load({
+      load: ('https:' == location.protocol ? '//ssl' : '//www') + '.google-analytics.com/ga.js'
+    });
+  </script>
+  -->
+
+
+  <!-- Prompt IE 6 users to install Chrome Frame. Remove this if you want to support IE 6.
+       chromium.org/developers/how-tos/chrome-frame-getting-started -->
+  <!--[if lt IE 7 ]>
+    <script src="//ajax.googleapis.com/ajax/libs/chrome-frame/1.0.3/CFInstall.min.js"></script>
+    <script>window.attachEvent('onload',function(){CFInstall.check({mode:'overlay'})})</script>
+  <![endif]-->
+  
+</body>
+</html>
