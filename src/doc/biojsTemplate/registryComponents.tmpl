@@ -1,0 +1,308 @@
+<!doctype html>
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!--[if lt IE 7]> <html class="no-js ie6 oldie" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js ie7 oldie" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js ie8 oldie" lang="en"> <![endif]-->
+<!-- Consider adding an manifest.appcache: h5bp.com/d/Offline -->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+
+  <meta charset="utf-8">
+
+  <!-- Use the .htaccess and remove these lines to avoid edge case issues.
+       More info: h5bp.com/b/378 -->
+  <!-- <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"> --> <!-- Not yet implemented -->
+
+<!-- BIOJS meta tags -->  
+  <meta http-equiv="content-type" content="text/html; charset={+IO.encoding+}" />
+  {! Link.base = "../"; /* all generated links will be relative to this */ !}
+  <title>Components &lt; BioJs &lt; EMBL-EBI</title>
+  <meta http-equiv="content-type" content="text/html; charset={+IO.encoding+}" />
+  <meta name="description" content="JavaScript components for biological data"><!-- Describe what this page is about -->
+  <meta name="keywords" content="bioinformatics, javascript, components"><!-- A few keywords that relate to the content of THIS PAGE (not the whol project) -->
+  <meta name="author" content="John Gomez Carvajal et all">
+<!-- /BIOJS meta tags -->  
+
+  <!-- Mobile viewport optimized: j.mp/bplateviewport -->
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+  <!-- Place favicon.ico and apple-touch-icon.png in the root directory: mathiasbynens.be/notes/touch-icons -->
+
+  <!-- CSS: implied media=all -->
+  <!-- CSS concatenated and minified via ant build script-->
+  <link rel="stylesheet" href="//www.ebi.ac.uk/web_guidelines/css/compliance/develop/boilerplate-style.css">
+  <link rel="stylesheet" href="//www.ebi.ac.uk/web_guidelines/css/compliance/develop/ebi-global.css" type="text/css" media="screen">
+  <link rel="stylesheet" href="//www.ebi.ac.uk/web_guidelines/css/compliance/develop/ebi-visual.css" type="text/css" media="screen">
+  <link rel="stylesheet" href="//www.ebi.ac.uk/web_guidelines/css/compliance/develop/984-24-col-fluid.css" type="text/css" media="screen">
+  
+  <!-- you can replace this with [projectname]-colours.css. See http://frontier.ebi.ac.uk/web/style/colour for details of how to do this -->
+  <!-- also inform ES so we can host your colour palette file -->
+  <!-- <link rel="stylesheet" href="//www.ebi.ac.uk/web_guidelines/css/compliance/develop/embl-petrol-colours.css" type="text/css" media="screen"> -->
+
+<!-- BIOJS color css -->  
+  <link href="style/biojs-colours_blue.css" rel="stylesheet" type="text/css" />
+<!-- /BIOJS color css -->  
+  
+  <!-- for production the above can be replaced with -->
+  <!--
+  <link rel="stylesheet" href="//www.ebi.ac.uk/web_guidelines/css/compliance/mini/ebi-fluid-embl.css">
+  -->
+
+  <style type="text/css">
+  	/* You have the option of setting a maximum width for your page, and making sure everything is centered */
+  	body { max-width: 1070px; min-width: 1070px; margin: 0 auto; }
+  </style>
+  
+  <!-- end CSS-->
+
+
+  <!-- All JavaScript at the bottom, except for Modernizr / Respond.
+       Modernizr enables HTML5 elements & feature detects; Respond is a polyfill for min/max-width CSS3 Media Queries
+       For optimal performance, use a custom Modernizr build: www.modernizr.com/download/ -->
+  
+  <!-- Full build -->
+  <!-- <script src="//www.ebi.ac.uk/web_guidelines/js/libs/modernizr.minified.2.1.6.js"></script> -->
+  
+  <!-- custom build (lacks most of the "advanced" HTML5 support -->
+  <script src="//www.ebi.ac.uk/web_guidelines/js/libs/modernizr.custom.49274.js"></script>	
+  
+<!-- BIOJS css -->
+  <link href="style/biojs.Table.css" rel="stylesheet" type="text/css"/>  
+  <link href="style/biojs.css" rel="stylesheet" type="text/css" />  
+<!-- /BIOJS css -->	
+
+</head>
+
+<body class="level2" id="biojs"><!-- add any of your classes or IDs -->
+	<div id="skip-to">
+		<ul>
+			<li><a href="#content">Skip to main content</a></li>
+			<li><a href="#local-nav">Skip to local navigation</a></li>
+			<li><a href="#global-nav">Skip to EBI global navigation menu</a></li>
+			<li><a href="#global-nav-expanded">Skip to expanded EBI global navigation menu (includes all sub-sections)</a></li>
+		</ul>
+	</div>
+
+  <div id="wrapper" class="container_24">
+    <header>
+		
+		<div id="local-masthead" class="masthead grid_24 nomenu">
+			
+      <!-- local-title -->
+      <!-- NB: for additional title style patterns, see http://frontier.ebi.ac.uk/web/style/patterns -->
+
+			<div class="grid_12 alpha" id="local-title">
+				<div class="biojsLocalTitle">
+					<a href="./index.html" title="Back to BioJS homepage"><img class="logo" src="images/biojs.png" alt="Biojs"></a>
+					<div id="biojsTitle">Reusable component for visualizing Biological data</div>
+				</div>
+			</div>
+      
+      <!-- /local-title -->
+
+      <!-- local-search -->
+      <!-- NB: if you do not have a local-search, delete the following div, and drop the class="grid_12 alpha" class from local-title above -->
+      		<!--
+			<div class="grid_12 omega">
+				<form id="local-search" name="local-search" action="[search-action]" method="post">
+								
+					<fieldset>
+					
+					<div class="left">
+						<label>
+						<input type="text" name="first" id="local-searchbox">
+						</label>
+						<span class="examples">Examples: <a href="[search-url-1]">[search-text-1]</a>, <a href="[search-url-1]">[search-text-2]</a>, <a href="[search-url-1]">[search-text-3]</a></span>
+					</div>
+					
+					<div class="right">
+						<input type="submit" name="submit" value="Search" class="submit">					
+						<span class="adv"><a href="../search" id="adv-search" title="Advanced">Advanced</a></span>
+					</div>									
+					
+					</fieldset>
+					
+				</form>
+			</div>
+			-->
+      <!-- /local-search -->
+
+      <!-- local-nav -->
+
+			<nav>
+				<ul class="grid_24" id="local-nav">
+					<li class="first"><a href="./index.html" title="">Home</a></li>
+                    <li class="active"><a href="./components.html" title="">Components</a></li>
+					<li><a href="http://code.google.com/p/biojs/">About BioJS</a></li>
+					<li class="last"><a href="http://www.ebi.ac.uk/support">Contact us</a></li>
+				</ul>
+			</nav>		      
+
+      <!-- /local-nav -->
+
+    </div>
+    </header>
+               
+    <div id="content" role="main" class="grid_24 clearfix">
+    
+    <!-- If you require a breadcrumb trail, its root should be your service.
+     	   You don't need a breadcrumb trail on the homepage of your service... -->
+    <!--
+    <nav id="breadcrumb">
+     	<p>
+		    <a href="[service-url]">[service-name]</a> &gt; 
+		    [page-title]
+			</p>
+  	</nav>
+  	-->
+    	
+
+
+
+                <!-- ============================== main section ============================ -->
+                    
+                <div class="grid_24"> <!-- grid_24 -->
+                    <h2>BioJS components</h2>
+                    <div class="main">
+                        <div id="biojsTable" style="margin-top: 7px;"></div>
+                    </div>
+                </div>
+
+        
+
+
+                    
+                    
+                
+
+                
+
+
+
+
+
+			
+    </div>
+    
+    
+    <footer>
+    <!-- Optional local footer (insert citation / project-specific copyright / etc here -->
+		  
+      <div id="local-footer" class="grid_24 clearfix">
+			    <div id="biojsFooter">
+                    Registry generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> {+JSDOC.VERSION+} on {+new Date()+}
+                </div>
+		  </div>
+      
+		<!-- End optional local footer -->
+		
+		
+    </footer>
+  </div> <!--! end of #wrapper -->
+
+
+  <!-- JavaScript at the bottom for fast page loading -->
+
+  <!-- Grab Google CDN's jQuery, with a protocol relative URL; fall back to local if offline -->
+  <!--
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+  <script>window.jQuery || document.write('<script src="../js/libs/jquery-1.6.2.min.js"><\/script>')</script>
+  -->
+
+
+  <!-- Your custom JavaScript file scan go here... change names accordingly -->
+<!-- BIOJS javascript -->  
+        <!-- jQuery Library -->
+        <script language="JavaScript" type="text/javascript" src="scripts/jquery-1.7.2.min.js"></script>
+        <script language="JavaScript" type="text/javascript" src="scripts/jquery-ui-1.8.2.custom.min.js"></script>
+        
+        <!-- core code -->
+        <script language="JavaScript" type="text/javascript" src="src/Biojs.js"></script>
+        
+        <!-- Using my own Biojs Table component in here as well -->
+        <script src="scripts/jquery.dataTables.min.js" type="text/javascript"></script>
+        <script src="scripts/jquery.multiselect.min.js" type="text/javascript"></script>
+        <script src="scripts/Biojs.Table.js" language="JavaScript" type="text/javascript"></script>
+                  
+        <script language="JavaScript" type="text/javascript">
+            window.onload = function() {
+	
+                function renderCenteredText (col, dataRow, value) {
+                    return '<p style="text-align:center;">'+ value + '</p>' ;
+                };
+            
+            var myTable = new Biojs.Table({
+            target: "biojsTable",
+            orderBy:  [ [4,'desc'] ],
+            hideColumns: [4],
+            pageLength:20,
+            
+            columns: [
+            { name:"Component", width: "230px" },
+            { name:"Description", width: "480px" },
+            { name:"Author(s)", width: "100px" },
+            { name:"Current Version", width: "80px", render: renderCenteredText },
+            { name:"Category", width: "40px", render: renderCenteredText }
+            ],
+            
+            dataSet: [
+            {! var comma = ''; !}
+            <for each="thisClass" in="data">
+                {+ comma +}
+                [
+                '<a href="{+thisClass.alias+}.html">{+thisClass.name+}</a>', 
+                '{+ resolveLinks(thisClass.desc).replace(/(\n|\')/g,'') +}', 
+                '<if test="thisClass.author">{+ thisClass.author.replace('\n','') +}</if>',
+                '<if test="thisClass.version">{+ thisClass.version.replace('\n','') +}</if>',
+                '<if test="thisClass.comment.getTag('category')">{+ thisClass.comment.getTag('category') +}</if>'
+                ]
+                {! comma = ','; !}
+            </for>
+            ],
+            rowSelection: false,
+            showColumnSelector: false
+            });
+            
+                SyntaxHighlighter.all();
+            };
+        </script>
+		
+        <!-- Syntax highlighting -->
+        <link href="style/shCore.css" rel="stylesheet" />
+        <link href="style/shCoreEclipse.css" rel="stylesheet" />
+        <link href="style/shThemeEclipse.css" rel="stylesheet" />
+        
+        <script src="scripts/shCore.js" type="text/javascript"></script>
+        <script src="scripts/shBrushJScript.js" type="text/javascript"></script>
+        <script src="scripts/shBrushXml.js" type="text/javascript"></script>
+        
+<!-- /BIOJS javascript -->  
+  <!--
+  <script defer="defer" src="//www.ebi.ac.uk/web_guidelines/js/plugins.js"></script>
+  <script defer="defer" src="//www.ebi.ac.uk/web_guidelines/js/script.js"></script>
+  -->
+  <script defer="defer" src="//www.ebi.ac.uk/web_guidelines/js/cookiebanner.js"></script>  
+  <!-- <script defer="defer" src="//www.ebi.ac.uk/web_guidelines/js/foot.js"></script>-->
+  <!-- end scripts-->
+
+  <!-- Google Analytics details... -->		
+  <!-- Change UA-XXXXX-X to be your site's ID -->
+  <!--
+  <script>
+    window._gaq = [['_setAccount','UAXXXXXXXX1'],['_trackPageview'],['_trackPageLoadTime']];
+    Modernizr.load({
+      load: ('https:' == location.protocol ? '//ssl' : '//www') + '.google-analytics.com/ga.js'
+    });
+  </script>
+  -->
+
+
+  <!-- Prompt IE 6 users to install Chrome Frame. Remove this if you want to support IE 6.
+       chromium.org/developers/how-tos/chrome-frame-getting-started -->
+  <!--[if lt IE 7 ]>
+    <script src="//ajax.googleapis.com/ajax/libs/chrome-frame/1.0.3/CFInstall.min.js"></script>
+    <script>window.attachEvent('onload',function(){CFInstall.check({mode:'overlay'})})</script>
+  <![endif]-->
+  
+</body>
+</html>

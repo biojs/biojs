@@ -17,16 +17,16 @@
 				<artifactId>jsdoctk-plugin</artifactId>
 				<version>2.3.2</version>
 				<configuration>
-					<template>${basedir}/src/doc/newBiojsTemplate</template>
+					<template>${basedir}/src/doc/biojsTemplate</template>
 					<directory>${project.build.directory}</directory>
 					<recurse>1</recurse>
 					<ext>js</ext>
 					<srcDir>${basedir}/src/main/javascript</srcDir>
 				</configuration>
 		</plugin> 
-		
+	
 
-          <!--    
+  <!--            
             <plugin>
 				<groupId>nl.windgazer</groupId>
 				<artifactId>jsdoctk-plugin</artifactId>
@@ -39,7 +39,7 @@
 					<srcDir>${basedir}/src/main/javascript</srcDir>
 				</configuration>
 			</plugin>
-			-->
+	-->			
 			
 			
 			<plugin>

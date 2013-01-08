@@ -1,0 +1,762 @@
+<!doctype html>
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!--[if lt IE 7]> <html class="no-js ie6 oldie" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js ie7 oldie" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js ie8 oldie" lang="en"> <![endif]-->
+<!-- Consider adding an manifest.appcache: h5bp.com/d/Offline -->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+
+  <meta charset="utf-8">
+
+  <!-- Use the .htaccess and remove these lines to avoid edge case issues.
+       More info: h5bp.com/b/378 -->
+  <!-- <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"> --> <!-- Not yet implemented -->
+
+<!-- BIOJS meta tags -->  
+  <meta http-equiv="content-type" content="text/html; charset={+IO.encoding+}" />
+  {! Link.base = "../"; /* all generated links will be relative to this */ !}
+  <title>Component overview &lt; BioJs &lt; EMBL-EBI</title>
+  <meta http-equiv="content-type" content="text/html; charset={+IO.encoding+}" />
+  <meta name="description" content="JavaScript components for biological data"><!-- Describe what this page is about -->
+  <meta name="keywords" content="bioinformatics, javascript, components"><!-- A few keywords that relate to the content of THIS PAGE (not the whol project) -->
+  <meta name="author" content="John Gomez Carvajal et all">
+<!-- /BIOJS meta tags -->  
+
+  <!-- Mobile viewport optimized: j.mp/bplateviewport -->
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+  <!-- Place favicon.ico and apple-touch-icon.png in the root directory: mathiasbynens.be/notes/touch-icons -->
+
+  <!-- CSS: implied media=all -->
+  <!-- CSS concatenated and minified via ant build script-->
+  <link rel="stylesheet" href="//www.ebi.ac.uk/web_guidelines/css/compliance/develop/boilerplate-style.css">
+  <link rel="stylesheet" href="//www.ebi.ac.uk/web_guidelines/css/compliance/develop/ebi-global.css" type="text/css" media="screen">
+  <link rel="stylesheet" href="//www.ebi.ac.uk/web_guidelines/css/compliance/develop/ebi-visual.css" type="text/css" media="screen">
+  <link rel="stylesheet" href="//www.ebi.ac.uk/web_guidelines/css/compliance/develop/984-24-col-fluid.css" type="text/css" media="screen">
+  
+  <!-- you can replace this with [projectname]-colours.css. See http://frontier.ebi.ac.uk/web/style/colour for details of how to do this -->
+  <!-- also inform ES so we can host your colour palette file -->
+  <!-- <link rel="stylesheet" href="//www.ebi.ac.uk/web_guidelines/css/compliance/develop/embl-petrol-colours.css" type="text/css" media="screen"> -->
+
+<!-- BIOJS color css -->  
+  <link href="style/biojs-colours_blue.css" rel="stylesheet" type="text/css" />
+  <link href="style/biojs.Tooltip.css" rel="stylesheet" type="text/css" />
+<!-- /BIOJS color css -->  
+  
+  <!-- for production the above can be replaced with -->
+  <!--
+  <link rel="stylesheet" href="//www.ebi.ac.uk/web_guidelines/css/compliance/mini/ebi-fluid-embl.css">
+  -->
+
+  <style type="text/css">
+  	/* You have the option of setting a maximum width for your page, and making sure everything is centered */
+  	body { max-width: 1070px; min-width: 1070px; margin: 0 auto; }
+  </style>
+  
+  <!-- end CSS-->
+
+
+  <!-- All JavaScript at the bottom, except for Modernizr / Respond.
+       Modernizr enables HTML5 elements & feature detects; Respond is a polyfill for min/max-width CSS3 Media Queries
+       For optimal performance, use a custom Modernizr build: www.modernizr.com/download/ -->
+  
+  <!-- Full build -->
+  <!-- <script src="//www.ebi.ac.uk/web_guidelines/js/libs/modernizr.minified.2.1.6.js"></script> -->
+  
+  <!-- custom build (lacks most of the "advanced" HTML5 support -->
+  <script src="//www.ebi.ac.uk/web_guidelines/js/libs/modernizr.custom.49274.js"></script>	
+  
+<!-- BIOJS css -->
+  <link href="style/biojs.css" rel="stylesheet" type="text/css" />  
+<!-- /BIOJS css -->	
+<!-- BIOJS javascript -->
+        
+        <!-- jQuery Library -->
+		<script language="JavaScript" type="text/javascript" src="scripts/jquery-1.7.2.min.js"></script>
+            
+        <!-- core code -->
+		<script language="JavaScript" type="text/javascript" src="src/Biojs.js"></script>
+    
+        <!-- Using my own Biojs Toolip component in here ;P by John Gomez johncar@gmail.com -->
+        <script src="scripts/Biojs.Tooltip.js" language="JavaScript" type="text/javascript" ></script>
+        <link href="style/biojs.Tooltip.css" rel="stylesheet" type="text/css" />
+
+		<!-- dependencies -->
+		<if test="data.comment.getTag('dependency').length">
+            <for each="item" in="data.comment.getTag('dependency')">
+                {+ item.desc +}
+            </for>
+	    </if>
+        
+		<!-- component code -->
+		<script language="JavaScript" type="text/javascript" src="src/Biojs.{+data.name+}.js"></script>
+		
+		<script language="JavaScript" type="text/javascript">		
+        window.onload = function() {
+<!-- START - EBI classic Template -->		
+        	if(navigator.userAgent.indexOf('MSIE') != -1) {document.getElementById('head').allowTransparency = true;}
+<!-- END - EBI classic Template -->		
+            <if test="data.example.length">
+                <for each="example" in="data.example">
+                    {+example+}
+                </for>
+            </if>
+            
+            <if test="data.methods.length">
+				{! var ownMethods = data.methods.filter(function($){return $.memberOf != "Biojs" }).sort(makeSortby("name")); !}
+                <if test="ownMethods.length">
+					<for each="member" in="ownMethods">
+						<if test="member.example.length">
+							{! var i=0; !}
+							<for each="example" in="member.example">
+								{! i++; !}
+								$("#{+member.name+}{+i+}")
+                                    .click( function() { {+example+} })
+                                    .data('code', '{+ escape(example) +}' );
+							</for>
+						</if>
+					</for>
+                </if>
+            </if>
+            
+            
+            <if test="data.events.length">
+				{! var ownEvents = data.events.filter(function($){return $.memberOf != "Biojs" }).sort(makeSortby("name")); !}
+                <if test="ownEvents.length">
+                    <for each="member" in="ownEvents">
+                        <if test="member.example.length">
+                            <for each="example" in="member.example">
+                                $("#{+member.name+}").children().remove();								
+                                {! var code = example.toString().replace("alert",'$("#'+member.name+'").text'); !}
+                                {+ code +}
+                                $("#{+member.name+}").data('code', '{+ escape(code) +}' );
+                            </for>
+                        </if>
+                    </for>
+                </if>		
+            </if>
+            
+            function selectMenuOption (){
+            
+                jQuery('#tabmenu ul li a').removeClass('selected');
+                jQuery(this).addClass('selected');
+            
+                jQuery('#biojsContent').children().hide();
+                jQuery( '#' + jQuery(this).attr('id').replace('Link','') ).show();
+            
+            };
+            
+            
+            jQuery('#tabmenu ul li a').click(function(){
+                selectMenuOption.call(this);
+            });
+
+            //
+            // Biojs.Tooltip component with syntax highlighter for the method's examples
+            //
+            // 
+            
+            // The highlighter
+            var myBrush = new SyntaxHighlighter.brushes.JScript();
+            myBrush.init({ toolbar: false });
+            
+            // function to render the code snippet
+            function drawJSCode (element) {
+                return myBrush.getHtml( unescape(jQuery(element).data('code')) );
+            }
+
+            // Create the tooltip
+            var biojsTooltip = new Biojs.Tooltip({
+                targetSelector: ".methodExample, .event",
+                cbRender: drawJSCode,
+                arrowType: Biojs.Tooltip.ARROW_RIGHT_MIDDLE
+            });
+            
+            //
+            // View the source code in a new window
+            //
+            var sourceCodeWindow; 
+            
+            jQuery('#viewInWindowButton').click(function() {
+            
+                sourceCodeWindow = window.open('', '', "width=700,height=600,menubar=0,toolbar=0,status=0,scrollbars=1,resizable=1,location=0" );
+            
+                // We get it?
+                if ( sourceCodeWindow ) {
+                
+                    sourceCodeWindow.document.writeln( unescape(window.exampleCode) );
+                    sourceCodeWindow.document.close();
+ 
+                } else {
+                    alert("Please allow pop-up windows for this site in your browser");
+                }
+            
+            });
+
+
+        };	
+			
+		</script>
+        
+        <!-- Syntax highlighting -->
+        <link href="style/shCore.css" rel="stylesheet" />
+        <link href="style/shCoreEclipse.css" rel="stylesheet" />
+        <link href="style/shThemeEclipse.css" rel="stylesheet" />
+        
+        <script src="scripts/shCore.js" type="text/javascript"></script>
+		<script src="scripts/shBrushJScript.js" type="text/javascript"></script>
+        <script src="scripts/shBrushXml.js" type="text/javascript"></script>
+        
+		<script language="JavaScript" type="text/javascript">
+		  	SyntaxHighlighter.all();
+		</script>
+
+
+<!-- /BIOJS javascript -->
+
+
+
+</head>
+
+<body class="level2" id="biojs"><!-- add any of your classes or IDs -->
+	<div id="skip-to">
+		<ul>
+			<li><a href="#content">Skip to main content</a></li>
+			<li><a href="#local-nav">Skip to local navigation</a></li>
+			<li><a href="#global-nav">Skip to EBI global navigation menu</a></li>
+			<li><a href="#global-nav-expanded">Skip to expanded EBI global navigation menu (includes all sub-sections)</a></li>
+		</ul>
+	</div>
+
+  <div id="wrapper" class="container_24">
+    <header>
+		
+		<div id="local-masthead" class="masthead grid_24 nomenu">
+			
+      <!-- local-title -->
+      <!-- NB: for additional title style patterns, see http://frontier.ebi.ac.uk/web/style/patterns -->
+
+			<div class="grid_12 alpha" id="local-title">
+				<div class="biojsLocalTitle">
+					<a href="./index.html" title="Back to BioJS homepage"><img class="logo" src="images/biojs.png" alt="Biojs"></a>
+					<div id="biojsTitle">Reusable component for visualizing Biological data</div>
+				</div>
+			</div>
+      
+      <!-- /local-title -->
+
+      <!-- local-search -->
+      <!-- NB: if you do not have a local-search, delete the following div, and drop the class="grid_12 alpha" class from local-title above -->
+      		<!--
+			<div class="grid_12 omega">
+				<form id="local-search" name="local-search" action="[search-action]" method="post">
+								
+					<fieldset>
+					
+					<div class="left">
+						<label>
+						<input type="text" name="first" id="local-searchbox">
+						</label>
+						<span class="examples">Examples: <a href="[search-url-1]">[search-text-1]</a>, <a href="[search-url-1]">[search-text-2]</a>, <a href="[search-url-1]">[search-text-3]</a></span>
+					</div>
+					
+					<div class="right">
+						<input type="submit" name="submit" value="Search" class="submit">					
+						<span class="adv"><a href="../search" id="adv-search" title="Advanced">Advanced</a></span>
+					</div>									
+					
+					</fieldset>
+					
+				</form>
+			</div>
+			-->
+      <!-- /local-search -->
+
+      <!-- local-nav -->
+
+			<nav>
+				<ul class="grid_24" id="local-nav">
+					<li class="first"><a href="./index.html" title="">Home</a></li>
+                    <li class="active"><a href="./components.html" title="">Components</a></li>
+					<li><a href="http://code.google.com/p/biojs/">About BioJS</a></li>
+					<li class="last"><a href="http://www.ebi.ac.uk/support">Contact us</a></li>
+				</ul>
+			</nav>		      
+
+      <!-- /local-nav -->
+
+    </div>
+    </header>
+
+
+
+               
+    <div id="content" role="main" class="grid_24 clearfix">
+    
+    <!-- If you require a breadcrumb trail, its root should be your service.
+     	   You don't need a breadcrumb trail on the homepage of your service... -->
+    <!--
+    <nav id="breadcrumb">
+     	<p>
+		    <a href="[service-url]">[service-name]</a> &gt; 
+		    [page-title]
+			</p>
+  	</nav>
+  	-->
+
+            <div id="tabmenu" class="grid_24 alpha">
+                <h2 class="strapline title">{+data.alias+} showcase</h2>
+                <ul>
+                    <li><a href="#" id="overviewLink" class="selected">Overview</a></li>
+                    <li><a href="#" id="sourceLink">Installation</a></li>
+                    <li><a href="#" id="optionsLink">Options</a></li>
+                    <li><a href="#" id="methodsLink">Methods</a></li>
+                    <li><a href="#" id="eventsLink">Events</a></li>
+                </ul>
+            </div>
+
+    	
+	<div id="biojsContent">
+
+                <!-- ============================== overview ============================ -->
+
+                <div id="overview" class="grid_24">
+                    
+                    <!-- ============================== component section ============================ -->
+
+                    <div class="grid_18 alpha"> 
+
+                        <div class="box_3dview" id="example">
+                            <div id="YourOwnDivId"></div>
+                        </div>
+                        <br/>
+                        <div style="text-align:right;">
+                            <p class="warning">
+                                PLEASE NOTE: the above example is being affected by the CSS rules of this site. 
+                                Click on 'view in window' to see the component by using its own CSS stylesheet(s) only.
+                            </p>
+                            <a id="viewInWindowButton" class="main_button" href="#">View in window</a>
+                        </div>
+            
+                        <div> 
+                            <h3>Overview</h3>
+                            <div class="intro">
+                                <p>{+resolveLinks(data.desc)+}
+                                    <if test="data.version"><br/>Version
+                                        {+ data.version +}.<br/>
+                                    </if>
+                                </p>
+                            </div>
+                        </div>
+            
+                    </div> <!-- component section end  -->
+           
+                    <!-- ============================== side bar ============================ -->	
+
+                    <div class="grid_6 omega">
+                        <aside>
+                            
+                            <if test="data.events.length">
+                                <div class="main-right-box-no">                                     
+                                    <div class="right_title"><span class="version">Events</span></div>
+                                    <div>
+                                        <ul class="feat_list">	
+                                            <for each="member" in="ownEvents">
+                                                <if test="member.example.length">
+                                                    <for each="example" in="member.example">
+                                                        <li>{+member.name+}<pre class="event" id="{+member.name+}"/></li>
+                                                    </for>
+                                                </if>
+                                            </for>                            
+                                        </ul>	
+                                    </div>
+                                </div>
+                            </if>
+                            
+                            <if test="data.methods.length">
+                                <div class="main-right-box-no">
+                                    <div class="right_title"><span class="version">Methods</span></div>
+                                    <div>
+                                        <ul class="feat_list">	
+                                            <for each="member" in="ownMethods">
+                                                <if test="member.example.length">
+                                                    {! 
+                                                        var i=0; 
+                                                        var methodNames = {};
+                                                        var suffix = 1;
+                                                    !}
+                                                    <for each="example" in="member.example">
+                                                        {! 
+                                                            i++; 
+                                                            suffix = methodNames.hasOwnProperty(member.name) ? ++suffix : 1;
+                                                            methodNames[member.name] = "";
+                                                        !}
+                                                        <li><a href="#" id="{+member.name+}{+i+}" class="methodExample">
+                                                            {+ member.name + ( suffix > 1 ? ' (' + suffix +')' : '' ) +}</a>
+                                                        </li>
+                                                    </for>
+                                                </if>
+                                            </for>                          
+                                        </ul>	
+                                    </div>
+                                </div>
+                            </if>
+                            
+                            <if test="data.requires">
+                                <div class="main-right-box-no">
+                                    <div class="right_title"><span class="version">Dependencies</span></div>
+                                    <div>
+                                        <ul class="feat_list">	
+                                            <for each="item" in="data.requires">
+                                                <li>{+ new Link().toSymbol(item) +}</li>
+                                            </for>                           
+                                        </ul>	
+                                    </div>
+                                </div>
+                            </if>
+                            
+                        </aside>
+                    </div> <!-- side bar end -->
+                    
+                </div> <!-- overview -->
+                
+                <!-- ============================= installation ======================== -->
+                    
+                <div id="source" class="grid_24" style="display:none;"> 
+                    <p>To get the above Biojs.{+data.name+} to work on your page, you need to do the following:</p>
+                    <br/>
+                    <ol>
+                        <li>Include the file <a href="src/Biojs.{+data.name+}.js">Biojs.{+data.name+}.js</a> and its dependencies to your page header.
+                            {! 
+                                var scripts = ""; 
+                                var links = "";
+                                var others = "";
+                                var biojs = '<script language="JavaScript" type="text/javascript" src="src/Biojs.js"></script>' + "\n";
+                                var exampleCode = "";
+                            !}
+                            <if test="data.comment.getTag('dependency').length">
+                                <for each="item" in="data.comment.getTag('dependency')">
+                                    {! 
+                                        var itemValue = item.desc.toString() + "\n";
+                                        
+                                        if ( itemValue.indexOf( 'script' ) != -1 ){
+                                        
+                                            if ( itemValue.indexOf( 'Biojs' ) != -1 ) {
+                                                biojs += itemValue;
+                                            
+                                            } else {
+                                                scripts += itemValue;
+                                            }
+                                            
+                                        } else if ( itemValue.indexOf( 'link' ) != -1 ) {
+                                            links += itemValue;
+                                            
+                                        } else {
+                                            others += itemValue;
+                                        }
+                                    
+                                    !}
+                                </for>
+                            </if>  
+                            {! 
+                                biojs += '<script language="JavaScript" type="text/javascript" src="src/Biojs.'+ data.name +'.js"></script>'; 
+                            !}
+                            
+                            <if test="biojs.length">
+                                <h4>Biojs scripts</h4>
+                                <pre class="brush: html; toolbar: false" >{+biojs.replace('<','&lt;').replace('>','&gt;')+}</pre>
+                                {! exampleCode += biojs; !}
+                            </if>
+                            
+                            <if test="scripts.length">
+                                <h4>External script(s)</h4>
+                                <pre class="brush: html; toolbar: false" >{+scripts.replace('<','&lt;').replace('>','&gt;')+}</pre>
+                                {! exampleCode += scripts; !}
+                            </if>
+
+                            <if test="links.length">
+                                <h4>CSS stylesheet(s)</h4>
+                                <pre class="brush: html; toolbar: false" >{+links.replace('<','&lt;').replace('>','&gt;')+}</pre>
+                                {! exampleCode += links; !}
+                            </if>
+                            
+                            <if test="others.length">
+                                <h4>Others</h4>
+                                <pre class="brush: html; toolbar: false" >{+others.replace('<','&lt;').replace('>','&gt;')+}</pre>
+                                {! exampleCode += others; !}
+                            </if>
+                        </li>    
+                        
+                        <li>Create a div tag which holds an unique identifier.
+                            <pre class="brush: html; toolbar: false">
+                                &lt;body&gt;
+                                ...
+                                &lt;div id="YourOwnDivId" /&gt;
+                                ...
+                                &lt;/body&gt;
+                            </pre>
+                        </li>
+                        
+                        <li>Create a code snippet within a &lt;script&gt; tag and instance Biojs.{+data.name+} into.
+                            <if test="!data.isBuiltin() && (data.isNamespace || data.is('CONSTRUCTOR'))">
+                                <if test="data.example.length">
+                                    {! 
+                                        var example = data.example[0].toString(); 
+                                        var snippet = 'window.onload = function() {\n' + example + '\n\n};';
+                                    !}
+                                    <pre class="brush: js; toolbar: false" >{+snippet+}</pre>
+                                    {! exampleCode += '<script language="JavaScript" type="text/javascript">' + snippet + '</script>'; !}
+                                </if>
+                            </if> 
+                        </li>
+                        <script language="JavaScript" type="text/javascript">
+                            window.exampleCode = escape('<html><head><title>{+data.alias+}</title>');
+                            window.exampleCode += '{+escape(exampleCode.replace('\n',''))+}';
+                            window.exampleCode += escape('</head><body><div id="YourOwnDivId"></div></body></html>');
+                        </script>
+                        
+                    </ol>
+                </div>
+                    
+                <!-- ============================== options ============================ -->
+                
+                <div id="options" class="grid_24" style="display:none;">
+                {!
+                    var options = data.comment.getTag("option");
+
+                    for ( var i in options ) {
+
+                        options[i].optional = options[i].defaultValue ? true : options[i].name.indexOf('\u005B') >= 0;
+
+                        if ( options[i].optional ) {
+
+                            options[i].name = options[i].name.replace(/(^\s*\[)|(\]\s*$)/g,'');
+
+                            chuncks = options[i].name.split("=");
+
+                            if ( chuncks.length > 1 ) {
+
+                                options[i].name = chuncks[0];
+                                options[i].defaultValue = chuncks[1];
+                            }
+                        }
+
+                    }
+                !}
+                    
+                    <div class="required">
+                        <h3>Required Parameters</h3>
+                        <ul>
+                        <if test="options.length">
+                            <for each="item" in="options">
+                                <if test="!item.optional">
+                                <li>
+                                    <h4><a href="#" class="method_name">{+item.name+} | {+((item.type)? ""+("<span class=\"dataType\">{"+ (new Link().toSymbol(item.type) +"}</span> ")) : "" )+}</a></h4>
+                                    <p class="method_desc">{+resolveLinks(item.desc)+}</p>
+                                </li>
+                                </if>
+                            </for>
+                        </if>
+                        </ul>
+                    </div>
+                    
+                    <div class="optional">
+                        <h3>Optional Parameters</h3>
+                        <ul>
+                        <if test="options.length">
+                            <for each="item" in="options">
+                                <if test="item.optional">
+                                <li>
+                                    <h4><a href="#" class="method_name">{+item.name+} | {+((item.type)?""+("<span class=\"dataType\">{"+(new Link().toSymbol(item.type)+"}</span> ")) : "")+}</a></h4>
+                                    <p class="method_desc">
+                                        {+resolveLinks(item.desc)+}
+                                        <if test="item.defaultValue">
+                                            <br/>Default: {+item.defaultValue+}
+                                        </if>
+                                    </p>
+                                </li>
+                                </if>
+                            </for>
+                        </if>
+                        </ul>
+                    </div>
+
+                </div> <!-- options end -->
+                
+                <!-- ============================== methods ============================ -->
+                        
+                <div id="methods" class="grid_24" style="display:none;">
+                    
+                    <if test="data.methods.length">
+                        {! var ownMethods = data.methods.filter(function($){return $.memberOf != "Biojs" }).sort(makeSortby("name")); !}
+                        <if test="ownMethods.length">
+                            <for each="member" in="ownMethods">
+                                <if test="member.name != 'constructor'">
+                                    <h3 class="method_name">{+member.name+}</h3><!-------------- Begin of method -->
+                                    <p class="method_desc"> 
+                                        {+resolveLinks(member.desc)+}
+                                    </p>
+
+                                    <if test="member.params.length">
+                                        <h4>Parameters:</h4>
+                                        <ul>
+                                            <for each="item" in="member.params">
+                                                <li>
+                                                    {+((item.type)?"<span class=\"dataType\">{"+(new Link().toSymbol(item.type))+"}</span> " : "")+}<b>{+item.name+}</b>
+                                                    <if test="item.isOptional"><i>Optional<if test="item.defaultValue">, Default: {+item.defaultValue+}</if></i></if>
+                                                    <br/>{+resolveLinks(item.desc)+}
+                                                </li>
+                                            </for>
+                                        </ul>
+                                    </if>
+                                        
+                                    <if test="member.example.length">
+                                        {! var i = 0; !}
+                                        <for each="example" in="member.example">
+                                            {! var counter = (member.example.length > 1)? (++i) : ""; !}
+                                            <h4>Example {+counter+}:</h4>
+                                            <pre class="brush: js">{+example+}</pre>
+                                        </for>
+                                    </if>
+                                    
+                                    <if test="member.returns.length">
+                                        <h4 class="heading">Returns:</h4>
+                                        <ul>
+                                        <for each="item" in="member.returns">
+                                            <li>{+((item.type)?"<span class=\"dataType\">{"+(new Link().toSymbol(item.type))+"}</span> " : "")+}{+resolveLinks(item.desc)+}</li>
+                                        </for>
+                                        </ul>
+                                    </if>
+                                </if> <!------------------- End of method -->
+                            </for>
+                        </if>
+                    </if>
+                    
+                </div> <!-- methods section end -->
+                        
+                <!-- ============================== events ============================ -->
+                
+                <if test="data.events.length">
+                    {! var ownEvents = data.events.filter(function($){ return $.memberOf != "Biojs" }).sort(makeSortby("name")); !}
+                    <div id="events" class="grid_24" style="display:none;">
+                        <if test="ownEvents.length">
+                            <for each="member" in="ownEvents">
+                                
+                                <h3 class="method_name">{+member.name+}</h3><!-------------- Begin of event -->
+
+                                <p>{+resolveLinks(member.desc)+}</p>
+                                    
+                                <if test="member.params.length">
+                                    <h4>Parameters:</h4>
+                                    <ul>
+                                        <for each="item" in="member.params">
+                                            <li>
+                                                {+((item.type)?"<span class=\"dataType\">{"+(new Link().toSymbol(item.type))+"}</span> " : "")+}<b>{+item.name+}</b>
+                                                <if test="item.isOptional"><i>Optional<if test="item.defaultValue">, Default: {+item.defaultValue+}</if></i></if>
+                                                <br/>{+resolveLinks(item.desc)+}
+                                            </li>
+                                        </for>
+                                    </ul>
+                                </if>
+                                    
+                                <if test="member.comment.getTag('eventData').length">
+                                    <h4>Returned data in the Biojs.Event object:</h4>
+                                    <ul>
+                                        <for each="eventData" in="member.comment.getTag('eventData')">	
+                                            <li>
+                                                {+((eventData.type)?""+("<span class=\"dataType\">{"+(new Link().toSymbol(eventData.type)+"}</span> ")) : "")+} 
+                                                <b>{+eventData.name+}</b>
+                                                <if test="eventData.isOptional"><i>Optional<if test="eventData.defaultValue">, Default: {+eventData.defaultValue+}</if></i></if>
+                                                <br/>{+resolveLinks(eventData.desc)+}
+                                            </li>
+                                        </for>
+                                    </ul>
+                                </if>
+                                    
+                                <if test="member.example.length">
+                                    {! var i = 0; !}
+                                    <for each="example" in="member.example">
+                                        {! var counter = (member.example.length > 1)? (++i) : ""; !}
+                                        <br/>
+                                        <h4>Example {+counter+}:</h4>
+                                        <pre class="brush: js">{+example+}</pre>
+                                    </for>
+                                </if><!------------------- End of event -->
+                            </for>
+                        </if>
+                    </div> <!-- events section end -->
+                </if>
+
+
+
+                    
+                    
+    </div> <!-- biojsContent -->            
+
+                
+
+
+
+
+
+			
+    </div>
+    
+    
+    <footer>
+    <!-- Optional local footer (insert citation / project-specific copyright / etc here -->
+		  
+      <div id="local-footer" class="grid_24 clearfix">
+			    <div id="biojsFooter">
+                    Registry generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> {+JSDOC.VERSION+} on {+new Date()+}
+                </div>
+		  </div>
+      
+		<!-- End optional local footer -->
+		
+		
+    </footer>
+  </div> <!--! end of #wrapper -->
+
+
+  <!-- JavaScript at the bottom for fast page loading -->
+
+  <!-- Grab Google CDN's jQuery, with a protocol relative URL; fall back to local if offline -->
+  <!--
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+  <script>window.jQuery || document.write('<script src="../js/libs/jquery-1.6.2.min.js"><\/script>')</script>
+  -->
+
+
+  <!-- Your custom JavaScript file scan go here... change names accordingly -->
+
+  <!--
+  <script defer="defer" src="//www.ebi.ac.uk/web_guidelines/js/plugins.js"></script>
+  <script defer="defer" src="//www.ebi.ac.uk/web_guidelines/js/script.js"></script>
+  -->
+  <script defer="defer" src="//www.ebi.ac.uk/web_guidelines/js/cookiebanner.js"></script>  
+  <!-- <script defer="defer" src="//www.ebi.ac.uk/web_guidelines/js/foot.js"></script>-->
+  <!-- end scripts-->
+
+  <!-- Google Analytics details... -->		
+  <!-- Change UA-XXXXX-X to be your site's ID -->
+  <!--
+  <script>
+    window._gaq = [['_setAccount','UAXXXXXXXX1'],['_trackPageview'],['_trackPageLoadTime']];
+    Modernizr.load({
+      load: ('https:' == location.protocol ? '//ssl' : '//www') + '.google-analytics.com/ga.js'
+    });
+  </script>
+  -->
+
+
+  <!-- Prompt IE 6 users to install Chrome Frame. Remove this if you want to support IE 6.
+       chromium.org/developers/how-tos/chrome-frame-getting-started -->
+  <!--[if lt IE 7 ]>
+    <script src="//ajax.googleapis.com/ajax/libs/chrome-frame/1.0.3/CFInstall.min.js"></script>
+    <script>window.attachEvent('onload',function(){CFInstall.check({mode:'overlay'})})</script>
+  <![endif]-->
+  
+</body>
+</html>
