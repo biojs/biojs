@@ -1,10 +1,3 @@
-body {
-	margin: 0;
-	padding: 0;
-	/* it's good practice to zero the margin and padding of the body element to account for differing browser defaults */
-	text-align: center; /* this centers the container in IE 5* browsers. The text is then set to the left aligned default in the #container selector */
-}
-
 div#local-footer {
 	border-top: 0px;
 }
@@ -2222,4 +2215,47 @@ div.twtr-ft div span {
 	margin: 20px;
 	color: #FFFFFF; 
 }
+
+.dataTables_filter{
+	top:0px;
+	left: 690px;
+	background: none;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+.dataTables_scroll {
+    clear: both;
+    position: relative;
+    top: 50px;
+}
+
+.dataTables_wrapper {
+    position: relative;
+    top: -50px;
+}
+
+.dataTables_filter label {
+    color: #000000;
+    margin: 3px;
+}
+
+.dataTables_filter input {
+    border-radius: 0;
+    padding: 4px;
+}
+
+.dataTables_paginate{
+    position: relative;
+    top: 60px;	
+}
+
+
+.dataTables_info {
+    position: relative;
+    top: 50px;
+}
+
+
 
