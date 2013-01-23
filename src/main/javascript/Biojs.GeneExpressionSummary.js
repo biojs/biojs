@@ -29,9 +29,9 @@
  *    Option to display the provenance legend.
  *  
  * @option {string} [proxyUrl='../biojs/dependencies/proxy/proxy.php']
- *    Since the same origin policy ({@link http://en.wikipedia.org/wiki/Same_origin_policy}) in the browsers 
- *    Biojs include a proxy script in PHP which redirects Ajax requests from local to any other domain.
- *    You can use tour own proxy script by modifying this value. 
+ *    If your web application is outside the EBI use a proxy to skip the same origin policy ({@link http://en.wikipedia.org/wiki/Same_origin_policy}) 
+ *    Biojs include a simple proxy script in PHP which redirects Ajax requests from local to any other domain.
+ *    You can use your own proxy by modifying this value. 
  * 
  * @example
  * var instance = new Biojs.GeneExpressionSummary({

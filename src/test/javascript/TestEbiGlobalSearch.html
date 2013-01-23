@@ -1,0 +1,37 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+		<title>Test EBI Global search</title>
+		
+		<!--JQuery LIb and CSS -->
+		<script language="JavaScript" type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
+		<script language="JavaScript" type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/jquery-ui.min.js"></script>		
+
+		<!-- EBI CSS -->
+  		<link rel="stylesheet" href="//www.ebi.ac.uk/web_guidelines/css/compliance/develop/ebi-visual.css" type="text/css" />
+ 
+ 		<!-- BIOJS LIB and CSS -->
+		<script language="JavaScript" type="text/javascript" src="../../main/javascript/Biojs.js"></script>
+		<script language="JavaScript" type="text/javascript" src="../../main/javascript/Biojs.EbiGlobalSearch.js"></script>
+		<link rel="stylesheet" href="../../main/resources/css/Biojs.EbiGlobalSearch.css" type="text/css" />
+				
+		<script language="JavaScript" type="text/javascript">
+
+		var instance;
+			window.onload = function() {
+				instance = new Biojs.EbiGlobalSearch({
+					target: "holder",
+					query: "keratin",
+					searchBaseURL: 'http://www.ebi.ac.uk/ebisearch/',
+					style:'collapsible' // basic | collapsible | expanded
+				});
+				 		
+			};
+		</script>
+	</head>
+	
+   	<body>
+		<div id="holder"></div>
+	</body>
+</html>
