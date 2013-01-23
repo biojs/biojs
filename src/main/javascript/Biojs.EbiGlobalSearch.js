@@ -128,7 +128,7 @@ Biojs.EbiGlobalSearch = Biojs.extend(
 		var url = this.opt.searchBaseURL+"globalsearchsummary.ebi?query="+this.opt.query;
 		jQuery.ajax({
 			url: url,
-			context: this, //maybe no needed
+			context: this,
 			dataType: "json",
 			crossDomain: true,
 		}).done(function( response ) {
