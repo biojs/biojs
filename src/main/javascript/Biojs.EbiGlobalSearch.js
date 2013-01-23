@@ -11,9 +11,6 @@
  * @requires <a href='http://blog.jquery.com/2012/08/09/jquery-1-8-released/'>jQuery Core 1.8.0</a>
  * @dependency <script language="JavaScript" type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
  *
- * @requires <a href='http://blog.jqueryui.com/2012/08/jquery-ui-1-8-23/'>jQuery UI 1.8.23</a>
- * @dependency <script language="JavaScript" type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/jquery-ui.min.js"></script>
- * 
  * @requires <a href="//www.ebi.ac.uk/web_guidelines/css/compliance/develop/ebi-visual.css">ebi-visual.css</a>
  * @dependency <link rel="stylesheet" href="//www.ebi.ac.uk/web_guidelines/css/compliance/develop/ebi-visual.css" type="text/css" />
  * 
