@@ -134,6 +134,9 @@ Biojs.EbiGlobalSearch = Biojs.extend(
 			self._drawResults(response)
 		}).fail(function(jqXHR, textStatus) {
 			var errorMessage = "ERROR: Request failed: " + textStatus;
+			if(this.opt.query == ""){
+				errorMessage = errorMessage + ": Empty query";	
+			}
 			Biojs.console.log(errorMessage);
 			self.raiseEvent(
 				Biojs.EbiGlobalSearch.EVT_ON_ERROR,{ "message": errorMessage}
