@@ -133,11 +133,15 @@ Biojs.EbiGlobalSearch = Biojs.extend(
 			self._completedRequest = true;
 			self._drawResults(response)
 		}).fail(function(jqXHR, textStatus) {
-			var message = "ERROR: Request failed: " + textStatus;
-			Biojs.console.log(message);
-			self.raiseEvent( Biojs.EbiGlobalSearch.EVT_ON_ERROR, { message: message} );
+			var errorMessage = "ERROR: Request failed: " + textStatus;
+			Biojs.console.log(errorMessage);
+			self.raiseEvent(
+				Biojs.EbiGlobalSearch.EVT_ON_ERROR,{ "message": errorMessage}
+			);
+			self._drawResults(errorMessage);
 		});
 	},
+
 	
 	/* 
      * Function: Biojs.EbiGlobalSearch._updateSummary
@@ -210,7 +214,7 @@ Biojs.EbiGlobalSearch = Biojs.extend(
 			thisElem.html("");
 			var search_extras = jQuery("<aside id='"+Biojs.EbiGlobalSearch.SEARCH_EXTRAS+"'></aside>");
 			search_extras.appendTo(thisElem);
-			search_extras.addClass("shortcuts");
+			search_extras.addClass("shortcuts expander");
 			var ebi_search_results = jQuery("<div id='"+Biojs.EbiGlobalSearch.EBI_SEARCH_RESULTS+"'></div>");
 			ebi_search_results.appendTo(search_extras);
 			var h3 = jQuery("<h3 data-icon='u'>Show more data from EMBL-EBI</h3>");
@@ -262,8 +266,15 @@ Biojs.EbiGlobalSearch = Biojs.extend(
 			search_extras.removeClass("loading");
 			search_extras.append("<p>EBI global search results</p>");
 			//container.blink({delay: 500});
-			var ul = jQuery("<ul>").appendTo(search_extras);
-	        self._renderItems(response, ul);
+			if(typeof response != "string"){
+				/* Print results */
+				var ul = jQuery("<ul>").appendTo(search_extras);
+	        	self._renderItems(response, ul);	
+			} else {
+				/* Print error response */
+				jQuery("<p>"+response+"</p>").appendTo(search_extras);		
+			}
+			
 			
 
 		/* COLLAPSIBLE style */
@@ -273,23 +284,35 @@ Biojs.EbiGlobalSearch = Biojs.extend(
 			jQuery(ebi_search_results).find("h3").removeClass("loading");
 			jQuery(ebi_search_results).find("ul").remove();
         	jQuery(ebi_search_results).find("p").remove();
-			var p = jQuery("<p>Other results for \"" + this.opt.query + "\"</p>");
-			p.appendTo(ebi_search_results);
-			var ul = jQuery("<ul>");
-			ul.attr("id", "global-search-results");
-			ul.appendTo(ebi_search_results);
-	        self._renderItems(response, ul);
+			if(typeof response != "string"){
+				/* Print results */
+				var p = jQuery("<p>Other results for \"" + this.opt.query + "\"</p>");
+				p.appendTo(ebi_search_results);
+				var ul = jQuery("<ul>");
+				ul.attr("id", "global-search-results");
+				ul.appendTo(ebi_search_results);
+		        self._renderItems(response, ul);
+			} else {
+				/* Print error response */
+				jQuery("<p>"+response+"</p>").appendTo(ebi_search_results);		
+			}
 
 		/* EXPANDED style or any other style selected */	
 		} else {
 			var ebi_search_results = jQuery("#" + Biojs.EbiGlobalSearch.EBI_SEARCH_RESULTS);
 			jQuery(ebi_search_results).find("h3").removeClass("loading");
-			var p = jQuery("<p>Other results for \"" + this.opt.query + "\"</p>");
-			p.appendTo(ebi_search_results);
-			var ul = jQuery("<ul>");
-			ul.attr("id", "global-search-results");
-			ul.appendTo(ebi_search_results);
-			self._renderItems(response, ul);			
+			if(typeof response != "string"){
+				/* Print results */
+				var p = jQuery("<p>Other results for \"" + this.opt.query + "\"</p>");
+				p.appendTo(ebi_search_results);
+				var ul = jQuery("<ul>");
+				ul.attr("id", "global-search-results");
+				ul.appendTo(ebi_search_results);
+				self._renderItems(response, ul);
+			} else {
+				/* Print error response */
+				jQuery("<p>"+response+"</p>").appendTo(ebi_search_results);		
+			}			
 		}
 
 
