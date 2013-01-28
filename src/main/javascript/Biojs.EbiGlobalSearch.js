@@ -154,10 +154,10 @@ Biojs.EbiGlobalSearch = Biojs.extend(
      * 		   end -> {object} One item result.
      */
     _renderItem: function(ul, item) {
-    	jQuery( "<li>" )
+		jQuery( "<li>" )
 	    	.append( jQuery( "<a>" ).attr("href", this.opt.searchBaseURL+item.url)
 	    					   .text( item.name + " ("+item.numberOfResults+")" )
-	    	).appendTo( ul );
+	    	).appendTo( ul );			
     },
 	
 	/* 
@@ -170,11 +170,15 @@ Biojs.EbiGlobalSearch = Biojs.extend(
     _renderItems: function(response, ul) {
     	var self = this;
 		var totalNumberOfResults = 0;
-		var totalNumberOfItems = 0;
+		var totalNumberOfServices = 0;
+		var totalNumberOfServicesWithResults = 0;
         jQuery.each(response, function(index, item) {
-           self._renderItem(ul, item);
-           totalNumberOfResults += parseInt(item.numberOfResults);
-           totalNumberOfItems++;
+           totalNumberOfServices++;
+		   if(item.numberOfResults != 0){
+		   	self._renderItem(ul, item);
+		   	totalNumberOfResults += parseInt(item.numberOfResults);
+		   	totalNumberOfServicesWithResults++;
+		   }
         }); 
         /* display "No results" */
         if(totalNumberOfResults == 0){
@@ -186,7 +190,7 @@ Biojs.EbiGlobalSearch = Biojs.extend(
 		/* raise event with number of results */
         this.raiseEvent(
 			Biojs.EbiGlobalSearch.EVT_ON_RESULTS, 
-			{ "resutls" : totalNumberOfResults, "items" : totalNumberOfItems }
+			{ "resutls" : totalNumberOfResults, "services" : totalNumberOfServices, "servicesWithResults" : totalNumberOfServicesWithResults, "items" : response }
 		);   
     	
         
