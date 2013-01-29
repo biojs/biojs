@@ -2218,7 +2218,7 @@ div.twtr-ft div span {
 
 .dataTables_filter{
 	top:0px;
-	left: 690px;
+	left: 760px;
 	background: none;
     border: 0;
     border-radius: 0;
@@ -2256,6 +2256,6 @@ div.twtr-ft div span {
     position: relative;
     top: 50px;
 }
-
-
-
+#biojsTable{
+	margin:10px;
+}

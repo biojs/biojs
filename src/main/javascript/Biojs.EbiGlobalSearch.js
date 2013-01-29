@@ -357,7 +357,7 @@ Biojs.EbiGlobalSearch = Biojs.extend(
 		 * @example 
 		 * instance.onResults(
 		 *    function( objEvent ) {
-		 *       alert( objEvent.resutls + " results for " + objEvent.items + " services" );
+		 *       alert( objEvent.resutls + " results for " + objEvent.servicesWithResults + " services of " + objEvent.services + " services queried" );
 		 *    }
 		 * ); 
 		 * 
