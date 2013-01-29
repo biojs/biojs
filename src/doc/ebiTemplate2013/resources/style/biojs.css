@@ -2096,7 +2096,7 @@ div.entry-child-prot {
 /* CUSTOM BIOJS STYLE --------------------------------------------------------- */
 
 div#example {
-	width: 715px;
+	/* width: 715px; */
 	height: 400px;
 	margin: auto;
 	background: url(images/background_01.gif);
