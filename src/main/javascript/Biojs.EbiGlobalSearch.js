@@ -120,14 +120,13 @@ Biojs.EbiGlobalSearch = Biojs.extend(
      * Inputs:  -
      */
 	_updateSummary: function() {
-		//this._drawTemplate();
 		var self = this;
 		var url = this.opt.searchBaseURL+"globalsearchsummary.ebi?query="+this.opt.query;
 		jQuery.ajax({
 			url: url,
 			context: this,
-			dataType: "json",
-			crossDomain: true,
+			dataType: "json"
+			//crossDomain: true //Does not work in IE 
 		}).done(function( response ) {
 			Biojs.console.log("SUCCESS: data received");
 			self._completedRequest = true;
