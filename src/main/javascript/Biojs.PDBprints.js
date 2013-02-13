@@ -10,7 +10,7 @@
  * @category 0
  *
  * @requires <a href='http://code.jquery.com/jquery-1.6.4.js'>Raphael 2.1.0</a>
- * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/graphics/raphael-min-v2.1.0.js"></script>
+ * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/graphics/raphael-2.1.0.js"></script>
  * 
  * @requires <a href='http://code.jquery.com/jquery-1.6.4.js'>jQuery Core 1.6.4</a>
  * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jquery/jquery-1.4.2.min.js"></script>
