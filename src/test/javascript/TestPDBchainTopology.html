@@ -1,0 +1,29 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <title>PDBchainTopology - Test</title>
+    <!--JQuery LIb and CSS -->
+    <script src="../../main/resources/dependencies/jquery/jquery-1.4.2.min.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        jQuery.noConflict();
+    </script>
+    <!--END JQuery LIb and CSS -->
+
+    <!-- RAPHAËL LIB -->
+    <script src="../../main/resources/dependencies/graphics/raphael-2.1.0.js" type="text/javascript" charset="utf-8"></script>
+
+    <!-- BIOJS LIB and CSS -->
+    <script language="JavaScript" type="text/javascript" src="../../main/javascript/Biojs.js"></script>
+    <script language="JavaScript" type="text/javascript" src="../../main/javascript/Biojs.PDBchainTopology.js"></script>
+
+    <script>
+function mytest() {
+	var myviewer = new Biojs.PDBchainTopology({divid:"topodiv", pdbid:"2qq9", chainid:"A"});
+};
+    </script>
+</head>
+<body onload="mytest();">
+    <div style='border:2px solid black;width:700px; height:700px;' id="topodiv"></div>
+</body>
+</html>
