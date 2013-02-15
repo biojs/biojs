@@ -22,6 +22,7 @@
  *    <li>pdbid: PDB entry id containing the protein chain of interest.</li>
  *    <li>chainid: Chain id of the protein chain.</li>
  *    <li>divid: Id of div in which the topology is to be rendered.</li>
+ *    <li>size: Dimensions of the square canvas on which topology will be drawn.</li>
  *    </ul>
  *    
  * @example 
@@ -37,7 +38,7 @@ Biojs.PDBchainTopology = Biojs.extend (
 	*  Default values for the options
 	*  @name Biojs.PDBchainTopology-opt
 	*/
-	opt: { target: "YourOwnDivId", chainid:"A", pdbid:"1cbs" },
+	opt: { divid: "YourOwnDivId", chainid:"A", pdbid:"1cbs", size:700 },
 
 	constructor: function (options) {
 		var self = this;
@@ -63,28 +64,116 @@ Biojs.PDBchainTopology = Biojs.extend (
 
 	topoLayout: function(topodata) {
 		var self = this;
-		self.sanitycheckLayout();
+		if(self.checkDataSanity(topodata) == false) { alert("Data error!! Cannot continue."); return; }
+		// loops
+		for(var ci=0; ci < topodata.coils.length; ci++) {
+			var ass = topodata.coils[ci];
+			var looppath = [];
+			var attrib = {'stroke-width':1};
+			if(ass.start == -1 && ass.stop == -1) attrib = {'stroke-dasharray':'--'};
+			for(var pi=0; pi < ass.path.length; pi+=2) {
+				looppath.push(ass.path[pi]); looppath.push(ass.path[pi+1]);
+			}
+			looppath = self.spliceMLin(looppath);
+			self.config.rapha.path(looppath).attr(attrib);
+			if(ass.start != -1 && ass.stop != -1) self.makeResidueSubpaths(looppath, ass.start, ass.stop);
+		}
+		// strand
+		for(var ci=0; ci < topodata.strands.length; ci++) {
+			var ass = topodata.strands[ci];
+			var looppath = [];
+			var attrib = {'stroke-width':1, 'fill':'90-#000-#000:50-#fff:50-#fff'};
+			for(var pi=0; pi < ass.path.length; pi+=2) {
+				looppath.push(ass.path[pi]); looppath.push(ass.path[pi+1]);
+			}
+			looppath = self.spliceMLin(looppath); looppath.push("Z");
+			self.config.rapha.path(looppath).attr(attrib);
+			var respath = [ "M", ass.path[6], ass.path[7], "L",
+				(ass.path[0]+ass.path[12])/2, (ass.path[1]+ass.path[13])/2 ];
+			self.makeResidueSubpaths(respath, ass.start, ass.stop);
+		}
+		// helices
+		for(var ci=0; ci < topodata.helices.length; ci++) {
+			var ass = topodata.helices[ci];
+			var attrib = {'stroke-width':1, 'fill':'90-#000-#000:50-#fff:50-#fff'};
+			var sx = ass.path[0]; var sy = ass.path[1];
+			var ex = ass.path[2]; var ey = ass.path[3];
+			var rx = ass.majoraxis; var ry = ass.minoraxis*1.3;
+			lf1 = 0; lf2 = 0; lf3 = 0; // flags for proper elliptical arcs
+			sf1 = 0; sf2 = 0; sf3 = 0;
+			if(sy < ey) {
+				lf1 = 1; lf2 = 1; lf3 = 1;
+				sf1 = 1; sf2 = 1; sf3 = 1;
+			}
+			cylpath = ["M", sx, ey, "L", sx, sy, "A", rx, ry, 180, lf1, sf1, ex, sy, "L", ex, ey,"A", rx, ry, 180, lf3, sf3, sx, ey , "Z"];
+			self.config.rapha.path(cylpath).attr(attrib);
+			if(sy < ey) { resy1 = sy-ry; resy2 = ey+ry; }
+			else        { resy1 = sy+ry; resy2 = ey-ry; }
+			var respath = [ "M", (sx+ex)/2, resy1, "L", (sx+ex)/2, resy2 ];
+			self.makeResidueSubpaths(respath, ass.start, ass.stop);
+		}
+		// terms
+		for(var ci=0; ci < topodata.terms.length; ci++) {
+			var ass = topodata.terms[ci];
+			var attrib = {'stroke-width':1};
+			var looppath = [];
+			for(var pi=0; pi < ass.path.length; pi+=2) {
+				looppath.push(ass.path[pi]); looppath.push(ass.path[pi+1]);
+			}
+			looppath = self.spliceMLin(looppath); looppath.push("Z");
+			self.config.rapha.path(looppath).attr(attrib);
+			self.config.rapha.path(looppath).attr(attrib);
+			var respath = [ "M", (ass.path[0]+ass.path[2]+ass.path[4]+ass.path[6])/4, ass.path[7],
+			                "L", (ass.path[0]+ass.path[2]+ass.path[4]+ass.path[6])/4, ass.path[3] ];
+			if(ass.start != -1 && ass.stop != -1) self.makeResidueSubpaths(respath, ass.start, ass.stop);
+		}
+		
+		// final resizing
+		var minx = topodata.extents[0]; var miny = topodata.extents[1];
+		var maxx = topodata.extents[2]; var maxy = topodata.extents[3];
+		var margin = 50;
+		self.config.rapha.setViewBox(minx-margin, miny-margin, maxx-minx+2*margin, maxy-miny+2*margin, true);
+	},
+
+	makeResidueSubpaths: function(fullpath, startresi, stopresi) {
+		var self = this;
+		var unitlen = Raphael.getTotalLength(fullpath)/(stopresi-startresi+1);
+		for(var ri=0; ri < stopresi-startresi+1; ri++) {
+			var subpath = Raphael.getSubpath(fullpath, unitlen*ri, unitlen*(ri+1));
+			self.config.rapha.path(subpath).attr({'stroke':self.randomColor(),'stroke-width':10, 'stroke-opacity':0.3});
+		}
+	},
+
+	checkDataSanity: function(topodata) {
+		var sstypes = {coils:"red", strands:"green", helices:"blue", terms:'purple'};
+		// using only start, stop, path properties of ss elements in json
+		var sortedcoils = [];
+		for(var st in sstypes) { // just join all sec str elems in an array
+			eval("var sselems = topodata."+st+";");
+			for(var ci=0; ci < sselems.length; ci++) {
+				var ass = topodata['coils'][ci];
+				if(ass.start == -1 && ass.stop == -1) ;
+				else if(ass.start == -1 || ass.stop == -1) return false;
+			}
+		}
+		return true;
+	},
+
+	topoLayout_1: function(topodata) {
+		var self = this;
+		//self.sanitycheckLayout(); return;
 		var chainpath = [];
 		var sstypes = {coils:"red", strands:"green", helices:"blue", terms:'purple'};
 		// using only start, stop, path properties of ss elements in json
 		var sortedcoils = [];
-		for(var st in sstypes) { // order ss elems based on start
-			eval("var coils = topodata."+st+";");
-			for(var ci=0; ci < coils.length; ci++) {
-				//if(coils[ci].start == -1 || coils[ci].stop == -1) continue;
-				coils[ci].sstype = st;
-				sortedcoils.push(coils[ci]);
+		for(var st in sstypes) { // just join all sec str elems in an array
+			eval("var sselems = topodata."+st+";");
+			for(var ci=0; ci < sselems.length; ci++) {
+				var ass = sselems[ci];
+				ass.sstype = st;
 			}
 		}
-		for(var ci=0; ci < sortedcoils.length; ci++) { // sort coils
-			for(var ck=ci+1; ck < sortedcoils.length; ck++) {
-				if(sortedcoils[ci].start < sortedcoils[ck].start) continue;
-				var tempcoil = sortedcoils[ci];
-				sortedcoils[ci] = sortedcoils[ck];
-				sortedcoils[ck] = tempcoil;
-			}
-		}
-		//for(var ci=0; ci < sortedcoils.length; ci++) alert(sortedcoils[ci].start + " " + sortedcoils[ci].st);
+		//sortedcoils = self.sortSSonStart(sortedcoils);
 		for(var ci=0; ci < sortedcoils.length; ci++) { // using only start, stop, path properties of ss elements in json
 			var acoil = sortedcoils[ci];
 			var st = acoil.sstype;
@@ -99,24 +188,24 @@ Biojs.PDBchainTopology = Biojs.extend (
 				}
 				if(st=="strands") { // make ss-path and add intersection points to chain path
 					ssshape.push(x); ssshape.push(y);
-					if(pi==6) { self.addChainPath(chainpath, acoil, x, y); }
-					if(pi==0) { self.addChainPath(chainpath, acoil, 
-							((acoil.path[12]+acoil.path[0])/2), ((acoil.path[13]+acoil.path[1])/2) ); }
+					//if(pi==6) { self.addChainPath(chainpath, acoil, x, y); }
+					//if(pi==0) { self.addChainPath(chainpath, acoil, 
+							//((acoil.path[12]+acoil.path[0])/2), ((acoil.path[13]+acoil.path[1])/2) ); }
 				}
 				if(st=="helices") { // make ss-path and add intersection points to chain path
 					ssshape.push(x); ssshape.push(y);
 					if(pi==0) {
 						var x1 = acoil.path[2]; var y1 = acoil.path[3];
-						self.addChainPath(chainpath, acoil, (x+x1)/2, y);
-						self.addChainPath(chainpath, acoil, (x+x1)/2, y1);
+						//self.addChainPath(chainpath, acoil, (x+x1)/2, y);
+						//self.addChainPath(chainpath, acoil, (x+x1)/2, y1);
 					}
 				}
 				if(st=="terms") { // make ss-path and add intersection points to chain path
 					ssshape.push(x); ssshape.push(y);
 					if(pi==0) {
-						self.addChainPath(chainpath, acoil, 
-								(acoil.path[0]+acoil.path[2]+acoil.path[4]+acoil.path[6])/4,
-								(acoil.path[1]+acoil.path[3]+acoil.path[5]+acoil.path[7])/4 );
+						//self.addChainPath(chainpath, acoil, 
+								//(acoil.path[0]+acoil.path[2]+acoil.path[4]+acoil.path[6])/4,
+								//(acoil.path[1]+acoil.path[3]+acoil.path[5]+acoil.path[7])/4 );
 					}
 				}
 			}
@@ -166,6 +255,17 @@ Biojs.PDBchainTopology = Biojs.extend (
 		self.config.rapha.setViewBox(bbox.x-50, bbox.y-50, bbox.width+100, bbox.height+100, true);
 	},
 
+	sortSSonStart: function(sortedcoils) {
+		for(var ci=0; ci < sortedcoils.length; ci++) { // sort coils
+			for(var ck=ci+1; ck < sortedcoils.length; ck++) {
+				if(sortedcoils[ci].start < sortedcoils[ck].start) continue;
+				var tempcoil = sortedcoils[ci];
+				sortedcoils[ci] = sortedcoils[ck];
+				sortedcoils[ck] = tempcoil;
+			}
+		}
+//		for(var ci=0; ci < sortedcoils.length; ci++) alert(sortedcoils[ci].start + " " + sortedcoils[ci].st);
+	},
 
 	addChainPath: function(chainpath, ass, x, y) {
 		chainpath.push(x);
@@ -189,7 +289,7 @@ Biojs.PDBchainTopology = Biojs.extend (
 	sanitycheckLayout: function() {
 		// just draw  few things for sanity check.... not directly useful in topology layout
 		var self = this;
-		var sanityAttribs = {"checksanity":0};
+		var sanityAttribs = {"checksanity":1};
 		self.config['rapha'].setStart();
 		if(sanityAttribs.checksanity == 1) {
 			self.config['rapha'].text(5,5,"Under construction").attr({'text-anchor':'start'});
@@ -202,6 +302,9 @@ Biojs.PDBchainTopology = Biojs.extend (
 			mypath = ["M", 100, 100, "T", 150, 50, "T", 200, 100];
 			mypath = self.config.rapha.path(mypath);
 			//mypath.glow({width:2, offsetx:10, offsety:10});
+			c1 = self.config.rapha.path(["M", 100, 100, "L", 100, 150, 150, 150, 150, 100]);
+			c2 = self.config.rapha.path(["M", 110, 110, "L", 110, 160, 160, 160, 160, 110]);
+			alert( Raphael.pathIntersection(c1,c2) );
 		}
 		var sanityset = self.config['rapha'].setFinish();
 		sanityset.attr(sanityAttribs);

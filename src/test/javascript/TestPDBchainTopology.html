@@ -19,11 +19,30 @@
 
     <script>
 function mytest() {
-	var myviewer = new Biojs.PDBchainTopology({divid:"topodiv", pdbid:"2qq9", chainid:"A"});
+	pid  = document.getElementById("pdbid").value;
+	chid = document.getElementById("chainid").value;
+	jQuery('#topodiv').remove();
+	jQuery("#parentdiv").append( "<div style='border:2px solid black;width:700px; height:700px;' id='topodiv'></div>" );
+	jQuery('#topodiv');
+	var myviewer = new Biojs.PDBchainTopology({divid:"topodiv", pdbid:pid, chainid:chid, size:700});
+};
+function setupKeyresponse() {
+	jQuery(document.getElementById('chainid')).keypress( function(e) {
+		if(e.keyCode==13) mytest();
+	} );
+	jQuery(document.getElementById('pdbid')).keypress( function(e) {
+		if(e.keyCode==13) mytest();
+	} );
 };
     </script>
 </head>
-<body onload="mytest();">
-    <div style='border:2px solid black;width:700px; height:700px;' id="topodiv"></div>
+<body onload="setupKeyresponse(); mytest();">
+	<form>
+		<table border=0>
+			<tr><td>PDB Code</td><td><input type=text name="pdbid" id="pdbid" value="2qq9"></input></td></tr>
+			<tr><td>Chain Id</td><td><input type=text name="chainid" id="chainid" value="A"></input></td></tr>
+		</table>
+	</form>
+    <div id="parentdiv"></div>
 </body>
 </html>
