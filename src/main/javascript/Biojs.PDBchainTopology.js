@@ -31,6 +31,13 @@
  * });	
  * 
  */
+
+if(typeof PDBchainTopologyRegistry == 'undefined') PDBchainTopologyRegistry = {};
+var topoSelectorChanged = function(divid) {
+	var topowidget = PDBchainTopologyRegistry[divid];
+	topowidget.showDomains();
+}
+
 Biojs.PDBchainTopology = Biojs.extend (
 /** @lends Biojs.PDBchainTopology# */
 {
@@ -50,7 +57,26 @@ Biojs.PDBchainTopology = Biojs.extend (
 		for(var akey in defconf) {
 			if(!self.config[akey]) self.config[akey] = defconf[akey];
 		}
-		self.config['rapha'] = Raphael(self.config['divid'], self.config['size']+"px", self.config['size']+"px");
+
+		PDBchainTopologyRegistry[self.config.divid] = self;
+
+		self.config.menudiv = 'topo_menu_'+self.config.divid;
+		self.config.resdiv = 'topo_resinfo_'+self.config.divid;
+		self.config.domseldiv = 'topo_domsel_'+self.config.divid;
+		var newdivs = "<div id='topo_rapha_"+self.config.divid+"'></div>";
+		newdivs += "<div id='"+self.config.menudiv+"'>";
+		var selstr = "<select id='"+self.config.domseldiv+"' onchange=topoSelectorChanged('"+self.config.divid+"')>";
+		for(domtype in {Domains:1,SCOP:1,CATH:1,PFAM:1}) selstr += "<option value='"+domtype+"'>"+domtype+"</option>"
+		selstr += "</select>";
+		newdivs += "<span>"+selstr+"</span>";
+		newdivs += "<span id='"+self.config.resdiv+"'></span>";
+		newdivs += "</div>";
+		document.getElementById(self.config['divid']).innerHTML = newdivs;
+
+		self.config['rapha'] = Raphael('topo_rapha_'+self.config['divid'], self.config['size']+"px", self.config['size']+"px");
+
+		self.previousDomainElems = null; // for clearing out any previous domain rendering
+		self.respaths = []; // essential to store hoverable residue elems so that they can be brought 'up' after rendeing domain
 
 		jQuery.ajax({
 			url: 'http://'+self.config.serverport+'/pdbe-apps/widgets/topology',
@@ -58,44 +84,148 @@ Biojs.PDBchainTopology = Biojs.extend (
 			dataType: 'script',
 			crossDomain: 'true',
 			type: 'GET',
-			success: function(response, callOptions) { self.topoLayout(topodata); }
+			success: function(response, callOptions) { self.topodata = topodata; self.topoLayout(); }
 		});
 	},
 
-	topoLayout: function(topodata) {
+	intervalIntersection: function(ssstart,ssstop, fromresindex,tillresindex) {
+		var start = ssstop + 10, stop = ssstart - 10;
+		for(var ri=ssstart; ri<=ssstop; ri++) {
+			if(ri < fromresindex || ri > tillresindex) continue;
+			if(start > ri) start = ri;
+			if(stop < ri) stop = ri;
+		}
+		var fracstart = (start-ssstart) *100.00 / (ssstop-ssstart+1)
+		var fracstop  = (stop+1-ssstart)*100.00 / (ssstop-ssstart+1)
+		return [start, stop, fracstart, fracstop];
+	},
+
+	// fill any strands in this range, both ends inclusive
+	fillStrands: function(strands, fromresindex, tillresindex) {
 		var self = this;
+		for(var si=0; si < strands.length; si++) {
+			var ass = strands[si];
+			if(ass.start > tillresindex || ass.stop < fromresindex) continue;
+			var startstop = self.intervalIntersection(ass.start, ass.stop, fromresindex, tillresindex);
+			var start = startstop[0], stop = startstop[1], fracstart = startstop[2], fracstop = startstop[3];
+			if(ass.direction=="down") { fracstart1 = 100-fracstop; fracstop1 = 100-fracstart; fracstart = fracstart1; fracstop = fracstop1; } 
+			var color = '#000', bgcol = '#fff';//, fracstart = 20, fracend = 60;
+			//alert(ass.start + " " + ass.stop + " " + fromresindex + " " + tillresindex + " " + start + " " + stop + " " + fracstart + " " + fracstop);
+			var halfgradattrib = {'fill':'90-'+bgcol+':0-'+bgcol+':'+fracstart+'-'+color+':'+fracstart+'-'+color+':'+fracstop+'-'+bgcol+':'+fracstop+'-'+bgcol+':100'};
+			ass.gelem.clone().attr(halfgradattrib);
+		}
+	},
+
+	// fill any loops in this range, both ends inclusive
+	fillLoops: function(coils, fromresindex, tillresindex) {
+		var self = this;
+		for(var si=0; si < coils.length; si++) {
+			var ass = coils[si];
+			var startstop = self.intervalIntersection(ass.start, ass.stop, fromresindex, tillresindex);
+			var fstart = startstop[2], fstop = startstop[3];
+			var looppath = self.makeLoopPathArray(ass.path);
+			var fulllength = Raphael.getTotalLength(looppath);
+			subpath = Raphael.getSubpath(looppath, fstart*fulllength, fstop*fulllength);
+			var broadstrokeattr = {'stroke-width':'5px','stroke':'black'};
+			self.config.rapha.path(subpath).attr(broadstrokeattr);
+		}
+	},
+
+	showDomains: function() {
+		var self = this;
+		var topodata = self.topodata;
+		if(self.previousDomainElems != null) { self.previousDomainElems.remove(); self.previousDomainElems = null; }
+		var dstart = null, dstop = null, domtype = document.getElementById(self.config.domseldiv).value;
+		if(domtype=="Domains") return;
+		eval("var domdata = self.topodata.domains."+domtype+";");
+		//alert(self.topodata.domains + " " + domdata);
+		self.config.rapha.setStart();
+		for(domid in domdata) {
+			var dominfo = domdata[domid];
+			for(di=0; di < dominfo.length; di++) { // domain instance
+				for(si=0; si < dominfo[di].length; si++) { // segment in instance
+					dstart = dominfo[di][si][0]; dstop = dominfo[di][si][1];
+					self.fillLoops  (topodata.coils,   dstart, dstop);
+					self.fillStrands(topodata.strands, dstart, dstop);
+					self.fillStrands(topodata.helices, dstart, dstop);
+					self.fillStrands(topodata.terms,   dstart, dstop);
+				}
+			}
+		}
+		self.previousDomainElems = self.config.rapha.setFinish();
+		for(var spi=0; spi < self.respaths.length; spi++) self.respaths[spi].toFront();
+		return;
+		self.config.rapha.setStart();
+		dstart = Math.floor(Math.random()*100); dstop = Math.floor(dstart + Math.random()*100);
+		self.fillLoops  (topodata.coils,   dstart, dstop);
+		self.fillStrands(topodata.strands, dstart, dstop);
+		self.fillStrands(topodata.helices, dstart, dstop);
+		self.fillStrands(topodata.terms,   dstart, dstop);
+		self.previousDomainElems = self.config.rapha.setFinish();
+	},
+		// some sample code for gradient fill
+		//var halfgradattrib = {'fill':'90-#000-#000:50-#fff:50-#fff'};
+		//var attrib1 = {'stroke-width':1, 'fill':'45-#fff:0-#fff:60-#00f:60-#00f:100-145-#fff:0-#fff:60-#00f:60-#00f:100', 'fill-opacity':0.1, 'opacity':0.1};
+		//fstr = '45';
+		//for(fi=0; fi < 5; fi++) {
+			//fk = 20*fi;
+			//fstr += '-#f00:'+(fk+2)+"-#f00:"+(fk+7)
+			//fstr += '-#0f0:'+(fk+12)+"-#0f0:"+(fk+17)
+		//}
+		//var attrib = {'stroke-width':1, 'fill':fstr, 'fill-opacity':0.2, 'opacity':0.1};
+
+	joinDicts: function(d1,d2) {
+		var newd = {};
+		for(k in d1) newd[k] = d1[k];
+		for(k in d2) newd[k] = d2[k];
+		return newd;
+	},
+
+	makeLoopPathArray: function(path) {
+		var self = this;
+		var looppath = [];
+		for(var pi=0; pi < path.length; pi+=2) {
+		//for(var pi=path.length-2; pi>=0; pi-=2) {
+			looppath.push(path[pi]); looppath.push(path[pi+1]);
+		}
+		looppath = self.spliceMLin(looppath);
+		return looppath;
+	},
+
+	topoLayout: function() {
+		var self = this;
+		var topodata = self.topodata;
 		if(self.checkDataSanity(topodata) == false) { alert("Data error!! Cannot continue."); return; }
+		var ssattrib = {'stroke-width':1,'stroke':'black'};
+		var unmappedattrib = {'stroke-dasharray':'--'};
 		// loops
 		for(var ci=0; ci < topodata.coils.length; ci++) {
 			var ass = topodata.coils[ci];
-			var looppath = [];
-			var attrib = {'stroke-width':1};
-			if(ass.start == -1 && ass.stop == -1) attrib = {'stroke-dasharray':'--'};
-			for(var pi=0; pi < ass.path.length; pi+=2) {
-				looppath.push(ass.path[pi]); looppath.push(ass.path[pi+1]);
-			}
-			looppath = self.spliceMLin(looppath);
-			self.config.rapha.path(looppath).attr(attrib);
+			var looppath = [], attribs = {};
+			if(ass.start == -1 && ass.stop == -1) attribs = unmappedattrib;
+			else attribs = ssattrib;
+			var looppath = self.makeLoopPathArray(ass.path);
+			self.config.rapha.path(looppath).attr(attribs);
 			if(ass.start != -1 && ass.stop != -1) self.makeResidueSubpaths(looppath, ass.start, ass.stop);
 		}
 		// strand
 		for(var ci=0; ci < topodata.strands.length; ci++) {
 			var ass = topodata.strands[ci];
 			var looppath = [];
-			var attrib = {'stroke-width':1, 'fill':'90-#000-#000:50-#fff:50-#fff'};
 			for(var pi=0; pi < ass.path.length; pi+=2) {
 				looppath.push(ass.path[pi]); looppath.push(ass.path[pi+1]);
 			}
 			looppath = self.spliceMLin(looppath); looppath.push("Z");
-			self.config.rapha.path(looppath).attr(attrib);
+			ass.gelem = self.config.rapha.path(looppath).attr(ssattrib);
 			var respath = [ "M", ass.path[6], ass.path[7], "L",
 				(ass.path[0]+ass.path[12])/2, (ass.path[1]+ass.path[13])/2 ];
-			self.makeResidueSubpaths(respath, ass.start, ass.stop);
+			if (ass.path[1] > ass.path[7]) ass.direction = "up";
+			else ass.direction = "down";
+			self.makeResidueSubpaths(respath, ass.start, ass.stop, "yes");
 		}
 		// helices
 		for(var ci=0; ci < topodata.helices.length; ci++) {
 			var ass = topodata.helices[ci];
-			var attrib = {'stroke-width':1, 'fill':'90-#000-#000:50-#fff:50-#fff'};
 			var sx = ass.path[0]; var sy = ass.path[1];
 			var ex = ass.path[2]; var ey = ass.path[3];
 			var rx = ass.majoraxis; var ry = ass.minoraxis*1.3;
@@ -106,23 +236,21 @@ Biojs.PDBchainTopology = Biojs.extend (
 				sf1 = 1; sf2 = 1; sf3 = 1;
 			}
 			cylpath = ["M", sx, ey, "L", sx, sy, "A", rx, ry, 180, lf1, sf1, ex, sy, "L", ex, ey,"A", rx, ry, 180, lf3, sf3, sx, ey , "Z"];
-			self.config.rapha.path(cylpath).attr(attrib);
-			if(sy < ey) { resy1 = sy-ry; resy2 = ey+ry; }
-			else        { resy1 = sy+ry; resy2 = ey-ry; }
+			ass.gelem = self.config.rapha.path(cylpath).attr(ssattrib);
+			if(sy < ey) { resy1 = sy-ry; resy2 = ey+ry; ass.direction="down"; }
+			else        { resy1 = sy+ry; resy2 = ey-ry; ass.direction="up"; }
 			var respath = [ "M", (sx+ex)/2, resy1, "L", (sx+ex)/2, resy2 ];
 			self.makeResidueSubpaths(respath, ass.start, ass.stop);
 		}
 		// terms
 		for(var ci=0; ci < topodata.terms.length; ci++) {
 			var ass = topodata.terms[ci];
-			var attrib = {'stroke-width':1};
 			var looppath = [];
 			for(var pi=0; pi < ass.path.length; pi+=2) {
 				looppath.push(ass.path[pi]); looppath.push(ass.path[pi+1]);
 			}
 			looppath = self.spliceMLin(looppath); looppath.push("Z");
-			self.config.rapha.path(looppath).attr(attrib);
-			self.config.rapha.path(looppath).attr(attrib);
+			ass.gelem = self.config.rapha.path(looppath).attr(ssattrib);
 			var respath = [ "M", (ass.path[0]+ass.path[2]+ass.path[4]+ass.path[6])/4, ass.path[7],
 			                "L", (ass.path[0]+ass.path[2]+ass.path[4]+ass.path[6])/4, ass.path[3] ];
 			if(ass.start != -1 && ass.stop != -1) self.makeResidueSubpaths(respath, ass.start, ass.stop);
@@ -135,13 +263,31 @@ Biojs.PDBchainTopology = Biojs.extend (
 		self.config.rapha.setViewBox(minx-margin, miny-margin, maxx-minx+2*margin, maxy-miny+2*margin, true);
 	},
 
-	makeResidueSubpaths: function(fullpath, startresi, stopresi) {
+	makeResidueSubpaths: function(fullpath, startresi, stopresi, reverse) {
 		var self = this;
 		var unitlen = Raphael.getTotalLength(fullpath)/(stopresi-startresi+1);
 		for(var ri=0; ri < stopresi-startresi+1; ri++) {
+			//var subpathattr = {'stroke':self.randomColor(),'stroke-width':14, 'stroke-opacity':0.1};
+			var subpathattr = {'stroke':'white', 'stroke-width':14, 'stroke-opacity':0.1};
 			var subpath = Raphael.getSubpath(fullpath, unitlen*ri, unitlen*(ri+1));
-			self.config.rapha.path(subpath).attr({'stroke':self.randomColor(),'stroke-width':10, 'stroke-opacity':0.3});
+			var resindex = startresi + ri;
+			if(reverse=="yes") resindex = stopresi - ri;
+			var rp = self.config.rapha.path(subpath).attr(subpathattr).data("resindex",resindex).data("topowidget",self)
+			.mouseover( function(e) {
+				var resinfo = this.data("topowidget").getResInfo(this.data("resindex"));
+				document.getElementById(self.config.resdiv).innerHTML = "  "+(resinfo[2]+"("+resinfo[0]+resinfo[1]+")").replace(/ /g,'');
+			})
+			.mouseout( function(e) {
+				document.getElementById(self.config.resdiv).innerHTML = "";
+			});
+			self.respaths.push(rp);
 		}
+	},
+
+	getResInfo: function(resindex) {
+		var self = this;
+		//alert(self.topodata.reslist + " " + resindex);
+		return self.topodata.reslist[resindex];
 	},
 
 	checkDataSanity: function(topodata) {
@@ -157,121 +303,6 @@ Biojs.PDBchainTopology = Biojs.extend (
 			}
 		}
 		return true;
-	},
-
-	topoLayout_1: function(topodata) {
-		var self = this;
-		//self.sanitycheckLayout(); return;
-		var chainpath = [];
-		var sstypes = {coils:"red", strands:"green", helices:"blue", terms:'purple'};
-		// using only start, stop, path properties of ss elements in json
-		var sortedcoils = [];
-		for(var st in sstypes) { // just join all sec str elems in an array
-			eval("var sselems = topodata."+st+";");
-			for(var ci=0; ci < sselems.length; ci++) {
-				var ass = sselems[ci];
-				ass.sstype = st;
-			}
-		}
-		//sortedcoils = self.sortSSonStart(sortedcoils);
-		for(var ci=0; ci < sortedcoils.length; ci++) { // using only start, stop, path properties of ss elements in json
-			var acoil = sortedcoils[ci];
-			var st = acoil.sstype;
-			//alert(acoil.start + " " + acoil.stop);
-			var ssshape = [];
-			for(var pi=0; pi < acoil.path.length; pi+=2) {
-				var x = acoil.path[pi];
-				var y = acoil.path[pi+1];
-				//self.config.rapha.circle(x,y,Math.random(5)+5).attr({'fill':sstypes[st],'fill-opacity':0.5});
-				if(st=="coils") { // merely add to the overall chain path
-					self.addChainPath(chainpath, acoil, x, y);
-				}
-				if(st=="strands") { // make ss-path and add intersection points to chain path
-					ssshape.push(x); ssshape.push(y);
-					//if(pi==6) { self.addChainPath(chainpath, acoil, x, y); }
-					//if(pi==0) { self.addChainPath(chainpath, acoil, 
-							//((acoil.path[12]+acoil.path[0])/2), ((acoil.path[13]+acoil.path[1])/2) ); }
-				}
-				if(st=="helices") { // make ss-path and add intersection points to chain path
-					ssshape.push(x); ssshape.push(y);
-					if(pi==0) {
-						var x1 = acoil.path[2]; var y1 = acoil.path[3];
-						//self.addChainPath(chainpath, acoil, (x+x1)/2, y);
-						//self.addChainPath(chainpath, acoil, (x+x1)/2, y1);
-					}
-				}
-				if(st=="terms") { // make ss-path and add intersection points to chain path
-					ssshape.push(x); ssshape.push(y);
-					if(pi==0) {
-						//self.addChainPath(chainpath, acoil, 
-								//(acoil.path[0]+acoil.path[2]+acoil.path[4]+acoil.path[6])/4,
-								//(acoil.path[1]+acoil.path[3]+acoil.path[5]+acoil.path[7])/4 );
-					}
-				}
-			}
-			if(st=="strands" || st=="terms") {
-				ssshape = self.spliceMLin(ssshape);
-				//if(st=="terms") alert(ssshape);
-				ssshape.push("Z");
-				self.config.rapha.path(ssshape);
-			}
-			if(st=="helices") {
-				ssshape.push("Z");
-				x1 = ssshape[0]; y1 = ssshape[1];
-				x2 = ssshape[2]; y2 = ssshape[3];
-				ssshape = ["M", x1,y1, "L", x1,y2, "L", x2,y2, "L", x2,y1, "Z"];
-				self.config.rapha.path(ssshape);
-			}
-		}
-		//for(var ci=0; ci<chainpath.length; ci+=2) self.config.rapha.circle(chainpath[ci],chainpath[ci+1],Math.random(5)+5);
-		// make residue-wise highlight elements
-		for(var ci=0; ci < sortedcoils.length; ci++) {
-			var acoil = sortedcoils[ci];
-			if(!("cpi" in acoil) || acoil.start < 0) continue;
-			//alert("SS " + ci + " has " + acoil.sstype + " " + acoil.cpi + " " + acoil.start + ":" + acoil.stop);
-			var numres = acoil.stop-acoil.start+1;
-			var apath = [];
-			for(var crdi=0; crdi < acoil.cpi.length; crdi++) {
-				apath.push(chainpath[ acoil.cpi[crdi] ]);
-				apath.push(chainpath[ acoil.cpi[crdi]+1 ]);
-			}
-			//alert("HERE 1 " + apath);
-			apath = self.spliceMLin(apath);
-			//alert("HERE 1 " + apath);
-			var unitlen = Raphael.getTotalLength(apath)/numres;
-			//apath = self.config.rapha.path(apath).attr({'stroke-width':2,'stroke':'black'});
-			//alert("UNITLEN " + unitlen + " "  + numres);
-			for(var ri=0; ri<=acoil.stop-acoil.start; ri++) {
-				var subpath = Raphael.getSubpath(apath, unitlen*ri, unitlen*(ri+1));
-			//alert("SPATH " + unitlen + " " + ri);
-				self.config.rapha.path(subpath).attr({'stroke':self.randomColor(),'stroke-width':4});
-			}
-		}
-		// make chain-wide path
-		chainpath = self.spliceMLin(chainpath); //.splice(0,0,"M"); chainpath.splice(3,0,"L");
-		var chainpathelem = self.config.rapha.path(chainpath).attr({'stroke-width':1});
-		// resize to bounding box of chainpath, leave margins
-		bbox = chainpathelem.getBBox();
-		self.config.rapha.setViewBox(bbox.x-50, bbox.y-50, bbox.width+100, bbox.height+100, true);
-	},
-
-	sortSSonStart: function(sortedcoils) {
-		for(var ci=0; ci < sortedcoils.length; ci++) { // sort coils
-			for(var ck=ci+1; ck < sortedcoils.length; ck++) {
-				if(sortedcoils[ci].start < sortedcoils[ck].start) continue;
-				var tempcoil = sortedcoils[ci];
-				sortedcoils[ci] = sortedcoils[ck];
-				sortedcoils[ck] = tempcoil;
-			}
-		}
-//		for(var ci=0; ci < sortedcoils.length; ci++) alert(sortedcoils[ci].start + " " + sortedcoils[ci].st);
-	},
-
-	addChainPath: function(chainpath, ass, x, y) {
-		chainpath.push(x);
-		chainpath.push(y);
-		try { ass.cpi.push(chainpath.length-2); }
-		catch(err) { ass.cpi = [chainpath.length-2]; }
 	},
 
 	randomColor: function() {
