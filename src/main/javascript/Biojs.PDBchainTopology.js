@@ -37,6 +37,12 @@ var topoSelectorChanged = function(divid) {
 	var topowidget = PDBchainTopologyRegistry[divid];
 	topowidget.showDomains();
 }
+var activesiteClicked = function(divid) {
+	var topowidget = PDBchainTopologyRegistry[divid];
+	topowidget.showActivesite("square");
+	//topowidget.showActivesite("diamond");
+	//topowidget.showActivesite("circle");
+}
 
 Biojs.PDBchainTopology = Biojs.extend (
 /** @lends Biojs.PDBchainTopology# */
@@ -63,12 +69,14 @@ Biojs.PDBchainTopology = Biojs.extend (
 		self.config.menudiv = 'topo_menu_'+self.config.divid;
 		self.config.resdiv = 'topo_resinfo_'+self.config.divid;
 		self.config.domseldiv = 'topo_domsel_'+self.config.divid;
+		self.config.ascheckbox = 'topo_ascheckbox_'+self.config.divid;
 		var newdivs = "<div id='topo_rapha_"+self.config.divid+"'></div>";
 		newdivs += "<div id='"+self.config.menudiv+"'>";
 		var selstr = "<select id='"+self.config.domseldiv+"' onchange=topoSelectorChanged('"+self.config.divid+"')>";
 		for(domtype in {Domains:1,SCOP:1,CATH:1,PFAM:1}) selstr += "<option value='"+domtype+"'>"+domtype+"</option>"
 		selstr += "</select>";
 		newdivs += "<span>"+selstr+"</span>";
+		newdivs += "      <span><input type='checkbox' id='"+self.config.ascheckbox+"' onchange=activesiteClicked('"+self.config.divid+"')>Active site</input></span>";
 		newdivs += "<span id='"+self.config.resdiv+"'></span>";
 		newdivs += "</div>";
 		document.getElementById(self.config['divid']).innerHTML = newdivs;
@@ -76,7 +84,9 @@ Biojs.PDBchainTopology = Biojs.extend (
 		self.config['rapha'] = Raphael('topo_rapha_'+self.config['divid'], self.config['size']+"px", self.config['size']+"px");
 
 		self.previousDomainElems = null; // for clearing out any previous domain rendering
+		self.previousActivsiteElems = null;
 		self.respaths = []; // essential to store hoverable residue elems so that they can be brought 'up' after rendeing domain
+		self.resi2paths = {};
 
 		jQuery.ajax({
 			url: 'http://'+self.config.serverport+'/pdbe-apps/widgets/topology',
@@ -109,9 +119,9 @@ Biojs.PDBchainTopology = Biojs.extend (
 			var startstop = self.intervalIntersection(ass.start, ass.stop, fromresindex, tillresindex);
 			var start = startstop[0], stop = startstop[1], fracstart = startstop[2], fracstop = startstop[3];
 			if(ass.direction=="down") { fracstart1 = 100-fracstop; fracstop1 = 100-fracstart; fracstart = fracstart1; fracstop = fracstop1; } 
-			var color = '#000', bgcol = '#fff';//, fracstart = 20, fracend = 60;
+			var color = self.domcolor, bgcol = '#fff';//, fracstart = 20, fracend = 60;
 			//alert(ass.start + " " + ass.stop + " " + fromresindex + " " + tillresindex + " " + start + " " + stop + " " + fracstart + " " + fracstop);
-			var halfgradattrib = {'fill':'90-'+bgcol+':0-'+bgcol+':'+fracstart+'-'+color+':'+fracstart+'-'+color+':'+fracstop+'-'+bgcol+':'+fracstop+'-'+bgcol+':100'};
+			var halfgradattrib = {'fill-opacity':0.5, 'fill':'90-'+bgcol+':0-'+bgcol+':'+fracstart+'-'+color+':'+fracstart+'-'+color+':'+fracstop+'-'+bgcol+':'+fracstop+'-'+bgcol+':100'};
 			ass.gelem.clone().attr(halfgradattrib);
 		}
 	},
@@ -126,9 +136,36 @@ Biojs.PDBchainTopology = Biojs.extend (
 			var looppath = self.makeLoopPathArray(ass.path);
 			var fulllength = Raphael.getTotalLength(looppath);
 			subpath = Raphael.getSubpath(looppath, fstart*fulllength, fstop*fulllength);
-			var broadstrokeattr = {'stroke-width':'5px','stroke':'black'};
+			var broadstrokeattr = {'stroke-width':'5px','stroke':self.domcolor};
 			self.config.rapha.path(subpath).attr(broadstrokeattr);
 		}
+	},
+
+	showActivesite: function(marktype) {
+		var self = this;
+		var topodata = self.topodata;
+		if(self.previousActivsiteElems != null) { self.previousActivsiteElems.remove(); self.previousActivsiteElems = null; }
+		if(document.getElementById(self.config.ascheckbox).checked == false) return;
+		self.config.rapha.setStart();
+		var dim = 3;
+		for(var ri in self.resi2paths) {
+			if(Math.random() > 0.1) continue;
+			for(var rpi=0; rpi < self.resi2paths[ri].length; rpi++) {
+				var rpk = self.resi2paths[ri][rpi];
+				var rp = self.respaths[rpk];
+				var xyd = rp.getPointAtLength( rp.getTotalLength()/2 );
+				var x = xyd.x, y = xyd.y, alpha = Math.PI/180 * xyd.alpha;
+				var ca = Math.cos(alpha), sa = Math.sin(alpha);
+				if(marktype=="square")
+					self.config.rapha.path(["M",x-dim,y-dim,"L",x-dim,y+dim,"L",x+dim,y+dim,"L",x+dim,y-dim,"Z"]).attr({fill:'blue'});
+				else if(marktype=="diamond")
+					self.config.rapha.path(["M",x-dim,y,"L",x,y+dim,"L",x+dim,y,"L",x,y-dim,"Z"]).attr({fill:'green'});
+				else
+					self.config.rapha.circle(x,y,dim).attr({fill:'red'});
+			}
+		}
+		self.previousActivsiteElems = self.config.rapha.setFinish();
+		return;
 	},
 
 	showDomains: function() {
@@ -143,6 +180,7 @@ Biojs.PDBchainTopology = Biojs.extend (
 		for(domid in domdata) {
 			var dominfo = domdata[domid];
 			for(di=0; di < dominfo.length; di++) { // domain instance
+				self.domcolor = self.randomDomColor(domtype);
 				for(si=0; si < dominfo[di].length; si++) { // segment in instance
 					dstart = dominfo[di][si][0]; dstop = dominfo[di][si][1];
 					self.fillLoops  (topodata.coils,   dstart, dstop);
@@ -185,10 +223,18 @@ Biojs.PDBchainTopology = Biojs.extend (
 		var self = this;
 		var looppath = [];
 		for(var pi=0; pi < path.length; pi+=2) {
-		//for(var pi=path.length-2; pi>=0; pi-=2) {
+			if(pi < path.length-2 && looppath.length >= 2 && Math.abs(path[pi+2]-path[pi]) < 1e-3 && Math.abs(path[pi]-looppath[looppath.length-2]) < 1e-3) {
+				continue; // get rid of points with same x coordinate
+				alert("ignored");
+			}
 			looppath.push(path[pi]); looppath.push(path[pi+1]);
+			//self.config.rapha.circle(path[pi], path[pi+1], 2);
 		}
-		looppath = self.spliceMLin(looppath);
+		if(looppath.length == 4)
+			looppath = self.spliceMLin(looppath,"L");
+		else {
+			looppath = self.spliceMLin(looppath,"L");
+		}
 		return looppath;
 	},
 
@@ -196,8 +242,8 @@ Biojs.PDBchainTopology = Biojs.extend (
 		var self = this;
 		var topodata = self.topodata;
 		if(self.checkDataSanity(topodata) == false) { alert("Data error!! Cannot continue."); return; }
-		var ssattrib = {'stroke-width':1,'stroke':'black'};
-		var unmappedattrib = {'stroke-dasharray':'--'};
+		var ssattrib = {'stroke-width':1,'stroke':'#aaa'};
+		var unmappedattrib = {'stroke-dasharray':'--','stroke':'#aaa'};
 		// loops
 		for(var ci=0; ci < topodata.coils.length; ci++) {
 			var ass = topodata.coils[ci];
@@ -268,7 +314,7 @@ Biojs.PDBchainTopology = Biojs.extend (
 		var unitlen = Raphael.getTotalLength(fullpath)/(stopresi-startresi+1);
 		for(var ri=0; ri < stopresi-startresi+1; ri++) {
 			//var subpathattr = {'stroke':self.randomColor(),'stroke-width':14, 'stroke-opacity':0.1};
-			var subpathattr = {'stroke':'white', 'stroke-width':14, 'stroke-opacity':0.1};
+			var subpathattr = {'stroke':'white', 'stroke-width':14, 'stroke-opacity':0};
 			var subpath = Raphael.getSubpath(fullpath, unitlen*ri, unitlen*(ri+1));
 			var resindex = startresi + ri;
 			if(reverse=="yes") resindex = stopresi - ri;
@@ -281,6 +327,8 @@ Biojs.PDBchainTopology = Biojs.extend (
 				document.getElementById(self.config.resdiv).innerHTML = "";
 			});
 			self.respaths.push(rp);
+			if(!self.resi2paths[resindex]) self.resi2paths[resindex] = [];
+			self.resi2paths[resindex].push( self.respaths.length-1 );
 		}
 	},
 
@@ -305,6 +353,18 @@ Biojs.PDBchainTopology = Biojs.extend (
 		return true;
 	},
 
+	randomDomColor: function(domtype) {
+		var retcol = '#';
+		var colspec = {'SCOP':[0,0,7], 'CATH':[0,7,0], 'PFAM':[7,0,0]}[domtype];
+		var charB16 = ['0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'];
+		for(var ci=0; ci < colspec.length; ci++) {
+			var index = colspec[ci] + Math.floor(Math.random()*8);
+			//alert(index);
+			retcol += charB16[index];
+		}
+		return retcol;
+	},
+
 	randomColor: function() {
 		var charB16 = ['0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'];
 		var retcol = '#';
@@ -312,8 +372,13 @@ Biojs.PDBchainTopology = Biojs.extend (
     	return retcol;
 	},
 
-	spliceMLin: function(apath) {
-		apath.splice(0,0,"M"); apath.splice(3,0,"L");
+	spliceMLin: function(apath, style) {
+		if(!style) {
+			apath.splice(0,0,"M"); apath.splice(3,0,"L");
+		}
+		else {
+			apath.splice(0,0,"M"); apath.splice(3,0,style);
+		}
 		return apath;
 	},
 
