@@ -222,20 +222,64 @@ Biojs.PDBchainTopology = Biojs.extend (
 	makeLoopPathArray: function(path) {
 		var self = this;
 		var looppath = [];
+		// get rid of points with same x coordinate
 		for(var pi=0; pi < path.length; pi+=2) {
 			if(pi < path.length-2 && looppath.length >= 2 && Math.abs(path[pi+2]-path[pi]) < 1e-3 && Math.abs(path[pi]-looppath[looppath.length-2]) < 1e-3) {
-				continue; // get rid of points with same x coordinate
-				alert("ignored");
+				continue;
 			}
 			looppath.push(path[pi]); looppath.push(path[pi+1]);
-			//self.config.rapha.circle(path[pi], path[pi+1], 2);
 		}
+		// return self.spliceMLin(looppath,"L");
+		// make curves depending on how many points in path
+		var IST = "S";
 		if(looppath.length == 4)
 			looppath = self.spliceMLin(looppath,"L");
+		else if(looppath.length == 6)
+			looppath = self.spliceMLin(looppath,IST);
+		else if(looppath.length == 8) {
+			//looppath = self.spliceMLin(looppath,"C");
+			newpath = ["M",looppath[0],looppath[1]];
+			midx = (looppath[2]+looppath[4])/2; midy = (looppath[3]+looppath[5])/2;
+			newpath = newpath.concat([IST,looppath[2],looppath[3],midx,midy])
+			newpath = newpath.concat([IST,looppath[4],looppath[5],looppath[6],looppath[7]])
+			looppath = newpath;
+		}
+		else if(looppath.length == 12) {
+			//looppath = self.spliceMLin(looppath,"L");
+			//looppath = self.insertMidpoints(looppath);
+			newpath = [];
+		//for(var pi=0; pi < looppath.length; pi+=2) self.config.rapha.circle(looppath[pi], looppath[pi+1], 2);
+			newpath = ["M",looppath[0],looppath[1]];
+			midx = (looppath[2]+looppath[4])/2; midy = (looppath[3]+looppath[5])/2;
+			newpath = newpath.concat([IST,looppath[2],looppath[3],midx,midy]);
+			midx = (looppath[4]+looppath[6])/2; midy = (looppath[5]+looppath[7])/2;
+			newpath = newpath.concat([IST,looppath[4],looppath[5],midx,midy]);
+			midx = (looppath[6]+looppath[8])/2; midy = (looppath[7]+looppath[9])/2;
+			newpath = newpath.concat([IST,looppath[6],looppath[7],midx,midy]);
+			newpath = newpath.concat([IST,looppath[8],looppath[9],looppath[10],looppath[11]]);
+			looppath = newpath;
+			//looppath = self.spliceMLin(looppath,"S");
+			//midx = (looppath[2]+looppath[4])/2; midy = (looppath[3]+looppath[5])/2;
+			//newpath = newpath.concat([IST,looppath[2],looppath[3],midx,midy])
+			//midx = (looppath[6]+looppath[8])/2; midy = (looppath[7]+looppath[9])/2;
+		}
 		else {
+			alert("unexpected path legth!! " + looppath.length);
 			looppath = self.spliceMLin(looppath,"L");
 		}
 		return looppath;
+	},
+
+	insertMidpoints: function(path) {
+		var newpath = [];
+		for(var pi=0; pi < path.length; pi+=2) {
+			newpath.push( path[pi] ); newpath.push( path[pi+1] );
+			if(pi < path.length-2) {
+				newpath.push( (path[pi+0]+path[pi+2])/2 );
+				newpath.push( (path[pi+1]+path[pi+3])/2 );
+			}
+		}
+		return newpath;
 	},
 
 	topoLayout: function() {
