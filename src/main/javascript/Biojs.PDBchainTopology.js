@@ -87,6 +87,9 @@ Biojs.PDBchainTopology = Biojs.extend (
 		self.previousActivsiteElems = null;
 		self.respaths = []; // essential to store hoverable residue elems so that they can be brought 'up' after rendeing domain
 		self.resi2paths = {};
+		self.thinssXscale = 0.5; self.allYscale = 1.;
+		self.curvyloops = true;
+		self.loopdip = 'useArea';
 
 		jQuery.ajax({
 			url: 'http://'+self.config.serverport+'/pdbe-apps/widgets/topology',
@@ -221,6 +224,7 @@ Biojs.PDBchainTopology = Biojs.extend (
 
 	makeLoopPathArray: function(path) {
 		var self = this;
+		if(self.curvyloops == false) return self.spliceMLin(path,"L");
 		var looppath = [];
 		// get rid of points with same x coordinate
 		for(var pi=0; pi < path.length; pi+=2) {
@@ -229,26 +233,49 @@ Biojs.PDBchainTopology = Biojs.extend (
 			}
 			looppath.push(path[pi]); looppath.push(path[pi+1]);
 		}
-		// return self.spliceMLin(looppath,"L");
+		//for(var pi=0; pi < looppath.length; pi+=2) self.config.rapha.circle(looppath[pi], looppath[pi+1], 2);
 		// make curves depending on how many points in path
 		var IST = "S";
 		if(looppath.length == 4)
 			looppath = self.spliceMLin(looppath,"L");
 		else if(looppath.length == 6)
+			//looppath = self.spliceMLin(looppath,"L");
 			looppath = self.spliceMLin(looppath,IST);
 		else if(looppath.length == 8) {
-			//looppath = self.spliceMLin(looppath,"C");
-			newpath = ["M",looppath[0],looppath[1]];
-			midx = (looppath[2]+looppath[4])/2; midy = (looppath[3]+looppath[5])/2;
-			newpath = newpath.concat([IST,looppath[2],looppath[3],midx,midy])
-			newpath = newpath.concat([IST,looppath[4],looppath[5],looppath[6],looppath[7]])
-			looppath = newpath;
+			scheme = 4;
+			if(scheme==1) {
+				newpath = []
+				midx = (looppath[2]+looppath[4])/2; midy = (looppath[3]+looppath[5])/2;
+				newpath = newpath.concat(["M",midx,midy]);
+				newpath = newpath.concat([IST,looppath[2],looppath[3],looppath[0],looppath[1]])
+				newpath = newpath.concat(["M",midx,midy]);
+				newpath = newpath.concat([IST,looppath[4],looppath[5],looppath[6],looppath[7]])
+				looppath = newpath;
+			}
+			else if(scheme==2) {
+				newpath = []
+				midx = (looppath[2]+looppath[4])/2; midy = (looppath[3]+looppath[5])/2;
+				newpath = newpath.concat(["M",looppath[0],looppath[1]]);
+				newpath = newpath.concat([IST,looppath[2],looppath[3],midx,midy])
+				newpath = newpath.concat(["M",looppath[6],looppath[7]]);
+				newpath = newpath.concat([IST,looppath[4],looppath[5],midx,midy])
+				looppath = newpath;
+			}
+			else if(scheme==3) {
+				newpath = []
+				midx = (looppath[2]+looppath[4])/2; midy = (looppath[3]+looppath[5])/2;
+				newpath = newpath.concat(["M",looppath[0],looppath[1]]);
+				newpath = newpath.concat([IST,looppath[2],looppath[3],midx,midy])
+				newpath = newpath.concat([IST,looppath[4],looppath[5],looppath[6],looppath[7]])
+				looppath = newpath;
+			}
+			else 
+				looppath = self.spliceMLin(looppath,"C");
 		}
 		else if(looppath.length == 12) {
 			//looppath = self.spliceMLin(looppath,"L");
 			//looppath = self.insertMidpoints(looppath);
 			newpath = [];
-		//for(var pi=0; pi < looppath.length; pi+=2) self.config.rapha.circle(looppath[pi], looppath[pi+1], 2);
 			newpath = ["M",looppath[0],looppath[1]];
 			midx = (looppath[2]+looppath[4])/2; midy = (looppath[3]+looppath[5])/2;
 			newpath = newpath.concat([IST,looppath[2],looppath[3],midx,midy]);
@@ -282,9 +309,89 @@ Biojs.PDBchainTopology = Biojs.extend (
 		return newpath;
 	},
 
+
+	scaleX: function(x1,x2) {
+		var self = this;
+		// thin down along X axis
+		var xdiff = (x1-x2)/2. * (1-self.thinssXscale);
+		return [x1-xdiff, x2+xdiff];
+	},
+
+
+	findExtents: function() {
+		var self = this;
+		var sstypes = {coils:"red", strands:"green", helices:"blue", terms:'purple'};
+		var minx=1e10, miny=1e10, maxx=-1e10, maxy=-1e10;
+		for(var st in sstypes) {
+			eval("var sselems = self.topodata."+st+";");
+			for(var ci=0; ci < sselems.length; ci++) {
+				var ass = sselems[ci];
+				for(var pi=0; pi < ass.path.length; pi+=2) {
+					if(minx > ass.path[pi+0]) minx = ass.path[pi+0];
+					if(miny > ass.path[pi+1]) miny = ass.path[pi+1];
+					if(maxx < ass.path[pi+0]) maxx = ass.path[pi+0];
+					if(maxy < ass.path[pi+1]) maxy = ass.path[pi+1];
+				}
+			}
+		}
+		return [minx,miny,maxx,maxy];
+	},
+	scaleYall: function() {
+		var self = this;
+		var sstypes = {coils:"red", strands:"green", helices:"blue", terms:'purple'};
+		for(var st in sstypes) {
+			eval("var sselems = self.topodata."+st+";");
+			for(var ci=0; ci < sselems.length; ci++) {
+				var ass = sselems[ci];
+				for(var pi=0; pi < ass.path.length; pi+=2) {
+					ass.path[pi+1] = ass.path[pi+1] * self.allYscale;
+				}
+			}
+		}
+	},
+	findPathExtents: function(path) {
+		var minx=1e10, miny=1e10, maxx=-1e10, maxy=-1e10;
+		for(var pi=0; pi < path.length; pi+=2) {
+			if(maxx < path[pi+0]) maxx = path[pi+0];
+			if(maxy < path[pi+1]) maxy = path[pi+1];
+			if(minx > path[pi+0]) minx = path[pi+0];
+			if(miny > path[pi+1]) miny = path[pi+1];
+		}
+		return [minx, miny, maxx, maxy];
+	},
+
+	editLoopsHorizontals: function() {
+		var self = this;
+		for(var ci=0; ci < self.topodata.coils.length; ci++) {
+			var ass = self.topodata.coils[ci];
+			var ext = self.findPathExtents(ass.path);
+			var minx=ext[0], miny=ext[1], maxx=ext[2], maxy=ext[3];
+			var area = (maxx-minx) * (maxy-miny);
+			for(var pi=0; pi < ass.path.length; pi+=2) {
+				if(pi > ass.path.length-4 || pi < 2) continue; // must have 1 point before, 2 after
+				if( Math.abs(ass.path[pi+1]-ass.path[pi+3]) > 1e-3 ) continue; // must be in horizontal segment, same Y
+				if( Math.abs(ass.path[pi+0]-ass.path[pi-2]) > 1e-3 ) continue; // segment should have vertical nbrs, same X
+				if( Math.abs(ass.path[pi+2]-ass.path[pi+4]) > 1e-3 ) continue; // segment should have vertical nbrs, same X
+				if( (ass.path[pi+1]-ass.path[pi-1])*(ass.path[pi+3]-ass.path[pi+5]) < 0 ) continue; // nbrs shd go in same Y direction
+				var dy = self.loopdip;
+				if(self.loopdip == 'useArea') dy = area/2500;
+				if( (ass.path[pi+1]-ass.path[pi-1]) < 0 ) { // nbrs go up
+					ass.path[pi+1] = ass.path[pi+1] - dy;
+					ass.path[pi+3] = ass.path[pi+3] - dy;
+				}
+				else {
+					ass.path[pi+1] = ass.path[pi+1] + dy;
+					ass.path[pi+3] = ass.path[pi+3] + dy;
+				}
+			}
+		}
+	},
+
 	topoLayout: function() {
 		var self = this;
 		var topodata = self.topodata;
+		self.scaleYall();
+		self.editLoopsHorizontals();
 		if(self.checkDataSanity(topodata) == false) { alert("Data error!! Cannot continue."); return; }
 		var ssattrib = {'stroke-width':1,'stroke':'#aaa'};
 		var unmappedattrib = {'stroke-dasharray':'--','stroke':'#aaa'};
@@ -302,6 +409,11 @@ Biojs.PDBchainTopology = Biojs.extend (
 		for(var ci=0; ci < topodata.strands.length; ci++) {
 			var ass = topodata.strands[ci];
 			var looppath = [];
+			for(var xi=0; xi < 3; xi++) {
+				xj = 2*xi; xk = 12-2*xi;
+				var sxex = self.scaleX(ass.path[xj],ass.path[xk]);
+				ass.path[xj] = sxex[0] ; ass.path[xk] = sxex[1];
+			}
 			for(var pi=0; pi < ass.path.length; pi+=2) {
 				looppath.push(ass.path[pi]); looppath.push(ass.path[pi+1]);
 			}
@@ -316,9 +428,10 @@ Biojs.PDBchainTopology = Biojs.extend (
 		// helices
 		for(var ci=0; ci < topodata.helices.length; ci++) {
 			var ass = topodata.helices[ci];
-			var sx = ass.path[0]; var sy = ass.path[1];
-			var ex = ass.path[2]; var ey = ass.path[3];
-			var rx = ass.majoraxis; var ry = ass.minoraxis*1.3;
+			var sxex = self.scaleX(ass.path[0],ass.path[2]);
+			var sx = sxex[0] , ex = sxex[1];
+			var sy = ass.path[1]; var ey = ass.path[3];
+			var rx = ass.majoraxis*self.thinssXscale; var ry = ass.minoraxis*1.3*self.allYscale;
 			lf1 = 0; lf2 = 0; lf3 = 0; // flags for proper elliptical arcs
 			sf1 = 0; sf2 = 0; sf3 = 0;
 			if(sy < ey) {
@@ -347,8 +460,9 @@ Biojs.PDBchainTopology = Biojs.extend (
 		}
 		
 		// final resizing
-		var minx = topodata.extents[0]; var miny = topodata.extents[1];
-		var maxx = topodata.extents[2]; var maxy = topodata.extents[3];
+		var extents = self.findExtents();
+		var minx = extents[0]; var miny = extents[1];
+		var maxx = extents[2]; var maxy = extents[3];
 		var margin = 50;
 		self.config.rapha.setViewBox(minx-margin, miny-margin, maxx-minx+2*margin, maxy-miny+2*margin, true);
 	},
