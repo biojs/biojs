@@ -155,7 +155,7 @@ Biojs.PDBchainTopology = Biojs.extend (
 			var looppath = self.makeLoopPathArray(ass.path);
 			var fulllength = Raphael.getTotalLength(looppath);
 			subpath = Raphael.getSubpath(looppath, fstart*fulllength, fstop*fulllength);
-			var broadstrokeattr = {'stroke-width':'5px','stroke':self.domcolor};
+			var broadstrokeattr = {'stroke-width':5,'stroke':self.domcolor};
 			self.config.rapha.path(subpath).attr(broadstrokeattr);
 		}
 	},
