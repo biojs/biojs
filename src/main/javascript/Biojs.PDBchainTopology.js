@@ -39,7 +39,8 @@ var topoSelectorChanged = function(divid) {
 }
 var activesiteClicked = function(divid) {
 	var topowidget = PDBchainTopologyRegistry[divid];
-	topowidget.showActivesite("square");
+	topowidget.showActivesite("triangle");
+	//topowidget.showActivesite("square");
 	//topowidget.showActivesite("diamond");
 	//topowidget.showActivesite("circle");
 }
@@ -99,6 +100,19 @@ Biojs.PDBchainTopology = Biojs.extend (
 			type: 'GET',
 			success: function(response, callOptions) { self.topodata = topodata; self.topoLayout(); }
 		});
+	},
+
+	changeTooltip: function(content, posx, posy) {
+		var self = this;
+		if(self.ttdiv == undefined) {
+			jQuery("#"+self.config.divid).append( "<div id='tooltip' style='display:none;position:absolute;left:100px;top:100px;'></div>" );
+			self.ttdiv = document.getElementById("tooltip");
+		}
+		if(content==false) { self.ttdiv.style.display = "none"; return; }
+		self.ttdiv.style.display = "block";
+		self.ttdiv.style.left = (posx+10)+"px";
+		self.ttdiv.style.top =  (posy-10)+"px";
+		self.ttdiv.innerHTML = content;
 	},
 
 	intervalIntersection: function(ssstart,ssstop, fromresindex,tillresindex) {
@@ -163,6 +177,10 @@ Biojs.PDBchainTopology = Biojs.extend (
 					self.config.rapha.path(["M",x-dim,y-dim,"L",x-dim,y+dim,"L",x+dim,y+dim,"L",x+dim,y-dim,"Z"]).attr({fill:'blue'});
 				else if(marktype=="diamond")
 					self.config.rapha.path(["M",x-dim,y,"L",x,y+dim,"L",x+dim,y,"L",x,y-dim,"Z"]).attr({fill:'green'});
+				else if(marktype=="triangle")
+					self.config.rapha.path(["M",x-1.2*dim,y,"L",x+0.6*dim,y+dim,"L",x+0.6*dim,y-dim,"Z"]).attr({fill:self.randomColor()});
+					//self.config.rapha.path(["M",x,y-1.2*dim,"L",x+dim,y+0.6*dim,"L",x-dim,y+0.6*dim,"Z"]).attr({fill:self.randomColor()});
+					//self.config.rapha.path(["M",x,y+0.6*dim,"L",x+dim/2,y-0.3*dim,"L",x-dim/2,y-0.3*dim,"Z"]).attr({fill:self.randomColor()});
 				else
 					self.config.rapha.circle(x,y,dim).attr({fill:'red'});
 			}
@@ -193,16 +211,9 @@ Biojs.PDBchainTopology = Biojs.extend (
 				}
 			}
 		}
+		if(self.previousActivsiteElems!=null) self.previousActivsiteElems.toFront(); // bring to front any point annotations
 		self.previousDomainElems = self.config.rapha.setFinish();
 		for(var spi=0; spi < self.respaths.length; spi++) self.respaths[spi].toFront();
-		return;
-		self.config.rapha.setStart();
-		dstart = Math.floor(Math.random()*100); dstop = Math.floor(dstart + Math.random()*100);
-		self.fillLoops  (topodata.coils,   dstart, dstop);
-		self.fillStrands(topodata.strands, dstart, dstop);
-		self.fillStrands(topodata.helices, dstart, dstop);
-		self.fillStrands(topodata.terms,   dstart, dstop);
-		self.previousDomainElems = self.config.rapha.setFinish();
 	},
 		// some sample code for gradient fill
 		//var halfgradattrib = {'fill':'90-#000-#000:50-#fff:50-#fff'};
@@ -389,6 +400,7 @@ Biojs.PDBchainTopology = Biojs.extend (
 
 	topoLayout: function() {
 		var self = this;
+		//self.sanitycheckLayout(); return;
 		var topodata = self.topodata;
 		self.scaleYall();
 		self.editLoopsHorizontals();
@@ -480,9 +492,11 @@ Biojs.PDBchainTopology = Biojs.extend (
 			.mouseover( function(e) {
 				var resinfo = this.data("topowidget").getResInfo(this.data("resindex"));
 				document.getElementById(self.config.resdiv).innerHTML = "  "+(resinfo[2]+"("+resinfo[0]+resinfo[1]+")").replace(/ /g,'');
+				self.changeTooltip("hi", e.clientX, e.clientY);
 			})
 			.mouseout( function(e) {
 				document.getElementById(self.config.resdiv).innerHTML = "";
+				self.changeTooltip(false);
 			});
 			self.respaths.push(rp);
 			if(!self.resi2paths[resindex]) self.resi2paths[resindex] = [];
@@ -557,8 +571,7 @@ Biojs.PDBchainTopology = Biojs.extend (
 			mypath = self.config.rapha.path(mypath);
 			//mypath.glow({width:2, offsetx:10, offsety:10});
 			c1 = self.config.rapha.path(["M", 100, 100, "L", 100, 150, 150, 150, 150, 100]);
-			c2 = self.config.rapha.path(["M", 110, 110, "L", 110, 160, 160, 160, 160, 110]);
-			alert( Raphael.pathIntersection(c1,c2) );
+			c2 = self.config.rapha.path(["M", 110, 110, "L", 110, 160, 160, 160, 160, 110]).attr({fill:'red','fill-opacity':0.1});
 		}
 		var sanityset = self.config['rapha'].setFinish();
 		sanityset.attr(sanityAttribs);
