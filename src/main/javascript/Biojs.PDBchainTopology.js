@@ -105,7 +105,7 @@ Biojs.PDBchainTopology = Biojs.extend (
 	changeTooltip: function(content, posx, posy) {
 		var self = this;
 		if(self.ttdiv == undefined) {
-			jQuery("#"+self.config.divid).append( "<div id='tooltip' style='display:none;position:absolute;left:100px;top:100px;'></div>" );
+			jQuery("#"+self.config.divid).append( "<div id='tooltip' style='border:1px solid black;display:none;position:absolute;left:100px;top:100px;'></div>" );
 			self.ttdiv = document.getElementById("tooltip");
 		}
 		if(content==false) { self.ttdiv.style.display = "none"; return; }
@@ -491,8 +491,9 @@ Biojs.PDBchainTopology = Biojs.extend (
 			var rp = self.config.rapha.path(subpath).attr(subpathattr).data("resindex",resindex).data("topowidget",self)
 			.mouseover( function(e) {
 				var resinfo = this.data("topowidget").getResInfo(this.data("resindex"));
-				document.getElementById(self.config.resdiv).innerHTML = "  "+(resinfo[2]+"("+resinfo[0]+resinfo[1]+")").replace(/ /g,'');
-				self.changeTooltip("hi", e.clientX, e.clientY);
+				ttext = (resinfo[2]+"("+resinfo[0]+resinfo[1]+")").replace(/ /g,'');
+				document.getElementById(self.config.resdiv).innerHTML = "  "+ttext;
+				self.changeTooltip(ttext, e.clientX, e.clientY);
 			})
 			.mouseout( function(e) {
 				document.getElementById(self.config.resdiv).innerHTML = "";
