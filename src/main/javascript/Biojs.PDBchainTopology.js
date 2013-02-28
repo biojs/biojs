@@ -77,12 +77,14 @@ Biojs.PDBchainTopology = Biojs.extend (
 		for(domtype in {Domains:1,SCOP:1,CATH:1,PFAM:1}) selstr += "<option value='"+domtype+"'>"+domtype+"</option>"
 		selstr += "</select>";
 		newdivs += "<span>"+selstr+"</span>";
-		newdivs += "      <span><input type='checkbox' id='"+self.config.ascheckbox+"' onchange=activesiteClicked('"+self.config.divid+"')>Active site</input></span>";
+		newdivs += "      <span><input type='checkbox' id='"+self.config.ascheckbox+"' onclick=activesiteClicked('"+self.config.divid+"')>Active site</input></span>";
 		newdivs += "<span id='"+self.config.resdiv+"'></span>";
 		newdivs += "</div>";
 		document.getElementById(self.config['divid']).innerHTML = newdivs;
 
-		self.config['rapha'] = Raphael('topo_rapha_'+self.config['divid'], self.config['size']+"px", self.config['size']+"px");
+		//self.config['rapha'] = Raphael('topo_rapha_'+self.config['divid'], self.config['size']+"px", self.config['size']+"px");
+		self.config['rapha'] = Raphael('topo_rapha_'+self.config['divid'], self.config['size'], self.config['size']);
+		self.config.rapha.setViewBox(0,0, self.config['size'], self.config['size']);
 
 		self.previousDomainElems = null; // for clearing out any previous domain rendering
 		self.previousActivsiteElems = null;
@@ -476,19 +478,19 @@ Biojs.PDBchainTopology = Biojs.extend (
 		var minx = extents[0]; var miny = extents[1];
 		var maxx = extents[2]; var maxy = extents[3];
 		var margin = 50;
-		self.config.rapha.setViewBox(minx-margin, miny-margin, maxx-minx+2*margin, maxy-miny+2*margin, true);
+		self.config.rapha.setViewBox(minx-margin, miny-margin, maxx-minx+2*margin, maxy-miny+2*margin, true); // TODO issue in IE! try patching raphael.js see https://github.com/DmitryBaranovskiy/raphael/issues/468 doesnt work even with it...
 	},
 
 	makeResidueSubpaths: function(fullpath, startresi, stopresi, reverse) {
 		var self = this;
 		var unitlen = Raphael.getTotalLength(fullpath)/(stopresi-startresi+1);
 		for(var ri=0; ri < stopresi-startresi+1; ri++) {
-			//var subpathattr = {'stroke':self.randomColor(),'stroke-width':14, 'stroke-opacity':0.1};
-			var subpathattr = {'stroke':'white', 'stroke-width':14, 'stroke-opacity':0};
+			var subpathattr = {'stroke':self.randomColor(),'stroke-width':14, 'stroke-opacity':0.1};
+			var subpathattr = {'stroke':'white', 'stroke-width':14, 'stroke-opacity':0.1}; // keep opacity > 0 so that mouse events are detected!
 			var subpath = Raphael.getSubpath(fullpath, unitlen*ri, unitlen*(ri+1));
 			var resindex = startresi + ri;
 			if(reverse=="yes") resindex = stopresi - ri;
-			var rp = self.config.rapha.path(subpath).attr(subpathattr).data("resindex",resindex).data("topowidget",self)
+			var rp = self.config.rapha.path(subpath).toFront().attr(subpathattr).data("resindex",resindex).data("topowidget",self)
 			.mouseover( function(e) {
 				var resinfo = this.data("topowidget").getResInfo(this.data("resindex"));
 				ttext = (resinfo[2]+"("+resinfo[0]+resinfo[1]+")").replace(/ /g,'');
@@ -572,7 +574,10 @@ Biojs.PDBchainTopology = Biojs.extend (
 			mypath = self.config.rapha.path(mypath);
 			//mypath.glow({width:2, offsetx:10, offsety:10});
 			c1 = self.config.rapha.path(["M", 100, 100, "L", 100, 150, 150, 150, 150, 100]);
-			c2 = self.config.rapha.path(["M", 110, 110, "L", 110, 160, 160, 160, 160, 110]).attr({fill:'red','fill-opacity':0.1});
+			c2 = self.config.rapha.path(["M", 110, 110, "L", 110, 160, 160, 160, 160, 110]).attr({fill:'red','fill-opacity':0.1})
+				.mouseover(function() {
+					alert("hello");
+				});
 		}
 		var sanityset = self.config['rapha'].setFinish();
 		sanityset.attr(sanityAttribs);
