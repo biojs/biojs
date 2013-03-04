@@ -83,7 +83,7 @@
  *      </ul> 
  *       
  * @example 
- * var theSequence = '"METLCQRLNVCQDKILTHYENDSTDLRDHIDYWKHMRLECAIYYKAREMGFKHINHQVVPTLAVSKNKALQAIELQLTLETIYNSQYSNEKWTLQDVSLEVYLTAPTGCIKKHGYTVEVQFDGDICNTMHYTNWTHIYICEEASVTVVEGQVDYYGLYYVHEGIRTYFVQFKDDAEKYSKNKVWEVHAGGQVILCPTSVFSSNEVSSPEIIRQHLANHPAATHTKAVALGTEETQTTIQRPRSEPDTGNPCHTTKLLHRDSVDSAPILTAFNSSHKGRINCNSNTTPIVHLKGDANTLKCLRYRFKKHCTLYTAVSSTWHWTGHNVKHKSAIVTLTYDSEWQRDQFLSQVKIPKTITVSTGFMSI"';
+ * var theSequence = "METLCQRLNVCQDKILTHYENDSTDLRDHIDYWKHMRLECAIYYKAREMGFKHINHQVVPTLAVSKNKALQAIELQLTLETIYNSQYSNEKWTLQDVSLEVYLTAPTGCIKKHGYTVEVQFDGDICNTMHYTNWTHIYICEEASVTVVEGQVDYYGLYYVHEGIRTYFVQFKDDAEKYSKNKVWEVHAGGQVILCPTSVFSSNEVSSPEIIRQHLANHPAATHTKAVALGTEETQTTIQRPRSEPDTGNPCHTTKLLHRDSVDSAPILTAFNSSHKGRINCNSNTTPIVHLKGDANTLKCLRYRFKKHCTLYTAVSSTWHWTGHNVKHKSAIVTLTYDSEWQRDQFLSQVKIPKTITVSTGFMSI";
  * var mySequence = new Biojs.Sequence({
  * 		sequence : theSequence,
  * 		target : "YourOwnDivId",
@@ -516,7 +516,6 @@ Biojs.Sequence = Biojs.extend(
      */
 	_restoreHighlights: function ( start, end ) {
 		var h = this._highlights;
-		
 		// paint the region using default blank settings
 		this._applyHighlight({
 			"start": start, 
@@ -719,6 +718,7 @@ Biojs.Sequence = Biojs.extend(
      * 		   end -> {int} End of the region to be selected.
      */
 	_setSelection : function(start, end) {
+		//alert("adsas");
 		
 		var current = this.opt.selection;
 		var change = {};
@@ -730,15 +730,15 @@ Biojs.Sequence = Biojs.extend(
 				change.start = current.end;
 				change.end = end;
 			} else {
-				this._restoreHighlights(end, current.end);
+				this._restoreHighlights(end+1, current.end);
 			}
 		} else if ( current.end == end ) {
 			// forward?
-			if ( current.start < start ) {
-				this._restoreHighlights(current.start, start);
-			} else {
+			if ( current.start > start ) {
 				change.start = start;
-				change.end = current.start;
+				change.end = current.start;				
+			} else {
+				this._restoreHighlights(current.start, start-1);
 			}
 		} else {
 			this._restoreHighlights(current.start, current.end);
@@ -759,6 +759,7 @@ Biojs.Sequence = Biojs.extend(
 		}
 		
 	},
+	
 	/* 
      * Function: Biojs.Sequence._repaintSelection
      * Purpose:  Repaint the whole current selection. 
