@@ -819,8 +819,14 @@ Biojs.Sequence = Biojs.extend(
 		var arr = [];
 	    var str = '>' + this.opt.id + ' ' + a.length + ' bp<br/>';
 		
+		/* Correct column size in case the sequence is as small peptide */
+		var numCols = this.opt.columns.size;
+		if ( this.opt.sequence.length < this.opt.columns.size ) {
+			numCols = this.opt.sequence.length;	
+		}
+		
 	    var opt = {
-			numCols: self.opt.columns.size,
+			numCols: numCols,
 		    numColsForSpace: self.opt.columns.spacedEach
 		};
 
@@ -1008,9 +1014,15 @@ Biojs.Sequence = Biojs.extend(
 		var i = 0;
 		var arr = [];
 		var pre = jQuery('<pre></pre>').appendTo(this._contentDiv);
+		
+		/* Correct column size in case the sequence is as small peptide */
+		var numCols = this.opt.columns.size;
+		if ( this.opt.sequence.length < this.opt.columns.size ) {
+			numCols = this.opt.sequence.length;	
+		}
 
 		var opt = {
-			numCols: self.opt.columns.size
+			numCols: numCols
 		};
 		
 		pre.html(
@@ -1029,6 +1041,12 @@ Biojs.Sequence = Biojs.extend(
 		var self = this;
 		var a = this.opt.sequence.toUpperCase().split('');
 		var pre = jQuery('<pre></pre>').appendTo(this._contentDiv);
+		
+		/* Correct column size in case the sequence is as small peptide */
+		var numCols = this.opt.columns.size;
+		if ( this.opt.sequence.length < this.opt.columns.size ) {
+			numCols = this.opt.sequence.length;	
+		}
 	
 		opt = {
 			numLeft: true,
@@ -1037,7 +1055,7 @@ Biojs.Sequence = Biojs.extend(
 			numRight: true,
 			numRightSize: 5,
 			numRightPad: '0',
-			numCols: self.opt.columns.size,
+			numCols: numCols,
 		    numColsForSpace: self.opt.columns.spacedEach
 		};
 		
