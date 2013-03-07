@@ -1,0 +1,54 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US" xml:lang="en-US">
+	<head>
+	  
+	  <script type="text/javascript" src="../../main/javascript/Biojs.js"></script>		
+	  <script type="text/javascript" src="../../main/javascript/Biojs.Sequence.js"></script>
+	  	  
+	  <script language="JavaScript" type="text/javascript" src="../../main/resources/dependencies/jquery/jquery-1.4.2.min.js"></script>
+	  <script language="JavaScript" type="text/javascript" src="../../main/resources/dependencies/jquery/jquery-ui-1.8.2.custom.min.js"></script>
+  
+	  
+	  <script type="text/javascript">
+           
+		var mySequence;
+		window.onload = function() {		 
+			var theSequence = '1111111111222222222233333333334444';
+			mySequence = new Biojs.Sequence({
+			        sequence : theSequence,
+			        target : "holder",
+			        format : 'CODATA',
+			        id : 'P918283'
+			});
+
+
+			
+			mySequence.setSelection(1,4);
+			mySequence.setSelection(2,4);
+
+			mySequence.addAnnotation({
+			   name:"UNIPROT",
+			   html:"<br> Example of <b>HTML</b>",
+			   color:"green",
+			   regions: [
+			      {start: 1, end: 10},
+			      {start: 11, end:20, color: "#FFA010"},
+			      {start: 21, end:30, color: "red"},
+			      {start: 31, end:32}]
+			});
+
+
+
+			
+
+		};	    
+		
+		    	   
+	  </script>	
+	</head>
+	<body>
+	  <div id="holder" />
+	  <div id="log" />
+	</body>
+</html>

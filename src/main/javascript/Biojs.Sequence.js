@@ -818,7 +818,7 @@ Biojs.Sequence = Biojs.extend(
 		var i = 1;
 		var arr = [];
 	    var str = '>' + this.opt.id + ' ' + a.length + ' bp<br/>';
-	    
+		
 	    var opt = {
 			numCols: self.opt.columns.size,
 		    numColsForSpace: self.opt.columns.spacedEach
@@ -845,13 +845,19 @@ Biojs.Sequence = Biojs.extend(
 		var str = 'ENTRY           ' + this.opt.id + '<br/>';
 		str += 'SEQUENCE<br/>';
 		
+		/* Correct column size in case the sequence is as small peptide */
+		var numCols = this.opt.columns.size;
+		if ( this.opt.sequence.length < this.opt.columns.size ) {
+			numCols = this.opt.sequence.length;	
+		}
+		
 		var opt = {
 				numLeft: true,
 				numLeftSize: 7,
 				numLeftPad:' ',
 				numTop: true,
 				numTopEach: 5,
-				numCols: self.opt.columns.size,
+				numCols: numCols,
 			    numColsForSpace: 0,
 			    spaceBetweenChars: true
 		};
