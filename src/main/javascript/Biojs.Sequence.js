@@ -296,7 +296,7 @@ Biojs.Sequence = Biojs.extend(
 	 */
     setSequence: function ( seq, identifier ) {
 
-    	if ( seq.match(/^[A-z]([0-9])*$/g) ) {
+    	if ( seq.match(/^([A-N,R-Z][0-9][A-Z][A-Z, 0-9][A-Z, 0-9][0-9])|([O,P,Q][0-9][A-Z, 0-9][A-Z, 0-9][A-Z, 0-9][0-9])(\.\d+)?$/i) ) {
     		this._requestSequence( arguments[0] );
     		
     	} else {
