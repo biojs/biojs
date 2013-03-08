@@ -204,8 +204,9 @@ Biojs.Protein3D = Biojs.extend(
    _jmoljarfile: "JmolApplet.jar",
    _jmolAppletInitialized: false,
    _selection: undefined,
-   
-   _display: { 
+   _selectionType: undefined,
+
+    _display: {
 	   property: {
 		   polar: false,
 		   unpolar: false,
@@ -412,6 +413,10 @@ Biojs.Protein3D = Biojs.extend(
     * @example
     * // Selection of the positions 4, 8 and 100.
     * instance.setSelection([4,8,100]);
+    *
+    * @example
+    * // Selection from 51 to 60, 87, and from 101 to 110
+    * instance.setSelection([{start:51,end:60},87,{start:101,end:110}]);
     * 
     * @param {Object|Array} selection Can be either a plain object or an array.  
     *        If object, it must have the fields start and end; Where "start" is greater than or equal to "end".
@@ -422,7 +427,7 @@ Biojs.Protein3D = Biojs.extend(
 			this._selection = Biojs.Utils.clone(selection);
 			this._drawSelection();
 			this.raiseEvent( Biojs.Protein3D.EVT_ON_SELECTION, {
-				selectionType: "positions",
+                selectionType: this._selectionType,
 				selection: Biojs.Utils.clone(selection)
 			});
 		}
@@ -445,21 +450,48 @@ Biojs.Protein3D = Biojs.extend(
 		
 		if ( selection ){
 			scr = 'select all; color translucent 1;';
-			selectionText = (selection instanceof Array)? selection.join(",") : selection.start + "-" + selection.end;
-			
-	        if ( !this._display.halos ) {
-	            scr += 'select not ' + selectionText + '; color translucent 0.8; selectionHalos off;';
-	        } else {
-	            scr += 'select ' + selectionText + '; selectionHalos on;';
-	        }
-		} else {
-			scr = "select none"; 
-		}
-		
-		Biojs.console.log("Selection script: " + scr);
-		
-		return scr;		
-	},
+			//selectionText = (selection instanceof Array)? selection.join(",") : selection.start + "-" + selection.end;
+            if (selection instanceof Array) {
+                for (i = 0; i < selection.length; i++) {
+                    if (selection[i] instanceof Object) {
+                        selectionText = selectionText + selection[i].start + "-" + selection[i].end;
+                        regionInSelection = true;
+                    } else {
+                        selectionText = selectionText + selection[i];
+                        positionInSelection = true;
+                    }
+                    if (i != (selection.length-1)) {
+                        selectionText = selectionText + ",";
+                    }
+                }
+            } else {
+                selectionText = selection.start + "-" + selection.end;
+                singleRegion = true;
+            }
+
+            if ( !this._display.halos ) {
+                scr += 'select not ' + selectionText + '; color translucent 0.8; selectionHalos off;';
+            } else {
+                scr += 'select ' + selectionText + '; selectionHalos on;';
+            }
+        } else {
+            scr = "select none";
+        }
+        Biojs.console.log("Selection script: " + scr);
+        if (singleRegion == true) {
+            this._selectionType = "region";
+        } else if ((regionInSelection == true) && (positionInSelection == true)) {
+            this._selectionType = "mixed";
+        } else if ((regionInSelection == true) && (positionInSelection == false)) {
+            this._selectionType = "multipleRegion";
+        } else if ((regionInSelection == false) && (positionInSelection == true)) {
+            this._selectionType = "positions";
+        } else {
+            this._selectionType = "region";
+        }
+        Biojs.console.log("Selection type: " + this._selectionType);
+        return scr;
+    },
 
 	_drawSelection: function(){		
 		if ( this._selection !== undefined ) {
