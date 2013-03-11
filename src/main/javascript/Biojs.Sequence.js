@@ -948,7 +948,7 @@ Biojs.Sequence = Biojs.extend(
 					jQuery(this).css("background-color", jQuery(this).attr("color") );
 				});
 		    }).mouseout(function() {
-		    	jQuery('.annotation').css("background-color", "white"); 
+		    	jQuery('.annotation').css("background-color", "transparent"); 
 		    	
 		    }).click(function(e) {
 		    	self.raiseEvent( Biojs.Sequence.EVT_ON_ANNOTATION_CLICKED, {
