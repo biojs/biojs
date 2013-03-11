@@ -14,18 +14,17 @@
            
 		var mySequence;
 		window.onload = function() {		 
-			var theSequence = '111111111122222222223333333333444444444455555555556666666666';
+			var theSequence = '111111111122222222223333333333'; //444444444455555555556666666666
 			mySequence = new Biojs.Sequence({
 			        sequence : theSequence,
 			        target : "holder",
 			        format : 'CODATA',
 					formatOptions : {
-			 			title:false
+			 			title:false,
+						footer:true
 			  		},
 			        id : 'P918283'
 			});
-
-
 			
 			//mySequence.setSelection(1,4);
 			//mySequence.setSelection(2,4);

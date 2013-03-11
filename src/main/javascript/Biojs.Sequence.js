@@ -86,7 +86,8 @@
  * 	  Options for displaying the title just in the CODATA.
  *    <pre class="brush: js" title="Syntax:"> 
  * 		formatOptions : {
- * 			title:false
+ * 			title:false,
+ * 			footer:false
  * 		}
  *    </pre>
  *    
@@ -885,8 +886,16 @@ Biojs.Sequence = Biojs.extend(
 		};
 		
 		str += this._drawSequence(a, opt);
-
-		str += '<br/>///'
+		
+		var footer = '<br/>///';
+		if (this.opt.formatOptions !== undefined) {
+			if (this.opt.formatOptions.footer !== undefined) {
+				if (this.opt.formatOptions.footer == false) {
+					footer = '';
+				}
+			}
+		}
+		str += footer;
 		pre.html(str);
 		
 		this._drawAnnotations(opt);
