@@ -82,8 +82,8 @@
  *        <li><b>regions[i].color</b> is an optional color for the i-th interval.   
  *      </ul> 
  *      
- * @option {Object} [formatOptions={title:true}] 
- * 	  Options for displaying the title just in the CODATA.
+ * @option {Object} [formatOptions={title:true, footer:true}] 
+ * 	  Options for displaying the title. by now just affecting the CODATA format.
  *    <pre class="brush: js" title="Syntax:"> 
  * 		formatOptions : {
  * 			title:false,
