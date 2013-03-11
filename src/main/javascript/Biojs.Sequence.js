@@ -924,10 +924,16 @@ Biojs.Sequence = Biojs.extend(
 				} 
 			}
 			
+			var numCols = settings.numCols;
+			var charRemaining = a.length-i;
+			if(charRemaining < numCols){
+				numCols	= charRemaining;
+			}
+			
 			if ( settings.numRight ) {
-				jQuery(row).insertAfter('div#'+self.opt.target+' div pre span#numRight'+ (i + settings.numCols) );
+				jQuery(row).insertAfter('div#'+self.opt.target+' div pre span#numRight'+ (i + numCols) );
 			} else {
-				jQuery(row).insertAfter('div#'+self.opt.target+' div pre span#'+ (i + settings.numCols) );
+				jQuery(row).insertAfter('div#'+self.opt.target+' div pre span#'+ (i + numCols) );
 			}
 		}
 		
