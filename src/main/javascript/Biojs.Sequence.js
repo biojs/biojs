@@ -983,6 +983,7 @@ Biojs.Sequence = Biojs.extend(
     	var styleBegin = 'border-left:1px solid; border-bottom:1px solid; border-color:';
     	var styleOn = 'border-bottom:1px solid; border-color:';
     	var styleEnd = 'border-bottom:1px solid; border-right:1px solid; border-color:';
+		var styleBeginAndEnd = 'border-left:1px solid; border-right:1px solid; border-bottom:1px solid; border-color:';
     	
     	var row = [];
     	var end = (currentPos + settings.numCols);
@@ -1001,7 +1002,11 @@ Biojs.Sequence = Biojs.extend(
 				color = ((region.color)? region.color : defaultColor);
 				data = 'class="annotation '+id+'" id="'+id+'" color="'+color+'" pos="'+pos+'"';
 				
-				if ( pos == region.start ) {
+				if ( pos == region.start && pos == region.end) {
+					row[pos] = '<span style="'+styleBeginAndEnd+color+'" '+data+'> ';
+					row[pos] += spaceAfter;
+					row[pos] += '</span>';
+				} else if ( pos == region.start ) {
 					row[pos] = '<span style="'+styleBegin+color+'" '+data+'> ';
 					row[pos] += spaceAfter;
 					row[pos] += '</span>';
