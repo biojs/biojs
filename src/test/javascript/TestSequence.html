@@ -14,7 +14,7 @@
            
 		var mySequence;
 		window.onload = function() {		 
-			var theSequence = '111111111122222222223333333333444444444';
+			var theSequence = '111111111122222222223333333333444444444455555555556666666666';
 			mySequence = new Biojs.Sequence({
 			        sequence : theSequence,
 			        target : "holder",
@@ -35,10 +35,11 @@
 			   html:"<br> Example of <b>HTML</b>",
 			   color:"green",
 			   regions: [
-			      {start: 1, end: 10},
-			      {start: 11, end:20, color: "#FFA010"},
-			      {start: 21, end:30, color: "red"},
-			      {start: 31, end:32}]
+			      {start: 1, end: 1},
+			      {start: 3, end:3, color: "#FFA010"},
+			      {start: 5, end:6, color: "red"},
+			      {start: 31, end:32},
+				  {start: 30, end: 40}]
 			});
 			
 			//mySequence.setSequence("P");
@@ -46,6 +47,7 @@
 			
 			mySequence.addHighlight( { "start": 12, "end": 15, "color": "blue", "background": "red", "id": "aaa" } );
 			mySequence.addHighlight( { "start": 22, "end": 25, "color": "blue", "background": "green", "id": "bbb" } );
+			mySequence.addHighlight( { "start": 30, "end": 40, "color": "blue", "background": "red", "id": "aaa" } );
 
 
 

@@ -835,7 +835,7 @@ Biojs.Sequence = Biojs.extend(
 		
 	    var opt = {
 			numCols: numCols,
-		    numColsForSpace: self.opt.columns.spacedEach
+		    numColsForSpace: 0
 		};
 
 		str += this._drawSequence(a, opt);
