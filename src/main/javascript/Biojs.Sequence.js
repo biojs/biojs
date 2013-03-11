@@ -81,13 +81,24 @@
  *        <li><b>regions[i].end</b> is the ending character for the i-th interval.</li>
  *        <li><b>regions[i].color</b> is an optional color for the i-th interval.   
  *      </ul> 
- *       
+ *      
+ * @option {Object} [formatOptions={title:true}] 
+ * 	  Options for displaying the title just in the CODATA.
+ *    <pre class="brush: js" title="Syntax:"> 
+ * 		formatOptions : {
+ * 			title:false
+ * 		}
+ *    </pre>
+ *    
  * @example 
- * var theSequence = "METLCQRLNVCQDKILTHYENDSTDLRDHIDYWKHMRLECAIYYKAREMGFKHINHQVVPTLAVSKNKALQAIELQLTLETIYNSQYSNEKWTLQDVSLEVYLTAPTGCIKKHGYTVEVQFDGDICNTMHYTNWTHIYICEEASVTVVEGQVDYYGLYYVHEGIRTYFVQFKDDAEKYSKNKVWEVHAGGQVILCPTSVFSSNEVSSPEIIRQHLANHPAATHTKAVALGTEETQTTIQRPRSEPDTGNPCHTTKLLHRDSVDSAPILTAFNSSHKGRINCNSNTTPIVHLKGDANTLKCLRYRFKKHCTLYTAVSSTWHWTGHNVKHKSAIVTLTYDSEWQRDQFLSQVKIPKTITVSTGFMSI";
+ * var theSequence = "METLCQRLNVCQDKILTHYENDSTDLRDHIDYWKHMRLECAIYYKAREMGFKHINHQVVPTLAVSKNKALQAIELQLTLETIYNSQYSNEKWTLQDVSLEVYLTAPTGCIKKHGYTVEVQFDGDICNTMHYTNWTHIYICEEAojs SVTVVEGQVDYYGLYYVHEGIRTYFVQFKDDAEKYSKNKVWEVHAGGQVILCPTSVFSSNEVSSPEIIRQHLANHPAATHTKAVALGTEETQTTIQRPRSEPDTGNPCHTTKLLHRDSVDSAPILTAFNSSHKGRINCNSNTTPIVHLKGDANTLKCLRYRFKKHCTLYTAVSSTWHWTGHNVKHKSAIVTLTYDSEWQRDQFLSQVKIPKTITVSTGFMSI";
  * var mySequence = new Biojs.Sequence({
  * 		sequence : theSequence,
  * 		target : "YourOwnDivId",
  * 		format : 'CODATA',
+ * 		formatOptions : {
+ * 			title:false
+ * 		}
  * 		id : 'P918283',
  * 		annotations: [
  *        { name:"CATH", 
@@ -849,6 +860,14 @@ Biojs.Sequence = Biojs.extend(
 
 		var i = 0;
 		var str = 'ENTRY           ' + this.opt.id + '<br/>';
+		if ( this.opt.formatOptions !== undefined ){
+			if(this.opt.formatOptions.title !== undefined ){
+				if (this.opt.formatOptions.title == false) {
+					str = '';
+				}			
+			}
+		} 
+
 		str += 'SEQUENCE<br/>';
 		
 		/* Correct column size in case the sequence is as small peptide */

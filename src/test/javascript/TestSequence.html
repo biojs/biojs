@@ -14,11 +14,14 @@
            
 		var mySequence;
 		window.onload = function() {		 
-			var theSequence = '1111111111222222222233333333334444';
+			var theSequence = '111111111122222222223333333333444444444';
 			mySequence = new Biojs.Sequence({
 			        sequence : theSequence,
 			        target : "holder",
 			        format : 'CODATA',
+					formatOptions : {
+			 			title:false
+			  		},
 			        id : 'P918283'
 			});
 
@@ -39,6 +42,10 @@
 			});
 			
 			//mySequence.setSequence("P");
+			
+			
+			mySequence.addHighlight( { "start": 12, "end": 15, "color": "blue", "background": "red", "id": "aaa" } );
+			mySequence.addHighlight( { "start": 22, "end": 25, "color": "blue", "background": "green", "id": "bbb" } );
 
 
 
