@@ -96,9 +96,6 @@
  * 		sequence : theSequence,
  * 		target : "YourOwnDivId",
  * 		format : 'CODATA',
- * 		formatOptions : {
- * 			title:false
- * 		}
  * 		id : 'P918283',
  * 		annotations: [
  *        { name:"CATH", 
