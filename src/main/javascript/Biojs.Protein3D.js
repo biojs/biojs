@@ -447,8 +447,11 @@ Biojs.Protein3D = Biojs.extend(
 	_getSelectionScript: function(selection){
 		var scr = "";
 		var selectionText = "";
-		
-		if ( selection ){
+        var singleRegion = false;
+        var regionInSelection = false;
+        var positionInSelection = false;
+
+        if ( selection ){
 			scr = 'select all; color translucent 1;';
 			//selectionText = (selection instanceof Array)? selection.join(",") : selection.start + "-" + selection.end;
             if (selection instanceof Array) {
