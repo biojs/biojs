@@ -1153,7 +1153,8 @@ Biojs.Sequence = Biojs.extend(
 				
 				str += '<br/>';
 				
-				if (opt.numLeft) {
+				var aaRemaining = a.length - i;
+				if (opt.numLeft && aaRemaining > 0) {
 					str += '<span id="numLeft'+i+'">';
 					str += this._formatIndex(i+1, opt.numLeftSize, opt.numLeftPad);
 					str += '  ';
