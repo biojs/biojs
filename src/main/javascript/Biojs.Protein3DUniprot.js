@@ -468,29 +468,53 @@ Biojs.Protein3DUniprot = Biojs.Protein3DWS.extend(
     *        If array, it must contain numbers representing the positions to be selected.
     */
 	setSelection: function ( s ) {
-            this._uniprotSelection = Biojs.Utils.clone(s);
-            var selection = this._translateSelection(s);
-            this.base(selection);
-        },
+        this._uniprotSelection = Biojs.Utils.clone(s);
+        var selection = this._translateSelection(s);
+        this.base(selection);
+    },
 
-        _translateSelection: function (s) {
-            //Selection in Uniprot regions needs to be translated into PDB regions
-            var selection = Biojs.Utils.clone(s);
-            var alignmentId = this.getCurrentAlignmentId();
-            var proteinId = this.getCurrentProteinId();
-            var segment = this.getAlignmentsByPdb(alignmentId)[alignmentId];
-            var offset = 0;
-            for ( i in segment ) {
-                if ( segment[i].intObjectId == alignmentId ) {
-                    pdbSegment = segment[i];
-                } else if ( segment[i].intObjectId == proteinId ) {
-                    uniprotSegment = segment[i];
-                }
+    _translateSelection: function (s) {
+        //Selection in Uniprot regions needs to be translated into PDB regions
+        var selection = Biojs.Utils.clone(s);
+        var alignmentId = this.getCurrentAlignmentId();
+        var proteinId = this.getCurrentProteinId();
+        var segment = this.getAlignmentsByPdb(alignmentId)[alignmentId];
+        var offset = 0;
+        for ( i in segment ) {
+            if ( segment[i].intObjectId == alignmentId ) {
+                pdbSegment = segment[i];
+            } else if ( segment[i].intObjectId == proteinId ) {
+                uniprotSegment = segment[i];
             }
-            offset = uniprotSegment.start - pdbSegment.start;
-            if ( selection instanceof Array ) {
-                var toDelete = new Array[selection.length];
-                for ( i in selection ) {
+        }
+        offset = uniprotSegment.start - pdbSegment.start;
+        if ( selection instanceof Array ) {
+            var toDelete = new Array(selection.length);
+            for ( i in selection ) {
+                if (selection[i] instanceof Object) {//a range
+                    if ( (selection[i].start > uniprotSegment.end) || (selection[i].end < uniprotSegment.start) ){
+                        //we first check whether it is completely out of the range
+                        selection[i].start = 0;
+                        selection[i].end = 0;
+                        toDelete[i] = true;
+                    } else if ( (selection[i].start >= uniprotSegment.start) && (selection[i].end <= uniprotSegment.end) ){
+                        selection.start -= offset;
+                        selection.end -= offset;
+                        toDelete[i] = false;
+                    } else if ( (selection[i].start < uniprotSegment.start) && (selection[i].end <= uniprotSegment.end) ){
+                        selection[i].start = pdbSegment.start - 0;
+                        selection[i].end -= offset;
+                        toDelete[i] = false;
+                    } else if ( (selection[i].start >= uniprotSegment.start) && (selection[i].end > uniprotSegment.end) ){
+                        selection[i].start -= offset;
+                        selection[i].end = pdbSegment.end - 0;
+                        toDelete[i] = false;
+                    } else if ( (selection[i].start < uniprotSegment.start) && (selection[i].end > uniprotSegment.end) ){
+                        selection[i].start = pdbSegment.start - 0
+                        selection[i].end = pdbSegment.end - 0;
+                        toDelete[i] = false;
+                    }
+                } else { //a position
                     if ( (uniprotSegment.start <= selection[i]) && (selection[i] <= uniprotSegment.end) ) {
                         selection[i] -= offset;
                         toDelete[i] = false;
@@ -498,35 +522,36 @@ Biojs.Protein3DUniprot = Biojs.Protein3DWS.extend(
                         toDelete[i] = true;
                     }
                 }
-                var deleted = 0;
-                for (j in toDelete) {
-                    if (toDelete[j] == true) {
-                        selection.splice(j-deleted,j-deleted);
-                        deleted += 1;
-                    }
-                }
-            } else if ( selection instanceof Object && selection.start <= selection.end ){
-                if ( (selection.start > uniprotSegment.end) || (selection.end < uniprotSegment.start) ){
-                    //we first check whether it is completely out of the range
-                    selection.start = 0;
-                    selection.end = 0;
-                    this.removeSelection();
-                } else if ( (selection.start >= uniprotSegment.start) && (selection.end <= uniprotSegment.end) ){
-                    selection.start -= offset;
-                    selection.end -= offset;
-                } else if ( (selection.start < uniprotSegment.start) && (selection.end <= uniprotSegment.end) ){
-                    selection.start = pdbSegment.start - 0;
-                    selection.end -= offset;
-                } else if ( (selection.start >= uniprotSegment.start) && (selection.end > uniprotSegment.end) ){
-                    selection.start -= offset;
-                    selection.end = pdbSegment.end - 0;
-                } else if ( (selection.start < uniprotSegment.start) && (selection.end > uniprotSegment.end) ){
-                    selection.start = pdbSegment.start - 0
-                    selection.end = pdbSegment.end - 0;
+            }
+            var deleted = 0;
+            for (j in toDelete) {
+                if (toDelete[j] == true) {
+                    selection.splice(j-deleted,j-deleted);
+                    deleted += 1;
                 }
             }
-            return (selection);
-        },
+        } else if ( selection instanceof Object && selection.start <= selection.end ){
+            if ( (selection.start > uniprotSegment.end) || (selection.end < uniprotSegment.start) ){
+                //we first check whether it is completely out of the range
+                selection.start = 0;
+                selection.end = 0;
+                this.removeSelection();
+            } else if ( (selection.start >= uniprotSegment.start) && (selection.end <= uniprotSegment.end) ){
+                selection.start -= offset;
+                selection.end -= offset;
+            } else if ( (selection.start < uniprotSegment.start) && (selection.end <= uniprotSegment.end) ){
+                selection.start = pdbSegment.start - 0;
+                selection.end -= offset;
+            } else if ( (selection.start >= uniprotSegment.start) && (selection.end > uniprotSegment.end) ){
+                selection.start -= offset;
+                selection.end = pdbSegment.end - 0;
+            } else if ( (selection.start < uniprotSegment.start) && (selection.end > uniprotSegment.end) ){
+                selection.start = pdbSegment.start - 0
+                selection.end = pdbSegment.end - 0;
+            }
+        }
+        return (selection);
+    },
 
 	getCurrentAlignmentId: function () {
 		var selectedValue = jQuery('#pdbFile_select').val();
