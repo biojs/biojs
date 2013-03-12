@@ -858,6 +858,7 @@ Biojs.Sequence = Biojs.extend(
 
 		var i = 0;
 		var str = 'ENTRY           ' + this.opt.id + '<br/>';
+		str += 'SEQUENCE<br/>';
 		if ( this.opt.formatOptions !== undefined ){
 			if(this.opt.formatOptions.title !== undefined ){
 				if (this.opt.formatOptions.title == false) {
@@ -865,8 +866,6 @@ Biojs.Sequence = Biojs.extend(
 				}			
 			}
 		} 
-
-		str += 'SEQUENCE<br/>';
 		
 		/* Correct column size in case the sequence is as small peptide */
 		var numCols = this.opt.columns.size;
