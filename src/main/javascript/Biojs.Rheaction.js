@@ -5,7 +5,7 @@
  * 
  * @author <a href="mailto:rafael.alcantara@ebi.ac.uk">Rafael Alcántara</a>
  * @version 1.0.0
- * @category 2
+ * @category 3
  * 
  * @requires <a href=''>Server side proxy</a>
  * 

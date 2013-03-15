@@ -14,7 +14,7 @@
            
 		var mySequence;
 		window.onload = function() {		 
-			var theSequence = '111111111122222222223333333333'; //444444444455555555556666666666
+			var theSequence = '111111111122222222223333333333444444444455555555556666666666111111111122222222223333333333444444444455555555556666666666';
 			mySequence = new Biojs.Sequence({
 			        sequence : theSequence,
 			        target : "holder",
@@ -30,11 +30,27 @@
 			//mySequence.setSelection(2,4);
 
 			mySequence.addAnnotation({
-			   name:"UNIPROT",
+			   name:"track1",
 			   html:"<br> Example of <b>HTML</b>",
 			   color:"green",
 			   regions: [
-			      {start: 2, end: 2}]
+			      {start: 2, end: 2},
+				  {start: 20, end: 30},
+				  {start: 31, end: 43},
+				  {start: 44, end: 44},
+				  {start: 50, end: 90}]
+			});
+			
+			mySequence.addAnnotation({
+			   name:"track2",
+			   html:"<br> Example of <b>HTML</b>",
+			   color:"green",
+			   regions: [
+			      {start: 7, end: 40},
+				  {start: 45, end: 45},
+				  {start: 47, end: 48},
+				  {start: 49, end: 55},
+				  {start: 80, end: 91}]
 			});
 			
 			//mySequence.setSequence("P");
