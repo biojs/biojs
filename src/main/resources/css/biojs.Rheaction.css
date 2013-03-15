@@ -1,0 +1,35 @@
+.scrollpane {
+    overflow: auto;
+}
+
+.reactionRow {
+    display: table-row;
+}
+
+div.compound {
+    display: table-cell;
+    text-align: center;
+}
+
+.stoichCoef {
+    font-weight: bold;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+}
+
+.direction {
+    display: table-cell;
+    font-weight: bold;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+}
+
+.compoundName {
+    color: blue;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+}
+
+.compoundStructure {
+}
+
