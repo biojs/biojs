@@ -180,19 +180,8 @@ Biojs.ChEBICompound = Biojs.extend(
 		};
 		
 		url = this.opt.imageUrl + '?' + jQuery.param(params);
-		image = jQuery('<img id="image_' + chebiId + '"/>');
-		
-		image.attr('src', url)
-        	.load(function() {
-	           if (!this.complete || typeof this.naturalWidth == "undefined" || this.naturalWidth == 0) {
-	        	   self._imageContainer.addClass("noImage");
-	        	   self.raiseEvent( Biojs.ChEBICompound.EVT_ON_REQUEST_ERROR, {
-	        		   id: chebiId,
-	        		   url: url,
-	        		   message: "No image available"
-	   			   });
-
-	           } else {
+		image = jQuery('<img id="image_' + chebiId + '"/>')
+			.load(function() {
 	        	   self._imageContainer.removeClass("noImage");
 	        	   self._imageContainer.append(image).css({
 	           			'width': self.opt.imageDimension,
@@ -204,10 +193,16 @@ Biojs.ChEBICompound = Biojs.extend(
 	        		   id: chebiId,
 	        		   url: url
 	   			   });
-	           }
         	})
-        	
-
+			.error(function() {
+				self._imageContainer.addClass("noImage");
+        	    self.raiseEvent( Biojs.ChEBICompound.EVT_ON_REQUEST_ERROR, {
+        			id: chebiId,
+        			url: url,
+        			message: "No image available"
+   			    });
+			})
+			.attr('src', url);
 	},
 	
 	_requestDetails: function( opt ){

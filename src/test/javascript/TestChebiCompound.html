@@ -1,0 +1,32 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US" xml:lang="en-US">
+	<head>
+	  <link href="../../main/resources/css/biojs.ChEBICompound.css" rel="stylesheet" type="text/css" />
+	  <script type="text/javascript" src="../../main/javascript/Biojs.js"></script>		
+	  <script type="text/javascript" src="../../main/javascript/Biojs.ChEBICompound.js"></script>
+	  	  
+	  <script language="JavaScript" type="text/javascript" src="../../main/resources/dependencies/jquery/jquery-1.6.4.js"></script>
+  
+	  
+	  <script type="text/javascript">
+    
+			
+		window.onload = function() {
+			var instance = new Biojs.ChEBICompound({
+			   target: 'holder',
+			   id: 'CHEBI:2922',
+			   width: 700,
+			   height: 400,
+			   proxyUrl: '../../main/resources/dependencies/proxy/proxy.php'
+			});
+		};  
+		
+		    	   
+	  </script>	
+	</head>
+	<body bgcolor="#E6E6FA">
+	  <div id="holder" />
+	  <div id="log" />
+	</body>
+</html>
