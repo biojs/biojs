@@ -90,7 +90,7 @@ Biojs.PDBchainTopology = Biojs.extend (
 		self.previousActivsiteElems = null;
 		self.respaths = []; // essential to store hoverable residue elems so that they can be brought 'up' after rendeing domain
 		self.resi2paths = {};
-		self.thinssXscale = 1.0; self.allYscale = 1.0;
+		self.thinssXscale = 1.0; self.allYscale = 1.0; self.allXscale = 1.5;
 		self.curvyloops = true; //true;
 		self.loopdip = 'useArea';
 
@@ -325,14 +325,12 @@ Biojs.PDBchainTopology = Biojs.extend (
 		return newpath;
 	},
 
-
 	scaleX: function(x1,x2) {
 		var self = this;
 		// thin down along X axis
 		var xdiff = (x1-x2)/2. * (1-self.thinssXscale);
 		return [x1-xdiff, x2+xdiff];
 	},
-
 
 	findExtents: function() {
 		var self = this;
@@ -351,6 +349,25 @@ Biojs.PDBchainTopology = Biojs.extend (
 			}
 		}
 		return [minx,miny,maxx,maxy];
+	},
+	scaleXall: function() {
+		var self = this;
+		var sstypes = {coils:"red", strands:"green", helices:"blue", terms:'purple'};
+		for(var st in sstypes) {
+			eval("var sselems = self.topodata."+st+";");
+			for(var ci=0; ci < sselems.length; ci++) {
+				var ass = sselems[ci];
+				if(st == "coils") {
+					for(var pi=0; pi < ass.path.length; pi+=2) ass.path[pi] *= self.allXscale;
+				}
+				else {
+					var midx = 0;
+					for(var pi=0; pi < ass.path.length; pi+=2) midx += ass.path[pi];
+					midx = midx * (self.allXscale-1) / (ass.path.length/2);
+					for(var pi=0; pi < ass.path.length; pi+=2) ass.path[pi] += midx;
+				}
+			}
+		}
 	},
 	scaleYall: function() {
 		var self = this;
@@ -408,10 +425,11 @@ Biojs.PDBchainTopology = Biojs.extend (
 		//self.sanitycheckLayout(); return;
 		var topodata = self.topodata;
 		self.scaleYall();
+		self.scaleXall();
 		self.editLoopsHorizontals();
 		if(self.checkDataSanity(topodata) == false) { alert("Data error!! Cannot continue."); return; }
 		var ssattrib = {'stroke-width':1,'stroke':'#aaa'};
-		var unmappedattrib = {'stroke-dasharray':'--','stroke':'#aaa'};
+		var unmappedattrib = {'stroke-dasharray':'- .','stroke':'#aaa'}; // ["", "-", ".", "-.", "-..", ". ", "- ", "--", "- .", "--.", "--.."]
 		// loops
 		for(var ci=0; ci < topodata.coils.length; ci++) {
 			var ass = topodata.coils[ci];
@@ -480,28 +498,38 @@ Biojs.PDBchainTopology = Biojs.extend (
 		var minx = extents[0]; var miny = extents[1];
 		var maxx = extents[2]; var maxy = extents[3];
 		var margin = 50;
-		self.config.rapha.setViewBox(minx-margin, miny-margin, maxx-minx+2*margin, maxy-miny+2*margin, true); // TODO issue in IE! try patching raphael.js see https://github.com/DmitryBaranovskiy/raphael/issues/468 doesnt work even with it...
+		self.config.rapha.setViewBox(minx-margin, miny-margin, maxx-minx+2*margin, maxy-miny+2*margin, true); // TODO issue in IE, safari ! try patching raphael.js see https://github.com/DmitryBaranovskiy/raphael/issues/468 doesnt work even with it...
 	},
 
 	makeResidueSubpaths: function(fullpath, startresi, stopresi, reverse) {
 		var self = this;
 		var unitlen = Raphael.getTotalLength(fullpath)/(stopresi-startresi+1);
+		var coilextents = [];
 		for(var ri=0; ri < stopresi-startresi+1; ri++) {
 			var subpathattr = {'stroke':self.randomColor(),'stroke-width':14, 'stroke-opacity':0.1};
 			var subpathattr = {'stroke':'white', 'stroke-width':14, 'stroke-opacity':0.1}; // keep opacity > 0 so that mouse events are detected!
 			var subpath = Raphael.getSubpath(fullpath, unitlen*ri, unitlen*(ri+1));
 			var resindex = startresi + ri;
 			if(reverse=="yes") resindex = stopresi - ri;
-			var rp = self.config.rapha.path(subpath).toFront().attr(subpathattr).data("resindex",resindex).data("topowidget",self)
+			var incoil = false;
+			for(var ci=0; ci < self.topodata.coils.length; ci++) {
+				if(self.topodata.coils[ci].start <= resindex && resindex <= self.topodata.coils[ci].stop) { incoil = true; break; }
+			}
+			var rp = self.config.rapha.path(subpath).toFront().attr(subpathattr).data("resindex",resindex).data("topowidget",self).data("doGlow",incoil)
 			.mouseover( function(e) {
 				var resinfo = this.data("topowidget").getResInfo(this.data("resindex"));
 				ttext = (resinfo[2]+"("+resinfo[0]+resinfo[1]+")").replace(/ /g,'');
 				document.getElementById(self.config.resdiv).innerHTML = "  "+ttext;
 				self.changeTooltip(ttext, e.clientX, e.clientY);
+				if(this.data("doGlow")==true) this.glowelem = this.glow({width:5});
 			})
 			.mouseout( function(e) {
+				//alert("here " + self + " " + this);
 				document.getElementById(self.config.resdiv).innerHTML = "";
 				self.changeTooltip(false);
+				//alert("here 1");
+				if(this.data("doGlow")==true) this.glowelem.remove(); //; this.glowelem = null; }
+				//alert("here 2");
 			});
 			self.respaths.push(rp);
 			if(!self.resi2paths[resindex]) self.resi2paths[resindex] = [];
