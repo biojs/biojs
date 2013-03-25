@@ -108,16 +108,30 @@ Biojs.PDBchainTopology = Biojs.extend (
 		});
 	},
 
-	changeTooltip: function(content, posx, posy) {
+	changeTooltip: function(content, e) {
 		var self = this;
 		if(self.ttdiv == undefined) {
 			jQuery("#"+self.config.divid).append( "<div id='tooltip' style='border:1px solid black;background-color:white;display:none;position:absolute;left:100px;top:100px;font-family:Helvetica Neue, Helvetica, Arial, sans-serif;'></div>" );
 			self.ttdiv = document.getElementById("tooltip");
 		}
 		if(content==false) { self.ttdiv.style.display = "none"; return; }
+		// find tooltip x,y - this is tricky...
+		posx = e.pageX - jQuery(document).scrollLeft()+10;// - jQuery('#'+self.config.divid).offset().left;
+		posy = e.pageY - jQuery(document).scrollTop()-10;// - jQuery('#'+self.config.divid).offset().top;
+		if (e.pageX || e.pageY) {
+		  posx = e.pageX;
+		  posy = e.pageY;
+		}
+		else if (e.clientX || e.clientY) {
+		  posx = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
+		  posy = e.clientY + document.body.scrollTop + document.documentElement.scrollTop;
+		}
+		posx += 10*self.fitscale;
+		posy -= 10*self.fitscale;
+		// set tooltip
 		self.ttdiv.style.display = "block";
-		self.ttdiv.style.left = (posx+10)+"px";
-		self.ttdiv.style.top =  (posy-10)+"px";
+		self.ttdiv.style.left = posx+"px";
+		self.ttdiv.style.top =  posy+"px";
 		self.ttdiv.innerHTML = content;
 	},
 
@@ -243,6 +257,7 @@ Biojs.PDBchainTopology = Biojs.extend (
 		var self = this;
 		var path = []; // copy given path - do not modify it
 		for(var pi=0; pi < origpath.length; pi++) { path.push(origpath[pi]); }
+		// return immediately if curved loops are not to be drawn
 		if(self.curvyloops == false) return self.spliceMLin(path,"L");
 		var looppath = [];
 		// get rid of points with same x coordinate
@@ -527,6 +542,7 @@ Biojs.PDBchainTopology = Biojs.extend (
 			self.makeResidueSubpaths(respath, ass.start, ass.stop);
 		}
 		// terms
+		var fontattr = {'font':(20*self.fitscale)+'px "Arial"','text-anchor':'middle'};
 		for(var ci=0; ci < topodata.terms.length; ci++) {
 			var ass = topodata.terms[ci];
 			var looppath = [];
@@ -534,10 +550,12 @@ Biojs.PDBchainTopology = Biojs.extend (
 				looppath.push(ass.path[pi]); looppath.push(ass.path[pi+1]);
 			}
 			looppath = self.spliceMLin(looppath); looppath.push("Z");
-			ass.gelem = self.config.rapha.path(looppath).attr(ssattrib);
-			var respath = [ "M", (ass.path[0]+ass.path[2]+ass.path[4]+ass.path[6])/4, ass.path[7],
-			                "L", (ass.path[0]+ass.path[2]+ass.path[4]+ass.path[6])/4, ass.path[3] ];
-			if(ass.start != -1 && ass.stop != -1) self.makeResidueSubpaths(respath, ass.start, ass.stop);
+			// ass.gelem = self.config.rapha.path(looppath).attr(ssattrib).attr({'stroke-width':0}); // do not need shape anymore
+			// var respath = [ "M", (ass.path[0]+ass.path[2]+ass.path[4]+ass.path[6])/4, ass.path[7],
+			//                "L", (ass.path[0]+ass.path[2]+ass.path[4]+ass.path[6])/4, ass.path[3] ];
+			// if(ass.start != -1 && ass.stop != -1) self.makeResidueSubpaths(respath, ass.start, ass.stop);
+			if(ass.type == "N") ass.gelem = self.config.rapha.text(looppath[4],looppath[2],"N").attr(fontattr).attr({stroke:'blue',fill:'blue'});
+			if(ass.type == "C") ass.gelem = self.config.rapha.text((looppath[1]+looppath[6])/2,(looppath[2]+looppath[7])/2,"C").attr(fontattr).attr({stroke:'red',fill:'red'});
 		}
 		// final resizing // not required anymore due to fitToBox. setViewBox was not working in safari, IE properly anyway
 		// var extents = self.findExtents();
@@ -609,7 +627,7 @@ Biojs.PDBchainTopology = Biojs.extend (
 				var resinfo = this.data("topowidget").getResInfo(this.data("resindex"));
 				ttext = (resinfo[2]+"("+resinfo[0]+resinfo[1]+")").replace(/ /g,'');
 				document.getElementById(self.config.resdiv).innerHTML = "  "+ttext;
-				self.changeTooltip(ttext, e.clientX, e.clientY);
+				self.changeTooltip(ttext, e);
 				if(this.data("doGlow")==true) this.glowelem = this.glow(self.glowstyle);
 			})
 			.mouseout( function(e) {
@@ -638,7 +656,7 @@ Biojs.PDBchainTopology = Biojs.extend (
 			for(var ci=0; ci < sselems.length; ci++) {
 				var ass = topodata['coils'][ci];
 				if(ass.start == -1 && ass.stop == -1) ;
-				else if(ass.start == -1 || ass.stop == -1) return false;
+				else if(ass.start == -1 || ass.stop == -1) { alert(ass.start + " " + ass.stop); return false; }
 			}
 		}
 		return true;
