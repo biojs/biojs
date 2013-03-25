@@ -59,6 +59,7 @@ Biojs.PDBchainTopology = Biojs.extend (
 
 		// internal config options - not to be exposed to end-user as of now
 		var defconf = {size:700, serverport:"wwwdev.ebi.ac.uk" };
+		//var defconf = {size:700, serverport:"chrystal.ebi.ac.uk:16800" };
 
 		self.config = self.opt;
 		for(var akey in defconf) {
@@ -110,7 +111,7 @@ Biojs.PDBchainTopology = Biojs.extend (
 	changeTooltip: function(content, posx, posy) {
 		var self = this;
 		if(self.ttdiv == undefined) {
-			jQuery("#"+self.config.divid).append( "<div id='tooltip' style='border:1px solid black;display:none;position:absolute;left:100px;top:100px;'></div>" );
+			jQuery("#"+self.config.divid).append( "<div id='tooltip' style='border:1px solid black;background-color:white;display:none;position:absolute;left:100px;top:100px;font-family:Helvetica Neue, Helvetica, Arial, sans-serif;'></div>" );
 			self.ttdiv = document.getElementById("tooltip");
 		}
 		if(content==false) { self.ttdiv.style.display = "none"; return; }
@@ -169,7 +170,7 @@ Biojs.PDBchainTopology = Biojs.extend (
 		if(self.previousActivsiteElems != null) { self.previousActivsiteElems.remove(); self.previousActivsiteElems = null; }
 		if(document.getElementById(self.config.ascheckbox).checked == false) return;
 		self.config.rapha.setStart();
-		var dim = 3;
+		var dim = 5*self.fitscale;
 		for(var ri in self.resi2paths) {
 			if(Math.random() > 0.1) continue;
 			for(var rpi=0; rpi < self.resi2paths[ri].length; rpi++) {
@@ -238,8 +239,10 @@ Biojs.PDBchainTopology = Biojs.extend (
 		return newd;
 	},
 
-	makeLoopPathArray: function(path) {
+	makeLoopPathArray: function(origpath) {
 		var self = this;
+		var path = []; // copy given path - do not modify it
+		for(var pi=0; pi < origpath.length; pi++) { path.push(origpath[pi]); }
 		if(self.curvyloops == false) return self.spliceMLin(path,"L");
 		var looppath = [];
 		// get rid of points with same x coordinate
@@ -553,9 +556,9 @@ Biojs.PDBchainTopology = Biojs.extend (
 		var extents = self.findExtents();
 		var px=extents[0] ,py=extents[1], qx=extents[2], qy=extents[3];
 		// find scale
-		var scale = (bx-ax)/(qx-px);
-		if(scale > (by-ay)/(qy-py))
-			scale = (by-ay)/(qy-py);
+		self.fitscale = (bx-ax)/(qx-px);
+		if(self.fitscale > (by-ay)/(qy-py))
+			self.fitscale = (by-ay)/(qy-py);
 		// transform
 		var sstypes = {coils:"red", strands:"green", helices:"blue", terms:'purple'};
 		for(var st in sstypes) {
@@ -563,10 +566,10 @@ Biojs.PDBchainTopology = Biojs.extend (
 			for(var ci=0; ci < sselems.length; ci++) {
 				var ass = sselems[ci];
 				for(var pi=0; pi < ass.path.length; pi+=2) {
-					ass.path[pi+0] = (ass.path[pi+0]-px) * scale + ax;
-					ass.path[pi+1] = (ass.path[pi+1]-py) * scale + ay;
+					ass.path[pi+0] = (ass.path[pi+0]-px) * self.fitscale + ax;
+					ass.path[pi+1] = (ass.path[pi+1]-py) * self.fitscale + ay;
 				}
-				ass.majoraxis *= scale; ass.minoraxis *= scale;
+				ass.majoraxis *= self.fitscale; ass.minoraxis *= self.fitscale;
 			}
 		}
 		// center
@@ -588,11 +591,12 @@ Biojs.PDBchainTopology = Biojs.extend (
 
 	makeResidueSubpaths: function(fullpath, startresi, stopresi, reverse) {
 		var self = this;
+		self.glowstyle = {width:5*self.fitscale};
+		//alert(self.fitscale);
 		var unitlen = Raphael.getTotalLength(fullpath)/(stopresi-startresi+1);
 		var coilextents = [];
 		for(var ri=0; ri < stopresi-startresi+1; ri++) {
-			var subpathattr = {'stroke':self.randomColor(),'stroke-width':14, 'stroke-opacity':0.1};
-			var subpathattr = {'stroke':'white', 'stroke-width':14, 'stroke-opacity':0.1}; // keep opacity > 0 so that mouse events are detected!
+			var subpathattr = {'stroke':'white', 'stroke-width':14*self.fitscale, 'stroke-opacity':0.01}; // keep opacity > 0 so that mouse events are detected! can use self.randomColor() for color
 			var subpath = Raphael.getSubpath(fullpath, unitlen*ri, unitlen*(ri+1));
 			var resindex = startresi + ri;
 			if(reverse=="yes") resindex = stopresi - ri;
@@ -606,15 +610,12 @@ Biojs.PDBchainTopology = Biojs.extend (
 				ttext = (resinfo[2]+"("+resinfo[0]+resinfo[1]+")").replace(/ /g,'');
 				document.getElementById(self.config.resdiv).innerHTML = "  "+ttext;
 				self.changeTooltip(ttext, e.clientX, e.clientY);
-				if(this.data("doGlow")==true) this.glowelem = this.glow({width:5});
+				if(this.data("doGlow")==true) this.glowelem = this.glow(self.glowstyle);
 			})
 			.mouseout( function(e) {
-				//alert("here " + self + " " + this);
 				document.getElementById(self.config.resdiv).innerHTML = "";
 				self.changeTooltip(false);
-				//alert("here 1");
-				if(this.data("doGlow")==true) this.glowelem.remove(); //; this.glowelem = null; }
-				//alert("here 2");
+				if(this.data("doGlow")==true) this.glowelem.remove();
 			});
 			self.respaths.push(rp);
 			if(!self.resi2paths[resindex]) self.resi2paths[resindex] = [];
