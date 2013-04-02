@@ -126,8 +126,8 @@ Biojs.PDBchainTopology = Biojs.extend (
 		  posx = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
 		  posy = e.clientY + document.body.scrollTop + document.documentElement.scrollTop;
 		}
-		posx += 10*self.fitscale;
-		posy -= 10*self.fitscale;
+		posx += 10;
+		posy -= 10;
 		// set tooltip
 		self.ttdiv.style.display = "block";
 		self.ttdiv.style.left = posx+"px";
@@ -184,7 +184,7 @@ Biojs.PDBchainTopology = Biojs.extend (
 		if(self.previousActivsiteElems != null) { self.previousActivsiteElems.remove(); self.previousActivsiteElems = null; }
 		if(document.getElementById(self.config.ascheckbox).checked == false) return;
 		self.config.rapha.setStart();
-		var dim = 5*self.fitscale;
+		var dim = 0.2*self.basicwidth;
 		for(var ri in self.resi2paths) {
 			if(Math.random() > 0.1) continue;
 			for(var rpi=0; rpi < self.resi2paths[ri].length; rpi++) {
@@ -542,7 +542,7 @@ Biojs.PDBchainTopology = Biojs.extend (
 			self.makeResidueSubpaths(respath, ass.start, ass.stop);
 		}
 		// terms
-		var fontattr = {'font':(20*self.fitscale)+'px "Arial"','text-anchor':'middle'};
+		var fontattr = {'font':(self.basicwidth)+'px "Arial"','text-anchor':'middle'};
 		for(var ci=0; ci < topodata.terms.length; ci++) {
 			var ass = topodata.terms[ci];
 			var looppath = [];
@@ -564,6 +564,21 @@ Biojs.PDBchainTopology = Biojs.extend (
 		// var margin = 50;
 		// self.config.rapha.setViewBox(minx-margin, miny-margin, maxx-minx+2*margin, maxy-miny+2*margin, true); // TODO issue in IE, safari ! try patching raphael.js see https://github.com/DmitryBaranovskiy/raphael/issues/468 doesnt work even with it...
 		// self.config.rapha.setViewBox(minx-margin, miny-margin, maxx-minx+2*margin, maxy-miny+2*margin); // TODO issue in IE, safari ! try patching raphael.js see https://github.com/DmitryBaranovskiy/raphael/issues/468 doesnt work even with it...
+self.extents = self.findExtents();
+jQuery('#'+self.config.divid).click(function(e) {
+	if(e.ctrlKey) {
+		if(e.shiftKey) {
+			self.extents[2] *= 0.9;
+			self.extents[3] *= 0.9;
+		}
+		else {
+			self.extents[2] /= 0.9;
+			self.extents[3] /= 0.9;
+		}
+		self.config.rapha.setViewBox(self.extents[0], self.extents[1], self.extents[2], self.extents[3], true); // TODO issue in IE, safari ! try patching raphael.js see https://github.com/DmitryBaranovskiy/raphael/issues/468 doesnt work even with it...
+	}
+});
+
 	},
 
 	fitToBox: function() {
@@ -587,7 +602,13 @@ Biojs.PDBchainTopology = Biojs.extend (
 					ass.path[pi+0] = (ass.path[pi+0]-px) * self.fitscale + ax;
 					ass.path[pi+1] = (ass.path[pi+1]-py) * self.fitscale + ay;
 				}
-				ass.majoraxis *= self.fitscale; ass.minoraxis *= self.fitscale;
+				if(st=="helices") {
+					ass.majoraxis *= self.fitscale; ass.minoraxis *= self.fitscale;
+					self.basicwidth = ass.majoraxis;
+				}
+				if(st=="strands") {
+					self.basicwidth = Math.abs(ass.path[4]-ass.path[8]);
+				}
 			}
 		}
 		// center
@@ -609,12 +630,11 @@ Biojs.PDBchainTopology = Biojs.extend (
 
 	makeResidueSubpaths: function(fullpath, startresi, stopresi, reverse) {
 		var self = this;
-		self.glowstyle = {width:5*self.fitscale};
-		//alert(self.fitscale);
+		self.glowstyle = {width:0.1*self.basicwidth};
 		var unitlen = Raphael.getTotalLength(fullpath)/(stopresi-startresi+1);
 		var coilextents = [];
 		for(var ri=0; ri < stopresi-startresi+1; ri++) {
-			var subpathattr = {'stroke':'white', 'stroke-width':14*self.fitscale, 'stroke-opacity':0.01}; // keep opacity > 0 so that mouse events are detected! can use self.randomColor() for color
+			var subpathattr = {'stroke':'white', 'stroke-width':self.basicwidth, 'stroke-opacity':0.01}; // keep opacity > 0 so that mouse events are detected! can use self.randomColor() for color
 			var subpath = Raphael.getSubpath(fullpath, unitlen*ri, unitlen*(ri+1));
 			var resindex = startresi + ri;
 			if(reverse=="yes") resindex = stopresi - ri;
