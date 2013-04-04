@@ -113,6 +113,20 @@ Biojs.BasicSequencePainter = Biojs.extend({
 			else alert("drawHorizontalLine cant understand y-placement for line!");
 			rd0.rapha.rect(sx,sy,ex-sx,ey-sy).attr(attribs);
 		}
+	},
+	addClickHoverToAllRaphaParentDivs: function(tooltip, clickurl) {
+		var self = this;
+		for(var ri=0; ri < self.raphadivs.length; ri++) {
+			var rd = self.raphadivs[ri];
+			jQuery('#'+rd.trackdiv).css({cursor:'pointer'});
+			jQuery('#'+rd.trackdiv).tooltip({
+				bodyHandler: function() {return tooltip;},
+				track:true,
+			});
+			jQuery('#'+rd.trackdiv).click( function(e) {
+				document.location.href=clickurl;
+			} );
+		}
 	}
 });
 
@@ -123,6 +137,8 @@ Biojs.ObservedSequencePainter = Biojs.BasicSequencePainter.extend({
 		self.unobserved = options.unobserved;
 		self.midribAttrib = options.midribAttrib;
 		self.obsbarAttrib = options.obsbarAttrib;
+		self.tooltip = options.tooltip;
+		self.clickURL = options.clickURL;
 	},
 	paint: function() {
 		var self = this;
@@ -130,11 +146,12 @@ Biojs.ObservedSequencePainter = Biojs.BasicSequencePainter.extend({
 		//rd.rapha.rect(rd.startx, rd.starty, rd.stopx-rd.startx, rd.stopy-rd.starty).attr({fill:'red'});
 		//alert( self.breakRangeAtRowBoudary(0,50) );
 		//alert( self.breakDomainRangesAtRowBoundary(self.unobserved) );
-		self.drawHorizontalLine(0, self.seqlen-1, {midpercent:10}, self.midribAttrib);
+		self.drawHorizontalLine(0, self.seqlen-1, {midpercent:20}, self.midribAttrib);
 		cranges = self.complementaryRanges(self.unobserved);
 		for(var ci=0; ci < cranges.length; ci++) {
 			self.drawHorizontalLine(cranges[ci][0], cranges[ci][1], {midpercent:80}, self.obsbarAttrib);
 		}
+		self.addClickHoverToAllRaphaParentDivs(self.tooltip, self.clickURL);
 	}
 });
 
@@ -166,7 +183,8 @@ Biojs.PDBsequenceViewer = Biojs.extend ({
 			self.rowtrackRapha.push([]);
 			for(var ti=0; ti < tracks.length; ti++) {
 				var rightdiv = divid+"_row_"+ri+"_right_"+ti; var leftdiv = divid+"_row_"+ri+"_left_"+ti;
-				self.rowtrackRapha[ri].push( {rapha:Raphael(divid+"_row_"+ri+"_track_"+ti, width, tracks[ti].height), extents:[0,0,width,tracks[ti].height], leftdivid:leftdiv, rightdivid:rightdiv} );
+				var trackdiv = divid+"_row_"+ri+"_track_"+ti;
+				self.rowtrackRapha[ri].push( {rapha:Raphael(divid+"_row_"+ri+"_track_"+ti, width, tracks[ti].height), extents:[0,0,width,tracks[ti].height], leftdivid:leftdiv, rightdivid:rightdiv, trackdiv:trackdiv} );
 			}
 		}
 	},

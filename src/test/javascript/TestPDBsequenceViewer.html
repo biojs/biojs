@@ -5,6 +5,8 @@
     <title>PDBsequenceViewer - Test</title>
     <!--JQuery LIb and CSS -->
     <script src="../../main/resources/dependencies/jquery/jquery-1.4.2.min.js" type="text/javascript"></script>
+    <script src="../../main/resources/dependencies/jquery/jquery.tooltip.js" type="text/javascript"></script>
+    <link rel="stylesheet" href="../../main/resources/dependencies/jquery/jquery.tooltip.css"></link>
     <script type="text/javascript">
         jQuery.noConflict();
     </script>
@@ -18,18 +20,31 @@
     <script language="JavaScript" type="text/javascript" src="../../main/javascript/Biojs.PDBsequenceViewer.js"></script>
 
     <script>
-		var thetracks = [
-			{height:20, painters:[
-				{type:'Biojs.ObservedSequencePainter', seqlen:100, numIndicesInRow:100, unobserved:[[0,5],[50,70],[95,99]], multimodelled:[[33,33],[44,48]], midribAttrib:{fill:'brown',stroke:null}, obsbarAttrib:{fill:'yellow',stroke:null}}
-			]}
-		];
 		function seqdemo() {
-			var myseqviwer = new Biojs.PDBsequenceViewer({divid:"seqdiv", numrows:4, leftwidth:10, width:100, rightwidth:10, tracks:thetracks});
+			var thetracks = [
+				{height:20, painters:[
+					{type:'Biojs.ObservedSequencePainter', seqlen:100, numIndicesInRow:100, unobserved:[[0,5],[50,70],[95,99]], multimodelled:[[33,33],[44,48]],
+						midribAttrib:{fill:'lightgrey',stroke:null}, obsbarAttrib:{fill:'grey',stroke:null},
+						tooltip:"hello", clickURL:"http://www.ebi.ac.uk",
+					}
+				]}
+			];
+			new Biojs.PDBsequenceViewer({divid:"seqdiv", numrows:1, leftwidth:10, width:150, rightwidth:10, tracks:thetracks});
+			var thetracks1 = [
+				{height:20, painters:[
+					{type:'Biojs.ObservedSequencePainter', seqlen:200, numIndicesInRow:200, unobserved:[[50,70],[95,99]], multimodelled:[[33,33],[44,48]],
+						midribAttrib:{fill:'lightgreen',stroke:null}, obsbarAttrib:{fill:'green',stroke:null},
+						tooltip:"hello again", clickURL:"http://www.google.com",
+					}
+				]}
+			];
+			new Biojs.PDBsequenceViewer({divid:"seqdiv1", numrows:1, leftwidth:10, width:100, rightwidth:10, tracks:thetracks1});
 		}
     </script>
 </head>
 <body onload="seqdemo();">
 	This is a PDBe widget showing various sequence decorations.<hr>
-    <div id="seqdiv"></div>
+    <span id="seqdiv"></span>
+    <span id="seqdiv1"></span>
 </body>
 </html>
