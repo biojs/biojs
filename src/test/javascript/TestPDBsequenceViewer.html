@@ -32,20 +32,20 @@
 			var thetracks2 = [
 				{height:20, painters:[
 					{type:'Biojs.ObservedSequencePainter', seqlen:200, numIndicesInRow:200,
-						unobserved:[[50,70],[95,99]], multimodelled:[[33,33],[44,48]],
+						unobserved:[[0,20],[50,70],[95,99],[175,199]], multimodelled:[[33,33],[44,48]],
 						midribAttrib:{fill:'lightgreen',stroke:null}, obsbarAttrib:{fill:'green',stroke:null},
 						tooltip:"hello again", clickURL:"http://www.google.com"
 					}
 				]},
 				{height:20, painters:[
 					{type:'Biojs.ZoombarPainter', seqlen:200, numIndicesInRow:200,
-						pixelwidth:200, minval:0, maxval:100, initleft:0, initright:100, thumbwidth:20,
+						pixelwidth:600, initleft:0, initright:200, thumbwidth:20,
 						leftthumb:"http://yui.yahooapis.com/2.9.0/build/slider/assets/left-thumb.png",
 						rightthumb:"http://yui.yahooapis.com/2.9.0/build/slider/assets/right-thumb.png",
 					}
 				]}
 			];
-			new Biojs.PDBsequenceViewer({divid:"seqdiv2", numrows:1, leftwidth:10, width:200, rightwidth:10, tracks:thetracks2});
+			new Biojs.PDBsequenceViewer({divid:"seqdiv2", numrows:1, leftwidth:10, width:600, rightwidth:10, tracks:thetracks2});
 
 			var thetracks = [
 				{height:20, painters:[

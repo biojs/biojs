@@ -31,6 +31,9 @@
  * 
  */
 
+// using these instead of biojs events because of flexibility! biojs events need both source and listener to be available to make a connection!
+Biojs.PDBsequenceViewerEvent = new YAHOO.util.CustomEvent("PDBsequenceViewerEvent", Biojs);
+
 Biojs.BasicSequencePainter = Biojs.extend({
 	constructor: function(options) {
 		var self = this;
@@ -41,6 +44,7 @@ Biojs.BasicSequencePainter = Biojs.extend({
 		self.raphadivs = options.raphadivs;
 		self.seqlen = options.seqlen;
 		self.numIndicesInRow = options.numIndicesInRow;
+		self.basedivid = options.basedivid;
 	},
 	indexCoordinate: function(index) {
 		// from raphael objects provided, return raphael object and bounding coordinates of a box corresponding to an index
@@ -136,7 +140,7 @@ Biojs.ZoombarPainter = Biojs.BasicSequencePainter.extend({
 		self.init(options);
 		self.pixelwidth = options.pixelwidth;
 		self.thumbwidth = options.thumbwidth; self.leftthumb = options.leftthumb; self.rightthumb = options.rightthumb;
-		self.initleft = options.initleft; self.initright = options.initright; self.minval = options.minval; self.maxval = options.maxval;
+		self.initleft = options.initleft; self.initright = options.initright; self.minval = 0; self.maxval = options.seqlen-1;
 	},
 	paint: function() {
 		var self = this;
@@ -163,9 +167,10 @@ Biojs.ZoombarPainter = Biojs.BasicSequencePainter.extend({
 					self.pixelwidth-self.thumbwidth, 0, [convertValueToPixel(self.initleft),convertValueToPixel(self.initright)] );
         slider.minRange = 1; // minimum distance between thumbnails
         var updateUI = function () {
-			//alert(slider.minVal + " " + slider.maxVal + "_______" + convertPixelToValue(slider.minVal) + " herer " + convertPixelToValue(slider.maxVal) );
+			Biojs.PDBsequenceViewerEvent.fire({basedivid:self.basedivid,type:"onSequenceZoom",start:convertPixelToValue(slider.minVal), stop:convertPixelToValue(slider.maxVal)});
+			//console.log("updateUI123 " + slider.minVal + " " + slider.maxVal + " " + convertPixelToValue(slider.minVal) + " " + convertPixelToValue(slider.maxVal) );
 		};
-        slider.subscribe('ready', updateUI);
+        //slider.subscribe('ready', updateUI);
         slider.subscribe('change', updateUI);
 	}
 });
@@ -182,25 +187,38 @@ Biojs.ObservedSequencePainter = Biojs.BasicSequencePainter.extend({
 	},
 	paint: function() {
 		var self = this;
-		//var rd = self.indexCoordinate(26);
-		//rd.rapha.rect(rd.startx, rd.starty, rd.stopx-rd.startx, rd.stopy-rd.starty).attr({fill:'red'});
-		//alert( self.breakRangeAtRowBoudary(0,50) );
-		//alert( self.breakDomainRangesAtRowBoundary(self.unobserved) );
+		Biojs.PDBsequenceViewerEvent.subscribe(self.onSequenceZoom, self);
 		self.drawHorizontalLine(0, self.seqlen-1, {midpercent:20}, self.midribAttrib);
 		cranges = self.complementaryRanges(self.unobserved);
 		for(var ci=0; ci < cranges.length; ci++) {
 			self.drawHorizontalLine(cranges[ci][0], cranges[ci][1], {midpercent:80}, self.obsbarAttrib);
 		}
 		self.addClickHoverToAllRaphaParentDivs(self.tooltip, self.clickURL);
+	},
+	zoomOnSequenceRange: function(start,stop) {
+		// changes viewbox so that the sequence between start and stop occupies the whole raphael canvas
+		var self = this;
+		if(self.raphadivs.length != 1) { alert("Serious error - zoom is not possible if painter spans more than a row!"); return; }
+		var rd = self.raphadivs[0];
+		var startx = self.indexCoordinate(start).startx, stopx = self.indexCoordinate(stop).stopx;
+		//console.log("hi " + start + " " + stop + " : " + startx + " " + stopx);
+		rd.rapha.setViewBox(startx, 0, stopx-startx, rd.rapha.height, false);
+		rd.rapha.canvas.setAttribute('preserveAspectRatio', 'none'); // TODO no equivalent fix for IE 6/7/8?
+	},
+	onSequenceZoom: function(type, args, me) {
+		//console.log(me.basedivid + " " + args[0].basedivid);
+		if(me.basedivid != args[0].basedivid) return;
+		//console.log(args[0].start);
+		me.zoomOnSequenceRange(args[0].start, args[0].stop);
 	}
 });
 
 Biojs.PDBsequenceViewer = Biojs.extend ({
 	constructor: function (options) {
 		var self = this;
+		self.divid = options.divid;
 		self.makeLayout(options.divid, options.numrows, options.leftwidth, options.width, options.rightwidth, options.tracks);
 		self.drawTracks(options.tracks, options.numrows);
-		return self;
 	},
 	makeLayout: function(divid, numrows, leftwidth, width, rightwidth, tracks) {
 		// the aim here is to make divs for rapha objects necessary, and assign a raphael object (and area therein) to a row/track
@@ -242,7 +260,7 @@ Biojs.PDBsequenceViewer = Biojs.extend ({
 			}
 			for(var pi=0; pi < tracks[ti].painters.length; pi++) {
 				var ap = tracks[ti].painters[pi];
-				ap.raphadivs = raphadivs;
+				ap.raphadivs = raphadivs; ap.basedivid = self.divid;
 				if(ap.type=="Biojs.ObservedSequencePainter") {
 					var painter = new Biojs.ObservedSequencePainter(ap);
 					painter.paint();
