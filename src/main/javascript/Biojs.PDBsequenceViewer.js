@@ -130,6 +130,46 @@ Biojs.BasicSequencePainter = Biojs.extend({
 	}
 });
 
+Biojs.ZoombarPainter = Biojs.BasicSequencePainter.extend({
+	constructor: function(options) {
+		var self = this;
+		self.init(options);
+		self.pixelwidth = options.pixelwidth;
+		self.thumbwidth = options.thumbwidth; self.leftthumb = options.leftthumb; self.rightthumb = options.rightthumb;
+		self.initleft = options.initleft; self.initright = options.initright; self.minval = options.minval; self.maxval = options.maxval;
+	},
+	paint: function() {
+		var self = this;
+		if(self.raphadivs.length != 1) {
+			alert("Serious error - Cannot implement ZoombarPainter in more than one row!"); return;
+		}
+		var rd = self.raphadivs[0];
+		jQuery("body").addClass("yui-skin-sam");
+		jQuery("#"+rd.trackdiv).empty();
+		var sliderhtml = '<div id="'+rd.trackdiv+'_sliderdiv" class="yui-h-slider" style="width:'+(self.pixelwidth-self.thumbwidth/2)+'px;">'
+		sliderhtml += '    <div id="'+rd.trackdiv+'_leftthumb" class="yui-slider-thumb"><img src="'+self.leftthumb+'"></div>'
+		sliderhtml += '    <div id="'+rd.trackdiv+'_rightthumb" class="yui-slider-thumb"><img src="'+self.rightthumb+'"></div>'
+		sliderhtml += '</div>'
+		jQuery("#"+rd.trackdiv).append(sliderhtml);
+    	var convertPixelToValue = function (pval) {
+    		var cf = (self.maxval-self.minval)/(self.pixelwidth - self.thumbwidth); // remember to account for width of thumbnail image!
+        	return Math.round(pval * cf + self.minval);
+    	};
+    	var convertValueToPixel = function (val) {
+    		var cf = (self.pixelwidth-self.thumbwidth)/(self.maxval-self.minval); // remember to account for width of thumbnail image!
+        	return Math.round(val * cf);
+    	};
+        var slider = YAHOO.widget.Slider.getHorizDualSlider(rd.trackdiv+"_sliderdiv", rd.trackdiv+"_leftthumb", rd.trackdiv+"_rightthumb",
+					self.pixelwidth-self.thumbwidth, 0, [convertValueToPixel(self.initleft),convertValueToPixel(self.initright)] );
+        slider.minRange = 1; // minimum distance between thumbnails
+        var updateUI = function () {
+			//alert(slider.minVal + " " + slider.maxVal + "_______" + convertPixelToValue(slider.minVal) + " herer " + convertPixelToValue(slider.maxVal) );
+		};
+        slider.subscribe('ready', updateUI);
+        slider.subscribe('change', updateUI);
+	}
+});
+
 Biojs.ObservedSequencePainter = Biojs.BasicSequencePainter.extend({
 	constructor: function(options) {
 		var self = this;
@@ -205,6 +245,10 @@ Biojs.PDBsequenceViewer = Biojs.extend ({
 				ap.raphadivs = raphadivs;
 				if(ap.type=="Biojs.ObservedSequencePainter") {
 					var painter = new Biojs.ObservedSequencePainter(ap);
+					painter.paint();
+				}
+				else if(ap.type=="Biojs.ZoombarPainter") {
+					var painter = new Biojs.ZoombarPainter(ap);
 					painter.paint();
 				}
 			}

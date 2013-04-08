@@ -12,6 +12,12 @@
     </script>
     <!--END JQuery LIb and CSS -->
 
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.9.0/build/slider/assets/skins/sam/slider.css" />
+<script type="text/javascript" src="http://yui.yahooapis.com/2.9.0/build/yahoo-dom-event/yahoo-dom-event.js"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/2.9.0/build/animation/animation-min.js"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/2.9.0/build/dragdrop/dragdrop-min.js"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/2.9.0/build/slider/slider.js"></script>
+
     <!-- raphael LIB -->
     <script src="../../main/resources/dependencies/graphics/raphael-2.1.0.js" type="text/javascript" charset="utf-8"></script>
 
@@ -21,6 +27,26 @@
 
     <script>
 		function seqdemo() {
+
+
+			var thetracks2 = [
+				{height:20, painters:[
+					{type:'Biojs.ObservedSequencePainter', seqlen:200, numIndicesInRow:200,
+						unobserved:[[50,70],[95,99]], multimodelled:[[33,33],[44,48]],
+						midribAttrib:{fill:'lightgreen',stroke:null}, obsbarAttrib:{fill:'green',stroke:null},
+						tooltip:"hello again", clickURL:"http://www.google.com"
+					}
+				]},
+				{height:20, painters:[
+					{type:'Biojs.ZoombarPainter', seqlen:200, numIndicesInRow:200,
+						pixelwidth:200, minval:0, maxval:100, initleft:0, initright:100, thumbwidth:20,
+						leftthumb:"http://yui.yahooapis.com/2.9.0/build/slider/assets/left-thumb.png",
+						rightthumb:"http://yui.yahooapis.com/2.9.0/build/slider/assets/right-thumb.png",
+					}
+				]}
+			];
+			new Biojs.PDBsequenceViewer({divid:"seqdiv2", numrows:1, leftwidth:10, width:200, rightwidth:10, tracks:thetracks2});
+
 			var thetracks = [
 				{height:20, painters:[
 					{type:'Biojs.ObservedSequencePainter', seqlen:100, numIndicesInRow:100, unobserved:[[0,5],[50,70],[95,99]], multimodelled:[[33,33],[44,48]],
@@ -30,21 +56,37 @@
 				]}
 			];
 			new Biojs.PDBsequenceViewer({divid:"seqdiv", numrows:1, leftwidth:10, width:150, rightwidth:10, tracks:thetracks});
+
 			var thetracks1 = [
 				{height:20, painters:[
 					{type:'Biojs.ObservedSequencePainter', seqlen:200, numIndicesInRow:200, unobserved:[[50,70],[95,99]], multimodelled:[[33,33],[44,48]],
 						midribAttrib:{fill:'lightgreen',stroke:null}, obsbarAttrib:{fill:'green',stroke:null},
-						tooltip:"hello again", clickURL:"http://www.google.com",
+						tooltip:"hello again", clickURL:"http://www.google.com"
 					}
 				]}
 			];
 			new Biojs.PDBsequenceViewer({divid:"seqdiv1", numrows:1, leftwidth:10, width:100, rightwidth:10, tracks:thetracks1});
+
 		}
     </script>
 </head>
 <body onload="seqdemo();">
+	!!!!UNDER DEVELOPMENT!!!!<hr>
 	This is a PDBe widget showing various sequence decorations.<hr>
-    <span id="seqdiv"></span>
+    example 1<br>
+	<span id="seqdiv"></span>
+	<hr>
+	<hr>
+	<hr>
+    example 2<br>
     <span id="seqdiv1"></span>
+	<hr>
+	<hr>
+	<hr>
+    example 3<br>
+    <span id="seqdiv2"></span>
+	<hr>
+	<hr>
+	<hr>
 </body>
 </html>
