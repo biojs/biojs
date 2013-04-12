@@ -32,7 +32,9 @@
  */
 
 // using these instead of biojs events because of flexibility! biojs events need both source and listener to be available to make a connection!
-Biojs.PDBsequenceViewerEvent = new YAHOO.util.CustomEvent("PDBsequenceViewerEvent", Biojs);
+Biojs.PSVevents = {}; // namespace for internal YUI events within PDBsequenceViewer
+Biojs.PSVevents.SequenceZoomEvent = new YAHOO.util.CustomEvent("Biojs.PSVevents.SequenceZoomEvent", Biojs);
+Biojs.PSVevents.DomainHoverEvent  = new YAHOO.util.CustomEvent("Biojs.PSVevents.DomainHoverEvent",  Biojs);
 
 Biojs.BasicSequencePainter = Biojs.extend({
 	constructor: function(options) {
@@ -103,7 +105,8 @@ Biojs.BasicSequencePainter = Biojs.extend({
 	},
 	drawHorizontalLine: function(start,stop,ypos,attribs) {
 		var self = this;
-		var brokenranges = self.breakRangeAtRowBoudary(start,stop);
+console.log(ypos);
+		var brokenranges = self.breakRangeAtRowBoudary(start,stop), raphaobjects = [];
 		for(var bi=0; bi<brokenranges.length; bi++) {
 			var rd1 = self.indexCoordinate(brokenranges[bi][1]);
 			var rd0 = self.indexCoordinate(brokenranges[bi][0]);
@@ -115,8 +118,9 @@ Biojs.BasicSequencePainter = Biojs.extend({
 				ey = my + ypos.midpercent/2*py;
 			}
 			else alert("drawHorizontalLine cant understand y-placement for line!");
-			rd0.rapha.rect(sx,sy,ex-sx,ey-sy).attr(attribs);
+			raphaobjects.push( rd0.rapha.rect(sx,sy,ex-sx,ey-sy).attr(attribs) );
 		}
+		return raphaobjects;
 	},
 	addClickHoverToAllRaphaParentDivs: function(tooltip, clickurl) {
 		var self = this;
@@ -125,12 +129,28 @@ Biojs.BasicSequencePainter = Biojs.extend({
 			jQuery('#'+rd.trackdiv).css({cursor:'pointer'});
 			jQuery('#'+rd.trackdiv).tooltip({
 				bodyHandler: function() {return tooltip;},
-				track:true,
+				track:true
 			});
 			jQuery('#'+rd.trackdiv).click( function(e) {
 				document.location.href=clickurl;
 			} );
 		}
+	},
+	zoomOnSequenceRange: function(start,stop) {
+		// changes viewbox so that the sequence between start and stop occupies the whole raphael canvas
+		var self = this;
+		if(self.raphadivs.length != 1) { alert("Serious error - zoom is not possible if painter spans more than a row!"); return; }
+		var rd = self.raphadivs[0];
+		var startx = self.indexCoordinate(start).startx, stopx = self.indexCoordinate(stop).stopx;
+		//console.log("hi " + start + " " + stop + " : " + startx + " " + stopx);
+		rd.rapha.setViewBox(startx, 0, stopx-startx, rd.rapha.height, false);
+		rd.rapha.canvas.setAttribute('preserveAspectRatio', 'none'); // TODO no equivalent fix for IE 6/7/8?
+	},
+	onSequenceZoom: function(type, args, me) {
+		//console.log(me.basedivid + " " + args[0].basedivid);
+		if(me.basedivid != args[0].basedivid) return;
+		//console.log(args[0].start);
+		me.zoomOnSequenceRange(args[0].start, args[0].stop);
 	}
 });
 
@@ -167,7 +187,7 @@ Biojs.ZoombarPainter = Biojs.BasicSequencePainter.extend({
 					self.pixelwidth-self.thumbwidth, 0, [convertValueToPixel(self.initleft),convertValueToPixel(self.initright)] );
         slider.minRange = 1; // minimum distance between thumbnails
         var updateUI = function () {
-			Biojs.PDBsequenceViewerEvent.fire({basedivid:self.basedivid,type:"onSequenceZoom",start:convertPixelToValue(slider.minVal), stop:convertPixelToValue(slider.maxVal)});
+			Biojs.PSVevents.SequenceZoomEvent.fire({basedivid:self.basedivid,start:convertPixelToValue(slider.minVal), stop:convertPixelToValue(slider.maxVal)});
 			//console.log("updateUI123 " + slider.minVal + " " + slider.maxVal + " " + convertPixelToValue(slider.minVal) + " " + convertPixelToValue(slider.maxVal) );
 		};
         //slider.subscribe('ready', updateUI);
@@ -187,7 +207,7 @@ Biojs.ObservedSequencePainter = Biojs.BasicSequencePainter.extend({
 	},
 	paint: function() {
 		var self = this;
-		Biojs.PDBsequenceViewerEvent.subscribe(self.onSequenceZoom, self);
+		Biojs.PSVevents.SequenceZoomEvent.subscribe(self.onSequenceZoom, self);
 		self.drawHorizontalLine(0, self.seqlen-1, {midpercent:20}, self.midribAttrib);
 		cranges = self.complementaryRanges(self.unobserved);
 		for(var ci=0; ci < cranges.length; ci++) {
@@ -195,21 +215,63 @@ Biojs.ObservedSequencePainter = Biojs.BasicSequencePainter.extend({
 		}
 		self.addClickHoverToAllRaphaParentDivs(self.tooltip, self.clickURL);
 	},
-	zoomOnSequenceRange: function(start,stop) {
-		// changes viewbox so that the sequence between start and stop occupies the whole raphael canvas
+});
+
+Biojs.DomainPainter = Biojs.BasicSequencePainter.extend({
+	constructor: function(options) {
 		var self = this;
-		if(self.raphadivs.length != 1) { alert("Serious error - zoom is not possible if painter spans more than a row!"); return; }
-		var rd = self.raphadivs[0];
-		var startx = self.indexCoordinate(start).startx, stopx = self.indexCoordinate(stop).stopx;
-		//console.log("hi " + start + " " + stop + " : " + startx + " " + stopx);
-		rd.rapha.setViewBox(startx, 0, stopx-startx, rd.rapha.height, false);
-		rd.rapha.canvas.setAttribute('preserveAspectRatio', 'none'); // TODO no equivalent fix for IE 6/7/8?
+		self.init(options);
+		self.domains = options.domains;
 	},
-	onSequenceZoom: function(type, args, me) {
-		//console.log(me.basedivid + " " + args[0].basedivid);
-		if(me.basedivid != args[0].basedivid) return;
-		//console.log(args[0].start);
-		me.zoomOnSequenceRange(args[0].start, args[0].stop);
+	paint: function() {
+		var self = this;
+		Biojs.PSVevents.SequenceZoomEvent.subscribe(self.onSequenceZoom, self);
+		for(var di=0; di < self.domains.length; di++) {
+			var dom = self.domains[di];
+			dom.domUid = self.basedivid + "_domid"+Math.random();
+			self.paintObserved(dom);
+		}
+	},
+	paintObserved: function(dom) {
+		var self = this;
+		var domranges = self.breakDomainRangesAtRowBoundary(dom.ranges);
+		dom.raphaobjs = []; dom.glowelems = [];
+		Biojs.PSVevents.DomainHoverEvent.subscribe(self.glowTheDomain, self);
+		for(var dri=0; dri < domranges.length; dri++) {
+			var ros = self.drawHorizontalLine(domranges[dri][0],domranges[dri][1], dom.ypos, dom.attribs);
+			for(var ri=0; ri < ros.length; ri++) {
+				dom.raphaobjs.push(ros[ri]);
+				if(dom.tooltip) {
+					jQuery(ros[ri].node).tooltip({
+						bodyHandler: function() {return dom.tooltip.text;},
+						track:true
+					});
+				}
+				if(dom.glowOnHover) {
+					jQuery(ros[ri].node).mouseenter( function(e) {
+						Biojs.PSVevents.DomainHoverEvent.fire({domUid:dom.domUid,type:'mouseenter'});
+					});
+					jQuery(ros[ri].node).mouseleave( function(e) {
+						Biojs.PSVevents.DomainHoverEvent.fire({domUid:dom.domUid,type:'mouseleave'});
+					});
+				}
+			}
+		}
+	},
+	glowTheDomain: function(type, args, me) {
+		var self = me;
+		jQuery.each(self.domains, function(di,dom) {
+			if(dom.domUid != args[0].domUid) return;
+			if(args[0].type != "mouseenter" && args[0].type != "mouseleave") {
+				alert("Serious error! event type unknown... " + args[0].type); return;
+			}
+			jQuery.each(dom.raphaobjs, function(ri,robj) {
+				if(args[0].type == "mouseenter")
+					dom.glowelems.push( robj.glow(dom.glowOnHover) );
+				else if(args[0].type == "mouseleave")
+					jQuery.each(dom.glowelems, function(gi,gelem) {gelem.remove();});
+			});
+		});
 	}
 });
 
@@ -268,6 +330,13 @@ Biojs.PDBsequenceViewer = Biojs.extend ({
 				else if(ap.type=="Biojs.ZoombarPainter") {
 					var painter = new Biojs.ZoombarPainter(ap);
 					painter.paint();
+				}
+				else if(ap.type=="Biojs.DomainPainter") {
+					var painter = new Biojs.DomainPainter(ap);
+					painter.paint();
+				}
+				else {
+					alert("serious error! unknown painter type " + ap.type);
 				}
 			}
 		}

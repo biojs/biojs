@@ -31,19 +31,44 @@
 
 			var thetracks2 = [
 				{height:20, painters:[
-					{type:'Biojs.ObservedSequencePainter', seqlen:200, numIndicesInRow:200,
-						unobserved:[[0,20],[50,70],[95,99],[175,199]], multimodelled:[[33,33],[44,48]],
-						midribAttrib:{fill:'lightgreen',stroke:null}, obsbarAttrib:{fill:'green',stroke:null},
-						tooltip:"hello again", clickURL:"http://www.google.com"
-					}
-				]},
-				{height:20, painters:[
 					{type:'Biojs.ZoombarPainter', seqlen:200, numIndicesInRow:200,
 						pixelwidth:600, initleft:0, initright:200, thumbwidth:20,
 						leftthumb:"http://yui.yahooapis.com/2.9.0/build/slider/assets/left-thumb.png",
 						rightthumb:"http://yui.yahooapis.com/2.9.0/build/slider/assets/right-thumb.png",
 					}
-				]}
+				]},
+				{height:20, painters:[
+					{type:'Biojs.DomainPainter', seqlen:200, numIndicesInRow:200,
+						domains:[
+							{ranges:[[0,199]], ypos:{midpercent:20}, attribs:{fill:'#33AA33',stroke:'#33AA33'},   // uniprot seq
+								tooltip:{common:'yes','text':'Uniprot P34243'} },
+							{ranges:[[10,90]], ypos:{midpercent:50}, attribs:{fill:'#EE3333',stroke:'none'},  // pfam domain
+								tooltip:{common:'yes',text:'Pfam domain PF12345'}, glowOnHover:{fill:'blue'} },
+							{ranges:[[110,180]], ypos:{midpercent:50}, attribs:{fill:'#DE2255',stroke:'none'},  // pfam domain
+								tooltip:{common:'yes',text:'Pfam domain PF45678'}, glowOnHover:{fill:'blue'} },
+						]
+					}
+				]},
+				{height:20, painters:[
+					{type:'Biojs.DomainPainter', seqlen:200, numIndicesInRow:200,
+						domains:[
+							{ranges:[[10,30],[40,144],[160,195]], ypos:{midpercent:20}, attribs:{fill:'#2222CC',stroke:'#2222CC'},   // 'domain'(!) of observed residues in a PDB chain
+								tooltip:{common:'yes','text':'Observed fraction is about 85% for PDB id 1xyz chain P.'} },
+							{ranges:[[20,25],[60,104],[180,190]], ypos:{midpercent:60}, attribs:{fill:'#22AAAA',stroke:'none'},  // some cath/scop domain
+								tooltip:{common:'yes',text:'CATH domain 3.2.30.40'}, glowOnHover:{fill:'blue'} }
+						]
+					}
+				]},
+				{height:20, painters:[
+					{type:'Biojs.DomainPainter', seqlen:200, numIndicesInRow:200,
+						domains:[
+							{ranges:[[5,32],[35,134],[155,192]], ypos:{midpercent:20}, attribs:{fill:'#2222CC',stroke:'#2222CC'},   // 'domain'(!) of observed residues in a PDB chain
+								tooltip:{common:'yes','text':'Observed fraction is about 80% for PDB id 1pqr chain X.'} },
+							{ranges:[[20,25],[60,104],[180,190]], ypos:{midpercent:60}, attribs:{fill:'#22AAAA',stroke:'none'},  // some cath/scop domain
+								tooltip:{common:'yes',text:'CATH domain 3.2.30.40'}, glowOnHover:{fill:'blue'} }
+						]
+					}
+				]},
 			];
 			new Biojs.PDBsequenceViewer({divid:"seqdiv2", numrows:1, leftwidth:10, width:600, rightwidth:10, tracks:thetracks2});
 
