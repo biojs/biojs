@@ -35,6 +35,7 @@
 Biojs.PSVevents = {}; // namespace for internal YUI events within PDBsequenceViewer
 Biojs.PSVevents.SequenceZoomEvent = new YAHOO.util.CustomEvent("Biojs.PSVevents.SequenceZoomEvent", Biojs);
 Biojs.PSVevents.DomainHoverEvent  = new YAHOO.util.CustomEvent("Biojs.PSVevents.DomainHoverEvent",  Biojs);
+jQuery(document).mousemove( function(e) {Biojs.PSVevents.latestMouseEvent = e;} ); // TODO remove this hack
 
 Biojs.BasicSequencePainter = Biojs.extend({
 	constructor: function(options) {
@@ -48,7 +49,7 @@ Biojs.BasicSequencePainter = Biojs.extend({
 		self.numIndicesInRow = options.numIndicesInRow;
 		self.basedivid = options.basedivid;
 	},
-	indexCoordinate: function(index) {
+	index2coordinate: function(index) {
 		// from raphael objects provided, return raphael object and bounding coordinates of a box corresponding to an index
 		var self = this;
 		if(index >= self.seqlen) return null;
@@ -105,11 +106,10 @@ Biojs.BasicSequencePainter = Biojs.extend({
 	},
 	drawHorizontalLine: function(start,stop,ypos,attribs) {
 		var self = this;
-console.log(ypos);
 		var brokenranges = self.breakRangeAtRowBoudary(start,stop), raphaobjects = [];
 		for(var bi=0; bi<brokenranges.length; bi++) {
-			var rd1 = self.indexCoordinate(brokenranges[bi][1]);
-			var rd0 = self.indexCoordinate(brokenranges[bi][0]);
+			var rd1 = self.index2coordinate(brokenranges[bi][1]);
+			var rd0 = self.index2coordinate(brokenranges[bi][0]);
 			var sx = rd0.startx; var sy = rd0.starty;
 			var ex = rd1.stopx; var ey = rd1.stopy;
 			if(ypos.midpercent) {
@@ -141,7 +141,7 @@ console.log(ypos);
 		var self = this;
 		if(self.raphadivs.length != 1) { alert("Serious error - zoom is not possible if painter spans more than a row!"); return; }
 		var rd = self.raphadivs[0];
-		var startx = self.indexCoordinate(start).startx, stopx = self.indexCoordinate(stop).stopx;
+		var startx = self.index2coordinate(start).startx, stopx = self.index2coordinate(stop).stopx;
 		//console.log("hi " + start + " " + stop + " : " + startx + " " + stopx);
 		rd.rapha.setViewBox(startx, 0, stopx-startx, rd.rapha.height, false);
 		rd.rapha.canvas.setAttribute('preserveAspectRatio', 'none'); // TODO no equivalent fix for IE 6/7/8?
@@ -155,6 +155,45 @@ console.log(ypos);
 });
 
 Biojs.ZoombarPainter = Biojs.BasicSequencePainter.extend({
+	constructor: function(options) {
+		var self = this;
+		self.init(options);
+		self.pixelwidth = options.pixelwidth;
+		self.initleft = options.initleft; self.initright = options.initright; self.minval = 0; self.maxval = options.seqlen-1;
+	},
+	paint: function() {
+		var self = this;
+		if(self.raphadivs.length != 1) {
+			alert("Serious error - Cannot implement ZoombarPainter in more than one row!"); return;
+		}
+		var rd = self.raphadivs[0];
+		jQuery("#"+rd.trackdiv).empty();
+		var sliderhtml = '<div id="'+rd.trackdiv+'_sliderdiv" class="yui-h-slider" style="width:'+self.pixelwidth+'px;"></div>';
+		jQuery("#"+rd.trackdiv).append(sliderhtml);
+    	var convertPixelToValue = function (pval) {
+    		var cf = (self.maxval-self.minval)/(self.pixelwidth); // remember to account for width of thumbnail image!
+        	return Math.round(pval * cf + self.minval);
+    	};
+    	var convertValueToPixel = function (val) {
+    		var cf = (self.pixelwidth)/(self.maxval-self.minval); // remember to account for width of thumbnail image!
+        	return Math.round(val * cf);
+    	};
+        jQuery('#'+rd.trackdiv+"_sliderdiv").rangeSlider({
+			arrows:false, bounds:{min:self.minval,max:self.maxval}, defaultValues:{min:self.minval,max:self.maxval}, step:1, valueLabels:'change',
+			scales: [
+				{
+					next: function(val) {return val+1;},
+					label: function(val) { if(val%10==0) return '|'; else return ''; }
+				}
+			]
+		});
+        jQuery('#'+rd.trackdiv+"_sliderdiv").bind("valuesChanging", function(e,data) {
+			Biojs.PSVevents.SequenceZoomEvent.fire({basedivid:self.basedivid,start:data.values.min, stop:data.values.max});
+		});
+	}
+});
+
+Biojs.ZoombarPainter1 = Biojs.BasicSequencePainter.extend({
 	constructor: function(options) {
 		var self = this;
 		self.init(options);
@@ -227,32 +266,39 @@ Biojs.DomainPainter = Biojs.BasicSequencePainter.extend({
 		var self = this;
 		Biojs.PSVevents.SequenceZoomEvent.subscribe(self.onSequenceZoom, self);
 		for(var di=0; di < self.domains.length; di++) {
-			var dom = self.domains[di];
-			dom.domUid = self.basedivid + "_domid"+Math.random();
-			self.paintObserved(dom);
+			var dmn = self.domains[di];
+			dmn.domUid = self.basedivid + "_domid"+Math.random();
+			self.paintObserved(dmn);
 		}
 	},
-	paintObserved: function(dom) {
+	paintObserved: function(dmn) {
 		var self = this;
-		var domranges = self.breakDomainRangesAtRowBoundary(dom.ranges);
-		dom.raphaobjs = []; dom.glowelems = [];
+		var domranges = self.breakDomainRangesAtRowBoundary(dmn.ranges);
+		dmn.raphaobjs = []; dmn.glowelems = [];
 		Biojs.PSVevents.DomainHoverEvent.subscribe(self.glowTheDomain, self);
 		for(var dri=0; dri < domranges.length; dri++) {
-			var ros = self.drawHorizontalLine(domranges[dri][0],domranges[dri][1], dom.ypos, dom.attribs);
+			var ros = self.drawHorizontalLine(domranges[dri][0],domranges[dri][1], dmn.ypos, dmn.attribs);
 			for(var ri=0; ri < ros.length; ri++) {
-				dom.raphaobjs.push(ros[ri]);
-				if(dom.tooltip) {
+				dmn.raphaobjs.push(ros[ri]);
+				if(dmn.tooltip) {
 					jQuery(ros[ri].node).tooltip({
-						bodyHandler: function() {return dom.tooltip.text;},
+						bodyHandler: function() {
+							var mev = Biojs.PSVevents.latestMouseEvent;
+							var trackdiv = jQuery(this).parent().parent();
+							var mo = trackdiv.offset(), width = trackdiv.width();
+							var seqindex = Math.floor((mev.pageX-mo.left) * self.seqlen/width);
+							//console.log(seqindex + " " + (mev.pageX-mo.left) + " " + width + " " + mev.pageX + " " + mo.left);
+							return dmn.tooltip.text + " index " + seqindex;
+						},
 						track:true
 					});
 				}
-				if(dom.glowOnHover) {
+				if(dmn.glowOnHover) {
 					jQuery(ros[ri].node).mouseenter( function(e) {
-						Biojs.PSVevents.DomainHoverEvent.fire({domUid:dom.domUid,type:'mouseenter'});
+						Biojs.PSVevents.DomainHoverEvent.fire({domUid:dmn.domUid,type:'mouseenter'});
 					});
 					jQuery(ros[ri].node).mouseleave( function(e) {
-						Biojs.PSVevents.DomainHoverEvent.fire({domUid:dom.domUid,type:'mouseleave'});
+						Biojs.PSVevents.DomainHoverEvent.fire({domUid:dmn.domUid,type:'mouseleave'});
 					});
 				}
 			}
@@ -260,16 +306,16 @@ Biojs.DomainPainter = Biojs.BasicSequencePainter.extend({
 	},
 	glowTheDomain: function(type, args, me) {
 		var self = me;
-		jQuery.each(self.domains, function(di,dom) {
-			if(dom.domUid != args[0].domUid) return;
+		jQuery.each(self.domains, function(di,dmn) {
+			if(dmn.domUid != args[0].domUid) return;
 			if(args[0].type != "mouseenter" && args[0].type != "mouseleave") {
 				alert("Serious error! event type unknown... " + args[0].type); return;
 			}
-			jQuery.each(dom.raphaobjs, function(ri,robj) {
+			jQuery.each(dmn.raphaobjs, function(ri,robj) {
 				if(args[0].type == "mouseenter")
-					dom.glowelems.push( robj.glow(dom.glowOnHover) );
+					dmn.glowelems.push( robj.glow(dmn.glowOnHover) );
 				else if(args[0].type == "mouseleave")
-					jQuery.each(dom.glowelems, function(gi,gelem) {gelem.remove();});
+					jQuery.each(dmn.glowelems, function(gi,gelem) {gelem.remove();});
 			});
 		});
 	}
@@ -293,9 +339,11 @@ Biojs.PDBsequenceViewer = Biojs.extend ({
 			jQuery('#'+divid).append("<div id='"+divid+"_row_"+ri+"' style='width:"+totwidth+"px;height:"+rowheight+"px;'></div>");
 		for(var ri=0; ri < numrows; ri++) { // make left/right/tracks within rows
 			for(var ti=0; ti < tracks.length; ti++) {
-				jQuery('#'+divid+"_row_"+ri).append("<span id='"+divid+"_row_"+ri+"_left_"+ ti+"' style='width:"+leftwidth+"px;height:"+tracks[ti].height+"px;'></span>");
-				jQuery('#'+divid+"_row_"+ri).append("<span id='"+divid+"_row_"+ri+"_track_"+ti+"' style='width:"+width+"px;height:"+tracks[ti].height+"px;'></span>");
-				jQuery('#'+divid+"_row_"+ri).append("<span id='"+divid+"_row_"+ri+"_right_"+ti+"' style='width:"+rightwidth+"px;height:"+tracks[ti].height+"px;'></span>");
+				var trackdivid = divid+"_row_"+ri+"_trackroot_"+ti;
+				jQuery('#'+divid+"_row_"+ri).append("<div id='"+trackdivid+"' style='height:"+tracks[ti].height+"px'></div>");
+				jQuery('#'+trackdivid).append("<span id='"+divid+"_row_"+ri+"_left_"+ ti+"' style='width:"+leftwidth+"px;'></span>");
+				jQuery('#'+trackdivid).append("<span id='"+divid+"_row_"+ri+"_track_"+ti+"' style='width:"+width+"px;'></span>");
+				jQuery('#'+trackdivid).append("<span id='"+divid+"_row_"+ri+"_right_"+ti+"' style='width:"+rightwidth+"px;'></span>");
 			}
 		}
 		self.rowtrackRapha = [];
