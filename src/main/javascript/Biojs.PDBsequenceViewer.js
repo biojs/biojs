@@ -48,6 +48,7 @@ Biojs.BasicSequencePainter = Biojs.extend({
 		self.seqlen = options.seqlen;
 		self.numIndicesInRow = options.numIndicesInRow;
 		self.basedivid = options.basedivid;
+		self.currentZoomIndices = [0,options.seqlen-1];
 	},
 	index2coordinate: function(index) {
 		// from raphael objects provided, return raphael object and bounding coordinates of a box corresponding to an index
@@ -151,6 +152,7 @@ Biojs.BasicSequencePainter = Biojs.extend({
 		if(me.basedivid != args[0].basedivid) return;
 		//console.log(args[0].start);
 		me.zoomOnSequenceRange(args[0].start, args[0].stop);
+		me.currentZoomIndices = [args[0].start,args[0].stop];
 	}
 });
 
@@ -168,7 +170,7 @@ Biojs.ZoombarPainter = Biojs.BasicSequencePainter.extend({
 		}
 		var rd = self.raphadivs[0];
 		jQuery("#"+rd.trackdiv).empty();
-		var sliderhtml = '<div id="'+rd.trackdiv+'_sliderdiv" class="yui-h-slider" style="width:'+self.pixelwidth+'px;"></div>';
+		var sliderhtml = '<div id="'+rd.trackdiv+'_sliderdiv" style="width:'+self.pixelwidth+'px;"></div>';
 		jQuery("#"+rd.trackdiv).append(sliderhtml);
     	var convertPixelToValue = function (pval) {
     		var cf = (self.maxval-self.minval)/(self.pixelwidth); // remember to account for width of thumbnail image!
@@ -190,47 +192,6 @@ Biojs.ZoombarPainter = Biojs.BasicSequencePainter.extend({
         jQuery('#'+rd.trackdiv+"_sliderdiv").bind("valuesChanging", function(e,data) {
 			Biojs.PSVevents.SequenceZoomEvent.fire({basedivid:self.basedivid,start:data.values.min, stop:data.values.max});
 		});
-	}
-});
-
-Biojs.ZoombarPainter1 = Biojs.BasicSequencePainter.extend({
-	constructor: function(options) {
-		var self = this;
-		self.init(options);
-		self.pixelwidth = options.pixelwidth;
-		self.thumbwidth = options.thumbwidth; self.leftthumb = options.leftthumb; self.rightthumb = options.rightthumb;
-		self.initleft = options.initleft; self.initright = options.initright; self.minval = 0; self.maxval = options.seqlen-1;
-	},
-	paint: function() {
-		var self = this;
-		if(self.raphadivs.length != 1) {
-			alert("Serious error - Cannot implement ZoombarPainter in more than one row!"); return;
-		}
-		var rd = self.raphadivs[0];
-		jQuery("body").addClass("yui-skin-sam");
-		jQuery("#"+rd.trackdiv).empty();
-		var sliderhtml = '<div id="'+rd.trackdiv+'_sliderdiv" class="yui-h-slider" style="width:'+(self.pixelwidth-self.thumbwidth/2)+'px;">'
-		sliderhtml += '    <div id="'+rd.trackdiv+'_leftthumb" class="yui-slider-thumb"><img src="'+self.leftthumb+'"></div>'
-		sliderhtml += '    <div id="'+rd.trackdiv+'_rightthumb" class="yui-slider-thumb"><img src="'+self.rightthumb+'"></div>'
-		sliderhtml += '</div>'
-		jQuery("#"+rd.trackdiv).append(sliderhtml);
-    	var convertPixelToValue = function (pval) {
-    		var cf = (self.maxval-self.minval)/(self.pixelwidth - self.thumbwidth); // remember to account for width of thumbnail image!
-        	return Math.round(pval * cf + self.minval);
-    	};
-    	var convertValueToPixel = function (val) {
-    		var cf = (self.pixelwidth-self.thumbwidth)/(self.maxval-self.minval); // remember to account for width of thumbnail image!
-        	return Math.round(val * cf);
-    	};
-        var slider = YAHOO.widget.Slider.getHorizDualSlider(rd.trackdiv+"_sliderdiv", rd.trackdiv+"_leftthumb", rd.trackdiv+"_rightthumb",
-					self.pixelwidth-self.thumbwidth, 0, [convertValueToPixel(self.initleft),convertValueToPixel(self.initright)] );
-        slider.minRange = 1; // minimum distance between thumbnails
-        var updateUI = function () {
-			Biojs.PSVevents.SequenceZoomEvent.fire({basedivid:self.basedivid,start:convertPixelToValue(slider.minVal), stop:convertPixelToValue(slider.maxVal)});
-			//console.log("updateUI123 " + slider.minVal + " " + slider.maxVal + " " + convertPixelToValue(slider.minVal) + " " + convertPixelToValue(slider.maxVal) );
-		};
-        //slider.subscribe('ready', updateUI);
-        slider.subscribe('change', updateUI);
 	}
 });
 
@@ -286,7 +247,7 @@ Biojs.DomainPainter = Biojs.BasicSequencePainter.extend({
 							var mev = Biojs.PSVevents.latestMouseEvent;
 							var trackdiv = jQuery(this).parent().parent();
 							var mo = trackdiv.offset(), width = trackdiv.width();
-							var seqindex = Math.floor((mev.pageX-mo.left) * self.seqlen/width);
+							var seqindex = Math.floor((mev.pageX-mo.left)/width * (1+self.currentZoomIndices[1]-self.currentZoomIndices[0])) + self.currentZoomIndices[0];
 							//console.log(seqindex + " " + (mev.pageX-mo.left) + " " + width + " " + mev.pageX + " " + mo.left);
 							return dmn.tooltip.text + " index " + seqindex;
 						},
@@ -312,10 +273,17 @@ Biojs.DomainPainter = Biojs.BasicSequencePainter.extend({
 				alert("Serious error! event type unknown... " + args[0].type); return;
 			}
 			jQuery.each(dmn.raphaobjs, function(ri,robj) {
-				if(args[0].type == "mouseenter")
-					dmn.glowelems.push( robj.glow(dmn.glowOnHover) );
-				else if(args[0].type == "mouseleave")
-					jQuery.each(dmn.glowelems, function(gi,gelem) {gelem.remove();});
+				if(args[0].type == "mouseenter") {
+					if(!robj.data('actualattr')) {
+						var oldattr = {};
+						for(k in dmn.glowOnHover) oldattr[k] = robj.attr(k);
+						robj.data('actualattr', oldattr);
+					}
+					robj.attr(dmn.glowOnHover);
+				}
+				else if(args[0].type == "mouseleave") {
+					robj.attr(robj.data('actualattr'));
+				}
 			});
 		});
 	}
@@ -341,9 +309,9 @@ Biojs.PDBsequenceViewer = Biojs.extend ({
 			for(var ti=0; ti < tracks.length; ti++) {
 				var trackdivid = divid+"_row_"+ri+"_trackroot_"+ti;
 				jQuery('#'+divid+"_row_"+ri).append("<div id='"+trackdivid+"' style='height:"+tracks[ti].height+"px'></div>");
-				jQuery('#'+trackdivid).append("<span id='"+divid+"_row_"+ri+"_left_"+ ti+"' style='width:"+leftwidth+"px;'></span>");
+				jQuery('#'+trackdivid).append("<span id='"+divid+"_row_"+ri+"_left_"+ ti+"' style='float:left;width:"+leftwidth+"px;'></span>");
 				jQuery('#'+trackdivid).append("<span id='"+divid+"_row_"+ri+"_track_"+ti+"' style='width:"+width+"px;'></span>");
-				jQuery('#'+trackdivid).append("<span id='"+divid+"_row_"+ri+"_right_"+ti+"' style='width:"+rightwidth+"px;'></span>");
+				jQuery('#'+trackdivid).append("<span id='"+divid+"_row_"+ri+"_right_"+ti+"' style='float:right;width:"+rightwidth+"px;'></span>");
 			}
 		}
 		self.rowtrackRapha = [];

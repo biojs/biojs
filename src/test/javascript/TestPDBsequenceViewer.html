@@ -54,9 +54,9 @@
 							{ranges:[[0,199]], ypos:{midpercent:20}, attribs:{fill:'#33AA33',stroke:'#33AA33'},   // uniprot seq
 								tooltip:{common:'yes','text':'Uniprot P34243'} },
 							{ranges:[[10,90]], ypos:{midpercent:50}, attribs:{fill:'#EE3333',stroke:'none'},  // pfam domain
-								tooltip:{common:'yes',text:'Pfam domain PF12345'}, glowOnHover:{fill:'blue'} },
+								tooltip:{common:'yes',text:'Pfam domain PF12345'}, glowOnHover:{fill:'silver'} },
 							{ranges:[[110,180]], ypos:{midpercent:50}, attribs:{fill:'#DE2255',stroke:'none'},  // pfam domain
-								tooltip:{common:'yes',text:'Pfam domain PF45678'}, glowOnHover:{fill:'blue'} }
+								tooltip:{common:'yes',text:'Pfam domain PF45678'}, glowOnHover:{fill:'gold'} }
 						]
 					}
 				]},
@@ -78,12 +78,12 @@
 							{ranges:[[5,32],[35,134],[155,192]], ypos:{midpercent:20}, attribs:{fill:'#2222CC',stroke:'#2222CC'},   // 'domain'(!) of observed residues in a PDB chain
 								tooltip:{common:'yes','text':'Observed fraction is about 80% for PDB id 1pqr chain X.'} },
 							{ranges:[[20,25],[44,104]], ypos:{midpercent:60}, attribs:{fill:'#22AAAA',stroke:'none'},  // some cath/scop domain
-								tooltip:{common:'yes',text:'CATH domain 3.2.30.40'}, glowOnHover:{fill:'blue'} }
+								tooltip:{common:'yes',text:'CATH domain 3.2.30.40'}, glowOnHover:{fill:'green'} }
 						]
 					}
 				]}
 			];
-			new Biojs.PDBsequenceViewer({divid:"seqdiv2", numrows:1, leftwidth:10, width:600, rightwidth:10, tracks:thetracks2});
+			new Biojs.PDBsequenceViewer({divid:"seqdiv2", numrows:1, leftwidth:50, width:600, rightwidth:50, tracks:thetracks2});
 
 			var thetracks = [
 				{height:20, painters:[
@@ -93,7 +93,7 @@
 					}
 				]}
 			];
-			new Biojs.PDBsequenceViewer({divid:"seqdiv", numrows:1, leftwidth:10, width:150, rightwidth:10, tracks:thetracks});
+			new Biojs.PDBsequenceViewer({divid:"seqdiv", numrows:1, leftwidth:50, width:150, rightwidth:50, tracks:thetracks});
 
 			var thetracks1 = [
 				{height:20, painters:[
@@ -103,7 +103,7 @@
 					}
 				]}
 			];
-			new Biojs.PDBsequenceViewer({divid:"seqdiv1", numrows:1, leftwidth:10, width:100, rightwidth:10, tracks:thetracks1});
+			new Biojs.PDBsequenceViewer({divid:"seqdiv1", numrows:1, leftwidth:50, width:100, rightwidth:50, tracks:thetracks1});
 
 		}
     </script>
