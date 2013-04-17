@@ -229,41 +229,62 @@ Biojs.DomainPainter = Biojs.BasicSequencePainter.extend({
 		for(var di=0; di < self.domains.length; di++) {
 			var dmn = self.domains[di];
 			dmn.domUid = self.basedivid + "_domid"+Math.random();
-			self.paintObserved(dmn);
+			self.paintDomain(dmn);
 		}
 	},
-	paintObserved: function(dmn) {
+	paintDomain: function(dmn) {
 		var self = this;
 		var domranges = self.breakDomainRangesAtRowBoundary(dmn.ranges);
 		dmn.raphaobjs = []; dmn.glowelems = [];
 		Biojs.PSVevents.DomainHoverEvent.subscribe(self.glowTheDomain, self);
 		for(var dri=0; dri < domranges.length; dri++) {
-			var ros = self.drawHorizontalLine(domranges[dri][0],domranges[dri][1], dmn.ypos, dmn.attribs);
-			for(var ri=0; ri < ros.length; ri++) {
-				dmn.raphaobjs.push(ros[ri]);
+			var rects = self.drawHorizontalLine(domranges[dri][0],domranges[dri][1], dmn.ypos, dmn.attribs);
+			var textelems = self.addTexttoDomain(dmn, rects);
+			for(var ri=0; ri < rects.length; ri++) {
+				dmn.raphaobjs.push(rects[ri]);
 				if(dmn.tooltip) {
-					jQuery(ros[ri].node).tooltip({
+					jQuery(rects[ri].node).tooltip({
 						bodyHandler: function() {
 							var mev = Biojs.PSVevents.latestMouseEvent;
 							var trackdiv = jQuery(this).parent().parent();
 							var mo = trackdiv.offset(), width = trackdiv.width();
 							var seqindex = Math.floor((mev.pageX-mo.left)/width * (1+self.currentZoomIndices[1]-self.currentZoomIndices[0])) + self.currentZoomIndices[0];
-							//console.log(seqindex + " " + (mev.pageX-mo.left) + " " + width + " " + mev.pageX + " " + mo.left);
 							return dmn.tooltip.text + " index " + seqindex;
 						},
 						track:true
 					});
 				}
 				if(dmn.glowOnHover) {
-					jQuery(ros[ri].node).mouseenter( function(e) {
+					jQuery(rects[ri].node).mouseenter( function(e) {
 						Biojs.PSVevents.DomainHoverEvent.fire({domUid:dmn.domUid,type:'mouseenter'});
 					});
-					jQuery(ros[ri].node).mouseleave( function(e) {
+					jQuery(rects[ri].node).mouseleave( function(e) {
 						Biojs.PSVevents.DomainHoverEvent.fire({domUid:dmn.domUid,type:'mouseleave'});
 					});
 				}
 			}
 		}
+	},
+	addTexttoDomain: function(dmn,rectangles) {
+		var self = this;
+		if(!dmn.displayname) return [];
+		var textelems = [];
+		jQuery.each(rectangles, function(roindex,arect) {
+			var rd0 = arect.paper;
+			console.log(arect, dmn.displayname);
+			var minfontsize = 10, maxfontsize = arect.attr('height');
+			var fontsize = arect.attr('width')/dmn.displayname.length; var domname = dmn.displayname;
+			if(fontsize < minfontsize) {
+				fontsize = minfontsize;
+				var domlen = arect.attr('width')/minfontsize;
+				if(domlen<=1) domname = "";
+				else if(domlen < 4) domname = dmn.displayname[0] + "..";
+				else domname = dmn.displayname.substring(0,arect.attr('width')/minfontsize-3) + "...";
+			}
+			if(fontsize > maxfontsize) fontsize = maxfontsize;
+			textelems.push( rd0.text(arect.attr('x')+arect.attr('width')/2, arect.attr('y')+arect.attr('height')/2, domname).attr({font:fontsize+'px "Courier"'}) );
+		});
+		return textelems;
 	},
 	glowTheDomain: function(type, args, me) {
 		var self = me;
