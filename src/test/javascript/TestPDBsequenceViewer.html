@@ -64,7 +64,16 @@
 					{type:'Biojs.DomainPainter', seqlen:200, numIndicesInRow:200,
 						domains:[
 							{ranges:[[10,30],[40,144],[160,195]], ypos:{midpercent:20}, attribs:{fill:'#2222CC',stroke:'#2222CC'},   // 'domain'(!) of observed residues in a PDB chain
-								tooltip:{common:'yes','text':'Observed fraction is about 85% for PDB id 1xyz chain P.'} },
+								tooltip:{common:'yes','text':'Observed fraction is about 85% for PDB id 1xyz chain P.'},
+								connectors:[
+									{from:15, to:25,ypos:{fromtop:10},attribs:{stroke:'red','stroke-width':2}, glowOnHover:{stroke:'gold'},  tooltip:'salt bridge 15-25'},
+									{from:50,to:120,ypos:{fromtop:7},attribs:{stroke:'green','stroke-width':2}, glowOnHover:{stroke:'gold'}, tooltip:'disulphide bridge 50-120'},
+									{from:56,to:124,ypos:{fromtop:5},attribs:{stroke:'blue','stroke-width':2}, glowOnHover:{stroke:'gold'}, tooltip:'disulphide bridge 50-120'}
+								],
+								baloons:[
+									{at:30, ypos:{fromtop:20}, size:5, attribs:{stroke:'red',fill:'red'}, glowOnHover:{stroke:'gold',fill:'gold'}, tooltip:'an important residue at 30'}
+								]
+							},
 							{ranges:[[20,25],[44,104]], ypos:{midpercent:60}, attribs:{fill:'#22AAAA',stroke:'none'},  // some cath/scop domain
 								tooltip:{common:'yes',text:'CATH domain 3.2.30.40'}, glowOnHover:{fill:'blue'}, displayname:"anotherDomain" },
 							{ranges:[[165,190]], ypos:{midpercent:60}, attribs:{fill:'#55ABBB',stroke:'none'},  // another cath/scop domain

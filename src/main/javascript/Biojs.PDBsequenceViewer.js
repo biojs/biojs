@@ -123,6 +123,12 @@ Biojs.BasicSequencePainter = Biojs.extend({
 		}
 		return raphaobjects;
 	},
+	selectiveCopy: function(keysFromDict, raphaElemToCopyAttrFrom) {
+		// copy properties from latter into a new dictionary only for keys in former, and return
+		var ret = {};
+		for(k in keysFromDict) ret[k] = raphaElemToCopyAttrFrom.attr(k);
+		return ret;
+	},
 	addClickHoverToAllRaphaParentDivs: function(tooltip, clickurl) {
 		var self = this;
 		for(var ri=0; ri < self.raphadivs.length; ri++) {
@@ -264,6 +270,7 @@ Biojs.DomainPainter = Biojs.BasicSequencePainter.extend({
 					});
 				});
 		}
+		self.paintConnectorsBaloons(dmn);
 	},
 	addTexttoDomain: function(dmn,rectangles) {
 		var self = this;
@@ -285,6 +292,78 @@ Biojs.DomainPainter = Biojs.BasicSequencePainter.extend({
 		});
 		return textelems;
 	},
+	paintConnectorsBaloons: function(dmn) {
+		var self = this;
+		if(!dmn.connectors) return;
+		jQuery.each(dmn.connectors, function(ci,aconn) {
+			self.makeConnector(aconn);
+		});
+		jQuery.each(dmn.baloons, function(ci,bparams) {
+			self.makeBaloon(bparams);
+		});
+	},
+	makeConnector: function(aconn) {
+		var self = this;
+		var retconnectors = [];
+		if(self.raphadivs.length != 1) { alert("Serious error - making connectors is not possible if painter spans more than a row!"); return []; }
+		var rd0 = self.index2coordinate(aconn.from), rd1 = self.index2coordinate(aconn.to);
+		var bx = (rd0.startx+rd0.stopx)/2, by = (rd0.starty+rd0.stopy)/2
+		var ex = (rd1.startx+rd1.stopx)/2, ey = (rd1.starty+rd1.stopy)/2
+		var yp = (rd0.stopy-rd0.starty)/100;
+		var yy = rd0.starty + Math.random()*100*yp;
+		if(aconn.ypos.fromtop) {
+			yy = rd0.starty + yp * (aconn.ypos.fromtop + Math.random()*10); // there is a bit of randomness added here so that connectors do not overlap
+			yy = rd0.starty + yp * (aconn.ypos.fromtop);
+		}
+		else { alert("Error, dont know where to place connector in Y direction! assigning randomly..."); }
+		var connelem = rd0.rapha.path(["M",bx,by,"L",bx,yy,"L",ex,yy,"L",ex,ey]).attr(aconn.attribs);
+		if(aconn.tooltip)
+			jQuery(connelem.node).tooltip({
+				bodyHandler: function() {return aconn.tooltip;},
+				track:true
+			});
+		if(aconn.glowOnHover) {
+			jQuery(connelem.node).mouseenter( function(e) {
+				if(!connelem.data('actualattr')) connelem.data("actualattr", self.selectiveCopy(aconn.glowOnHover,connelem));
+				connelem.attr(aconn.glowOnHover);
+			});
+			jQuery(connelem.node).mouseleave( function(e) {
+				connelem.attr(connelem.data("actualattr"));
+			});
+		}
+		return [connelem];
+	},
+	makeBaloon: function(bparams) {
+		var self = this, retelems=[];
+		var rd0 = self.index2coordinate(bparams.at);
+		var bx = (rd0.startx+rd0.stopx)/2, by = (rd0.starty+rd0.stopy)/2
+		var yp = (rd0.stopy-rd0.starty)/100;
+		var yy = rd0.starty + Math.random()*100*yp;
+		if(bparams.ypos.fromtop) {
+			yy = rd0.starty + yp * (bparams.ypos.fromtop);
+		}
+		else { alert("Error, dont know where to place connector in Y direction! assigning randomly..."); }
+		retelems.push( rd0.rapha.path(["M",bx,by,"L",bx,yy]).attr(bparams.attribs) );
+		retelems.push( rd0.rapha.circle(bx,yy,bparams.size/2).attr(bparams.attribs) );
+		if(bparams.tooltip)
+			jQuery.each(retelems, function(ri,relem) {
+				jQuery(relem.node).tooltip({
+					bodyHandler: function() {return bparams.tooltip;},
+					track:true
+				});
+			});
+		if(bparams.glowOnHover)
+			jQuery.each(retelems, function(ri,relem) {
+				jQuery(relem.node).mouseenter( function(e) {
+					if(!relem.data("actualattr")) relem.data("actualattr", self.selectiveCopy(bparams.glowOnHover,relem));
+					relem.attr(bparams.glowOnHover);
+				});
+				jQuery(relem.node).mouseleave( function(e) {
+					relem.attr(relem.data("actualattr"));
+				});
+			});
+		return retelems;
+	},
 	glowTheDomain: function(type, args, me) {
 		var self = me;
 		jQuery.each(self.domains, function(di,dmn) {
@@ -294,11 +373,7 @@ Biojs.DomainPainter = Biojs.BasicSequencePainter.extend({
 			}
 			jQuery.each(dmn.raphaGlowObjs, function(ri,robj) {
 				if(args[0].type == "mouseenter") {
-					if(!robj.data('actualattr')) {
-						var oldattr = {};
-						for(k in dmn.glowOnHover) oldattr[k] = robj.attr(k);
-						robj.data('actualattr', oldattr);
-					}
+					if(!robj.data('actualattr')) robj.data("actualattr", self.selectiveCopy(dmn.glowOnHover,robj));
 					robj.attr(dmn.glowOnHover);
 				}
 				else if(args[0].type == "mouseleave") {
