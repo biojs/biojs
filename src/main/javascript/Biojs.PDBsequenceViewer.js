@@ -235,15 +235,24 @@ Biojs.DomainPainter = Biojs.BasicSequencePainter.extend({
 	paintDomain: function(dmn) {
 		var self = this;
 		var domranges = self.breakDomainRangesAtRowBoundary(dmn.ranges);
-		dmn.raphaobjs = []; dmn.glowelems = [];
+		dmn.raphaGlowObjs = []; // which elements are to be glowed when mouse hovers on domain?
 		Biojs.PSVevents.DomainHoverEvent.subscribe(self.glowTheDomain, self);
 		for(var dri=0; dri < domranges.length; dri++) {
 			var rects = self.drawHorizontalLine(domranges[dri][0],domranges[dri][1], dmn.ypos, dmn.attribs);
+			dmn.raphaGlowObjs = dmn.raphaGlowObjs.concat(rects);
 			var textelems = self.addTexttoDomain(dmn, rects);
-			for(var ri=0; ri < rects.length; ri++) {
-				dmn.raphaobjs.push(rects[ri]);
-				if(dmn.tooltip) {
-					jQuery(rects[ri].node).tooltip({
+			if(dmn.glowOnHover) // fire DomainHoverEvent in response to mouse entering or leaving rectangles and text elements
+				jQuery.each([].concat(rects,textelems), function(ri,relem) {
+					jQuery(relem.node).mouseenter( function(e) {
+						Biojs.PSVevents.DomainHoverEvent.fire({domUid:dmn.domUid,type:'mouseenter'});
+					});
+					jQuery(relem.node).mouseleave( function(e) {
+						Biojs.PSVevents.DomainHoverEvent.fire({domUid:dmn.domUid,type:'mouseleave'});
+					});
+				});
+			if(dmn.tooltip) // add tooltip if given in options
+				jQuery.each([].concat(rects,textelems), function(ri,relem) {
+					jQuery(relem.node).tooltip({
 						bodyHandler: function() {
 							var mev = Biojs.PSVevents.latestMouseEvent;
 							var trackdiv = jQuery(this).parent().parent();
@@ -253,16 +262,7 @@ Biojs.DomainPainter = Biojs.BasicSequencePainter.extend({
 						},
 						track:true
 					});
-				}
-				if(dmn.glowOnHover) {
-					jQuery(rects[ri].node).mouseenter( function(e) {
-						Biojs.PSVevents.DomainHoverEvent.fire({domUid:dmn.domUid,type:'mouseenter'});
-					});
-					jQuery(rects[ri].node).mouseleave( function(e) {
-						Biojs.PSVevents.DomainHoverEvent.fire({domUid:dmn.domUid,type:'mouseleave'});
-					});
-				}
-			}
+				});
 		}
 	},
 	addTexttoDomain: function(dmn,rectangles) {
@@ -271,7 +271,6 @@ Biojs.DomainPainter = Biojs.BasicSequencePainter.extend({
 		var textelems = [];
 		jQuery.each(rectangles, function(roindex,arect) {
 			var rd0 = arect.paper;
-			console.log(arect, dmn.displayname);
 			var minfontsize = 10, maxfontsize = arect.attr('height');
 			var fontsize = arect.attr('width')/dmn.displayname.length; var domname = dmn.displayname;
 			if(fontsize < minfontsize) {
@@ -293,7 +292,7 @@ Biojs.DomainPainter = Biojs.BasicSequencePainter.extend({
 			if(args[0].type != "mouseenter" && args[0].type != "mouseleave") {
 				alert("Serious error! event type unknown... " + args[0].type); return;
 			}
-			jQuery.each(dmn.raphaobjs, function(ri,robj) {
+			jQuery.each(dmn.raphaGlowObjs, function(ri,robj) {
 				if(args[0].type == "mouseenter") {
 					if(!robj.data('actualattr')) {
 						var oldattr = {};
