@@ -332,22 +332,37 @@ Biojs.DomainPainter = Biojs.BasicSequencePainter.extend({
 			yy = rd0.starty + yp * (aconn.ypos.fromtop);
 		}
 		else { alert("Error, dont know where to place connector in Y direction! assigning randomly..."); }
-		var connelem = rd0.rapha.path(["M",bx,by,"L",bx,yy,"L",ex,yy,"L",ex,ey]).attr(aconn.attribs);
+		var connelems = [
+			rd0.rapha.path(["M",bx,by,"L",bx,yy]).attr(aconn.attribs),
+			rd0.rapha.path(["M",bx,yy,"L",ex,yy]).attr(aconn.attribs),
+			rd0.rapha.path(["M",ex,yy,"L",ex,ey]).attr(aconn.attribs)
+		];
+		self.noXstretchElems.push(connelems[0]); self.noXstretchElems.push(connelems[2]); // vertical lines need not x-stretch
 		if(aconn.tooltip)
-			jQuery(connelem.node).tooltip({
-				bodyHandler: function() {return aconn.tooltip;},
-				track:true
+			jQuery.each(connelems, function(ci,connelem) {
+				jQuery(connelem.node).tooltip({
+					bodyHandler: function() {return aconn.tooltip;},
+					track:true
+				});
 			});
 		if(aconn.glowOnHover) {
-			jQuery(connelem.node).mouseenter( function(e) {
-				if(!connelem.data('actualattr')) connelem.data("actualattr", self.selectiveCopy(aconn.glowOnHover,connelem));
-				connelem.attr(aconn.glowOnHover);
+			jQuery.each(connelems, function(acmi,acm) {
+				jQuery(acm.node).mouseenter( function(e) {
+					jQuery.each(connelems, function(ci,connelem) {
+						if(!connelem.data('actualattr')) connelem.data("actualattr", self.selectiveCopy(aconn.glowOnHover,connelem));
+						connelem.attr(aconn.glowOnHover);
+					});
+				});
 			});
-			jQuery(connelem.node).mouseleave( function(e) {
-				connelem.attr(connelem.data("actualattr"));
+			jQuery.each(connelems, function(acmi,acm) {
+				jQuery(acm.node).mouseleave( function(e) {
+					jQuery.each(connelems, function(ci,connelem) {
+						connelem.attr(connelem.data("actualattr"));
+					});
+				});
 			});
 		}
-		return [connelem];
+		return connelems;
 	},
 	makeBaloon: function(bparams) {
 		var self = this, retelems=[];
