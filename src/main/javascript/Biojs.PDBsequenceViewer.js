@@ -48,7 +48,8 @@ Biojs.BasicSequencePainter = Biojs.extend({
 		self.seqlen = options.seqlen;
 		self.numIndicesInRow = options.numIndicesInRow;
 		self.basedivid = options.basedivid;
-		self.currentZoomIndices = [0,options.seqlen-1];
+		self.currentZoomIndices = [0,options.seqlen-1]; self.prevZoomIndices = [0,options.seqlen-1];
+		self.noXstretchElems = []; // elems for which x-scaling on sequence-zoom is to be undone
 	},
 	index2coordinate: function(index) {
 		// from raphael objects provided, return raphael object and bounding coordinates of a box corresponding to an index
@@ -158,7 +159,14 @@ Biojs.BasicSequencePainter = Biojs.extend({
 		if(me.basedivid != args[0].basedivid) return;
 		//console.log(args[0].start);
 		me.zoomOnSequenceRange(args[0].start, args[0].stop);
+		me.prevZoomIndices = [me.currentZoomIndices[0], me.currentZoomIndices[1]];
 		me.currentZoomIndices = [args[0].start,args[0].stop];
+		me.undoXscaling();
+	},
+	undoXscaling: function() {
+		var self = this;
+		var xscale =  (this.currentZoomIndices[0]-this.currentZoomIndices[1]) / (this.prevZoomIndices[0]-this.prevZoomIndices[1]) ;
+		jQuery.each(this.noXstretchElems, function(ri,relem) { relem = relem.scale(xscale,1); });
 	}
 });
 
@@ -247,6 +255,7 @@ Biojs.DomainPainter = Biojs.BasicSequencePainter.extend({
 			var rects = self.drawHorizontalLine(domranges[dri][0],domranges[dri][1], dmn.ypos, dmn.attribs);
 			dmn.raphaGlowObjs = dmn.raphaGlowObjs.concat(rects);
 			var textelems = self.addTexttoDomain(dmn, rects);
+			self.noXstretchElems = self.noXstretchElems.concat(textelems);
 			if(dmn.glowOnHover) // fire DomainHoverEvent in response to mouse entering or leaving rectangles and text elements
 				jQuery.each([].concat(rects,textelems), function(ri,relem) {
 					jQuery(relem.node).mouseenter( function(e) {
@@ -299,7 +308,7 @@ Biojs.DomainPainter = Biojs.BasicSequencePainter.extend({
 			self.makeConnector(aconn);
 		});
 		jQuery.each(dmn.baloons, function(ci,bparams) {
-			self.makeBaloon(bparams);
+			self.noXstretchElems = self.noXstretchElems.concat(self.makeBaloon(bparams));
 		});
 	},
 	makeConnector: function(aconn) {
@@ -355,11 +364,15 @@ Biojs.DomainPainter = Biojs.BasicSequencePainter.extend({
 		if(bparams.glowOnHover)
 			jQuery.each(retelems, function(ri,relem) {
 				jQuery(relem.node).mouseenter( function(e) {
-					if(!relem.data("actualattr")) relem.data("actualattr", self.selectiveCopy(bparams.glowOnHover,relem));
-					relem.attr(bparams.glowOnHover);
+					jQuery.each(retelems, function(ai,anelem) {
+						if(!anelem.data("actualattr")) anelem.data("actualattr", self.selectiveCopy(bparams.glowOnHover,anelem));
+						anelem.attr(bparams.glowOnHover);
+					});
 				});
 				jQuery(relem.node).mouseleave( function(e) {
-					relem.attr(relem.data("actualattr"));
+					jQuery.each(retelems, function(ai,anelem) {
+						anelem.attr(anelem.data("actualattr"));
+					});
 				});
 			});
 		return retelems;
