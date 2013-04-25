@@ -6,7 +6,7 @@
  * Please remember to use jQuery in <a href="http://docs.jquery.com/Using_jQuery_with_Other_Libraries">compatibility mode</a>, particularly a good idea if you use other libraries.
  *
  * If you are using JQuery 1.9.x please make sure you also include the jQuery Migrate plugin
- * as tooltips are not compatible with 1.9.x versions.
+ * as tooltips are not compatible with 1.9.x versions, see <a href="http://jquery.com/upgrade-guide/1.9/">http://jquery.com/upgrade-guide/1.9/</a>
  *
  * @class
  * @extends Biojs
