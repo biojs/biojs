@@ -5,6 +5,9 @@
  *
  * Please remember to use jQuery in <a href="http://docs.jquery.com/Using_jQuery_with_Other_Libraries">compatibility mode</a>, particularly a good idea if you use other libraries.
  *
+ * If you are using JQuery 1.9.x please make sure you also include the jQuery Migrate plugin
+ * as tooltips are not compatible with 1.9.x versions.
+ *
  * @class
  * @extends Biojs
  *
@@ -12,26 +15,20 @@
  * @version 1.0.0
  * @category 0
  *
- * @requires <a href='http://code.jquery.com/jquery-1.6.2.min.js/'>jQuery Core 1.4.2</a>
- * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jquery/jquery-1.4.2.min.js"></script>
+ * @requires <a href='http://code.jquery.com/jquery-1.7.2.min.js/'>jQuery Core 1.7.2</a>
+ * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jquery/jquery-1.7.2.min.js"></script>
+ *
+ * @requires jQuery UI 1.8.2
+ * @dependency <script src="../biojs/dependencies/jquery/jquery-ui-1.8.2.custom.min.js" type="text/javascript"></script>
+ *
+ * @requires jQuery UI CSS 1.8.2
+ * @dependency <link rel="stylesheet" href="../biojs/dependencies/jquery/jquery-ui-1.8.2.css" />
  *
  * @requires <a href='http://jquery.bassistance.de/tooltip/jquery.tooltip.js'>jQuery.tooltip</a>
  * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jquery/jquery.tooltip.js"></script>
  *
  * @requires <a href='http://jquery.bassistance.de/tooltip/jquery.tooltip.css'>jQuery.tooltip CSS</a>
  * @dependency <link rel="stylesheet" href="../biojs/dependencies/jquery/jquery.tooltip.css"/>
- *
- * @requires <a href='https://github.com/brandonaaron/bgiframe/blob/master/jquery.bgiframe.js'>jQuery.bgiframe</a>
- * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jquery/jquery.bgiframe.js"></script>
- *
- * @requires <a href='http://code.google.com/p/jqueryjs/source/browse/trunk/plugins/delegate/jquery.delegate.js?r=4374'>jQuery.delegate</a>
- * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jquery/jquery.delegate.js"></script>
- *
- * @requires <a href='http://code.google.com/p/kaytwo/source/browse/tags/1.0.3/js/jquery.dimensions.js?r=1066'>jQuery.dimensions</a>
- * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jquery/jquery.dimensions.min.js"></script>
- *
- * @requires <a href='https://github.com/allmarkedup/jQuery-URL-Parser/blob/master/jquery.url.js'>jQuery.url</a>
- * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jquery/jquery.url.js"></script>
  *
  * @requires <a href='http://github.com/DmitryBaranovskiy/raphael/raw/master/raphael-min.js'>raphael</a>
  * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/graphics/raphael.js"></script>
@@ -42,11 +39,29 @@
  * @requires <a href='http://code.google.com/p/canvg/source/browse/trunk/rgbcolor.js'>rgbcolor</a>
  * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/graphics/rgbcolor.js"></script>
  *
- * @requires jQuery UI 1.8.2
- * @dependency <script src="../biojs/dependencies/jquery/jquery-ui-1.8.2.custom.min.js" type="text/javascript"></script>
+ * @requires Image ui-bg_flat_0_aaaaaa_40x100.png (base theme images for jquery-ui-1.8.2)
+ * @dependency <link rel="stylesheet" href="../biojs/dependencies/jquery/images/ui-bg_flat_0_aaaaaa_40x100.png" />
  *
- * @requires jQuery UI CSS 1.8.2
- * @dependency <link rel="stylesheet" href="../biojs/dependencies/jquery/jquery-ui-1.8.2.css" />
+ * @requires Image ui-bg_flat_75_ffffff_40x100.png (base theme images for jquery-ui-1.8.2)
+ * @dependency <link rel="stylesheet" href="../biojs/dependencies/jquery/images/ui-bg_flat_75_ffffff_40x100.png" />
+ *
+ * @requires Image ui-bg_glass_65_ffffff_1x400.png (base theme images for jquery-ui-1.8.2)
+ * @dependency <link rel="stylesheet" href="../biojs/dependencies/jquery/images/ui-bg_glass_65_ffffff_1x400.png" />
+ *
+ * @requires Image ui-bg_glass_75_dadada_1x400.png (base theme images for jquery-ui-1.8.2)
+ * @dependency <link rel="stylesheet" href="../biojs/dependencies/jquery/images/ui-bg_glass_75_dadada_1x400.png" />
+ *
+ * @requires ui-bg_glass_75_e6e6e6_1x400.png (base theme images for jquery-ui-1.8.2)
+ * @dependency <link rel="stylesheet" href="../biojs/dependencies/jquery/images/ui-bg_glass_75_e6e6e6_1x400.png" />
+ *
+ * @requires ui-bg_highlight-soft_75_cccccc_1x100.png (base theme images for jquery-ui-1.8.2)
+ * @dependency <link rel="stylesheet" href="../biojs/dependencies/jquery/images/ui-bg_highlight-soft_75_cccccc_1x100.png" />
+ *
+ * @requires ui-icons_222222_256x240.png (base theme images for jquery-ui-1.8.2)
+ * @dependency <link rel="stylesheet" href="../biojs/dependencies/jquery/images/ui-icons_222222_256x240.png" />
+ *
+ * @requires ui-icons_454545_256x240.png (base theme images for jquery-ui-1.8.2)
+ * @dependency <link rel="stylesheet" href="../biojs/dependencies/jquery/images/ui-icons_454545_256x240.png" />
  *
  * @param {Object} options An object with the options for FeatureViewer component.
  *
