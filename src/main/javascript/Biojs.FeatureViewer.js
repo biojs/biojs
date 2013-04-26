@@ -514,12 +514,12 @@ Biojs.FeatureViewer = Biojs.extend(
          * Depending on the selected values for the style radio buttons and the vertical and horizontal
          * check buttons, this method changes the current style and adds/removes the gridlines.
          *
+         * @example
+         * myPainter.customize("centered",true,true);
+         *
          * @param {string} rdbStyle Radio buttons grouping styles, possible values: nonOverlapping, rows, centered.
          * @param {boolean} chkHorizontal Check button for horizontal grid lines.
          * @param {boolean} chkVertical Check button for vertical grid lines.
-         *
-         * @example
-         * myPainter.customize("centered",true,true);
          */
         customize: function(selectedStyle, paintHorizontalGrid, paintVerticalGrid) {
             var config = this.opt.json.configuration;
@@ -576,11 +576,10 @@ Biojs.FeatureViewer = Biojs.extend(
          * This method initializes the holder, paints the slider and print button depending on the options, and
          * paints the features and legend.
          *
-         * @param {Object} [json] The json object describing the configuration, features, and legend to be displayed.
-         *
          * @example
          * myPainter.paintFeatures();
          *
+         * @param {Object} [json] The json object describing the configuration, features, and legend to be displayed.
          */
         paintFeatures: function(json) {
             if ( json )
@@ -671,11 +670,12 @@ Biojs.FeatureViewer = Biojs.extend(
 
         /**
          * Applies a zoom in or zoom out; it should not be used if the slider is available.
-         * @param init
-         * @param end
          *
          * @example
          * myPainter.zoom(2,10);
+         *
+         * @param init
+         * @param end
          */
         zoom: function(init, end) {
             var config = this.opt.json.configuration;
