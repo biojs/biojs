@@ -49,6 +49,9 @@ Biojs.BasicSequencePainter = Biojs.extend({
 		self.basedivid = options.basedivid;
 		self.currentZoomIndices = [0,options.seqlen-1]; self.prevZoomIndices = [0,options.seqlen-1];
 		self.noXstretchElems = []; // elems for which x-scaling on sequence-zoom is to be undone
+		self.redrawTextElems = []; // domain text titles which need to be redrawn after zoom
+		self.seqtextelems = [];
+		self.textstyle = 'px "Courier"';
 	},
 	index2coordinate: function(index) {
 		// from raphael objects provided, return raphael object and bounding coordinates of a box corresponding to an index
@@ -154,18 +157,84 @@ Biojs.BasicSequencePainter = Biojs.extend({
 		rd.rapha.canvas.setAttribute('preserveAspectRatio', 'none'); // TODO no equivalent fix for IE 6/7/8?
 	},
 	onSequenceZoom: function(type, args, me) {
-		//console.log(me.basedivid + " " + args[0].basedivid);
 		if(me.basedivid != args[0].basedivid) return;
 		//console.log(args[0].start);
 		me.zoomOnSequenceRange(args[0].start, args[0].stop);
 		me.prevZoomIndices = [me.currentZoomIndices[0], me.currentZoomIndices[1]];
 		me.currentZoomIndices = [args[0].start,args[0].stop];
 		me.undoXscaling();
+		me.redrawText();
+		me.redoSequenceText();
+	},
+	getRangediffForSeqfont: function() {
+		// at which range will i have a fontsize >= lesser_of(10,charheight)?
+		var self = this;
+		var rd = self.index2coordinate(0), minfontsize=10;
+		var charwidth = rd.stopx-rd.startx, charheight = rd.stopy-rd.starty;
+		if(minfontsize > charheight) minfontsize = charheight;
+		rangediff = charwidth * self.seqlen / minfontsize;
+		// console.log("minfont " + minfontsize + " " + rangediff);
+		return rangediff;
+	},
+	getScaledFontsizeForSequence: function() {
+		var self = this;
+		var rd = self.index2coordinate(0);
+		var charwidth = rd.stopx-rd.startx, charheight = rd.stopy-rd.starty;
+		var xscale = Math.abs( (self.currentZoomIndices[0]-self.currentZoomIndices[1]+1) / self.seqlen ) ;
+		charwidth /= xscale;
+		var fontsize = charwidth;
+		if(charheight < charwidth) fontsize = charheight;
+		fontsize = Math.round(fontsize*0.8);
+		return fontsize;
+	},
+	redoSequenceText: function() {
+		var self = this;
+		if(self.seqtextelems.length == 0) return;
+		var fontsize = self.getScaledFontsizeForSequence();
+		var fontstyle = fontsize + self.textstyle;
+			rangediff = self.getRangediffForSeqfont();
+		var shouldShowSeq = (Math.abs(self.currentZoomIndices[1]-self.currentZoomIndices[0]) <= rangediff);
+		//shouldShowSeq = (fontsize >= 10);
+		console.log(shouldShowSeq  + " " + self.sequenceVisible + " " + self.currentZoomIndices);
+		if(self.sequenceNevershown == true && shouldShowSeq == false) { // hide
+			jQuery.each(self.seqtextelems, function(ri,relem) {
+				relem.hide();
+			});
+			self.sequenceVisible = false;
+		}
+		if(self.sequenceVisible == true && shouldShowSeq == true) return;
+		if(self.sequenceVisible == true && shouldShowSeq == false) { // hide
+			jQuery.each(self.seqtextelems, function(ri,relem) {
+				relem.hide();
+			});
+			self.sequenceVisible = false;
+		}
+		if(self.sequenceVisible == false && shouldShowSeq == true) { // show
+			if(self.sequenceNevershown == true) {
+				self.sequenceNevershown = false;
+				console.log("scaling");
+				var xscale =  (self.currentZoomIndices[1]-self.currentZoomIndices[0]) / (self.seqlen) ;
+				jQuery.each(self.seqtextelems, function(ri,relem) { relem.scale(xscale,1); } );
+			}
+			jQuery.each(self.seqtextelems, function(ri,relem) { relem.show(); relem.attr("font",fontstyle); } );
+			self.sequenceVisible = true;
+		}
+		return;
 	},
 	undoXscaling: function() {
 		var self = this;
-		var xscale =  (this.currentZoomIndices[0]-this.currentZoomIndices[1]) / (this.prevZoomIndices[0]-this.prevZoomIndices[1]) ;
-		jQuery.each(this.noXstretchElems, function(ri,relem) { relem = relem.scale(xscale,1); });
+		var xscale =  (self.currentZoomIndices[0]-self.currentZoomIndices[1]) / (self.prevZoomIndices[0]-self.prevZoomIndices[1]) ;
+		jQuery.each(self.noXstretchElems, function(ri,relem) { relem = relem.scale(xscale,1); });
+	},
+	redrawText: function() {
+		var self = this;
+		jQuery.each(self.redrawTextElems, function(ti,telem) {
+			//console.log(telem.data("in_rect")); console.log(telem);
+			//telem.attr("text", "heyyy"); telem.attr("font", "20px 'Courier'");
+			var rwidth = telem.data("in_rect").attr('width'), rheight = telem.data("in_rect").attr('height');
+			var textfont = self.textTruncate(telem.data("fulltext"), rwidth, rheight);
+			telem.attr("font",textfont[1]+self.textstyle).attr("text",textfont[0]);
+		});
 	}
 });
 
@@ -193,17 +262,27 @@ Biojs.ZoombarPainter = Biojs.BasicSequencePainter.extend({
     		var cf = (self.pixelwidth)/(self.maxval-self.minval); // remember to account for width of thumbnail image!
         	return Math.round(val * cf);
     	};
+			// at which range will i have a fontsize >= lesser_of(10,charheight)?
+			
+			rangediff = self.getRangediffForSeqfont();
+
         jQuery('#'+rd.trackdiv+"_sliderdiv").rangeSlider({
-			arrows:false, bounds:{min:self.minval,max:self.maxval}, defaultValues:{min:self.minval,max:self.maxval}, step:1, valueLabels:'change',
+			arrows:false,
+			bounds:{min:self.minval,max:self.maxval},
+			defaultValues:{min:self.minval,max:self.maxval}, step:5, valueLabels:'change',
 			scales: [
 				{
 					next: function(val) {return val+1;},
 					label: function(val) { if(val%10==0) return '|'; else return ''; }
 				}
-			]
+			],
+			range:{min:rangediff,max:false} 
 		});
-        jQuery('#'+rd.trackdiv+"_sliderdiv").bind("valuesChanging", function(e,data) {
-			Biojs.PSVevents.SequenceZoomEvent.fire({basedivid:self.basedivid,start:data.values.min, stop:data.values.max});
+		jQuery('#'+rd.trackdiv+"_sliderdiv").bind("valuesChanging", function(e,data) {
+		//jQuery('#'+rd.trackdiv+"_sliderdiv").bind("valuesChanged", function(e,data) {
+			var thestart = data.values.min, thestop = data.values.max;
+			if(thestart > thestop) { temp = thestart; thestart = thestop; thestop = temp; }
+			Biojs.PSVevents.SequenceZoomEvent.fire({basedivid:self.basedivid,start:thestart, stop:thestop});
 		});
 	}
 });
@@ -235,6 +314,8 @@ Biojs.DomainPainter = Biojs.BasicSequencePainter.extend({
 		var self = this;
 		self.init(options);
 		self.domains = options.domains;
+		self.sequenceNevershown = true;
+		self.sequenceVisible = false;
 	},
 	paint: function() {
 		var self = this;
@@ -256,6 +337,13 @@ Biojs.DomainPainter = Biojs.BasicSequencePainter.extend({
 			var textelems = self.addTexttoDomain(dmn, rectelems);
 			alltextelems = alltextelems.concat(textelems);
 			self.noXstretchElems = self.noXstretchElems.concat(textelems);
+			self.redrawTextElems = self.redrawTextElems.concat(textelems);
+		}
+		if(dmn.sequence) {
+			self.seqtextelems = self.seqtextelems.concat( self.showSequence(dmn.sequence) );
+			self.redoSequenceText();
+			//self.seqtextelems = self.showSequence(dmn.sequence);
+			//self.redoSequenceText();
 		}
 		if(dmn.glowOnHover) { // change look of domain's rectangles on hover
 			jQuery.each([].concat(allrectelems,alltextelems), function(aei,anobj) {
@@ -288,25 +376,56 @@ Biojs.DomainPainter = Biojs.BasicSequencePainter.extend({
 		}
 		self.paintConnectorsBaloons(dmn);
 	},
+	textTruncate: function(thetext,rectwidth,rectheight) { // truncate text based on fontsize and width available to display text
+		var self = this;
+		var xscale = Math.abs( (self.currentZoomIndices[0]-self.currentZoomIndices[1]+1) / (self.seqlen) );
+		rectwidth /= xscale;
+		var minfontsize = 10, maxfontsize = rectheight;
+		var fontsize = rectwidth/thetext.length;
+		var newtext = thetext;
+		if(fontsize < minfontsize) {
+			fontsize = minfontsize;
+			var possibleTextlen = rectwidth/minfontsize;
+			if(possibleTextlen<=1) newtext = "";
+			else if(possibleTextlen < 4) newtext = thetext[0] + "..";
+			else newtext = thetext.substring(0,rectwidth/minfontsize-3) + "...";
+		}
+		if(fontsize >= maxfontsize) fontsize = maxfontsize;
+		return [newtext, fontsize];
+	},
+	showSequence: function(theseq) {
+		if(!theseq) return [];
+		var self = this;
+		//console.log("here");
+		if(theseq.length != self.seqlen) alert("Cannot show sequence due to unxpected length! " + theseq.length + " expected:" + self.seqlen);
+		var rd = self.index2coordinate(0);
+		var seqtextelems = rd.rapha.set();
+		for(var ri=0; ri < self.seqlen; ri++) {
+			var rd = self.index2coordinate(ri);
+			seqtextelems.push(
+				rd.rapha.text((rd.startx+rd.stopx)/2, (rd.starty+rd.stopy)/2, theseq[ri])
+			);
+		}
+		return seqtextelems;
+	},
 	addTexttoDomain: function(dmn,rectangles) {
 		var self = this;
 		if(!dmn.displayname) return [];
 		var textelems = [];
 		jQuery.each(rectangles, function(roindex,arect) {
 			var rd0 = arect.paper;
-			var minfontsize = 10, maxfontsize = arect.attr('height');
-			var fontsize = arect.attr('width')/dmn.displayname.length; var domname = dmn.displayname;
-			if(fontsize < minfontsize) {
-				fontsize = minfontsize;
-				var domlen = arect.attr('width')/minfontsize;
-				if(domlen<=1) domname = "";
-				else if(domlen < 4) domname = dmn.displayname[0] + "..";
-				else domname = dmn.displayname.substring(0,arect.attr('width')/minfontsize-3) + "...";
-			}
-			if(fontsize > maxfontsize) fontsize = maxfontsize;
-			textelems.push( rd0.text(arect.attr('x')+arect.attr('width')/2, arect.attr('y')+arect.attr('height')/2, domname).attr({font:fontsize+'px "Courier"'}) );
+			var newtextfont = self.textTruncate(dmn.displayname, arect.attr('width'), arect.attr('height'));
+			var newtext = newtextfont[0], fontsize = newtextfont[1];
+			textelems.push( rd0.text(arect.attr('x')+arect.attr('width')/2, arect.attr('y')+arect.attr('height')/2, newtext)
+				.attr({font:fontsize+self.textstyle})
+				.data("in_rect",arect)
+				.data('fulltext',dmn.displayname)
+			);
 		});
 		return textelems;
+	},
+	addSequencetext: function(dmn,rectangles) {
+		
 	},
 	paintConnectorsBaloons: function(dmn) {
 		var self = this;
