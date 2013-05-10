@@ -152,13 +152,11 @@ Biojs.BasicSequencePainter = Biojs.extend({
 		if(self.raphadivs.length != 1) { alert("Serious error - zoom is not possible if painter spans more than a row!"); return; }
 		var rd = self.raphadivs[0];
 		var startx = self.index2coordinate(start).startx, stopx = self.index2coordinate(stop).stopx;
-		//console.log("hi " + start + " " + stop + " : " + startx + " " + stopx);
 		rd.rapha.setViewBox(startx, 0, stopx-startx, rd.rapha.height, false);
 		rd.rapha.canvas.setAttribute('preserveAspectRatio', 'none'); // TODO no equivalent fix for IE 6/7/8?
 	},
 	onSequenceZoom: function(type, args, me) {
 		if(me.basedivid != args[0].basedivid) return;
-		//console.log(args[0].start);
 		me.zoomOnSequenceRange(args[0].start, args[0].stop);
 		me.prevZoomIndices = [me.currentZoomIndices[0], me.currentZoomIndices[1]];
 		me.currentZoomIndices = [args[0].start,args[0].stop];
@@ -173,7 +171,6 @@ Biojs.BasicSequencePainter = Biojs.extend({
 		var charwidth = rd.stopx-rd.startx, charheight = rd.stopy-rd.starty;
 		if(minfontsize > charheight) minfontsize = charheight;
 		rangediff = charwidth * self.seqlen / minfontsize;
-		// console.log("minfont " + minfontsize + " " + rangediff);
 		return rangediff;
 	},
 	getScaledFontsizeForSequence: function() {
@@ -195,7 +192,7 @@ Biojs.BasicSequencePainter = Biojs.extend({
 			rangediff = self.getRangediffForSeqfont();
 		var shouldShowSeq = (Math.abs(self.currentZoomIndices[1]-self.currentZoomIndices[0]) <= rangediff);
 		//shouldShowSeq = (fontsize >= 10);
-		console.log(shouldShowSeq  + " " + self.sequenceVisible + " " + self.currentZoomIndices);
+		//console.log(shouldShowSeq  + " " + self.sequenceVisible + " " + self.currentZoomIndices);
 		if(self.sequenceNevershown == true && shouldShowSeq == false) { // hide
 			jQuery.each(self.seqtextelems, function(ri,relem) {
 				relem.hide();
@@ -212,7 +209,7 @@ Biojs.BasicSequencePainter = Biojs.extend({
 		if(self.sequenceVisible == false && shouldShowSeq == true) { // show
 			if(self.sequenceNevershown == true) {
 				self.sequenceNevershown = false;
-				console.log("scaling");
+				//console.log("scaling");
 				var xscale =  (self.currentZoomIndices[1]-self.currentZoomIndices[0]) / (self.seqlen) ;
 				jQuery.each(self.seqtextelems, function(ri,relem) { relem.scale(xscale,1); } );
 			}
@@ -380,13 +377,13 @@ Biojs.DomainPainter = Biojs.BasicSequencePainter.extend({
 		var self = this;
 		var xscale = Math.abs( (self.currentZoomIndices[0]-self.currentZoomIndices[1]+1) / (self.seqlen) );
 		rectwidth /= xscale;
-		var minfontsize = 10, maxfontsize = rectheight;
+		var minfontsize = 10, maxfontsize = rectheight-1;
 		var fontsize = rectwidth/thetext.length;
 		var newtext = thetext;
 		if(fontsize < minfontsize) {
 			fontsize = minfontsize;
-			var possibleTextlen = rectwidth/minfontsize;
-			if(possibleTextlen<=1) newtext = "";
+			var possibleTextlen = Math.floor(rectwidth/minfontsize);
+			if(possibleTextlen<=1) newtext = ".";
 			else if(possibleTextlen < 4) newtext = thetext[0] + "..";
 			else newtext = thetext.substring(0,rectwidth/minfontsize-3) + "...";
 		}
@@ -396,7 +393,6 @@ Biojs.DomainPainter = Biojs.BasicSequencePainter.extend({
 	showSequence: function(theseq) {
 		if(!theseq) return [];
 		var self = this;
-		//console.log("here");
 		if(theseq.length != self.seqlen) alert("Cannot show sequence due to unxpected length! " + theseq.length + " expected:" + self.seqlen);
 		var rd = self.index2coordinate(0);
 		var seqtextelems = rd.rapha.set();
