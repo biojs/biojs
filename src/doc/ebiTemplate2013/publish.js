@@ -342,7 +342,7 @@ function inheritedMembers(components, remain ) {
 				node.comment.tags.push( tag );
 
 				node.requires.push( 
-                    new JSDOC.DocTag('@requires '+parent.alias) 
+					new JSDOC.DocTag('@requires <a href="' + parent.alias + '.html">' + parent.alias +'</a>')  
 				);
 				
 				// Remove the first
