@@ -61,7 +61,11 @@
 			//mySequence.addHighlight( { "start": 30, "end": 40, "color": "blue", "background": "red", "id": "aaa" } );
 
 
-
+			mySequence.onAnnotationClicked(
+			   function( objEvent ) {
+			      $("#log").text(objEvent.id + "Clicked " + objEvent.name + " on position " + objEvent.pos );
+			   }
+			);
 			
 
 		};	    

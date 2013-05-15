@@ -170,6 +170,22 @@ Biojs.InteractionsTable = Biojs.Table.extend(
 			}
 		});
 	},
+
+    /**
+     * Add a single new row or multiple rows of data to the table.
+     * @param {array} data 1D array of data - add a single row with the data provided
+     * 
+     * @example 
+     * myTable.addDataRow([ "Protein A", "Protein B", "...", "...", "...", "..." ]);
+     *  
+     */
+    addDataRow: function(row) {
+   	 if (this.opt.rowSelection) {
+   		 row.unshift('<input type="checkbox" id="" />');
+   	 }
+   	 this._table.fnAddData(row); 
+    },
+
 	
     /**
      * Rebuild the table
