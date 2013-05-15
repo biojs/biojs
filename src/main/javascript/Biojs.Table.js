@@ -14,7 +14,7 @@
  * @requires <a href='http://www.datatables.net/'>DataTables Plugin</a>
  * @dependency <script type="text/javascript" src="../biojs/dependencies/jquery.dataTables.min.js"></script>
  * 
- * @requires <a href='http://jqueryui.com/'>jQuery UI 1.8.2+</a>
+ * @requires <a href=''>jQuery UI 1.8.2+</a>
  * @dependency <script type="text/javascript" src="../biojs/dependencies/jquery/jquery-ui-1.8.2.custom.min.js"></script>
  * 
  * @requires <a href='http://www.erichynds.com/jquery/jquery-ui-multiselect-widget/'>MultiSelect Plugin</a>
