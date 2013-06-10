@@ -226,10 +226,6 @@
  * @option {boolean} [dragSites=true]
  *    Should the sites be draggable?
  *
- * @option {String}
- *    Web service that creates image files for annotation features as those described in the json option
- *    Note: We recommend to use the same Web service that was used to generate the json file if any.
- *
  * @option {String} [selectionColor=#ff8c00]
  *    Color in hexa format so the features on mouse-over and click will change to it.
  *    Make sure it does not exist at http://wwwdev.ebi.ac.uk/das-srv/uniprot/das/uniprot/stylesheet as those are the reference colours for protein features.
@@ -245,7 +241,7 @@
  *             ,"typeCategory":"Molecule processing","typeCode":"SO:0001062","cy":56,"cx":27,"evidenceCode":""
  *             ,"r":10,"featureId":"UNIPROTKB_Q8LAX3_PROPEP_1_73","rowsStyle":{"heightOrRadius":10,"y":169}
  *             ,"featureTypeLabel":"propeptide","y":56,"x":27
-*          }
+ *          }
  *         ,{
  *             "nonOverlappingStyle":{"heightOrRadius":10,"y":56},"type":"rect","featureEnd":96,"fillOpacity":0.5
  *             ,"evidenceText":"UniProt","stroke":"#7DBAA4","height":10,"path":"","typeLabel":"Peptide"
@@ -305,8 +301,7 @@
  *
  * var myPainter = new Biojs.FeatureViewer({
  *    target: "YourOwnDivId",
- *    json: json,
- *    featureImageWebService: "http://wwwdev.ebi.ac.uk/uniprot/featureViewer/image"
+ *    json: json
  * });
  *
  */
@@ -365,7 +360,6 @@ Biojs.FeatureViewer = Biojs.extend(
          * selectFeatureOnMouseClick: true,
          * dragSites: true //beware that dragging implies a click on so the click event will be raised!
          * selectionColor: "#ff8c00"
-         * featureImageWebService: "http://localhost:8080/image"
          * @name Biojs.FeatureViewer-opt
          */
         opt: {
@@ -377,8 +371,7 @@ Biojs.FeatureViewer = Biojs.extend(
             highlightFeatureOnMouseOver: true,
             selectFeatureOnMouseClick: true,
             dragSites: true,
-            selectionColor: "#ff8c00", //make sure it does not exist at http://wwwdev.ebi.ac.uk/das-srv/uniprot/das/uniprot/stylesheet
-            featureImageWebService: "http://localhost:8080/image"
+            selectionColor: "#ff8c00" //make sure it does not exist at http://wwwdev.ebi.ac.uk/das-srv/uniprot/das/uniprot/stylesheet
         },
 
         /**
@@ -596,6 +589,7 @@ Biojs.FeatureViewer = Biojs.extend(
          * Note: For IE it does not reflect the drags/drops on sites
          *
          * @example
+         * //It only works in Firefox or Chrome, IE may require a web service to handle this (which is not supported in this component).
          * myPainter.exportFeaturesToImage();
          *
          */
@@ -606,20 +600,14 @@ Biojs.FeatureViewer = Biojs.extend(
             var config = this.opt.json.configuration;
             var dataURL = "";
             if (jQuery.browser.msie) { //canvas does not work (not even with IE 9)
-                var arguments = "segment=" + this.opt.json.segment;
-                if ((config.requestedStart != 0) && (config.requestedStop != 0)) {
-                    arguments = arguments + ":" + config.requestedStart + "," + config.requestedStop;
-                }
-                arguments = arguments +
-                    "&dasReference=" + config.dasReference +
-                    "&dasSources=" + config.dasSources +
-                    "&width=" + config.sizeX +
-                    "&option=image" +
-                    "&hgrid=" + config.horizontalGrid +
-                    "&vgrid=" + config.verticalGrid +
-                    "&style=" + config.style;
-                dataURL = this.opt.featureImageWebService + "?" + arguments;
-                window.open(dataURL); //open generated image in new tab/window
+                this.$imageExported = jQuery('<div id="uniprotFeaturePainter-imageExportedDiv"></div>')
+                    .html('Image export is not supported for IE')
+                    .dialog({
+                        autoOpen: true,
+                        title: 'Exported image',
+                        modal: true,
+                        width: config.sizeX+20
+                    });
             } else {
                 svg = document.getElementById('uniprotFeaturePainter-holder').innerHTML;
                 var canvas = document.createElement("canvas");
@@ -652,20 +640,6 @@ Biojs.FeatureViewer = Biojs.extend(
 //        printWin.focus();
 //        printWin.print();
 //        printWin.close();
-        },
-
-        /**
-         * Opens a new window/tab in the browser with the graphical representation as a plain image.
-         * Note: For IE it does not reflect the drags/drops on sites
-         *
-         * @example
-         * myPainter.showGeneralLegend();
-         *
-         */
-        showGeneralLegend: function() {
-            var config = this.opt.json.configuration;
-            var dataURL = this.opt.featureImageWebService + "?";
-            window.open(dataURL); //open generated image in new tab/window
         },
 
         /**
