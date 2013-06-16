@@ -4,7 +4,8 @@
         $allowedDomains = array(
                 'http://www.ebi.ac.uk',
                 'http://wwwdev.ebi.ac.uk',
-                'http://das.proteinatlas.org'
+                'http://das.proteinatlas.org',
+                'http://www.ensembl.org'
         );
         
 /* GET THE URL TO PROXY */
