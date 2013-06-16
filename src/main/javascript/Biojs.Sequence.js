@@ -15,7 +15,7 @@
  * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jquery/jquery-ui-1.8.2.custom.min.js"></script>
  *
  * @requires <a href='Biojs.Tooltip.css'>Biojs.Tooltip</a>
- * @dependency <script language="JavaScript" type="text/javascript" src="Biojs.Tooltip.js"></script>
+ * @dependency <script language="JavaScript" type="text/javascript" src="src/Biojs.Tooltip.js"></script>
  * 
  * @param {Object} options An object with the options for Sequence component.
  *    
