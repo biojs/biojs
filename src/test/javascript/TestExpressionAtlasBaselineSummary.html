@@ -1,0 +1,70 @@
+<!--
+  ~ Copyright 2008-2013 Microarray Informatics Team, EMBL-European Bioinformatics Institute
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  ~
+  ~
+  ~ For further details of the Gene Expression Atlas project, including source code,
+  ~ downloads and documentation, please see:
+  ~
+  ~ http://gxa.github.com/gxa
+  -->
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="eng"
+      class=" js flexbox canvas canvastext no-touch rgba hsla multiplebgs backgroundsize borderimage
+              borderradius boxshadow textshadow opacity cssanimations csscolumns cssgradients cssreflections
+              csstransforms csstransforms3d csstransitions fontface generatedcontent applicationcache">
+
+<head>
+
+    <title>Biojs.ExpressionAtlasBaselineSummary test</title>
+
+    <link type="text/css" rel="stylesheet"
+          href="//www.ebi.ac.uk/web_guidelines/css/compliance/develop/boilerplate-style.css"/>
+    <link type="text/css" rel="stylesheet"
+          href="//www.ebi.ac.uk/web_guidelines/css/compliance/develop/ebi-global.css"/>
+    <link type="text/css" rel="stylesheet"
+          href="//www.ebi.ac.uk/web_guidelines/css/compliance/develop/ebi-visual.css"/>
+    <link type="text/css" rel="stylesheet"
+          href="//www.ebi.ac.uk/web_guidelines/css/compliance/develop/984-24-col-fluid.css"/>
+    <link type="text/css" rel="stylesheet"
+          href="//www.ebi.ac.uk/web_guidelines/css/compliance/develop/embl-petrol-colours.css"/>
+
+
+    <script language="JavaScript" type="text/javascript"
+            src="../../main/resources/dependencies/jquery/jquery-1.7.2.min.js"></script>
+    <script language="JavaScript" type="text/javascript" src="../../main/javascript/Biojs.js"></script>
+    <script language="JavaScript" type="text/javascript"
+            src="../../main/javascript/Biojs.ExpressionAtlasBaselineSummary.js"></script>
+
+    <script>
+        (function ($) { //self invoking wrapper function that prevents $ namespace conflicts
+
+            $(document).ready(function () {
+
+                var instance = new Biojs.ExpressionAtlasBaselineSummary({
+                    featuresUrl:'http://www-test.ebi.ac.uk/gxa/widgets/heatmap/protein?geneQuery=ENSG00000187003&propertyType=identifier',
+                    target:"YourOwnDivId",
+                    rootContext:"../../main/resources/dependencies/proxy/proxy.php?url=http://www-test.ebi.ac.uk/gxa",
+                    proxyUrl:"../../main/resources/dependencies/proxy/proxy.php"
+                });
+
+            });
+
+        })(jQuery);
+    </script>
+</head>
+<body>
+<div id="YourOwnDivId"></div>
+</body>
+</html>
