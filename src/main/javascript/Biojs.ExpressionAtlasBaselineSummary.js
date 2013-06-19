@@ -9,8 +9,8 @@
  * @version 1.0.3
  * @category 3
  *
- * @requires <a href='http://code.jquery.com/jquery-1.7.2.min.js'>jQuery Core 1.7.2</a>
- * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jquery/jquery-1.7.2.min.js"></script>
+ * @requires <a href='http://code.jquery.com/jquery-1.9.1.min.js'>jQuery Core 1.9.1</a>
+ * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jquery/jquery-1.9.1.min.js"></script>
  *
  * @param {Object} options An object with the options for ExpressionAtlasBaselineSummary component.
  *
