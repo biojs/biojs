@@ -31,20 +31,6 @@
  * });	
  * 
  */
-
-if(typeof PDBchainTopologyRegistry == 'undefined') PDBchainTopologyRegistry = {};
-var topoSelectorChanged = function(divid) {
-	var topowidget = PDBchainTopologyRegistry[divid];
-	topowidget.showDomains();
-}
-var activesiteClicked = function(divid) {
-	var topowidget = PDBchainTopologyRegistry[divid];
-	topowidget.showActivesite("triangle");
-	//topowidget.showActivesite("square");
-	//topowidget.showActivesite("diamond");
-	//topowidget.showActivesite("circle");
-}
-
 Biojs.PDBchainTopology = Biojs.extend (
 /** @lends Biojs.PDBchainTopology# */
 {
@@ -568,12 +554,12 @@ self.extents = self.findExtents();
 jQuery('#'+self.config.divid).click(function(e) {
 	if(e.ctrlKey) {
 		if(e.shiftKey) {
-			self.extents[2] *= 0.9;
-			self.extents[3] *= 0.9;
+			self.extents[2] *= 0.5;
+			//self.extents[3] *= 0.9;
 		}
 		else {
-			self.extents[2] /= 0.9;
-			self.extents[3] /= 0.9;
+			self.extents[2] /= 0.5;
+			//self.extents[3] /= 0.9;
 		}
 		self.config.rapha.setViewBox(self.extents[0], self.extents[1], self.extents[2], self.extents[3], true); // TODO issue in IE, safari ! try patching raphael.js see https://github.com/DmitryBaranovskiy/raphael/issues/468 doesnt work even with it...
 	}
@@ -777,3 +763,18 @@ jQuery('#'+self.config.divid).click(function(e) {
      "onHelloSelected"      
   ] 
 });
+
+
+if(typeof PDBchainTopologyRegistry == 'undefined') PDBchainTopologyRegistry = {};
+var topoSelectorChanged = function(divid) {
+	var topowidget = PDBchainTopologyRegistry[divid];
+	topowidget.showDomains();
+}
+var activesiteClicked = function(divid) {
+	var topowidget = PDBchainTopologyRegistry[divid];
+	topowidget.showActivesite("triangle");
+	//topowidget.showActivesite("square");
+	//topowidget.showActivesite("diamond");
+	//topowidget.showActivesite("circle");
+}
+
