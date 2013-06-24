@@ -14,10 +14,19 @@
  *
  * @param {Object} options An object with the options for ExpressionAtlasBaselineSummary component.
  *
- * @option {string} featuresUrl
+ * @option {string} [featuresUrl='http://www-test.ebi.ac.uk/gxa/widgets/heatmap/protein']
  *    The query URL pointing to the ExpressionAtlas for retrieving gene page results
  *    displayed as part of this widget. It is usually composed to include the identifier
  *    of the gene you are interested in, see example.
+ *
+ * @option {string} geneQuery
+ *    ENSEMBL gene ids or UniProt ids. If more than one identifier follow this format "P00846+P99999"
+ *
+ * @option {string} [propertyType='']
+ *    To narrow to search scope of a query term, please provide a type.
+ *
+ * @option {string} [geneSetMatch=false]
+ *    If true collapse multiple returned gene profiles into one single line of average expression.
  *
  * @option {string} target
  *    Identifier of the DIV tag where the component should be displayed.
@@ -34,11 +43,15 @@
  *
  * @example
  *    var instance = new Biojs.ExpressionAtlasBaselineSummary({
- *      featuresUrl: 'http://www-test.ebi.ac.uk/gxa/widgets/heatmap/protein?geneQuery=P00846',
+ *      geneQuery:"ENSG00000187003+ENSG00000185264",
+ *      propertyType:"identifier",
+ *      geneSetMatch:false,
  *      target : "YourOwnDivId"
  *    });
  *
  */
+
+
 Biojs.ExpressionAtlasBaselineSummary = Biojs.extend(
     /** @lends Biojs.ExpressionAtlasBaselineSummary# */
     {
@@ -49,59 +62,125 @@ Biojs.ExpressionAtlasBaselineSummary = Biojs.extend(
          */
         constructor:function (options) {
             //Biojs.console.enable();
-            var self = this;
-
-            var containerDiv = jQuery("#" + self.opt.target);
-            containerDiv.empty();
-
-            var options = self.opt;
-            var url = options.featuresUrl;
-            if (this.opt.proxyUrl != "") {
-                url = this.opt.proxyUrl + "?url=" + url;
-            }
-
-            var httpRequest = {
-                url:url,
-                data:{rootContext:options.rootContext},
-                methid:"GET",
-                beforeSend:function () {
-                    containerDiv.html("<img src='http://www-test.ebi.ac.uk/gxa/resources/images/loading.gif' />");
-                },
-                success:function (htmlResponse) {
-                    Biojs.console.log("SUCCESS: data received");
-                    Biojs.console.log(htmlResponse);
-                    containerDiv.html(htmlResponse);
-                },
-                error:function (xhr, ajaxOptions, thrownError) {
-                    Biojs.console.log("ERROR: " + xhr.status);
-                    containerDiv.html("An error occurred while retrieving the data: " + xhr.status + " - " + xhr.statusText);
-                }
-            };
-
-            jQuery.ajax(httpRequest);
-
+	    this._containerDiv = jQuery("#" + this.opt.target);
+	    this.setQuery(this.opt.geneQuery, this.opt.propertyType, this.opt.geneSetMatch);
         },
+
+	/**
+	 * Set ENSEMBL gene ids or UniProt ids.
+	 * @param {string} geneQuery ENSEMBL gene ids or UniProt ids. If more than one identifier follow this format "P00846+P99999".
+	 * @param {string} propertyType Property to narrow to search scope of a query term, please provide a type.
+	 * @param {boolean} geneSetMatch If true collapse multiple returned gene profiles into one single line of average expression.
+	 * 
+	 * @example 
+	 * instance.setQuery("ENSG00000187003+ENSG00000185264","identifier",false);
+	 * 
+	 * @example 
+	 * instance.setQuery("Q61171","",false);
+	 * 
+	 * @example 
+	 * instance.setQuery("P37173+Q9UER7+P10600+P35243+Q93074+P16234","",false);
+	 * 
+	 * @example 
+	 * instance.setQuery("ENSG000000000000","identifier",false);
+	 * 
+	 */
+	setQuery: function(geneQuery, propertyType, geneSetMatch){
+		this.opt.geneQuery = geneQuery;
+		this.opt.propertyType = propertyType;
+		this.opt.geneSetMatch = geneSetMatch;
+		this._containerDiv.empty();
+
+		/* Check if it is Uniprot or Ensembl ID. Correct propertyType if necessary */
+		var listOfIds = geneQuery.split("+");
+		this._identifierDb = this._checkIdentifier(listOfIds[0]);
+		if(this._identifierDb == Biojs.ExpressionAtlasBaselineSummary.ID_UNIPROT){
+			this.opt.propertyType = "";
+		} else if (this._identifierDb == Biojs.ExpressionAtlasBaselineSummary.ID_ENSEMBL){
+			this.opt.propertyType = "identifier";
+		}	
+
+		/* Set url */
+		var url = this.opt.featuresUrl + "?geneQuery=" + this.opt.geneQuery;
+		if(this.opt.propertyType != ""){
+			url = url + "&propertyType=" + this.opt.propertyType;
+		}
+		if(this.opt.geneSetMatch == true){
+			url = url + "&geneSetMatch=true";
+		}
+		if (this.opt.proxyUrl != "") {
+			url = this.opt.proxyUrl + "?url=" + url;
+		}
+
+		/* Set url and start the request */
+		var self = this;
+		var httpRequest = {
+		url:url,
+		data:{rootContext:this.opt.rootContext},
+		methid:"GET",
+		/** @ignore No need to document this object */
+		beforeSend:function () {
+		    self._containerDiv.html("<img src='http://www-test.ebi.ac.uk/gxa/resources/images/loading.gif' />");
+		},
+		/** @ignore No need to document this object */
+		success:function (htmlResponse) {
+		    Biojs.console.log("SUCCESS: data received");
+		    Biojs.console.log(htmlResponse);
+		    self._containerDiv.html(htmlResponse);
+		},
+		/** @ignore No need to document this object */
+		error:function (xhr, ajaxOptions, thrownError) {
+		    Biojs.console.log("ERROR: " + xhr.status);
+		    self._containerDiv.html("An error occurred while retrieving the data: " + xhr.status + " - " + xhr.statusText);
+		    self.raiseEvent(
+		    	"onError",
+			{ "message": "AJAX request failed", "jqXHR":xhr, "textStatus":ajaxOptions, "errorThrown":thrownError }
+		    );
+		}
+		};
+
+		jQuery.ajax(httpRequest);
+	},
+
+    /* 
+     * Function: Biojs.ExpressionAtlasBaselineSummary._checkIdentifier
+     * Purpose:  Check if the indetifier provided by the user is ENSEMBL or UniProt
+     * Returns:  Database name (uniprot or ensembl)
+     * Inputs:   id -> {String} Identifier.
+     */
+	_checkIdentifier: function(id){
+		var self = this;
+		self._re = /^([A-N,R-Z][0-9][A-Z][A-Z, 0-9][A-Z, 0-9][0-9])|([O,P,Q][0-9][A-Z, 0-9][A-Z, 0-9][A-Z, 0-9][0-9])$/;
+		if (id.search(self._re) != -1){
+			return Biojs.ExpressionAtlasBaselineSummary.ID_UNIPROT;
+		} else if(id.substring(0,4) == "ENSG"){
+			return Biojs.ExpressionAtlasBaselineSummary.ID_ENSEMBL;
+		}	
+	},
 
         /**
          *  Default values for the options
          *  @name Biojs.ExpressionAtlasBaselineSummary-opt
          */
         opt:{
-            /* Features URL
-             This mandatory parameter consists of the query for a particular
-             gene or genes by given their properties. For a single gene query,
-             please use a unique accession (e.g. ENSEMBL gene id or UniProt id).
-             For example search with UniProt id P00846 returns the gene mt-atp6,
-             a search for REACT_6900 returns genes belonging to this pathway.
-             To narrow to search scope of a query term, please provide a type:
-             &propertyType=identifier (here only the identifier property is searched)
-             An additional parameter (&geneSetMatch=true) can be appended after
-             the query term to collapse multiple returned gene profiles into one
-             single line of average expression (this feature is still experimental).
-             For multiple identifiers of the same species please use:
-             geneQuery=ENSG00000187003+ENSG00000185264&propertyType=identifier
-             */
-            featuresUrl:'http://www-test.ebi.ac.uk/gxa/widgets/heatmap/protein?geneQuery=P00846',
+	    /* Features URL
+	     This consists of service url used to query for a particular
+	     gene or genes by given their properties. For a single gene query,
+	     please use a unique accession (e.g. ENSEMBL gene id or UniProt id).
+	     For example search with UniProt id P00846 returns the gene mt-atp6,
+	     a search for REACT_6900 returns genes belonging to this pathway.
+	     To narrow to search scope of a query term, please provide a type:
+	     &propertyType=identifier (here only the identifier property is searched)
+	     An additional parameter (&geneSetMatch=true) can be appended after
+	     the query term to collapse multiple returned gene profiles into one
+	     single line of average expression (this feature is still experimental).
+	     For multiple identifiers of the same species please use:
+	     geneQuery=ENSG00000187003+ENSG00000185264&propertyType=identifier
+	     */
+	    featuresUrl:'http://www-test.ebi.ac.uk/gxa/widgets/heatmap/protein',
+            geneQuery:"",
+	    propertyType:"",
+	    geneSetMatch:"",
             /* Target DIV
              This mandatory parameter is the identifier of the DIV tag where the
              component should be displayed. Use this value to draw your
@@ -126,10 +205,27 @@ Biojs.ExpressionAtlasBaselineSummary = Biojs.extend(
          * @name Biojs.ExpressionAtlasBaselineSummary-eventTypes
          */
         eventTypes:[
-            /*
-             Currently no events are supported.
-             */
+        		/**
+        		 * @name Biojs.ExpressionAtlasBaselineSummary#onError
+        		 * @event
+        		 * @param {function} actionPerformed A function which receives a {@link Biojs.Event} object as argument.
+			 * @eventData {string} message Error message in case of result be 'failure'.
+			 * @eventData {Object} jqXHR XMLHttpRequest object
+			 * @eventData {string} textStatus It describes the type of error that occurred and an optional exception object, if one occurred
+			 * @eventData {string} errorThrown When an HTTP error occurs, errorThrown receives the textual portion of the HTTP status, such as "Not Found" or "Internal Server Error." 
+			 * 
+        		 * @example 
+        		 * instance.onError(
+        		 *    function( error ) {
+        		 *       alert( error.message );
+        		 *    }
+        		 * ); 
+        		 * 
+        		 **/
+        		"onError"
         ]
 
-
-    });
+    },{
+	ID_UNIPROT: "uniprot",
+	ID_ENSEMBL: "ensembl"	
+});
