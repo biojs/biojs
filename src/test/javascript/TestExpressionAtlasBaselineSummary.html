@@ -38,16 +38,20 @@
 
     <script>
         (function ($) { //self invoking wrapper function that prevents $ namespace conflicts
-
+	    var instance;
             $(document).ready(function () {
 
-                var instance = new Biojs.ExpressionAtlasBaselineSummary({
-                    featuresUrl:'http://www-test.ebi.ac.uk/gxa/widgets/heatmap/protein?geneQuery=ENSG00000187003&propertyType=identifier',
-                    target:"YourOwnDivId",
-                    rootContext:"../../main/resources/dependencies/proxy/proxy.php?url=http://www-test.ebi.ac.uk/gxa",
-                    proxyUrl:"../../main/resources/dependencies/proxy/proxy.php"
+                instance = new Biojs.ExpressionAtlasBaselineSummary({
+			geneQuery:"ENSG00000187003+ENSG00000185264",
+			propertyType:"identifier",
+			geneSetMatch:false,
+			target:"YourOwnDivId",
+			rootContext:"../../main/resources/dependencies/proxy/proxy.php?url=http://www-test.ebi.ac.uk/gxa",
+			proxyUrl:"../../main/resources/dependencies/proxy/proxy.php"
                 });
 
+		setTimeout(function(){instance.setQuery("Q61171","",false)},3000);
+		setTimeout(function(){instance.setQuery("P37173+Q9UER7+P10600+P35243+Q93074+P16234","",false)},6000);
             });
 
         })(jQuery);
