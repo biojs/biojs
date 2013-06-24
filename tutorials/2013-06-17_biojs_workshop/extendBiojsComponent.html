@@ -1,0 +1,812 @@
+<!doctype html>
+<html class="no-js" lang="en">
+<head>
+    <title>Extending a BioJS component</title>
+    <style type="text/css">
+        body { max-width: 700px; margin: 0 auto; }
+        pre {
+            background: #9E9E9E;
+        }
+        code {
+            background-color: rgb(220, 220, 220);
+            display: block;
+            padding: 0.1em 1em;
+            border: 1px solid #bebab0;
+        }
+        .emphasis {
+            font-weight: bolder;
+            color: darkblue;
+        }
+        .attention {
+            font-weight: bolder;
+            font-size: larger;
+            color: red;
+        }
+    </style>
+    <!-- end CSS-->
+
+    <script>
+        function toggle(obj) {
+            var el = document.getElementById(obj);
+            el.style.display = (el.style.display != 'none' ? 'none' : '' );
+        }
+    </script>
+
+</head>
+
+<body>
+<p>
+<a href="../2013-06-17_biojs_workshop.html">Tutorial menu</a>
+</p>
+<div class="contents clearfix" id="contents clearfix">
+<h1>Extending a BioJS component</h1>
+<p>
+    This tutorial shows how to extend a BioJS component. We will extend the functionality of the <a href="codingBiojsComponent.html">"gene summary view" component</a> taking XML as input from an ENSEMBL web service. We will follow a new set of <a target="_blank" href="https://docs.google.com/document/d/1Xd-YaglpU7VXYR08FZ7wEW2BR-eugfKPviq01YEvztI/edit?usp=sharing">requirements</a>.
+
+<h2>Requirements and recommendations</h2>
+
+    <p>
+        To follow this tutorial you will need <a href="ebiWorkshopBiojsInstall.html">the BioJS source code in a web server folder</a> as well as the <a href="codingBiojsComponent.html">"gene summary view" component</a>.
+
+
+<h2>Tutorial</h2>
+
+<section id="step1">
+    <h3>Step 1 - Create the component</h3>
+<p>
+In this step we provide you with the skeleton to extend the <a target="_blank" href="http://localhost/biojs/target/registry/Biojs.EnsemblGeneSummaryView.html">Gene Summary Component</a> 
+
+<ul>
+	<li>
+		Copy the <a href="javascript: toggle('step1js');">code and create a JavaScript file named “Biojs.DasEnsemblGeneSummaryView.js”</a> in "biojs/src/main/javascript/"
+
+
+		<div id="step1js" style="display: none">
+			<br/>
+We created three additional options (identifier, ensemblS4DasUrl, proxyUrl). These new options will help us to query the ENSEMBL DAS S4 service, retrieve an XML and feed the "Gene Summary View" component. In this component we are just defining the options and printing them out.
+			
+		<pre><code>
+/** 
+ * Component displaying a ENSEMBL gene view summary
+ * 
+ * @class
+ * @extends Biojs.EnsemblGeneSummaryView
+ * 
+ * @author &lt;a href=&quot;MyEmail@my.email&quot;&gt;My Name&lt;/a&gt;, &lt;a href=&quot;mailto:MyCollaboratorEmail@mycollaborator.email&quot;&gt;Mycollaborator Name&lt;/a&gt;
+ * @version 1.0.0
+ * @category 0
+ * 
+ * @param {Object} options
+ * An object with the options to display the component.
+ * <span class="emphasis">
+ * @option {string} identifier
+ * ENSEMBL identifier. i.e. ENSG00000142192
+ * 
+ * @option {string} [ensemblS4DasUrl='http://www.ensembl.org/das/Multi.EnsemblGeneId.spine/features']
+ * ENSEMBL S4 DAS URL
+ * 
+ * @option {string} [proxyUrl='../biojs/dependencies/proxy/proxy.php']
+ *  This component needs to request data from a web service. To bypass the same origin policy 
+ *  (http://en.wikipedia.org/wiki/Same_origin_policy) this component needs a proxy.  
+ *  You could use your own proxy by modifying this value or one of the BioJS proxies: 
+ *  '../biojs/dependencies/proxy/proxy.php' or '../biojs/dependencies/proxy/proxy.jsp'
+ *     
+ * @example 
+ * var instance = new Biojs.DasEnsemblGeneSummaryView({
+ * 		&quot;target&quot;: &quot;YourOwnDivId&quot;,
+ * 		&quot;identifier&quot;: &quot;ENSG00000142192&quot;
+ * });	</span>
+ * 
+ */
+
+
+Biojs.DasEnsemblGeneSummaryView = Biojs.EnsemblGeneSummaryView.extend(
+/** @lends Biojs.DasEnsemblGeneSummaryView# */
+{
+  constructor: function (options) {<span class="emphasis">
+  	var container = jQuery(&quot;#&quot;+this.opt.target);
+  	
+  	container.append(&quot;&lt;h3&gt;ENSEMBL DAS-S4 URL + identifier&lt;/h3&gt;&quot;);
+	container.append(this.opt.ensemblS4DasUrl + &quot;?segment=&quot; + this.opt.identifier);
+	
+	container.append(&quot;&lt;h3&gt;URL with proxy&lt;/h3&gt;&quot;);
+	container.append(this.opt.proxyUrl + &quot;?url=&quot; + this.opt.ensemblS4DasUrl + &quot;?segment=&quot; + this.opt.identifier);</span>
+  },
+
+  /**
+   *  Default values for the options
+   *  @name Biojs.DasEnsemblGeneSummaryView-opt
+   */
+  opt: {
+     &quot;target&quot;: &quot;YourOwnDivId&quot;,
+     &quot;inputData&quot;: {},<span class="emphasis">
+     &quot;identifier&quot;: &quot;&quot;,
+     &quot;ensemblS4DasUrl&quot;: &quot;http://www.ensembl.org/das/Multi.EnsemblGeneId.spine/features&quot;, 
+     &quot;proxyUrl&quot;: &quot;../biojs/dependencies/proxy/proxy.php&quot;</span>
+  },
+  
+  /**
+   * Array containing the supported event names
+   * @name Biojs.DasEnsemblGeneSummaryView-eventTypes
+   */
+  eventTypes : [ ]
+  
+});
+		</code></pre>
+   		</div> 
+	</li>
+</ul>
+</p>
+</section>
+
+
+
+
+<br/>
+<section id="step2">
+    <h3>Step 2 - Test the component</h3>
+	<ul>
+		<li>
+			To test the component create a HTML page “TestDasEnsemblGeneSummaryView.html” in "biojs/src/test/javascript/".
+		</li>
+		<li>
+		Your web page should look like this (<a href="javascript: toggle('step2page');">show/hide</a>).
+    			<div id="step2page" style="display: none">
+			<pre><code>
+
+
+&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD XHTML 1.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd&quot;&gt;
+&lt;html xmlns=&quot;http://www.w3.org/1999/xhtml&quot; lang=&quot;en-US&quot; xml:lang=&quot;en-US&quot;&gt;
+	&lt;head&gt;
+	  &lt;link href=&quot;../../main/resources/css/Biojs.EnsemblGeneSummaryView.css&quot; rel=&quot;stylesheet&quot; type=&quot;text/css&quot;&gt;<span class="emphasis">
+	  &lt;script type=&quot;text/javascript&quot; src=&quot;../../main/javascript/Biojs.js&quot;&gt;&lt;/script&gt;		
+	  &lt;script type=&quot;text/javascript&quot; src=&quot;../../main/javascript/Biojs.EnsemblGeneSummaryView.js&quot;&gt;&lt;/script&gt;
+	  &lt;script type=&quot;text/javascript&quot; src=&quot;../../main/javascript/Biojs.DasEnsemblGeneSummaryView.js&quot;&gt;&lt;/script&gt;</span>
+	  &lt;script language=&quot;JavaScript&quot; type=&quot;text/javascript&quot; src=&quot;../../main/resources/dependencies/jquery/jquery-1.9.1.min.js&quot;&gt;&lt;/script&gt;
+	  
+	  &lt;script type=&quot;text/javascript&quot;&gt;       
+		var dasGeneView;
+		window.onload = function() {	<span class="emphasis">	 
+			dasGeneView = new Biojs.DasEnsemblGeneSummaryView({
+			        &quot;target&quot; : &quot;holder&quot;,
+					&quot;identifier&quot;: &quot;ENSG00000142192&quot;,
+     				&quot;ensemblS4DasUrl&quot;: &quot;http://www.ensembl.org/das/Multi.EnsemblGeneId.spine/features&quot;, 
+     				&quot;proxyUrl&quot;:  &quot;../../main/resources/dependencies/proxy/proxy.php&quot;,
+			});</span>
+		};	    
+		
+		    	   
+	  &lt;/script&gt;	
+	&lt;/head&gt;
+	&lt;body&gt;
+	  &lt;div id=&quot;holder&quot;&gt;&lt;/div&gt;
+	  &lt;div id=&quot;log&quot;&gt;&lt;/div&gt;
+	&lt;/body&gt;
+&lt;/html&gt;
+
+			</code></pre>
+    			</div>
+		</li>
+    <li>
+Try in <a href="http://localhost/biojs/src/test/javascript/TestDasEnsemblGeneSummaryView.html">http://localhost/biojs/src/test/javascript/TestDasEnsemblGeneSummaryView.html</a>
+        
+    </li>
+</ul>
+</section>
+
+
+
+
+<br/>
+<section id="step3">
+    <h3>Step 3 - Retrieve information from Web Service</h3>
+    <p>
+Create an AJAX request and make sure you get the XML content.
+
+
+<h5>Advice</h5>
+<ul>
+<li>Make an <a target="_blank" href="http://api.jquery.com/jQuery.ajax/">ajax request with jQuery</a></li>
+<li>Print the XML as text or make sure the response was retrieved by looking at the browser console</li> 
+<li>Your JavaScript could look like this (<a href="javascript: toggle('step3js');">show/hide</a>).
+    </p>
+
+    <div id="step3js" style="display: none">
+<pre><code>
+/** 
+ * Component displaying a ENSEMBL gene view summary
+ * 
+ * @class
+ * @extends Biojs.EnsemblGeneSummaryView
+ * 
+ * @author &lt;a href=&quot;MyEmail@my.email&quot;&gt;My Name&lt;/a&gt;, &lt;a href=&quot;mailto:MyCollaboratorEmail@mycollaborator.email&quot;&gt;Mycollaborator Name&lt;/a&gt;
+ * @version 1.0.0
+ * @category 0
+ * 
+ * @param {Object} options
+ * An object with the options to display the component.
+ * 
+ * @option {string} identifier
+ * ENSEMBL identifier. i.e. ENSG00000142192
+ * 
+ * @option {string} [ensemblS4DasUrl='http://www.ensembl.org/das/Multi.EnsemblGeneId.spine/features']
+ * ENSEMBL S4 DAS URL
+ * 
+ * @option {string} [proxyUrl='../biojs/dependencies/proxy/proxy.php']
+ *  This component needs to request data from a web service. To bypass the same origin policy 
+ *  (http://en.wikipedia.org/wiki/Same_origin_policy) this component needs a proxy.  
+ *  You could use your own proxy by modifying this value or one of the BioJS proxies: 
+ *  '../biojs/dependencies/proxy/proxy.php' or '../biojs/dependencies/proxy/proxy.jsp'
+ *     
+ * @example 
+ * var instance = new Biojs.DasEnsemblGeneSummaryView({
+ * 		&quot;target&quot;: &quot;YourOwnDivId&quot;,
+ * 		&quot;identifier&quot;: &quot;ENSG00000142192&quot;
+ * });	
+ * 
+ */
+
+
+Biojs.DasEnsemblGeneSummaryView = Biojs.EnsemblGeneSummaryView.extend(
+/** @lends Biojs.DasEnsemblGeneSummaryView# */
+{
+  constructor: function (options) {<span class="emphasis">
+	  var self = this;
+	  /* URL where to get DAS XML */
+	  var url = this.opt.ensemblS4DasUrl + &quot;?segment=&quot; + this.opt.identifier;
+	  if(this.opt.proxyUrl != &quot;&quot;){
+		  url= this.opt.proxyUrl + &quot;?url=&quot; + url;
+	  }
+	  /* get XML */
+	  jQuery.ajax({
+		    type: &quot;GET&quot;,
+		    url: url,
+		    dataType: &quot;xml&quot;,
+		    success: function(a){
+		    	var xml = (new XMLSerializer()).serializeToString(a);
+				jQuery(&quot;#&quot;+self.opt.target).text(xml);
+			},
+			error: function(a){alert(&quot;error request&quot;);}
+	  });	</span>
+  },
+
+  /**
+   *  Default values for the options
+   *  @name Biojs.DasEnsemblGeneSummaryView-opt
+   */
+  opt: {
+     &quot;target&quot;: &quot;YourOwnDivId&quot;,
+     &quot;inputData&quot;: {},
+     &quot;identifier&quot;: &quot;&quot;,
+     &quot;ensemblS4DasUrl&quot;: &quot;http://www.ensembl.org/das/Multi.EnsemblGeneId.spine/features&quot;, 
+     &quot;proxyUrl&quot;: &quot;../biojs/dependencies/proxy/proxy.php&quot;
+  },
+  
+  /**
+   * Array containing the supported event names
+   * @name Biojs.DasEnsemblGeneSummaryView-eventTypes
+   */
+  eventTypes : [ ]
+  
+});
+</code></pre>
+    </div>
+</li>    
+    
+</section>
+
+
+
+<br/>
+<section id="step4">
+    <h3>Step 4 - Create new method to set new identifiers</h3>
+    <p>
+Create a new public method "setIdentifier" 
+</p>
+
+<p>
+Besides to reassign the new identifier this method could clear any content in the main HTML container, and display the new content for the new identifier. 
+</p>
+<p>
+        Your JavaScript could look like this (<a href="javascript: toggle('step4js');">show/hide</a>).
+    </p>
+
+    <div id="step4js" style="display: none">
+    	In this example we set a "setIdentifier" method processing the AJAX request with the new identifier. We also created a new event to report any errors. The constructor was modify to allow the option to run the component using an idetifier or the original JSON "inputData" object.
+    	
+<pre><code>
+/** 
+ * Component displaying a ENSEMBL gene view summary
+ * 
+ * @class
+ * @extends Biojs.EnsemblGeneSummaryView
+ * 
+ * @author &lt;a href=&quot;MyEmail@my.email&quot;&gt;My Name&lt;/a&gt;, &lt;a href=&quot;mailto:MyCollaboratorEmail@mycollaborator.email&quot;&gt;Mycollaborator Name&lt;/a&gt;
+ * @version 1.0.0
+ * @category 0
+ * 
+ * @param {Object} options
+ * An object with the options to display the component.
+ * 
+ * @option {string} identifier
+ * ENSEMBL identifier. i.e. ENSG00000142192
+ * 
+ * @option {string} [ensemblS4DasUrl='http://www.ensembl.org/das/Multi.EnsemblGeneId.spine/features']
+ * ENSEMBL S4 DAS URL
+ * 
+ * @option {string} [proxyUrl='../biojs/dependencies/proxy/proxy.php']
+ *  This component needs to request data from a web service. To bypass the same origin policy 
+ *  (http://en.wikipedia.org/wiki/Same_origin_policy) this component needs a proxy.  
+ *  You could use your own proxy by modifying this value or one of the BioJS proxies: 
+ *  '../biojs/dependencies/proxy/proxy.php' or '../biojs/dependencies/proxy/proxy.jsp'
+ *     
+ * @example 
+ * var instance = new Biojs.DasEnsemblGeneSummaryView({
+ * 		&quot;target&quot;: &quot;YourOwnDivId&quot;,
+ * 		&quot;identifier&quot;: &quot;ENSG00000142192&quot;
+ * });	
+ * 
+ */
+
+
+Biojs.DasEnsemblGeneSummaryView = Biojs.EnsemblGeneSummaryView.extend(
+/** @lends Biojs.DasEnsemblGeneSummaryView# */
+{
+  constructor: function (options) {<span class="emphasis">
+	  if(this.opt.identifier){
+		  this.setIdentifier(this.opt.identifier);
+	  } else if (jQuery.isEmptyObject(this.opt.inputData) == false){
+		  this.setInputData(this.opt.inputData);
+	  } else {
+		  this._processErrorRequest(&quot;No idenfier or inputData&quot;)
+	  }</span>
+  },
+
+  /**
+   *  Default values for the options
+   *  @name Biojs.DasEnsemblGeneSummaryView-opt
+   */
+  opt: {
+     &quot;target&quot;: &quot;YourOwnDivId&quot;,
+     &quot;inputData&quot;: {},
+     &quot;identifier&quot;: &quot;&quot;,
+     &quot;ensemblS4DasUrl&quot;: &quot;http://www.ensembl.org/das/Multi.EnsemblGeneId.spine/features&quot;, 
+     &quot;proxyUrl&quot;: &quot;../biojs/dependencies/proxy/proxy.php&quot;
+  },<span class="emphasis">
+  
+	/**
+	 * Set an ENSEMBL identifier
+	 * @param {string} ENSEMBL identifier
+	 * 
+	 * @example 
+	 * instance.setIdentifier(&quot;ENSG00000141510&quot;);
+	 * 
+	 * @example 
+	 * instance.setIdentifier(&quot;ENSG00000000000&quot;);
+	 * 
+	 */
+  setIdentifier: function(identifier){
+	  this.opt.identifier = identifier;
+	  var self = this;
+	  /* URL where to get DAS XML */
+	  var url = this.opt.ensemblS4DasUrl + &quot;?segment=&quot; + this.opt.identifier;
+	  if(this.opt.proxyUrl != &quot;&quot;){
+		  url= this.opt.proxyUrl + &quot;?url=&quot; + url;
+	  }
+	  /* get XML */
+	  jQuery.ajax({
+		    type: &quot;GET&quot;,
+		    url: url,
+		    dataType: &quot;xml&quot;,
+		    success: function(a){self._processXml(a);},
+			error: function(a){self._processErrorRequest(a);}
+	  });
+	},</span>
+	/* 
+     * Function: Biojs.DasEnsemblGeneSummaryView._processErrorRequest
+     * Purpose:  Process request error
+     * Returns:  -
+     * Inputs:   textStatus -&gt; {String} Text satus
+     */
+	_processErrorRequest: function (textStatus){
+		Biojs.console.log(textStatus );
+		this.raiseEvent(
+				Biojs.DasEnsemblGeneSummaryView.EVT_ON_REQUEST_ERROR,
+				{ message: textStatus }
+		);
+	},
+	
+	/* 
+     * Function: Biojs.DasEnsemblGeneSummaryView._processXml
+     * Purpose:  Process XML
+     * Returns:  -
+     * Inputs:  xml -&gt; {String} DAS XML with summary information
+     */
+	_processXml: function(xml){
+		var xml = (new XMLSerializer()).serializeToString(xml);
+		jQuery(&quot;#&quot;+this.opt.target).text(xml);
+	},
+  
+  /**
+   * Array containing the supported event names
+   * @name Biojs.DasEnsemblGeneSummaryView-eventTypes
+   */
+  eventTypes : [
+        		/**
+        		 * @name Biojs.DasEnsemblGeneSummaryView#onError
+        		 * @event
+        		 * @param {function} actionPerformed A function which receives an {@link Biojs.Event} object as argument.
+        		 * @example 
+        		 * instance.onError(
+        		 *    function( i ) {
+        		 *       alert( i.message );
+        		 *    }
+        		 * ); 
+        		 * 
+        		 **/
+        		&quot;onError&quot;
+  ]
+  
+},{
+	EVT_ON_REQUEST_ERROR: &quot;onError&quot;
+});
+</code></pre>
+    </div>   
+</section>
+
+
+
+
+
+<br/>
+<section id="step4">
+    <h3>Step 4 - Try your new method</h3>
+
+<ul>
+	<li>Modify "biojs/src/test/javascript/TestEnsemblGeneSummaryView.html</li>
+	<li>
+	Change the display after 6 seconds using the following new ENSEMBL gene identifier: ENSG00000139618
+
+	</li>
+	<li>Your HTML page could look like this (<a href="javascript: toggle('step4page');">show/hide</a>).
+
+
+    <div id="step4page" style="display: none">
+<pre><code>
+&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD XHTML 1.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd&quot;&gt;
+&lt;html xmlns=&quot;http://www.w3.org/1999/xhtml&quot; lang=&quot;en-US&quot; xml:lang=&quot;en-US&quot;&gt;
+	&lt;head&gt;
+	  &lt;link href=&quot;../../main/resources/css/Biojs.EnsemblGeneSummaryView.css&quot; rel=&quot;stylesheet&quot; type=&quot;text/css&quot;&gt;
+	  &lt;script type=&quot;text/javascript&quot; src=&quot;../../main/javascript/Biojs.js&quot;&gt;&lt;/script&gt;		
+	  &lt;script type=&quot;text/javascript&quot; src=&quot;../../main/javascript/Biojs.EnsemblGeneSummaryView.js&quot;&gt;&lt;/script&gt;
+	  &lt;script type=&quot;text/javascript&quot; src=&quot;../../main/javascript/Biojs.DasEnsemblGeneSummaryView.js&quot;&gt;&lt;/script&gt;
+	  &lt;script language=&quot;JavaScript&quot; type=&quot;text/javascript&quot; src=&quot;../../main/resources/dependencies/jquery/jquery-1.9.1.min.js&quot;&gt;&lt;/script&gt;
+	  
+	  &lt;script type=&quot;text/javascript&quot;&gt;       
+		var dasGeneView;
+		window.onload = function() {		 
+			dasGeneView = new Biojs.DasEnsemblGeneSummaryView({
+			        &quot;target&quot; : &quot;holder&quot;,
+					&quot;identifier&quot;: &quot;ENSG00000142192&quot;,
+     				&quot;ensemblS4DasUrl&quot;: &quot;http://www.ensembl.org/das/Multi.EnsemblGeneId.spine/features&quot;, 
+     				&quot;proxyUrl&quot;:  &quot;../../main/resources/dependencies/proxy/proxy.php&quot;,
+			});
+
+			/* Log errors */
+			dasGeneView.onError(
+			   function( objEvent ) {
+			      $(&quot;#log&quot;).text(objEvent.message);
+			   }
+			);<span class="emphasis">
+			
+			/* Set new inpput data after 3 seconds */
+			setInterval(function(){
+				dasGeneView.setIdentifier(&quot;ENSG00000139618&quot;);
+			},6000);</span>
+	    
+		};
+		    	   
+	  &lt;/script&gt;	
+	&lt;/head&gt;
+	&lt;body&gt;
+	  &lt;div id=&quot;holder&quot;&gt;&lt;/div&gt;
+	  &lt;div id=&quot;log&quot;&gt;&lt;/div&gt;
+	&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+    </div>
+</section>
+</li>
+</ul>
+
+
+<br/>
+<section id="step5">
+    <h3>Step 5 - Process XML</h3>
+    
+<ul>
+	<li>Parse the XML</li>
+	<li>Create a new "inputData" object</li>
+	<li>Use the parent method "setInputData" to set the new input and display the gene summary view</li>
+	<li>Your JavaScript could look like this (<a href="javascript: toggle('step5js');">show/hide</a>).
+
+
+    <div id="step5js" style="display: none">
+<pre><code>
+/** 
+ * Component displaying a ENSEMBL gene view summary
+ * 
+ * @class
+ * @extends Biojs.EnsemblGeneSummaryView
+ * 
+ * @author &lt;a href=&quot;MyEmail@my.email&quot;&gt;My Name&lt;/a&gt;, &lt;a href=&quot;mailto:MyCollaboratorEmail@mycollaborator.email&quot;&gt;Mycollaborator Name&lt;/a&gt;
+ * @version 1.0.0
+ * @category 0
+ * 
+ * @param {Object} options
+ * An object with the options to display the component.
+ * 
+ * @option {string} identifier
+ * ENSEMBL identifier. i.e. ENSG00000142192
+ * 
+ * @option {string} [ensemblS4DasUrl='http://www.ensembl.org/das/Multi.EnsemblGeneId.spine/features']
+ * ENSEMBL S4 DAS URL
+ * 
+ * @option {string} [proxyUrl='../biojs/dependencies/proxy/proxy.php']
+ *  This component needs to request data from a web service. To bypass the same origin policy 
+ *  (http://en.wikipedia.org/wiki/Same_origin_policy) this component needs a proxy.  
+ *  You could use your own proxy by modifying this value or one of the BioJS proxies: 
+ *  '../biojs/dependencies/proxy/proxy.php' or '../biojs/dependencies/proxy/proxy.jsp'
+ *     
+ * @example 
+ * var instance = new Biojs.DasEnsemblGeneSummaryView({
+ * 		&quot;target&quot;: &quot;YourOwnDivId&quot;,
+ * 		&quot;identifier&quot;: &quot;ENSG00000142192&quot;
+ * });	
+ * 
+ */
+
+
+Biojs.DasEnsemblGeneSummaryView = Biojs.EnsemblGeneSummaryView.extend(
+/** @lends Biojs.DasEnsemblGeneSummaryView# */
+{
+  constructor: function (options) {
+	  if(this.opt.identifier){
+		  this.setIdentifier(this.opt.identifier);
+	  } else if (jQuery.isEmptyObject(this.opt.inputData) == false){
+		  this.setInputData(this.opt.inputData);
+	  } else {
+		  this._processErrorRequest(&quot;No idenfier or inputData&quot;)
+	  }
+  },
+
+  /**
+   *  Default values for the options
+   *  @name Biojs.DasEnsemblGeneSummaryView-opt
+   */
+  opt: {
+     &quot;target&quot;: &quot;YourOwnDivId&quot;,
+     &quot;inputData&quot;: {},
+     &quot;identifier&quot;: &quot;&quot;,
+     &quot;ensemblS4DasUrl&quot;: &quot;http://www.ensembl.org/das/Multi.EnsemblGeneId.spine/features&quot;, 
+     &quot;proxyUrl&quot;: &quot;../biojs/dependencies/proxy/proxy.php&quot;
+  },
+  
+	/**
+	 * Set an ENSEMBL identifier
+	 * @param {string} ENSEMBL identifier
+	 * 
+	 * @example 
+	 * instance.setIdentifier(&quot;ENSG00000141510&quot;);
+	 * 
+	 * @example 
+	 * instance.setIdentifier(&quot;ENSG00000000000&quot;);
+	 * 
+	 */
+  setIdentifier: function(identifier){
+	  this.opt.identifier = identifier;
+	  var self = this;
+	  /* URL where to get DAS XML */
+	  var url = this.opt.ensemblS4DasUrl + &quot;?segment=&quot; + this.opt.identifier;
+	  if(this.opt.proxyUrl != &quot;&quot;){
+		  url= this.opt.proxyUrl + &quot;?url=&quot; + url;
+	  }
+	  /* get XML */
+	  jQuery.ajax({
+		    type: &quot;GET&quot;,
+		    url: url,
+		    dataType: &quot;xml&quot;,
+		    success: function(a){self._processXml(a);},
+			error: function(a){self._processErrorRequest(a);}
+	   });
+	},
+	/* 
+     * Function: Biojs.DasEnsemblGeneSummaryView._processErrorRequest
+     * Purpose:  Process request error
+     * Returns:  -
+     * Inputs:   textStatus -&gt; {String} Text satus
+     */
+	_processErrorRequest: function (textStatus){
+		Biojs.console.log(textStatus );
+		this.raiseEvent(
+				Biojs.DasEnsemblGeneSummaryView.EVT_ON_REQUEST_ERROR,
+				{ message: textStatus }
+		);
+	},<span class="emphasis">
+	
+	/* 
+     * Function: Biojs.DasEnsemblGeneSummaryView._processXml
+     * Purpose:  Process XML
+     * Returns:  -
+     * Inputs:  xml -&gt; {String} DAS XML with summary information
+     */
+	_processXml: function(xml){
+		if(jQuery(xml).find(&quot;FEATURE&quot;).length == 0){
+			Biojs.console.log(Biojs.DasEnsemblGeneSummaryView.MESSAGE_NODATA );
+			this.raiseEvent(
+					Biojs.DasEnsemblGeneSummaryView.EVT_ON_EMPTY_RESULTS,
+					{ message: Biojs.DasEnsemblGeneSummaryView.MESSAGE_NODATA }
+			);
+			jQuery(&quot;#&quot;+this.opt.target).text(Biojs.DasEnsemblGeneSummaryView.MESSAGE_NODATA);
+		} else {
+			var inputData = {
+					&quot;title&quot;:{
+						&quot;text&quot;:&quot;&quot;,
+				        &quot;link&quot;: {
+				        	&quot;text&quot;: &quot;&quot;,
+				        	&quot;url&quot;: &quot;&quot;
+				        }
+					},
+					&quot;image&quot;: {
+				        &quot;text&quot;: &quot;&quot;, 
+				        &quot;url&quot;: &quot;&quot;
+					},
+					&quot;provenance&quot;: {
+				        &quot;text&quot;: [],
+				        &quot;link&quot;: [] //Array with linkEntry objects
+					},
+					&quot;summary&quot;: [] // Array with summaryEntry objects
+				};
+			jQuery(xml).find(&quot;FEATURE&quot;).each(function(){
+				/* TITLE */
+				if (jQuery(this).find(&quot;TYPE&quot;).attr(&quot;id&quot;).indexOf(&quot;description&quot;) != -1) {
+					/* Get notes */
+					var xmlNotes = jQuery(this).find(&quot;NOTE&quot;);
+					xmlNotes.each(function(){
+						inputData.title.text = jQuery(this).text();
+					});
+					/* Get links */
+					//var xmlLinks = jQuery(this).find(&quot;LINK&quot;);
+					var xmlLinks = jQuery(this).find(&quot;LINK&quot;);
+					xmlLinks.each(function(){
+						inputData.title.link.url = jQuery(this).attr(&quot;href&quot;);
+						inputData.title.link.text = jQuery(this).text();
+					});
+				/* IMAGE */ 
+				} else if (jQuery(this).find(&quot;TYPE&quot;).attr(&quot;id&quot;).indexOf(&quot;image&quot;) != -1) {
+					/* Get links */
+					var xmlLinks = jQuery(this).find(&quot;LINK&quot;);
+					xmlLinks.each(function(){
+						inputData.image.url = jQuery(this).attr(&quot;href&quot;);
+						inputData.image.text = jQuery(this).text();
+					});
+				/* PROVENANCE */	
+				} else if (jQuery(this).find(&quot;TYPE&quot;).attr(&quot;id&quot;).indexOf(&quot;provenance&quot;) != -1) {
+					/* Get notes */
+					var xmlNotes = jQuery(this).find(&quot;NOTE&quot;);
+					xmlNotes.each(function(){
+						inputData.provenance.text.push(jQuery(this).text());
+					});
+					/* Get links */
+					var xmlLinks = jQuery(this).find(&quot;LINK&quot;);
+					xmlLinks.each(function(){
+						var linkEntry = {
+								&quot;text&quot;: &quot;&quot;,
+								&quot;url&quot;: &quot;&quot;
+							}
+						linkEntry.text = jQuery(this).attr(&quot;href&quot;);
+						linkEntry.url = jQuery(this).text();
+						inputData.provenance.link.push(linkEntry);
+					});
+				/* SUMMARY */	
+				} else if (jQuery(this).find(&quot;TYPE&quot;).attr(&quot;id&quot;).indexOf(&quot;summary&quot;) != -1) {
+					var summaryEntry = {
+							&quot;title&quot;: {
+								&quot;text&quot;: &quot;&quot;
+							},
+							&quot;text&quot;: [], 
+							&quot;link&quot;: [] //Array with linkEntry objects
+						};
+					/* Feature label */
+					summaryEntry.title.text = jQuery(this).attr(&quot;label&quot;);
+					/* Get notes */
+					var xmlNotes = jQuery(this).find(&quot;NOTE&quot;);
+					xmlNotes.each(function(){
+						summaryEntry.text.push(jQuery(this).text());
+					});
+					/* Get links */
+					var xmlLinks = jQuery(this).find(&quot;LINK&quot;);
+					xmlLinks.each(function(){
+						var linkEntry = {
+								&quot;text&quot;: &quot;&quot;,
+								&quot;url&quot;: &quot;&quot;
+							}
+						linkEntry.url = jQuery(this).attr(&quot;href&quot;);
+						linkEntry.text = jQuery(this).text();
+						summaryEntry.link.push(linkEntry);
+					});
+					inputData.summary.push(summaryEntry);
+				}	
+			});
+			this.setInputData(inputData);
+		}
+	},</span>
+  
+  /**
+   * Array containing the supported event names
+   * @name Biojs.DasEnsemblGeneSummaryView-eventTypes
+   */
+  eventTypes : [
+        		/**
+        		 * @name Biojs.DasEnsemblGeneSummaryView#onError
+        		 * @event
+        		 * @param {function} actionPerformed A function which receives an {@link Biojs.Event} object as argument.
+        		 * @example 
+        		 * instance.onError(
+        		 *    function( i ) {
+        		 *       alert( i.message );
+        		 *    }
+        		 * ); 
+        		 * 
+        		 **/
+        		&quot;onError&quot;,
+        		/**
+        		 * @name Biojs.DasEnsemblGeneSummaryView#onWarning
+        		 * @event
+        		 * @param {function} actionPerformed A function which receives an {@link Biojs.Event} object as argument.
+        		 * @example 
+        		 * instance.onWarning(
+        		 *    function( i) {
+        		 *       alert( i.message );
+        		 *    }
+        		 * ); 
+        		 * 
+        		 **/
+        		&quot;onWarning&quot;
+  ]
+  
+},{
+	MESSAGE_NODATA: &quot;Sorry, we could not find summary data for your request&quot;,
+	EVT_ON_REQUEST_ERROR: &quot;onError&quot;,
+	EVT_ON_EMPTY_RESULTS: &quot;onWarning&quot;
+});
+</code></pre>
+    </div>
+</li>
+	<li>Try your component <a href="http://localhost/biojs/src/test/javascript/TestDasEnsemblGeneSummaryView.html">http://localhost/biojs/src/test/javascript/TestDasEnsemblGeneSummaryView.html</a></li>
+	</ul>    
+</section>
+
+
+
+<br/>
+<section id="step6">
+    <h3>Step 6 - Deploy the component locally</h3>
+        <ul>
+            <li><a target="_blank" href="ebiWorkshopBiojsInstall.html">Deploy BioJS in your local server</a></li>
+            <li><a target="_blank" href="http://localhost/biojs/target/registry/Biojs.DasEnsemblGeneSummaryView.html">Check your component</a></li>
+            <li><a target="_blank" href="http://localhost/biojs/target/jsdoc/symbols/Biojs.DasEnsemblGeneSummaryView.html">Check the JSDoc API for your component</a></li>
+            <li><a target="_blank" href="http://localhost/biojs/target/biojs/Biojs.DasEnsemblGeneSummaryView.js">Check your minified javascript file</a></li>
+            <li><a target="_blank" href="http://localhost/biojs/src/main/javascript/Biojs.DasEnsemblGeneSummaryView.js">Check your non minified javascript file</a></li>
+        </ul>
+        
+</section>
+
+<br/>
+
+</div>
+
+
+</body>
+</html>
+

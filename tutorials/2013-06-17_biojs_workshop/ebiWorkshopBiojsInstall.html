@@ -1,0 +1,102 @@
+<!doctype html>
+<html class="no-js" lang="en">
+<head>
+    <title>Install BioJS</title>
+    <style type="text/css">
+        body { max-width: 700px; margin: 0 auto; }
+        pre {
+            background: #9E9E9E;
+        }
+        code {
+            background-color: rgb(220, 220, 220);
+            display: block;
+            padding: 0.1em 1em;
+            border: 1px solid #bebab0;
+        }
+        .emphasis {
+            font-weight: bolder;
+            color: darkblue;
+        }
+        .attention {
+            font-weight: bolder;
+            font-size: larger;
+            color: red;
+        }
+    </style>
+    <!-- end CSS-->
+
+    <script>
+        function toggle(obj) {
+            var el = document.getElementById(obj);
+            el.style.display = (el.style.display != 'none' ? 'none' : '' );
+        }
+    </script>
+
+</head>
+
+<body>
+<p>
+<a href="../2013-06-17_biojs_workshop.html">Tutorial menu</a>
+</p>
+<div class="contents clearfix" id="contents clearfix">
+    <h1>Install BioJS</h1>
+<p>
+These are quick instructions for the EBI BioJS workshop 2013 of how to install BioJS. A more detailed tutorial about how to install BioJS is available <a href="https://docs.google.com/document/d/1oS4M0EKAMre4IDERV61VVTDXJH9F-HGbHxKwNXqjWuo/edit">
+        here</a>.
+</p>
+
+    <p>    
+        For this tutorial we will presuppose you installed apache, PHP and you also enabled <a href="http://www.php.net/manual/en/book.curl.php">cURL in PHP</a>. 
+</p>
+
+
+<br/>
+    <h3>Download the BioJS source code</h3>
+<ul>
+<li><strong>Access your web folder</strong>
+<p><code>cd /path/to/your/apache/folder</code></p></li>
+<li><strong>Download BioJS</strong>
+<p><code>svn checkout http://biojs.googlecode.com/svn/trunk/ biojs</code></p></li>
+<li><strong>Check in your internet borwser your web server is running and shows the biojs folder</strong>
+<p><code><a href="">http://localhost</a></code></p>
+</li>
+</ul>
+<br/>
+    <h3>Deploy BioJS</h3>
+<ul>
+<li>
+<p><code>cd /path/to/your/apache/folder/biojs<br/>
+mvn clean compile jsdoctk:jsdoc</code>
+Maven (mvn) is used to build the <strong>registry</strong>, create the <strong>JSDoc API</strong> and <strong>minify</strong> (compress) JavaScript files.</p>  
+</li>
+</ul>
+<br/>
+    <h3>Check your local copy of BioJS</h3>
+<ul>
+
+<li><strong>Registry</strong>
+<p><code><a href="http://localhost/biojs/target/registry/">http://localhost/biojs/target/registry/</a></code>
+The registry is built taking the selfdocumented information available in the components.</p>
+</li>
+<li><strong>JSDoc</strong>
+<p><code><a href="http://localhost/biojs/target/jsdoc/">http://localhost/biojs/target/jsdoc/</a></code>
+The documentation API is created taking the selfdocumented information available in the components.</p>
+</li>
+<li><strong>BioJS original JS components</strong>
+<p><code><a href="http://localhost/biojs/src/main/javascript/">http://localhost/biojs/src/main/javascript/</a></code></p></li>
+<li><strong>BioJS minified JS components</strong> 
+<p><code><a href="http://localhost/biojs/target/biojs/">http://localhost/biojs/target/biojs/</a></code>
+Maven created minified JavaScript files removing unnecessary characters from source code without changing its functionality. This is useful to reduce the amount of data that needs to be transferred.</p>
+</li> 
+<li><strong>BioJS component tests</strong>
+<p><code><a href="http://localhost/biojs/src/test">http://localhost/biojs/src/test</a></code>
+We used this folder as a sandbox to play and test components.</p>
+</li>
+</ul>
+
+
+
+
+</body>
+</html>
+

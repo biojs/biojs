@@ -1,0 +1,558 @@
+<!--
+/**
+* Biojs Basic Hello World tutorial.
+* Based on Hello World tutorial at http://code.google.com/p/biojs/wiki/Documentation (John Gómez Caravajal)
+* @author Leyla Garcia
+* @version: 1.0
+* @since   1.0
+*/
+-->
+<!doctype html>
+<html class="no-js" lang="en">
+<head>
+    <title>Implementing a HelloWorld component</title>
+    <style type="text/css">
+        body { max-width: 700px; margin: 0 auto; }
+        pre {
+            background: #9E9E9E;
+        }
+        code {
+            background-color: rgb(220, 220, 220);
+            display: block;
+            padding: 0.1em 1em;
+            border: 1px solid #bebab0;
+        }
+        .emphasis {
+            font-weight: bolder;
+            color: darkblue;
+        }
+        .attention {
+            font-weight: bolder;
+            font-size: larger;
+            color: red;
+        }
+    </style>
+    <!-- end CSS-->
+
+    <script>
+        function toggle(obj) {
+            var el = document.getElementById(obj);
+            el.style.display = (el.style.display != 'none' ? 'none' : '' );
+        }
+    </script>
+
+</head>
+
+<body>
+<p>
+<a href="../2013-06-17_biojs_workshop.html">Tutorial menu</a>
+</p>
+<div class="contents clearfix" id="contents clearfix">
+    <h1>Implementing a HelloWorld component</h1>
+    <p>
+        This tutorial shows how to create a basic component HelloWorld, following the guidelines defined by
+        the <a href="https://docs.google.com/document/d/1gG036Bvwl4i-KX5BTHddGzeE_5eospL-864BrnsAS_s/edit">Biojs specification</a>.
+        <br/>
+        <img src="images/component.png"/>
+    </p>
+
+    <h2>Requirements and recommendations</h2>
+    <p>
+        To follow this tutorial you will need to <a href="ebiWorkshopBiojsInstall.html">download the BioJS source code and place it on a web server folder</a>
+
+    <h2>Tutorial</h2>
+
+    <section id="step1">
+        <h3>Step 1</h3>
+        <p>Before starting coding, Biojs specification recommends to fill a requirements document.
+            We recommend you to take a look to our graphical version before going further (<a href="javascript: toggle('requirements');">show/hide</a>).
+        </p>
+        <div id="requirements" style="display: none">
+            <img src="images/helloWorld_requirements.png" alt="requirements"/>
+        </div>
+    </section>
+
+    <section id="step2">
+        <h3>Step 2</h3><p>Create an empty file named Biojs.MyHelloWorld.js into directory biojs/src/main/javascript.
+        Note: Biojs.HelloWorld.js already exists in the repository as an example, please create your own file
+        Biojs.MyHelloWorld.js
+        </p>
+        <img src="images/creating.png" alt="Creating"/>
+    </section>
+
+    <section id="step3">
+        <h3>Step 3</h3><p>Now you can copy this template (<a href="javascript: toggle('template');">show/hide</a>) so you will
+        have the basic structure of any component, including some comments to help you to understand what things are about.
+        </p>
+        <div id="template" style="display: none">
+<pre><code>
+Biojs.MyHelloWorld = Biojs.extend ({
+    constructor: function (options) {
+        /* Your constructor code here
+        Note: options provided on instantiation time overrides the
+        default values in this.opt, automatically; i.e. 'options'
+        argument refers to the provided values and 'this.opt'
+        refers to the  the overridden options. For more details,
+        go to section 6.3.2 in the spec. doc. */
+    },
+
+    opt: {
+        /* Target DIV
+        This mandatory parameter is the identifier of the DIV tag where the
+        component should be displayed. Use this value to draw your
+        component into. */
+        target: "YourOwnDivId"
+        /* Component Options
+        These options defines the input data for your component.
+        Must have a default value for each one. Note that, either some or
+        all of values might be replaced by the constructor using the values
+        provided in instantiation time.
+        Define your own options here following the next syntax:
+        &lt;option1&gt;: &lt;defaultValue1&gt;,
+        &lt;option2&gt;: &lt;defaultValue2&gt;,
+        ...
+        &lt;optionN&gt;: &lt;defaultValueN&gt; */
+    },
+
+    eventTypes: [
+        /* Event Names
+        The parent class Biojs build the event handlers automatically
+        with the names defined here. Use this.raiseEvent(&lt;eventName&gt;,
+        &lt;eventData&gt;) for triggering an event from this component. Where,
+        &lt;eventName&gt; is a string (defined in eventTypes) and &lt;eventData&gt; is
+        an object which should be passed to the registered listeners.
+        Define your event names following the syntax:
+        &lt;eventName1&gt;,
+        &lt;eventName2&gt;,
+        ...
+        &lt;eventNameN&gt;
+        */
+    ],
+
+    /* Your own attributes
+    _&lt;attrName1&gt;: &lt;defaultValueAttr1&gt;,
+    _&lt;attrName2&gt;: &lt;defaultValueAttr2&gt;,
+    ...
+    _&lt;attrNameN&gt;: &lt;defaultValueAttrN&gt;,
+
+    Example:
+    _PI: 3.1415, */
+
+
+    /* Your own 'PUBLIC' methods
+    &lt;methodName1&gt;: function (&lt;argsMethod1&gt;) {&lt;codeOfMethod1&gt;},
+    &lt;methodName2&gt;: function (&lt;argsMethod2&gt;) {&lt;codeOfMethod2&gt;},
+    ...
+    &lt;methodNameN&gt;: function (&lt;argsMethodN>) {&lt;codeOfMethodN&gt;}
+
+    Example:
+    square: function(number) { return number*number }
+
+    /* Your own 'PROTECTED' methods
+    Javascript does not provides visibility mechanism for class members.
+    Use character '_' to identify the private members of your component.
+    For example: '_initialize'.
+    NOTE: use this.base(arguments) to invoke parent's method if apply.
+    */
+});
+</code></pre>
+        </div>
+    </section>
+
+    <section id="step4">
+        <h3>Step 4</h3><p>Remove unnecessary comments so you will get a clean template, ready for you to add your own code!
+        (<a href="javascript: toggle('cleanTemplate');">show/hide</a>)
+        </p>
+        <div id="cleanTemplate" style="display: none" class="code">
+<pre><code>
+Biojs.MyHelloWorld = Biojs.extend ({
+    constructor: function (options) {
+
+    },
+
+    opt: {
+        target: "YourOwnDivId"
+    },
+
+    eventTypes: [
+
+    ],
+
+    _text: ""
+});
+</code></pre>
+        </div>
+    </section>
+
+    <section id="step5">
+        <h3>Step 5</h3><p>Add some comments to the component so future developers will know about purpose, author,
+        dependencies, and options. Biojs follows a structured and specific way for comments, so you may want to take a look
+        to any of the components of Biojs, for instance Biojs.HelloWorld. Additions/changes to the previous code are in bold blue.
+        (<a href="javascript: toggle('initialComments');">show/hide</a>)
+        </p>
+        <div id="initialComments" style="display: none" class="code">
+<pre><code>
+<span class="emphasis">
+/**
+*
+* Tutorial component which takes a text and displays it as a span HTML element.
+*
+* @class
+* @extends Biojs
+*
+* @author &lt;a href=&quot;mailto:MyEmail@my.email&quot;&gt;My Name&lt;/a&gt;
+* @version 1.0.0
+* @category 0
+*
+* @requires &lt;a href='http://code.jquery.com/jquery-1.7.2.min.js/'&gt;jQuery Core 1.7.2&lt;/a&gt;
+* @dependency &lt;script language=&quot;JavaScript&quot; type=&quot;text/javascript&quot; src=&quot;../biojs/dependencies/jquery/jquery-1.7.2.min.js&quot;&gt;&lt;/script&gt;
+*
+* @param {Object} options An object with the options for this component.
+*
+* @option {string} target
+*    Identifier of the DIV tag where the component should be displayed.
+*
+* @option {string} [text=&quot;Hello!&quot;]
+*    String to be displayed by the component.
+*
+* @example
+* var instance = new Biojs.MyHelloWorld({
+*    target: &quot;YourOwnDivId&quot;,
+*    text: 'Hello to my world!'
+* });
+*
+*/
+</span>
+Biojs.MyHelloWorld = Biojs.extend ({
+    constructor: function (options) {
+
+    },
+
+    opt: {
+    target: "YourOwnDivId"
+    },
+
+    eventTypes: [
+
+    ],
+
+    _text: ""
+});
+</code></pre>
+    </div>
+    </section>
+
+    <section id="step6">
+        <h3>Step 6</h3>
+        <p>
+            Now it is time to code! All our code by now will be in the constructor.
+            <ul>
+                <li>Create a self reference var self = this;</li>
+                <li>Get the container div element (either with jQuery or with document.getElementById)</li>
+                <li>Use an element in the options called 'text' and save it to an attribute called '_text'</li>
+                <li>Append a span to the container with the text from the options</li>
+            </ul>
+            Additions/changes to the previous code are in bold blue. (<a href="javascript: toggle('constructor');">show/hide</a>)
+        </p>
+        <div id="constructor" style="display: none" class="code">
+<pre><code>
+/**
+*
+* Tutorial component which takes a text and displays it as a span HTML element.
+*
+* @class
+* @extends Biojs
+*
+* @author &lt;a href=&quot;mailto:MyEmail@my.email&quot;&gt;My Name&lt;/a&gt;
+* @version 1.0.0
+* @category 0
+*
+* @requires &lt;a href='http://code.jquery.com/jquery-1.7.2.min.js/'&gt;jQuery Core 1.7.2&lt;/a&gt;
+* @dependency &lt;script language=&quot;JavaScript&quot; type=&quot;text/javascript&quot; src=&quot;../biojs/dependencies/jquery/jquery-1.7.2.min.js&quot;&gt;&lt;/script&gt;
+*
+* @param {Object} options An object with the options for this component.
+*
+* @option {string} target
+*    Identifier of the DIV tag where the component should be displayed.
+*
+* @option {string} [text=&quot;Hello!&quot;]
+*    String to be displayed by the component.
+*
+* @example
+* var instance = new Biojs.MyHelloWorld({
+*    target: &quot;YourOwnDivId&quot;,
+*    text: 'Hello to my world!'
+* });
+*
+*/
+
+Biojs.MyHelloWorld = Biojs.extend (
+/** @lends Biojs.MyHelloWorld# */
+{
+<span class="emphasis">
+    /**
+    * Constructor to initialize the component
+    * @name Biojs.MyHelloWorld-constructor
+    */
+    constructor: function (options) {
+        // In JavaScript 'this' always refers to the 'owner' of the function
+        // we're executing (http://www.quirksmode.org/js/this.html)
+        // Let's preserve the reference to 'this' through the variable self. In
+        // this way, we can invoke/execute
+        // our component instead of the object where 'this' is being
+        // invoked/executed.
+        var self = this;
+
+        // For practical use, create an object with the main DIV container
+        // to be used in all of the code of our component
+        this._container = jQuery(&quot;#&quot;+self.opt.target);
+
+        //Move the options to your model
+        this._text = options.text;
+
+        //display the model, i.e., text
+        this._container.append('' + this._text + '');
+    },
+</span>
+    /**
+    *  Default values for the options
+    *  @name Biojs.MyHelloWorld-opt
+    */
+    opt: {
+        target: &quot;YourOwnDivId&quot;
+    },
+
+    /**
+    * Array containing the supported event names
+    * @name Biojs.ProteinPortafolio-eventTypes
+    */
+    eventTypes: [
+
+    ],
+
+    //Your own attributes
+    _text: &quot;&quot;
+
+});
+
+</code></pre>
+        </div>
+    </section>
+
+    <section id="step7">
+        <h3>Step 7</h3>
+        <p>
+            You can give it a try now to see how it looks in a browser create a playground HTML page.
+            <ul>
+                <li>Create an HTML page called "TestMyHelloWorld.html" inside the test folder "biojs/src/test/javascript/"</li>
+                <li>Add a div element called 'YourOwnDivId'</li>
+                <li>Add dependencies to javascripts Biojs, Biojs.MyHelloWorld, and jquery-1.7.2
+                    (optional, only required if you used jQuery selectors instead document.getElementId)</li>
+                <li>If you used a dependency to jQuery, you better add a no conflict statement</li>
+                <li>Add a window.onload function</li>
+                <li>In the window.onload function, instantiate the MyHelloWorld component, use 'Hello World' as the 'text' in
+                    the options
+                </li>
+                <li>Try it now!</li>
+            </ul>
+            Your HTML page should look like (<a href="javascript: toggle('html1');">show/hide</a>)
+        </p>
+        <div id="html1" style="display: none" class="code">
+<pre><code>
+&lt;html>
+    &lt;head>
+        &lt;title>Biojs.MyHelloWorld test&lt;/title>
+        &lt;script type="text/javascript" src="../../main/javascript/Biojs.js">&lt;/script>
+        &lt;script type="text/javascript" src="../../main/javascript/Biojs.MyHelloWorld.js">&lt;/script>
+        &lt;script type="text/javascript" src="../../main/resources/dependencies/jquery/jquery-1.7.2.min.js">&lt;/script>
+        &lt;script type="text/javascript">
+        jQuery.noConflict();
+        &lt;/script>
+        &lt;script type="text/javascript">
+	var instance;
+        window.onload = function() {
+             instance = new Biojs.MyHelloWorld({
+                  target : "YourOwnDivId",
+                  text: "Hello World"
+             });
+        };
+        &lt;/script>
+    &lt;/head>
+
+    &lt;body>
+        &lt;div id="YourOwnDivId" >&lt;/div>
+    &lt;/body>
+&lt;/html>
+</code></pre>
+        </div>
+    </section>
+
+    <section id="step8">
+        <h3>Step 8</h3><p>Now we can add some methods and events, for instance:
+        <ul>
+            <li>Add a getter and setter for the text</li>
+            <li>Create a method to display the text</li>
+            <li>Create an event 'onTextDisplayed' triggered whenever a text is displayed</li>
+            <li>Do not forget to add an example for the methods and events</li>
+            <li>Do not forget to trigger the event in the method dislaying the text, use raiseEvent from Biojs</li>
+            <li>Try it now! Use the same HTML that you used in Stpe 6</li>
+        </ul>
+        It all should look like (<a href="javascript: toggle('getterSetter');">show/hide</a>).
+        Additions/changes to the previous code are in bold blue.
+        </p>
+        <div id="getterSetter" style="display: none" class="code">
+<pre><code>
+/**
+*
+* Tutorial component which takes a text and displays it as a span HTML element.
+*
+* @class
+* @extends Biojs
+*
+* @author &lt;a href=&quot;mailto:MyEmail@my.email&quot;&gt;My Name&lt;/a&gt;
+* @version 1.0.0
+* @category 0
+*
+* @requires &lt;a href='http://code.jquery.com/jquery-1.7.2.min.js/'&gt;jQuery Core 1.7.2&lt;/a&gt;
+* @dependency &lt;script language=&quot;JavaScript&quot; type=&quot;text/javascript&quot; src=&quot;../biojs/dependencies/jquery/jquery-1.7.2.min.js&quot;&gt;&lt;/script&gt;
+*
+* @param {Object} options An object with the options for this component.
+*
+* @option {string} target
+*    Identifier of the DIV tag where the component should be displayed.
+*
+* @option {string} [text=&quot;Hello!&quot;]
+*    String to be displayed by the component.
+*
+* @example
+* var instance = new Biojs.MyHelloWorld({
+*    target: &quot;YourOwnDivId&quot;,
+*    text: 'Hello to my world!'
+* });
+*
+*/
+Biojs.MyHelloWorld = Biojs.extend (
+/** @lends Biojs.MyHelloWorld# */
+{
+    /**
+    * Constructor to initialize the component
+    * @name Biojs.MyHelloWorld-constructor
+    */
+    constructor: function (options) {
+        // In JavaScript 'this' always refers to the 'owner' of the function
+        // we're executing (http://www.quirksmode.org/js/this.html)
+        // Let's preserve the reference to 'this' through the variable self. In
+        //this way, we can invoke/execute
+        // our component instead of the object where 'this' is being
+        // invoked/executed.
+        var self = this;
+
+        // For practical use, create an object with the main DIV container
+        // to be used in all of the code of our component
+        this._container = jQuery("#"+self.opt.target);
+    <span class="emphasis">
+        //Move the options to your model
+        this.setText(options.text);
+
+        //display the model, i.e., text
+        this.displayText();
+    </span>
+    },
+
+    /**
+    *  Default values for the options
+    *  @name Biojs.MyHelloWorld-opt
+    */
+    opt: {
+        target: "YourOwnDivId"
+    },
+
+    /**
+    * Array containing the supported event names
+    * @name Biojs.MyHelloWorld-eventTypes
+    */
+    eventTypes: [
+        <span class="emphasis">
+        /**
+        * @name Biojs.MyHelloWorld#onTextDisplayed
+        * @event
+        * @param {function} actionPerformed A function which receives a {@link Biojs.Event} object as argument.
+        * @eventData {Object} source The component which triggered the event.
+        * @example
+        * instance.onTextDisplayed(
+        *    function( obj ) {
+        *       alert(obj);
+        *    }
+        * );
+        *
+        * */
+        "onTextDisplayed"
+        </span>
+    ],
+
+    _text: "",
+    <span class="emphasis">
+
+    _container: undefined,
+    </span>
+
+    <span class="emphasis">
+    //public methods
+    /**
+    * Getter for the text,
+    *
+    * @example
+    * instance.getText();
+    */
+    getText: function() {
+        return this._text;
+    },
+
+    /**
+     * Setter for the text,
+     * @param {string} text Input text.
+     * @example
+     * instance.setText("A refreshed hello world!");
+     */
+    setText: function(text) {
+        this._text = text;
+    },
+
+    /**
+     * Displays the text in a span HTML element,
+     * @example
+     * instance.displayText();
+     */
+    displayText: function() {
+        this._container.html('&lt;span>' + this.getText() + '&lt;/span>');
+        this.raiseEvent("onTextDisplayed", this.getText());
+    }
+    </span>
+});
+</code></pre>
+        </div>
+    </section>
+
+    <section id="step9">
+        <h3>Step 9</h3>
+        <p>
+            Your component is ready, so you can take a look on how it would look in the BioJS registry.</a>:
+        <ul>
+            <li><a href="ebiWorkshopBiojsInstall.html">Deploy the BioJS registry in your local server</a></li>
+            <li><a href="http://localhost/biojs/target/registry/Biojs.MyHelloWorld.html">Check your component</a></li>
+            <li><a href="http://localhost/biojs/target/jsdoc/symbols/Biojs.MyHelloWorld.html">Check the JSDoc API for your component</a></li>
+            <li><a href="http://localhost/biojs/target/biojs/Biojs.MyHelloWorld.js">Check your minified javascript file</a></li>
+            <li><a href="http://localhost/biojs/src/main/javascript/Biojs.MyHelloWorld.js">Check your non minified javascript file</a></li>
+        </ul>
+            <!--(<a href="javascript: toggle('registry');">show/hide</a>)-->
+        </p>
+        <div id="registry" style="display: none" class="code">
+        </div>
+    </section>
+</div>
+
+
+
+</body>
+</html>
+

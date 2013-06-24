@@ -1,0 +1,434 @@
+<!doctype html>
+<html class="no-js" lang="en">
+<head>
+    <title>Integrating two components, the Sequence Component and 3D Structure case</title>
+    <style type="text/css">
+        body { max-width: 700px; margin: 0 auto; }
+        pre {
+            background: #9E9E9E;
+        }
+        code {
+            background-color: rgb(220, 220, 220);
+            display: block;
+            padding: 0.1em 1em;
+            border: 1px solid #bebab0;
+        }
+        .emphasis {
+            font-weight: bolder;
+            color: darkblue;
+        }
+        .attention {
+            font-weight: bolder;
+            font-size: larger;
+            color: red;
+        }
+    </style>
+    <!-- end CSS-->
+
+    <script>
+        function toggle(obj) {
+            var el = document.getElementById(obj);
+            el.style.display = (el.style.display != 'none' ? 'none' : '' );
+        }
+    </script>
+
+</head>
+
+<body>
+<p>
+<a href="../2013-06-17_biojs_workshop.html">Tutorial menu</a>
+</p>
+<div class="contents clearfix" id="contents clearfix">
+<h1>Integrating two components, the Sequence Component and 3D Structure case</h1>
+<p>
+    This tutorial shows how to use and integrate two Biojs component. We use the
+    <a href="http://www.ebi.ac.uk/Tools/biojs/registry/Biojs.Sequence.html">Sequence component</a>
+    and the <a href="http://www.ebi.ac.uk/Tools/biojs/registry/Biojs.Protein3DUniprot.html">Protein 3D UniProt component</a> 
+    as an example. 
+</p><p>
+    The idea is to automatically highlight in the 3D structure the amino acids selected in the 
+    sequence. As the 3D highlighting will be done as a reaction to a selection on the sequence, it is the sequence
+    the one that has to listen to changes on the selection and trigger changes in the 3D structure. Changes in the 3D 
+    structure will be only propagated once the selection is done.
+    <br/><br/>
+    <img src="images/integration.png"/>
+</p>
+
+<h2>Requirements and recommendations</h2>
+<p>
+    To follow this tutorial you will need the core Biojs component, the Sequence component and the Protein 3D UniProt component.
+    You can either download them
+    from the Google <a href="http://code.google.com/p/biojs/source/checkout">Code site</a> or you can point to the latest
+    version in the registry; we will use the latter in this tutorial.
+</p><p>
+    We also recommend to have a look to the <a href="http://www.ebi.ac.uk/Tools/biojs/registry/Biojs.Sequence.html">
+    Sequence documentation</a> as well as <a href="http://www.ebi.ac.uk/Tools/biojs/registry/Biojs.Protein3DUniprot.html">Protein 3D UniProt documentation</a>
+    as they both have important information about the
+    requirements and behaviour of the components.
+</p><p>    
+    Because we are using the Biojs proxy hosted at EBI domain, it could be that this code will not work
+    locally, so try to put it in your public_html. If you are not EBI staff or cannot access you public_html folder,
+    see how it works <a href="http://www.ebi.ac.uk/~ljgarcia/Presentations/Biojs/Tutorials/integratingTwoComponentsTutorial_proxyTest.html">here</a>.
+    You can also <a href="http://code.google.com/p/biojs/source/browse/trunk/src/main/resources/dependencies/proxy/proxy.php">
+        	download the Biojs proxy</a> and use it in your localhost.
+</p>
+
+
+    <p>    
+        A web server like Apache is not needed however it is recommended.
+        If you are using your own computer and you do not have apache we suggest you to install it with
+        <a href="http://www.apachefriends.org/en/xampp.html">
+            XAMPP</a>. For this workshop at the EBI we will use the default apache web folder. 
+</p>
+<p>
+	<code>
+	cd /var/www/
+	</code>
+</p>
+<p>
+You could create a "tutorial" folder to place your files.
+</p>
+<p>
+	<code>
+	mkdir /var/www/tutorial
+	</code>
+</p>
+
+<p>
+Make sure you can access it with your browser in <a href="http://localhost/tutorial/">http://localhost/tutorial/</a>
+    </p>
+
+
+<h2>Tutorial</h2>
+
+<section id="step1">
+    <h3>Step 1</h3>
+    <p>Create a web page importing the <a href="http://www.ebi.ac.uk/Tools/biojs/registry/src/Biojs.js">Biojs core</a>, 
+    	the
+        <a href="http://www.ebi.ac.uk/Tools/biojs/registry/src/Biojs.Sequence.js">Sequence component</a>, and
+        the <a href="http://www.ebi.ac.uk/Tools/biojs/registry/src/Biojs.Protein3DUniprot.js">Protein 3D Structure 
+        	component</a>. 
+        Make sure you also include the dependencies required by these components.         
+        <br/>
+        The sequence component has dependencies to
+        <a href="http://code.jquery.com/jquery-1.8.2.min.js">jQuery</a>,
+        <a href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/jquery-ui.min.js">jQuery UI</a>,
+        <a href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/themes/base/jquery.ui.all.css">jQuery UI CSS</a>,
+        <a href="http://www.ebi.ac.uk/Tools/biojs/registry/scripts/Biojs.Tooltip.js">Biojs Tooltip</a>,
+        and <a href="http://www.ebi.ac.uk/Tools/biojs/registry/style/biojs.Tooltip.css">Biojs tooltip CSS</a>.
+        We are using jQuery compatibility style. If you want to use the latest jQuery version, you will
+        need the migration package, see more about it <a href="http://jquery.com/download/">here</a>.
+        <br/>
+        The Protein 3D Structure component has dependencies to
+        <a href="http://www.ebi.ac.uk/Tools/biojs/biojs/css/biojs.Protein3D.css">the Protein 3D CSS</a>,
+        <a href="http://www.ebi.ac.uk/Tools/biojs/biojs/dependencies/jmol-12.0.48/Jmol.js">jmol</a>,
+        <a href="http://www.ebi.ac.uk/Tools/biojs/registry/src/Biojs.Protein3DWS.js">Biojs Protein 3DW component</a>,
+        and <a href="http://www.ebi.ac.uk/Tools/biojs/registry/src/Biojs.Protein3D.js">Biojs Protein 3D component</a>.
+        <br/>
+        In the body, include two divs that will act as the component containers.
+        <br/>
+        Your web page should look like this (<a href="javascript: toggle('webPage');">show/hide</a>).
+    </p>
+    <div id="webPage" style="display: none">
+<pre><code>
+&lt;!doctype html>
+&lt;html>
+    &lt;head>
+        &lt;!--JQuery-->
+        &lt;script type="text/javascript" src="http://code.jquery.com/jquery-1.8.2.min.js">&lt;/script>
+        &lt;script type="text/javascript">
+            jQuery.noConflict();
+        &lt;/script>
+        &lt;script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/jquery-ui.min.js">&lt;/script>
+        &lt;link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/themes/base/jquery.ui.all.css" />
+        &lt;!--Biojs-->
+        &lt;script type="text/javascript" src="http://www.ebi.ac.uk/Tools/biojs/registry/src/Biojs.js">&lt;/script>
+        &lt;script type="text/javascript" src="http://www.ebi.ac.uk/Tools/biojs/registry/src/Biojs.Sequence.js">&lt;/script>
+        &lt;script src="http://www.ebi.ac.uk/Tools/biojs/registry/scripts/Biojs.Tooltip.js">&lt;/script>
+        &lt;link href="http://www.ebi.ac.uk/Tools/biojs/registry/style/biojs.Tooltip.css" rel="stylesheet" type="text/css" />
+        &lt;script type="text/javascript" src="http://www.ebi.ac.uk/Tools/biojs/biojs/dependencies/jmol-12.0.48/Jmol.js">&lt;/script>
+        &lt;script type="text/javascript" src="http://www.ebi.ac.uk/Tools/biojs/registry/src/Biojs.Protein3D.js">&lt;/script>
+        &lt;script type="text/javascript" src="http://www.ebi.ac.uk/Tools/biojs/registry/src/Biojs.Protein3DWS.js">&lt;/script>
+        &lt;script type="text/javascript" src="http://www.ebi.ac.uk/Tools/biojs/registry/src/Biojs.Protein3DUniprot.js">&lt;/script>
+        &lt;link href="http://www.ebi.ac.uk/Tools/biojs/biojs/css/biojs.Protein3D.css" rel="stylesheet" type="text/css" />
+    &lt;/head>
+    &lt;body>
+        &lt;div id="sequenceDiv" />
+        &lt;div id="3DDiv" />
+    &lt;/body>
+&lt;/html>
+</code></pre>
+    </div>
+</section>
+
+<section id="step2">
+    <h3>Step 2</h3><p>Load the Sequence component in the window.onload function. Use an ajax call to retrieve the
+    sequence for the protein accession P05067. You can see how to do that in the
+    <a href="http://www.ebi.ac.uk/~ljgarcia/Presentations/Biojs/Tutorials/usingSequenceComponentTutorial.html">
+        Step 4 of Using a Biojs Component Tutorial
+    </a>. If you do not want to follow that tutorial, take a look on how it works
+    <a href="http://www.ebi.ac.uk/~ljgarcia/Presentations/Biojs/Tutorials/usingSequenceComponentTutorial_proxyTest.html">here</a>
+    <br/>
+    Additions/changes to the previous code are in bold blue (<a href="javascript: toggle('onload');">show/hide</a>).
+    <div id="onload" style="display: none">
+<pre><code>
+&lt;!doctype html>
+&lt;html>
+    &lt;head>
+        &lt;!--JQuery-->
+        &lt;script type="text/javascript" src="http://code.jquery.com/jquery-1.8.2.min.js">&lt;/script>
+        &lt;script type="text/javascript">
+            jQuery.noConflict();
+        &lt;/script>
+        &lt;script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/jquery-ui.min.js">&lt;/script>
+        &lt;link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/themes/base/jquery.ui.all.css" />
+        &lt;!--Biojs-->
+        &lt;script type="text/javascript" src="http://www.ebi.ac.uk/Tools/biojs/registry/src/Biojs.js">&lt;/script>
+        &lt;script type="text/javascript" src="http://www.ebi.ac.uk/Tools/biojs/registry/src/Biojs.Sequence.js">&lt;/script>
+        &lt;script src="http://www.ebi.ac.uk/Tools/biojs/registry/scripts/Biojs.Tooltip.js">&lt;/script>
+        &lt;link href="http://www.ebi.ac.uk/Tools/biojs/registry/style/biojs.Tooltip.css" rel="stylesheet" type="text/css" />
+        &lt;script type="text/javascript" src="http://www.ebi.ac.uk/Tools/biojs/biojs/dependencies/jmol-12.0.48/Jmol.js">&lt;/script>
+        &lt;script type="text/javascript" src="http://www.ebi.ac.uk/Tools/biojs/registry/src/Biojs.Protein3D.js">&lt;/script>
+        &lt;script type="text/javascript" src="http://www.ebi.ac.uk/Tools/biojs/registry/src/Biojs.Protein3DWS.js">&lt;/script>
+        &lt;script type="text/javascript" src="http://www.ebi.ac.uk/Tools/biojs/registry/src/Biojs.Protein3DUniprot.js">&lt;/script>
+        &lt;link href="http://www.ebi.ac.uk/Tools/biojs/biojs/css/biojs.Protein3D.css" rel="stylesheet" type="text/css" />
+        &lt;script type="text/javascript" src="http://www.ebi.ac.uk/Tools/biojs/registry/src/Biojs.Protein3DUniprot.js">&lt;/script>
+        &lt;link href="http://www.ebi.ac.uk/Tools/biojs/biojs/css/biojs.Protein3D.css" rel="stylesheet" type="text/css" />
+    <span class="emphasis">
+        &lt;script>
+            window.onload = function() {
+                Biojs.console.enable();
+                var proxyUrl = "http://www.ebi.ac.uk/Tools/biojs/biojs/dependencies/proxy/proxy.php";
+                var proteinAcc = "P05067";
+                var theSequence;
+                jQuery.ajax({
+                    url: proxyUrl,
+                    dataType: 'xml',
+                    data: "url=" + "http://www.ebi.ac.uk/das-srv/uniprot/das/uniprot/sequence?segment=" + proteinAcc,
+                    success: function (response, callOptions) {
+                        Biojs.console.log("SUCCESS: data received");
+                        try {
+                            Biojs.console.log(response);
+                            sequenceXML = jQuery('DASSEQUENCE', response);
+                            Biojs.console.log(sequenceXML);
+                            theSequence = sequenceXML.find('SEQUENCE[id="+ proteinAcc + "]').text();
+                            Biojs.console.log("Before creating the sequence");
+                            var mySequence = new Biojs.Sequence({
+                                sequence : theSequence,
+                                target : "sequenceDiv",
+                                format : 'CODATA',
+                                id : proteinAcc
+                            });
+                            Biojs.console.log("After creating the sequence");
+                        } catch (err) {
+                            Biojs.console.log(err);
+                        }
+                    },
+                    error:function (error, callOptions) {
+                        Biojs.console.log(error);
+                    }
+                });
+            };
+        &lt;/script>
+    </span>
+    &lt;/head>
+    &lt;body>
+        &lt;div id="sequenceDiv" />
+        &lt;div id="3DDiv" />
+    &lt;/body>
+&lt;/html>
+</code></pre>
+    </div>
+</section>
+
+<section id="step3">
+    <h3>Step 3</h3><p>Instantiate the 3D structure now, so far there is no integration yet.
+    Make sure you get the jmol folder with all jmol jars. We have include such folder right next to our html file.
+    That folder is included in the Biojs source code in the dependencies under the name jmol-12.0.48, see the
+    files <a href="http://code.google.com/p/biojs/source/browse/#svn%2Ftrunk%2Fsrc%2Fmain%2Fresources%2Fdependencies">here</a>
+    <br/>
+    Additions/changes to the previous code are in bold blue (<a href="javascript: toggle('3Dcomponent');">show/hide</a>)
+</p>
+    <div id="3Dcomponent" style="display: none" class="code">
+<pre><code>
+&lt;!doctype html>
+&lt;html>
+    &lt;head>
+        &lt;!--JQuery-->
+        &lt;script type="text/javascript" src="http://code.jquery.com/jquery-1.8.2.min.js">&lt;/script>
+        &lt;script type="text/javascript">
+            jQuery.noConflict();
+        &lt;/script>
+        &lt;script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/jquery-ui.min.js">&lt;/script>
+        &lt;link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/themes/base/jquery.ui.all.css" />
+        &lt;!--Biojs-->
+        &lt;script type="text/javascript" src="http://www.ebi.ac.uk/Tools/biojs/registry/src/Biojs.js">&lt;/script>
+        &lt;script type="text/javascript" src="http://www.ebi.ac.uk/Tools/biojs/registry/src/Biojs.Sequence.js">&lt;/script>
+        &lt;script src="http://www.ebi.ac.uk/Tools/biojs/registry/scripts/Biojs.Tooltip.js">&lt;/script>
+        &lt;link href="http://www.ebi.ac.uk/Tools/biojs/registry/style/biojs.Tooltip.css" rel="stylesheet" type="text/css" />
+        &lt;script type="text/javascript" src="http://www.ebi.ac.uk/Tools/biojs/biojs/dependencies/jmol-12.0.48/Jmol.js">&lt;/script>
+        &lt;script type="text/javascript" src="http://www.ebi.ac.uk/Tools/biojs/registry/src/Biojs.Protein3D.js">&lt;/script>
+        &lt;script type="text/javascript" src="http://www.ebi.ac.uk/Tools/biojs/registry/src/Biojs.Protein3DWS.js">&lt;/script>
+        &lt;script type="text/javascript" src="http://www.ebi.ac.uk/Tools/biojs/registry/src/Biojs.Protein3DUniprot.js">&lt;/script>
+        &lt;link href="http://www.ebi.ac.uk/Tools/biojs/biojs/css/biojs.Protein3D.css" rel="stylesheet" type="text/css" />
+        &lt;script>
+            window.onload = function() {
+                Biojs.console.enable();
+                var proxyUrl = "http://www.ebi.ac.uk/Tools/biojs/biojs/dependencies/proxy/proxy.php";
+                var proteinAcc = "P05067";
+    <span class="emphasis">
+                var mySequence;
+                var my3DStructure;
+                var my3DStructure = new Biojs.Protein3DUniprot({
+                    target: '3DDiv',
+                    proteinId: proteinAcc,
+                    proxyUrl: proxyUrl,
+                    jmolFolder: './jmol-12.0.48',
+                    loadingStatusImage: 'http://www.ebi.ac.uk/Tools/biojs/biojs/css/images/ajax-loader-1.gif'
+                });
+    </span>
+                var theSequence;
+                jQuery.ajax({
+                    url: proxyUrl,
+                    dataType: 'xml',
+                    data: "url=" + "http://www.ebi.ac.uk/das-srv/uniprot/das/uniprot/sequence?segment=" + proteinAcc,
+                    success: function (response, callOptions) {
+                        Biojs.console.log("SUCCESS: data received");
+                        try {
+                            Biojs.console.log(response);
+                            sequenceXML = jQuery('DASSEQUENCE', response);
+                            Biojs.console.log(sequenceXML);
+                            theSequence = sequenceXML.find('SEQUENCE[id="+ proteinAcc + "]').text();
+                            Biojs.console.log("Before creating the sequence");
+                            var mySequence = new Biojs.Sequence({
+                                sequence : theSequence,
+                                target : "sequenceDiv",
+                                format : 'CODATA',
+                                id : proteinAcc
+                            });
+                            Biojs.console.log("After creating the sequence");
+                        } catch (err) {
+                            Biojs.console.log(err);
+                        }
+                    },
+                    error:function (error, callOptions) {
+                        Biojs.console.log(error);
+                    }
+                });
+            };
+        &lt;/script>
+    &lt;/head>
+    &lt;body>
+        &lt;div id="sequenceDiv" />
+        &lt;div id="3DDiv" />
+    &lt;/body>
+&lt;/html>
+</code></pre>
+    </div>
+</section>
+
+<section id="step4">
+    <h3>Step 4</h3><p>Add listeners to the sequence object mySequence so it will trigger changes in the structure
+    whenever a portion of the sequence is highlighted. The event that tells us when the selection has been done in the 
+    sequence is 'onSelectionChanged' so the sequence instance will listen to it. 
+    <br/>
+    The first structured displayed only covers the last bit of
+    the protein, from 739 to 770 so when you are trying it, make sure that you select the last amino acids so you wil
+    see the selection as well in the structure.
+    <br/>
+    Additions/changes to the previous code are in bold blue (<a href="javascript: toggle('integration');">show/hide</a>)
+</p>
+    <div id="integration" style="display: none" class="code">
+<pre><code>
+&lt;!doctype html>
+&lt;html>
+    &lt;head>
+        &lt;!--JQuery-->
+        &lt;script type="text/javascript" src="http://code.jquery.com/jquery-1.8.2.min.js">&lt;/script>
+        &lt;script type="text/javascript">
+            jQuery.noConflict();
+        &lt;/script>
+        &lt;script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/jquery-ui.min.js">&lt;/script>
+        &lt;link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/themes/base/jquery.ui.all.css" />
+        &lt;!--Biojs-->
+        &lt;script type="text/javascript" src="http://www.ebi.ac.uk/Tools/biojs/registry/src/Biojs.js">&lt;/script>
+        &lt;script type="text/javascript" src="http://www.ebi.ac.uk/Tools/biojs/registry/src/Biojs.Sequence.js">&lt;/script>
+        &lt;script src="http://www.ebi.ac.uk/Tools/biojs/registry/scripts/Biojs.Tooltip.js">&lt;/script>
+        &lt;link href="http://www.ebi.ac.uk/Tools/biojs/registry/style/biojs.Tooltip.css" rel="stylesheet" type="text/css" />
+        &lt;script type="text/javascript" src="http://www.ebi.ac.uk/Tools/biojs/biojs/dependencies/jmol-12.0.48/Jmol.js">&lt;/script>
+        &lt;script type="text/javascript" src="http://www.ebi.ac.uk/Tools/biojs/registry/src/Biojs.Protein3D.js">&lt;/script>
+        &lt;script type="text/javascript" src="http://www.ebi.ac.uk/Tools/biojs/registry/src/Biojs.Protein3DWS.js">&lt;/script>
+        &lt;script type="text/javascript" src="http://www.ebi.ac.uk/Tools/biojs/registry/src/Biojs.Protein3DUniprot.js">&lt;/script>
+        &lt;link href="http://www.ebi.ac.uk/Tools/biojs/biojs/css/biojs.Protein3D.css" rel="stylesheet" type="text/css" />
+        &lt;script>
+            window.onload = function() {
+                Biojs.console.enable();
+                var proxyUrl = "http://www.ebi.ac.uk/Tools/biojs/biojs/dependencies/proxy/proxy.php";
+                var proteinAcc = "P05067";
+                var mySequence;
+                var my3DStructure;
+                var my3DStructure = new Biojs.Protein3DUniprot({
+                    target: '3DDiv',
+                    proteinId: proteinAcc,
+                    proxyUrl: proxyUrl,
+                    jmolFolder: './jmol-12.0.48',
+                    loadingStatusImage: 'http://www.ebi.ac.uk/Tools/biojs/biojs/css/images/ajax-loader-1.gif'
+                });
+                var theSequence;
+                jQuery.ajax({
+                    url: proxyUrl,
+                    dataType: 'xml',
+                    data: "url=" + "http://www.ebi.ac.uk/das-srv/uniprot/das/uniprot/sequence?segment=" + proteinAcc,
+                    success: function (response, callOptions) {
+                        Biojs.console.log("SUCCESS: data received");
+                        try {
+                            Biojs.console.log(response);
+                            sequenceXML = jQuery('DASSEQUENCE', response);
+                            Biojs.console.log(sequenceXML);
+                            theSequence = sequenceXML.find('SEQUENCE[id="+ proteinAcc + "]').text();
+                            Biojs.console.log("Before creating the sequence");
+                            var mySequence = new Biojs.Sequence({
+                                sequence : theSequence,
+                                target : "sequenceDiv",
+                                format : 'CODATA',
+                                id : proteinAcc
+                            });
+                            Biojs.console.log("After creating the sequence");
+                        <span class="emphasis">
+                            mySequence.addListener( 'onSelectionChanged',
+                                function(selection) {
+                                    if ((selection.start == 0) && (selection.end == 0)) {
+                                        structure.removeSelection();
+                                    } else {
+                                        my3DStructure.removeSelection();
+                                        my3DStructure.setSelection({start: selection.start, end: selection.end});
+                                    }
+                                }
+                            );
+                    </span>
+                        } catch (err) {
+                            Biojs.console.log(err);
+                        }
+                    },
+                    error:function (error, callOptions) {
+                        Biojs.console.log(error);
+                    }
+                });
+            };
+        &lt;/script>
+    &lt;/head>
+    &lt;body>
+        &lt;div id="sequenceDiv" />
+        &lt;div id="3DDiv" />
+    &lt;/body>
+&lt;/html>
+</code></pre>
+    </div>
+</section>
+
+</div>
+
+
+</body>
+</html>
+

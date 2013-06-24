@@ -1,0 +1,64 @@
+<!doctype html>
+<html>
+    <head>
+        <!--JQuery-->
+        <script type="text/javascript" src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
+        <script type="text/javascript">
+            jQuery.noConflict();
+        </script>
+        <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/jquery-ui.min.js"></script>
+        <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/themes/base/jquery.ui.all.css" />
+        <!--Biojs-->
+        <script type="text/javascript" src="http://www.ebi.ac.uk/Tools/biojs/registry/src/Biojs.js"></script>
+        <script type="text/javascript" src="http://www.ebi.ac.uk/Tools/biojs/registry/src/Biojs.Sequence.js"></script>
+        <script src="http://www.ebi.ac.uk/Tools/biojs/registry/scripts/Biojs.Tooltip.js"></script>
+        <link href="http://www.ebi.ac.uk/Tools/biojs/registry/style/biojs.Tooltip.css" rel="stylesheet" type="text/css" />
+        <script>
+            window.onload = function() {
+                Biojs.console.enable();
+                var theSequence;
+                var proxyUrl = "http://www.ebi.ac.uk/Tools/biojs/biojs/dependencies/proxy/proxy.php";
+                var proteinAcc = "P99999";
+                jQuery.ajax({
+                    url: proxyUrl,
+                    dataType: 'xml',
+                    data: "url=" + "http://www.ebi.ac.uk/das-srv/uniprot/das/uniprot/sequence?segment=" + proteinAcc,
+                    success: function (response, callOptions) {
+                        Biojs.console.log("SUCCESS: data received");
+                        //Response will look something like
+                        //<DASSEQUENCE>
+                        // <SEQUENCE id="P99999" start="1" stop="105" version="2bdff12130aec0c85a14a8e32f97d502" label="Cytochrome c">
+                        // MGDVEKGKKIFIMKCSQCHTVEKGGKHKTGPNLHGLFGRKTGQAPGYSYTAANKNKGIIWGEDTLMEYLENPKKYIPGTKMIFVGIKKKEERADLIAYLKKATNE
+                        // </SEQUENCE>
+                        // </DASSEQUENCE>
+                        try {
+                            Biojs.console.log(response);
+							sequenceXML = jQuery('DASSEQUENCE', response);
+                            Biojs.console.log(sequenceXML);
+                            theSequence = sequenceXML.find('SEQUENCE[id="+ proteinAcc + "]').text();
+                            Biojs.console.log("Before creating the sequence");
+                            var mySequence = new Biojs.Sequence({
+                                sequence : theSequence,
+                                target : "sequenceDiv",
+                                format : 'CODATA',
+                                id : proteinAcc
+                            });
+                            Biojs.console.log("After creating the sequence");
+                        } catch (err) {
+                            Biojs.console.log(err);
+                        }
+                    },
+                    error:function (error, callOptions) {
+                        Biojs.console.log(error);
+                    }
+                });
+            };
+        </script>
+    </head>
+    <body>
+<p>
+<a href="../2013-06-17_biojs_workshop.html">Tutorial menu</a>
+</p>
+        <div id="sequenceDiv" />
+    </body>
+</html>
