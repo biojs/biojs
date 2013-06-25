@@ -340,8 +340,12 @@ Biojs.FeatureViewer = Biojs.extend(
          * @name Biojs.FeatureViewer-constructor
          */
         constructor: function(options) {
-            //Biojs.console.enable();
-            jQuery.noConflict();
+            // Commented by johncar:
+        	// noConfict() is causing conflict with building registry.
+        	// It shouldn't be in the component' source code but in its deployment (i.e. page where it will be used)  
+        	// Besides, it is used to replace the jQuery shorcut '$' by any other.
+        	// This component does not uses a shorcut, so it's unnecessary to have it.
+            //jQuery.noConflict();
             this.initRaphael();
 
             if (!Biojs.Utils.isEmpty(this.opt.json)) {
@@ -396,7 +400,7 @@ Biojs.FeatureViewer = Biojs.extend(
 	         *          "<br/>Type: " + obj.featureTypeLabel + " - " + obj.typeCode + " - " + obj.typeCategory +
 	         *          "<br/>Evidence: " + obj.evidenceText + " - " + obj.evidenceCode;
 	         *       alert("Clicked: " + tooltip );
-	         *       Biojs.console.log(obj.shape); //raphaël object
+	         *       Biojs.console.log(obj.shape); //raphaï¿½l object
 	         *    }
 	         * );
 	         *
@@ -420,7 +424,7 @@ Biojs.FeatureViewer = Biojs.extend(
 	         *           "<br/>Type: " + obj.featureTypeLabel + " - " + obj.typeCode + " - " + obj.typeCategory +
 	         *           "<br/>Evidence: " + obj.evidenceText + " - " + obj.evidenceCode;
 	         *       alert("On feature: " + tooltip );
-	         *       Biojs.console.log(obj.shape); //raphaël object
+	         *       Biojs.console.log(obj.shape); //raphaï¿½l object
 	         *    }
 	         * );
 	         *
@@ -442,7 +446,7 @@ Biojs.FeatureViewer = Biojs.extend(
 	         *           "<br/>Type: " + obj.featureTypeLabel + " - " + obj.typeCode + " - " + obj.typeCategory +
 	         *           "<br/>Evidence: " + obj.evidenceText + " - " + obj.evidenceCode;
 	         *       alert("Off feature: " + tooltip );
-	         *       Biojs.console.log(obj.shape); //raphaël object
+	         *       Biojs.console.log(obj.shape); //raphaï¿½l object
 	         *    }
 	         * );
 	         *
@@ -464,7 +468,7 @@ Biojs.FeatureViewer = Biojs.extend(
 	         *           "<br/>Type: " + obj.featureTypeLabel + " - " + obj.typeCode + " - " + obj.typeCategory +
 	         *           "<br/>Evidence: " + obj.evidenceText + " - " + obj.evidenceCode;
 	         *       alert("Selected feature: " + tooltip );
-	         *       Biojs.console.log(obj.shape); //raphaël object
+	         *       Biojs.console.log(obj.shape); //raphaï¿½l object
 	         *    }
 	         * );
 	         *
@@ -486,7 +490,7 @@ Biojs.FeatureViewer = Biojs.extend(
 	         *           "<br/>Type: " + obj.featureTypeLabel + " - " + obj.typeCode + " - " + obj.typeCategory +
 	         *           "<br/>Evidence: " + obj.evidenceText + " - " + obj.evidenceCode;
 	         *       alert("Unselected feature: " + tooltip );
-	         *       Biojs.console.log(obj.shape); //raphaël object
+	         *       Biojs.console.log(obj.shape); //raphaï¿½l object
 	         *    }
 	         * );
 	         *
@@ -1061,7 +1065,7 @@ Biojs.FeatureViewer = Biojs.extend(
         },
 
         /**
-         * Private: Gets a JSON element representing SVG-features and creates a Raphaël object and paints features;
+         * Private: Gets a JSON element representing SVG-features and creates a Raphaï¿½l object and paints features;
          * it also adds tooltip and move, mousein, mouseout, and drag events for features.
          * @param {Object} obj SVG representation for features.
          * @param {int} sequenceLineY Y position for the sequence line.
