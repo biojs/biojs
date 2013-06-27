@@ -24,9 +24,10 @@
  *    the side of the square canvas
  *    
  * @example 
- * var myprints = new Biojs.RaphaelCanvas({
+ * var instance = new Biojs.RaphaelCanvas({
  *          divid:"YourOwnDivId",   dimension:500
  * });	
+ * instance.testSetup();
  * 
  */
 Biojs.RaphaelCanvas = Biojs.extend (

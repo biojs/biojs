@@ -26,7 +26,7 @@
  *    </ul>
  *    
  * @example 
- * var mytopo = new Biojs.PDBchainTopology({
+ * var instance = new Biojs.PDBchainTopology({
  * 		divid:"YourOwnDivId",   pdbid:"1cbs", chainid:"A"
  * });	
  * 
@@ -70,9 +70,8 @@ Biojs.PDBchainTopology = Biojs.extend (
 		document.getElementById(self.config['divid']).innerHTML = newdivs;
 
 		//self.config['rapha'] = Raphael('topo_rapha_'+self.config['divid'], self.config['size']+"px", self.config['size']+"px");
-		self.config['rapha'] = Raphael('topo_rapha_'+self.config['divid'], self.config['size'], self.config['size']);
-		self.config.fullbox = self.config.rapha.rect(0, 0, self.config['size'], self.config['size']).attr({'fill':'green', opacity:0.01});
-		//self.config.fullbox = self.config.rapha.path(["M", 0, 0, "L", 0, self.config['size'], "L", self.config['size'], self.config['size'], "L", self.config['size'], 0, "Z"]).attr({'fill':'white', opacity:0.01});
+		self.config['rapha'] = new Biojs.RaphaelCanvas({divid:'topo_rapha_'+self.config['divid'], dimension:self.config['size']});
+		self.config['rapha'] = self.config['rapha'].rapha;
 		self.config.rapha.setViewBox(0,0, self.config['size'], self.config['size']);
 
 		self.previousDomainElems = null; // for clearing out any previous domain rendering
@@ -563,39 +562,6 @@ Biojs.PDBchainTopology = Biojs.extend (
 			if(ass.type == "N") ass.gelem = self.config.rapha.text(looppath[4],looppath[2],"N").attr(fontattr).attr({stroke:'blue',fill:'blue'});
 			if(ass.type == "C") ass.gelem = self.config.rapha.text((looppath[1]+looppath[6])/2,(looppath[2]+looppath[7])/2,"C").attr(fontattr).attr({stroke:'red',fill:'red'});
 		}
-		// final resizing // not required anymore due to fitToBox. setViewBox was not working in safari, IE properly anyway
-		// var extents = self.findExtents();
-		// var minx = extents[0]; var miny = extents[1];
-		// var maxx = extents[2]; var maxy = extents[3];
-		// var margin = 50;
-		// self.config.rapha.setViewBox(minx-margin, miny-margin, maxx-minx+2*margin, maxy-miny+2*margin, true); // TODO issue in IE, safari ! try patching raphael.js see https://github.com/DmitryBaranovskiy/raphael/issues/468 doesnt work even with it...
-		// self.config.rapha.setViewBox(minx-margin, miny-margin, maxx-minx+2*margin, maxy-miny+2*margin); // TODO issue in IE, safari ! try patching raphael.js see https://github.com/DmitryBaranovskiy/raphael/issues/468 doesnt work even with it...
-self.config.fullbox.mousedown( function(e) {
-	rect = self.config.fullbox;
-	var bnds = e.target.getBoundingClientRect();
-    // adjust mouse x/y
-    var mx = e.clientX - bnds.left;
-    var my = e.clientY - bnds.top;
-    // divide x/y by the bounding w/h to get location %s and apply factor by actual paper w/h
-    var fx = mx/bnds.width * rect.attrs.width
-    var fy = my/bnds.height * rect.attrs.height
-	console.log("SEE " + fx + " " + fy);
-} );
-self.extents = self.findExtents();
-jQuery('#'+self.config.divid).dblclick(function(e) {
-		pos = jQuery('#'+self.config.divid).position();
-		console.log(e.clientX + " " + e.clientY + " " + (e.clientX-pos.left) + " " + (e.clientY-pos.top));
-		if(e.shiftKey) {
-			self.extents[2] *= 0.5;
-			//self.extents[3] *= 0.9;
-		}
-		else {
-			self.extents[2] /= 0.5;
-			//self.extents[3] /= 0.9;
-		}
-		self.config.rapha.setViewBox(self.extents[0], self.extents[1], self.extents[2], self.extents[3], true); // TODO issue in IE, safari ! try patching raphael.js see https://github.com/DmitryBaranovskiy/raphael/issues/468 doesnt work even with it...
-});
-
 	},
 
 	fitToBox: function() {
