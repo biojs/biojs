@@ -71,6 +71,8 @@ Biojs.PDBchainTopology = Biojs.extend (
 
 		//self.config['rapha'] = Raphael('topo_rapha_'+self.config['divid'], self.config['size']+"px", self.config['size']+"px");
 		self.config['rapha'] = Raphael('topo_rapha_'+self.config['divid'], self.config['size'], self.config['size']);
+		self.config.fullbox = self.config.rapha.rect(0, 0, self.config['size'], self.config['size']).attr({'fill':'green', opacity:0.01});
+		//self.config.fullbox = self.config.rapha.path(["M", 0, 0, "L", 0, self.config['size'], "L", self.config['size'], self.config['size'], "L", self.config['size'], 0, "Z"]).attr({'fill':'white', opacity:0.01});
 		self.config.rapha.setViewBox(0,0, self.config['size'], self.config['size']);
 
 		self.previousDomainElems = null; // for clearing out any previous domain rendering
@@ -90,8 +92,21 @@ Biojs.PDBchainTopology = Biojs.extend (
 			dataType: 'script',
 			crossDomain: 'true',
 			type: 'GET',
-			success: function(response, callOptions) { self.topodata = topodata; self.topoLayout(); }
+			success: function(response, callOptions) {
+				self.topodata = topodata;
+				if(self.topodata['error'] != undefined) {
+					alert("Error!! PDBe protein chain topology service returned : " + self.topodata.error);
+					document.getElementById(self.config.divid).innerHTML = "Error!";
+					return;
+				}
+				self.topoLayout();
+			},
+			error: function(jqXHR, textStatus, errorThrown) {
+				alert("There was an unidentified error - please report to pdbehelp@ebi.ac.uk");
+				document.getElementById(self.config.divid).innerHTML = "Error!";
+			}
 		});
+
 	},
 
 	changeTooltip: function(content, e) {
@@ -466,6 +481,11 @@ Biojs.PDBchainTopology = Biojs.extend (
 		}
 	},
 
+	errorLayout: function() {
+		var self = this;
+		document.getElementById(self.config['divid']).innerHTML = "ERROR!!";
+	},
+
 	topoLayout: function() {
 		var self = this;
 		//self.sanitycheckLayout(); return;
@@ -550,9 +570,21 @@ Biojs.PDBchainTopology = Biojs.extend (
 		// var margin = 50;
 		// self.config.rapha.setViewBox(minx-margin, miny-margin, maxx-minx+2*margin, maxy-miny+2*margin, true); // TODO issue in IE, safari ! try patching raphael.js see https://github.com/DmitryBaranovskiy/raphael/issues/468 doesnt work even with it...
 		// self.config.rapha.setViewBox(minx-margin, miny-margin, maxx-minx+2*margin, maxy-miny+2*margin); // TODO issue in IE, safari ! try patching raphael.js see https://github.com/DmitryBaranovskiy/raphael/issues/468 doesnt work even with it...
+self.config.fullbox.mousedown( function(e) {
+	rect = self.config.fullbox;
+	var bnds = e.target.getBoundingClientRect();
+    // adjust mouse x/y
+    var mx = e.clientX - bnds.left;
+    var my = e.clientY - bnds.top;
+    // divide x/y by the bounding w/h to get location %s and apply factor by actual paper w/h
+    var fx = mx/bnds.width * rect.attrs.width
+    var fy = my/bnds.height * rect.attrs.height
+	console.log("SEE " + fx + " " + fy);
+} );
 self.extents = self.findExtents();
-jQuery('#'+self.config.divid).click(function(e) {
-	if(e.ctrlKey) {
+jQuery('#'+self.config.divid).dblclick(function(e) {
+		pos = jQuery('#'+self.config.divid).position();
+		console.log(e.clientX + " " + e.clientY + " " + (e.clientX-pos.left) + " " + (e.clientY-pos.top));
 		if(e.shiftKey) {
 			self.extents[2] *= 0.5;
 			//self.extents[3] *= 0.9;
@@ -562,7 +594,6 @@ jQuery('#'+self.config.divid).click(function(e) {
 			//self.extents[3] /= 0.9;
 		}
 		self.config.rapha.setViewBox(self.extents[0], self.extents[1], self.extents[2], self.extents[3], true); // TODO issue in IE, safari ! try patching raphael.js see https://github.com/DmitryBaranovskiy/raphael/issues/468 doesnt work even with it...
-	}
 });
 
 	},
