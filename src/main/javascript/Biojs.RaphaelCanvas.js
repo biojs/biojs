@@ -50,14 +50,18 @@ Biojs.RaphaelCanvas = Biojs.extend (
 		var self = this;
 		self.rapha = Raphael(self.divid, self.dim, self.dim);
 		self.fullbox = self.rapha.rect(0,0,self.dim,self.dim).attr({fill:'green',stroke:'black', opacity:0.01});
-		for(var x=0; x < 500; x+=50)
-			for(var y=0; y < 500; y+=50) {
-				self.rapha.text(x, y, x+","+y).attr({'text-anchor':'start'});
-				self.rapha.circle(x, y, 10);
-			}
 		self.jq.mousedown( function(e) { self.recordMousedown(e); } );
 		self.makeZoomPannable();
 		self.setVbox(0,0,self.dim);
+	},
+	testSetup: function() {
+		var self = this;
+		for(var x=0; x < self.dim; x+=self.dim/10) {
+			for(var y=0; y < self.dim; y+=self.dim/10) {
+				self.rapha.text(x, y, x+","+y).attr({'text-anchor':'start'});
+				self.rapha.circle(x, y, self.dim/50);
+			}
+		}
 	},
 	makeZoomPannable: function() {
 		var self = this;
