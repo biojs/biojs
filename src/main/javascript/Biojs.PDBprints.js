@@ -32,7 +32,7 @@
  *    </ul>
  *    
  * @example 
- * var myprints = new Biojs.PDBprints({
+ * var instance = new Biojs.PDBprints({
  * 		targets : [
  *          {divid:"YourOwnDivId",     pdbids:["1aac","1cbs"]}
  *      ]
