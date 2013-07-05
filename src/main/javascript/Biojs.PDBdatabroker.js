@@ -22,45 +22,6 @@
  * 
  */
 
-function makeTracksData(pdbid) {
-	try {
-		var pdb = new Biojs.PDBdatabroker({apiURL:"http://puck.ebi.ac.uk:10000"});
-		pdb.getEntry(pdbid,
-			new Callback(null, function(entry) {
-				console.log("got entry", entry);
-				entry.getEntities(
-					new Callback(null, function(entities) {
-						console.log("got entities", entities);
-						pdb.getUniprotMappings(pdbid,
-							new Callback(null, function(unpmap) {
-								console.log("got unp mappings", unpmap);
-								jQuery.each(entities, function(ei,ent) {
-									if(!(ent.getEid() in unpmap)) return;
-									jQuery.each(unpmap[ent.getEid()], function(si,seg) {
-										console.log("segment", seg);
-										ent.addUnpMapping(seg);
-									});
-									console.log("done");
-								});
-							}, [], [])
-						);
-						//jQuery.each(entities, function(ei,entity) {
-							//console.log("an ent", entity);
-							//if(entity.isType("protein"))
-								//console.log("prot", entity);
-						//});
-					}, [], [])
-				);
-			}, [], [])
-		);
-		//Biojs.PDBdatabroker.onload(pdb, [["getEntry",["1cbs"]], ["getEntities",[]]], null, function() { console.log("here"); });
-	}
-	catch(err) {
-		console.log(err);
-	}
-	return null;
-}
-
 
 Biojs.PDBdatabroker = Biojs.extend (
 /** @lends Biojs.PDBdatabroker# */
@@ -77,34 +38,24 @@ Biojs.PDBdatabroker = Biojs.extend (
 		self.entries = {};
 	},
 
-	getEntry: function(pid, cbo) {
+	makeEntry: function(pid) {
 		var self = this;
-		if(pid in self.entries) { cbo.run(self.entries[pid]); return; }
+		if(pid in self.entries) return self.entries[pid];
+		var d = Q.defer();
+		console.log("calling entry");
 		jQuery.ajax({
 			url: self.apiURL+"/pdb/entry/summary/"+pid,
 			data: {varname:'t'}, dataType: 'script', crossDomain: true, type: 'GET',
 			success: function(response, callOptions) {
 				self.entries[pid] = new Biojs.PDBdatabroker.Entry(t, self.apiURL);
-				cbo.run([self.entries[pid]]);
+				d.resolve(self.entries[pid]);
 			},
 			error: function(jqXHR, textStatus, errorThrown) {
 				alert("There was an unidentified error - please report to pdbehelp@ebi.ac.uk");
 			}
 		});
-	},
-
-	getUniprotMappings: function(pdbid, cbo) {
-		var self = this;
-		jQuery.ajax({
-			url: self.apiURL+"/mappings/to_uniprot/entry/"+pdbid,
-			data: {varname:'t'}, dataType: 'script', crossDomain: true, type: 'GET',
-			success: function(response, callOptions) { cbo.run([t]); },
-			error: function(jqXHR, textStatus, errorThrown) {
-				alert("There was an unidentified error - please report to pdbehelp@ebi.ac.uk");
-			}
-		});
-
-	},
+		return d.promise;
+	}, 
 
   /**
    * Array containing the supported event names
@@ -158,13 +109,18 @@ function Callback(obj, method, preargs, postargs) {
 Biojs.PDBdatabroker.Entry = Biojs.extend ( {
 	constructor: function(data, apiURL) {
 		var self = this;
-		self.data = data;
-		for(k in data) {self.pid = k; break;}
+		for(k in data) {
+			self.pid = k;
+			self.data = data[k];
+			break;
+		}
 		self.apiURL = apiURL;
 	},
-	getEntities: function(cbo) {
+	makeEntities: function(cbo) {
 		var self = this;
-		if(self.entities) processCallback([],cbo,[self.entities]);
+		if(self.entities) return self.entities;
+		var d = Q.defer();
+		console.log("calling entity");
 		jQuery.ajax({
 			url: self.apiURL+"/pdb/entry/entities/"+self.pid,
 			data: {varname:'t'}, dataType: 'script', crossDomain: true, type: 'GET',
@@ -174,12 +130,34 @@ Biojs.PDBdatabroker.Entry = Biojs.extend ( {
 					//console.log("see", ei, edata);
 					self.entities.push(new Biojs.PDBdatabroker.Entity(edata, self.apiURL, self.pid));
 				});
-				cbo.run([self.entities]);
+				d.resolve(self.entities);
 			},
 			error: function(jqXHR, textStatus, errorThrown) {
 				alert("There was an unidentified error - please report to pdbehelp@ebi.ac.uk");
 			}
 		});
+		return d.promise;
+	},
+	makeUniprotMappings: function() {
+		var self = this;
+		var d = Q.defer();
+		jQuery.ajax({
+			url: self.apiURL+"/mappings/to_uniprot/entry/"+self.pid,
+			data: {varname:'t'}, dataType: 'script', crossDomain: true, type: 'GET',
+			success: function(response, callOptions) {
+				jQuery.each(self.entities, function(ei,ent) {
+					if(!(ent.getEid() in t)) return;
+					jQuery.each(t[ent.getEid()], function(si,seg) {
+						ent.addUnpMapping(seg);
+					});
+				});
+				d.resolve(t);
+			},
+			error: function(jqXHR, textStatus, errorThrown) {
+				alert("There was an unidentified error - please report to pdbehelp@ebi.ac.uk");
+			}
+		});
+		return d.promise;
 	}
 } );
 
@@ -200,9 +178,32 @@ Biojs.PDBdatabroker.Entity = Biojs.extend ( {
 		var self = this;
 		return self.data.entity_id;
 	},
-	addUnpMapping: function() {
+	addUnpMapping: function(seg) {
 		var self = this;
-		if(!(self.unpmap)) self.unpmap = [];
-		self.unpmap.push(seg);
+		if(seg.accession==null) return;
+		if(!(self.unpmap)) self.unpmap = {};
+		for(k in {'pdb_start':'','pdb_end':'','unp_start':'','unp_end':''})
+			seg[k] = self.convert2int(seg[k]);
+		if(!(seg.accession in self.unpmap)) self.unpmap[seg.accession] = [];
+		self.unpmap[seg.accession].push({
+			'pdb_start':seg['pdb_start'],
+			'pdb_end':seg['pdb_end'],
+			'unp_start':seg['unp_start'],
+			'unp_end':seg['unp_end'],
+		});
+	},
+	getLength: function() {
+		var self = this;
+		if( jQuery.isNumeric(self.data.num_groups) ) return parseInt(self.data.num_groups);
+		return self.data.num_groups;
+	},
+	getUnpMapping: function() {
+		var self = this;
+		return self.unpmap;
+	},
+	convert2int: function(numstr) {
+		if(numstr==null) return numstr;
+		if( jQuery.isNumeric(numstr) ) return parseInt(numstr);
+		return numstr;
 	}
 } );

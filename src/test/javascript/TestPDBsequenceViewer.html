@@ -4,7 +4,8 @@
     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
     <title>PDBsequenceViewer - Test</title>
     <!--JQuery LIb and CSS -->
-    <script src="../../main/resources/dependencies/jquery/jquery-1.4.2.min.js" type="text/javascript"></script>
+    <script src="../../main/resources/dependencies/jquery/jquery-1.7.2.min.js" type="text/javascript"></script>
+    <script src="../../main/resources/dependencies/jquery/q.js" type="text/javascript"></script>
     <script src="../../main/resources/dependencies/jquery/swanand.jquery.tooltip.js" type="text/javascript"></script>
     <link rel="stylesheet" href="../../main/resources/dependencies/jquery/jquery.tooltip.css"></link>
     <script type="text/javascript">
@@ -35,6 +36,8 @@
     <!-- BIOJS LIB and CSS -->
     <script language="JavaScript" type="text/javascript" src="../../main/javascript/Biojs.js"></script>
     <script language="JavaScript" type="text/javascript" src="../../main/javascript/Biojs.PDBsequenceViewer.js"></script>
+    <script language="JavaScript" type="text/javascript" src="../../main/javascript/Biojs.PDBdatabroker.js"></script>
+    <script language="JavaScript" type="text/javascript" src="../../main/javascript/Biojs.PDBsequenceLayout.js"></script>
 
     <script>
 		function seqdemo() {
@@ -44,7 +47,7 @@
 			var thetracks3 = [
 				{height:25, painters:[
 					{type:'Biojs.ZoombarPainter', seqlen:600, numIndicesInRow:600,
-						pixelwidth:600, initleft:0, initright:600, thumbwidth:20
+						pixelwidth:1000, initleft:0, initright:600, thumbwidth:20
 					}
 				]},
 				{height:10, painters:[
@@ -100,7 +103,7 @@
 					}
 				]}
 			];
-			new Biojs.PDBsequenceViewer({divid:"seqdiv3", numrows:1, leftwidth:50, width:600, rightwidth:50, tracks:thetracks3});
+			new Biojs.PDBsequenceViewer({divid:"seqdiv3", numrows:1, leftwidth:50, width:1000, rightwidth:50, tracks:thetracks3});
 
 
 
@@ -187,6 +190,11 @@
 			];
 			new Biojs.PDBsequenceViewer({divid:"seqdiv1", numrows:1, leftwidth:50, width:100, rightwidth:50, tracks:thetracks1});
 
+			//new Biojs.PDBsequenceViewer({divid:"seqdiv4", numrows:1, leftwidth:50, width:100, rightwidth:50, tracks:makeTracksData('1cbs')});
+			//makeTracksData('1cbs');
+			//testQ();
+			new Biojs.PDBsequenceLayout({pdbid:'2qk9', apiURL:'http://puck.ebi.ac.uk:10000',divid:'seqdiv4'});
+
 		}
     </script>
 </head>
@@ -210,6 +218,12 @@
 	<hr>
     example 4<br>
     <div style='height:200px;' id="seqdiv3"></div>
+	<hr>
+	<hr>
+	<hr>
+    example 5<br>
+    Here we try to get data from PDBe API for the only protein entity in 1cbs.<br>
+    <div style='height:200px;' id="seqdiv4"></div>
 	<hr>
 	<hr>
 	<hr>
