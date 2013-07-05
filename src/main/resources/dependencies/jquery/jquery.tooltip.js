@@ -241,6 +241,16 @@
 				right: right,
 				top: top
 			});
+		if ( settings(current).bodyHandler ) {
+			helper.title.hide();
+			var bodyContent = settings(current).bodyHandler.call(current);
+			if (bodyContent.nodeType || bodyContent.jquery) {
+				helper.body.empty().append(bodyContent)
+			} else {
+				helper.body.html( bodyContent );
+			}
+			helper.body.show();
+		}
 		}
 
 		var v = viewport(),
