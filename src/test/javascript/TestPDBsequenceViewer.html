@@ -190,10 +190,16 @@
 			];
 			new Biojs.PDBsequenceViewer({divid:"seqdiv1", numrows:1, leftwidth:50, width:100, rightwidth:50, tracks:thetracks1});
 
-			//new Biojs.PDBsequenceViewer({divid:"seqdiv4", numrows:1, leftwidth:50, width:100, rightwidth:50, tracks:makeTracksData('1cbs')});
-			//makeTracksData('1cbs');
-			//testQ();
-			new Biojs.PDBsequenceLayout({pdbid:'2qk9', apiURL:'http://puck.ebi.ac.uk:10000',divid:'seqdiv4'});
+			new Biojs.PDBsequenceLayout({pdbid:'1cbs', apiURL:'http://puck.ebi.ac.uk:10000', divid:'seqdiv4', width:800});
+			jQuery('#pdbid').keypress( function(e) {
+				newpid = document.getElementById("pdbid").value;
+				//if(newpid.length==4) {
+				if(e.keyCode==13) {
+					document.getElementById("seqdiv4").innerHTML = "";
+					console.log(document.getElementById("pdbid").value);
+					new Biojs.PDBsequenceLayout({pdbid:document.getElementById("pdbid").value, apiURL:'http://puck.ebi.ac.uk:10000', divid:'seqdiv4', width:800});
+				}
+			} );
 
 		}
     </script>
@@ -222,10 +228,9 @@
 	<hr>
 	<hr>
     example 5<br>
-    Here we try to get data from PDBe API for the only protein entity in 1cbs.<br>
-    <div style='height:200px;' id="seqdiv4"></div>
-	<hr>
-	<hr>
-	<hr>
+    Here we get real data from PDBe API. This uses PDBdatabroker and PDBsequenceLayout components in addition to PDBsequenceViewer.<br>
+		<input type=text name="pdbid" id="pdbid" value="1cbs"></input>
+	<br>
+    <div id="seqdiv4"></div>
 </body>
 </html>

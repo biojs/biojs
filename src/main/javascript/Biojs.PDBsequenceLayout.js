@@ -29,11 +29,11 @@ Biojs.PDBsequenceLayout = Biojs.extend (
    *  Default values for the options
    *  @name Biojs.PDBsequenceLayout-opt
    */
-	opt: { apiURL:"http://www.ebi.ac.uk/pdbe/api", divid:'your-divid', pdbid:'1cbs' },
+	opt: { apiURL:"http://www.ebi.ac.uk/pdbe/api", divid:'your-divid', pdbid:'1cbs', width:800 },
   
 	constructor: function (options) {
 		var self = this;
-		jQuery.each(['apiURL','pdbid','divid'], function(ki,kk) {
+		jQuery.each(['apiURL','pdbid','divid','width'], function(ki,kk) {
 			self[kk] = options[kk];
 		});
 		self.pdb = new Biojs.PDBdatabroker({apiURL:self.apiURL});
@@ -41,60 +41,160 @@ Biojs.PDBsequenceLayout = Biojs.extend (
 			return self.pdb.makeEntry(self.pdbid);
 		} )
 		.then( function(entry) {
-			console.log("see entry", entry);
 			return entry.makeEntities();
 		} )
 		.then( function(entities) {
-			console.log("see entities", entities);
-			return self.pdb.makeEntry(self.pdbid).makeUniprotMappings(self.pdbid);
+			return self.pdb.makeEntry(self.pdbid).makeUniprotMappings();
 		} )
 		.then( function(unpmap) {
-			console.log("see unpmap", unpmap);
+			return self.pdb.makeEntry(self.pdbid).makePfamMappings();
+		} ).then( function(pfammap) {
+			return self.pdb.makeEntry(self.pdbid).makeStructuralMappings();
+		} ).then( function(strmap) {
+			console.log("all data acquired, sequence layout begins.");
 		} ).then( function() {
 			var entry = self.pdb.makeEntry(self.pdbid);
 			for(var ei=0; ei < entry.entities.length; ei++) {
 				var ent = entry.entities[ei];
 				if(ent.isType("protein")==false) continue;
 				var mytracks = [];
-				var elen = ent.getLength();
-				console.log("protein length", ent.isType("protein"), elen);
-				//var unpmap = ent.getUnpMapping(), unpdoms = [];
-				var unpdoms = self.makeUnpdomForEntity(ent);
-				console.log("unpdoms", unpdoms);
+				var eseq = ent.getSequence(); var elen = eseq.length;
+				//for(esi=0; esi<elen; esi++) eseq += 'A';
 				mytracks.push({
 					height:25, painters:[
+						{type:'Biojs.ZoombarPainter', seqlen:elen, numIndicesInRow:elen,
+							pixelwidth:self.width, initleft:0, initright:elen-1, thumbwidth:20
+						}
+					]
+				});
+				//mytracks.push({
+					//height:20, painters:[
+						//{ type:'Biojs.DomainPainter', seqlen:elen, numIndicesInRow:elen,
+							//domains:[
+								//{
+									//ranges:[[0,elen-1]], ypos:{midpercent:80}, attribs:{fill:'none',stroke:'none'},
+									//tooltip:{common:'yes',text:'Sequence'}, sequence:eseq
+								//},
+							//]
+						//}
+					//]
+				//});
+				mytracks.push({
+					height:50, painters:[
 						{ type:'Biojs.DomainPainter', seqlen:elen, numIndicesInRow:elen,
 							domains:[
 								{
 									ranges:[[0,elen-1]], ypos:{midpercent:20}, attribs:{fill:'green',stroke:null},
-									tooltip:{common:'yes',text:'entity'}, glowOnHover:{fill:'blue'}
+									tooltip:{common:'yes',text:'ent ' + ent.getEid()}, glowOnHover:{fill:'blue'}
 								},
-							].concat(unpdoms)
+							].concat(self.makePfamDomsForEntity(ent))
+						},
+						{ type:'Biojs.DomainPainter', seqlen:elen, numIndicesInRow:elen,
+							domains:[
+								{
+									ranges:[[0,elen-1]], ypos:{midpercent:80}, attribs:{fill:'none',stroke:'none'},
+									tooltip:{common:'yes',text:'Sequence'}, sequence:eseq
+								},
+							]
 						}
 					]
 				});
-				console.log("tracks", mytracks);
-				new Biojs.PDBsequenceViewer({divid:self.divid, numrows:1, leftwidth:50, width:500, rightwidth:50, tracks:mytracks});
-				break;
+				mytracks.push({
+					height:50, painters:[
+						{ type:'Biojs.DomainPainter', seqlen:elen, numIndicesInRow:elen,
+							domains:self.makeUnpdomForEntity(ent)
+						}
+					]
+				});
+				for(var chi=0; chi < ent.instances.length; chi++) {
+					var chain = ent.instances[chi];
+					var obsranges = chain.getObservedRanges();
+					mytracks.push({
+						height:50, painters:[
+							{ type:'Biojs.DomainPainter', seqlen:elen, numIndicesInRow:elen,
+								domains:self.makeDomsForChain(ent, chain)
+							}
+						]
+					});
+				}
+				var adivid = self.divid+"_"+ei;
+				jQuery("#"+self.divid).append("<div id='"+adivid+"'></div>");
+				new Biojs.PDBsequenceViewer({divid:adivid, numrows:1, leftwidth:50, width:self.width, rightwidth:50, tracks:mytracks});
 			}
 		} );
 	},
 
+	makeDomsForChain: function(ent, chain) {
+		var ret = [];
+		// observed
+		var obsranges = [];
+		jQuery.each(chain.getObservedRanges(), function(ri,rg) {
+			obsranges.push([rg.pdb_start-1,rg.pdb_end-1]);
+		});
+		ret.push( {
+				ranges:obsranges, ypos:{rangepercent:[35,65]}, attribs:{fill:'blue',stroke:null},
+				tooltip:{common:'yes',text:'chain ' + chain.getAuthAsymId()}, glowOnHover:{fill:'gold'}
+		});
+		// cath
+		var cathranges = chain.getCathRanges();
+		if(cathranges) {
+			jQuery.each(cathranges, function(ci,cdata) {
+				var cranges = [];
+				jQuery.each( cdata.ranges, function(ri,rd) {
+					cranges.push( [rd.pdb_start-1, rd.pdb_end-1] );
+				} );
+				ret.push( {
+					ranges:cranges, ypos:{rangepercent:[25,45]}, attribs:{fill:'cyan',stroke:null},
+					tooltip:{common:'yes',text:'cath ' + cdata.cath_superfamily}, glowOnHover:{fill:'silver'}
+				} );
+			} );
+		}
+		// scop
+		var scopranges = chain.getScopRanges();
+		if(scopranges) {
+			jQuery.each(scopranges, function(ci,cdata) {
+				var cranges = [];
+				jQuery.each( cdata.ranges, function(ri,rd) {
+					cranges.push( [rd.pdb_start-1, rd.pdb_end-1] );
+				} );
+				ret.push( {
+					ranges:cranges, ypos:{rangepercent:[55,75]}, attribs:{fill:'violet',stroke:null},
+					tooltip:{common:'yes',text:'scop ' + cdata.scop_family}, glowOnHover:{fill:'grey'}
+				} );
+			} );
+		}
+		return ret;
+	},
+
+	makePfamDomsForEntity: function(ent) {
+		var self = this;
+		var pfmap = ent.getPfamMapping(), pfdoms = [];
+		for(pfid in pfmap) {
+			var pfranges = [];
+			if(pfid == null) continue;
+			jQuery.each(pfmap[pfid], function(ui,ur) {
+				if(ur.pdb_start == null || ur.pdb_end == null) return;
+				pfranges.push([ur.pdb_start-1,ur.pdb_end-1]);
+			});
+			pfdoms.push( {
+				ranges:pfranges, ypos:{midpercent:60}, attribs:{fill:'green',stroke:null,opacity:0.3},
+				tooltip:{common:'yes',text:'pfam accession '+pfid}, glowOnHover:{fill:'magenta'}, displayname:pfid
+			} );
+		}
+		return pfdoms;
+	}, 
 	makeUnpdomForEntity: function(ent) {
 		var self = this;
 		var unpmap = ent.getUnpMapping(), unpdoms = [];
-		for(unp in ent.getUnpMapping()) {
+		for(unp in unpmap) {
 			var uranges = [];
-			console.log("UNPPPPP", unp);
 			if(unp == null) continue;
 			jQuery.each(unpmap[unp], function(ui,ur) {
-		console.log(unp, ur.pdb_start, ur.pdb_end);
 				if(ur.pdb_start == null || ur.pdb_end == null) return;
 				uranges.push([ur.pdb_start-1,ur.pdb_end-1]);
 			});
-			console.log("URANGE", uranges);
 			unpdoms.push( {
-				ranges:uranges, ypos:{midpercent:80}, attribs:{fill:'red',stroke:null,opacity:0.3},
+				ranges:uranges, ypos:{midpercent:60}, attribs:{fill:'red',stroke:null,opacity:0.3},
 				tooltip:{common:'yes',text:'uniprot accession '+unp}, glowOnHover:{fill:'blue'}, displayname:unp
 			} );
 		}
