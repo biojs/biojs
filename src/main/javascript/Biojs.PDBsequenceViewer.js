@@ -121,6 +121,11 @@ Biojs.BasicSequencePainter = Biojs.extend({
 				sy = my - ypos.midpercent/2*py;
 				ey = my + ypos.midpercent/2*py;
 			}
+			else if(ypos.rangepercent) {
+				py = (ey-sy)/100;
+				ey = sy + ypos.rangepercent[1]*py;
+				sy = sy + ypos.rangepercent[0]*py;
+			}
 			else alert("drawHorizontalLine cant understand y-placement for line!");
 			raphaobjects.push( rd0.rapha.rect(sx,sy,ex-sx,ey-sy).attr(attribs) );
 		}
@@ -273,7 +278,7 @@ Biojs.ZoombarPainter = Biojs.BasicSequencePainter.extend({
 					label: function(val) { if(val%10==0) return '|'; else return ''; }
 				}
 			],
-			range:{min:rangediff,max:false} 
+			range:{min:rangediff,max:false} // TODO range does not work if slider moves from 0
 		});
 		jQuery('#'+rd.trackdiv+"_sliderdiv").bind("valuesChanging", function(e,data) {
 		//jQuery('#'+rd.trackdiv+"_sliderdiv").bind("valuesChanged", function(e,data) {
