@@ -11,8 +11,11 @@
  * @class
  * @extends Biojs
  *
+ * Main developer
  * @author <a href="mailto:ljgarcia@ebi.ac.uk">Leyla Jael Garcia Castro</a>
- * @version 1.0.0
+ * Collaborators
+ * @author <a href="mailto:ljgarcia@ebi.ac.uk">Pablo Moreno</a>
+ * @version 1.1.0
  * @category 0
  *
  * @requires <a href='http://code.jquery.com/jquery-1.7.2.min.js/'>jQuery Core 1.7.2</a>
@@ -340,11 +343,7 @@ Biojs.FeatureViewer = Biojs.extend(
          * @name Biojs.FeatureViewer-constructor
          */
         constructor: function(options) {
-            // Commented by johncar:
-        	// noConfict() is causing conflict with building registry.
-        	// It shouldn't be in the component' source code but in its deployment (i.e. page where it will be used)  
-        	// Besides, it is used to replace the jQuery shorcut '$' by any other.
-        	// This component does not uses a shorcut, so it's unnecessary to have it.
+            //Biojs.console.enable();
             //jQuery.noConflict();
             this.initRaphael();
 
@@ -499,6 +498,23 @@ Biojs.FeatureViewer = Biojs.extend(
         ],
 
         /**
+         * Private: Finds an element within the target div for this component,
+         * search is expanded to all descendants in the target.
+         * @param {String} {idToFind} Element id
+         * */
+        _getElementWithinTarget: function(idToFind) {
+            return jQuery("#"+this.opt.target).find("#"+idToFind);
+        },
+
+        /**
+         * Private: Finds the first child element within the target div;
+         * this element corresponds to the Raphaël canvas holder.
+         * */
+        getHolder: function() {
+            return jQuery('#'+this.opt.target).children("#uniprotFeaturePainter-holder")[0];
+        },
+
+        /**
          *
          * @param {string} newSelectionColor New selection color
          */
@@ -559,11 +575,11 @@ Biojs.FeatureViewer = Biojs.extend(
                 config.horizontalGrid = paintHorizontalGrid;
                 config.verticalGrid = paintVerticalGrid;
                 this._updateFeaturesToStyle(selectedStyle);
-                var holder = document.getElementById("uniprotFeaturePainter-holder");
+                var holder = this.getHolder();
                 holder.innerHTML = "";
                 holder.style.height = (config.sizeY+config.sizeYKey) + "px";
                 holder.style.width = config.sizeX + "px";
-                this.raphael = Raphael("uniprotFeaturePainter-holder", config.sizeX, config.sizeY+config.sizeYKey);
+                this.raphael = Raphael(holder, config.sizeX, config.sizeY+config.sizeYKey);
                 this._repaint('withoutZoom');
             }
         },
@@ -613,7 +629,7 @@ Biojs.FeatureViewer = Biojs.extend(
                         width: config.sizeX+20
                     });
             } else {
-                svg = document.getElementById('uniprotFeaturePainter-holder').innerHTML;
+                svg = this.getHolder().innerHTML;
                 var canvas = document.createElement("canvas");
                 canvg(canvas, svg);
                 dataURL = canvas.toDataURL();
@@ -671,7 +687,7 @@ Biojs.FeatureViewer = Biojs.extend(
          */
         _init: function() {
             //console.log(this.opt);
-            Biojs_FeatureViewer_myself = this;
+            Biojs_FeatureViewer_array.push(this);
             var config = this.opt.json.configuration;
             //First create the slider, button, and holder
             var painter_div = jQuery("#" + this.opt.target);
@@ -686,7 +702,7 @@ Biojs.FeatureViewer = Biojs.extend(
             painter_div.append('<br/>');
             painter_div.append('<div id="uniprotFeaturePainter-holder"></div>');
 
-            var holder = document.getElementById("uniprotFeaturePainter-holder");
+            var holder = this.getHolder();
             if (!holder) {
                 this.$errorMsg = jQuery('<div id="uniprotFeaturePainter-errorInit"></div>')
                     .html('There was an unexpected failure, the image cannot be displayed.')
@@ -704,7 +720,7 @@ Biojs.FeatureViewer = Biojs.extend(
             holder.innerHTML = "";
             holder.style.height = (config.sizeY+config.sizeYKey) + "px";
             holder.style.width = config.sizeX + "px";
-            this.raphael = Raphael("uniprotFeaturePainter-holder", config.sizeX, config.sizeY+config.sizeYKey);
+            this.raphael = Raphael(holder, config.sizeX, config.sizeY+config.sizeYKey);
         },
 
         /**
@@ -830,13 +846,13 @@ Biojs.FeatureViewer = Biojs.extend(
                 var start = config.requestedStart;
                 var stop = config.requestedStop;
                 var sequenceLength = config.sequenceLength;
-                if (!document.getElementById("uniprotFeaturePainter-slider")) {
+                var slider_div = this._getElementWithinTarget('uniprotFeaturePainter-slider');
+                if (!slider_div) {
                     return;
                 }
 
                 this.slider_start = start;
                 this.slider_stop = stop;
-                var slider_div = jQuery("#uniprotFeaturePainter-slider");
                 slider_div.text('');
                 slider_div.append('<label for="uniprotFeaturePainter-slider-values"></label>');
                 slider_div.append('<div type="text" id="uniprotFeaturePainter-slider-values" style="margin-bottom:5px" />');
@@ -845,13 +861,13 @@ Biojs.FeatureViewer = Biojs.extend(
 
                 //console.log(jQuery('#uniprotFeaturePainter-slider-bar' ));
 
-                jQuery('#uniprotFeaturePainter-slider-bar' ).slider({
+                this._getElementWithinTarget('uniprotFeaturePainter-slider-bar').slider({
                     range: true,
                     min: 1,
                     max: sequenceLength,
                     values: [start, stop],
                     slide: function(event, ui) {
-                        jQuery('#uniprotFeaturePainter-slider-values').html('Zoom - Start: '+ui.values[0] + ', End: ' + ui.values[1]);
+                        myself._getElementWithinTarget('uniprotFeaturePainter-slider-values').html('Zoom - Start: '+ui.values[0] + ', End: ' + ui.values[1]);
                         slider_start = ui.values[0];
                         slider_stop = ui.values[1];
                     },
@@ -860,7 +876,7 @@ Biojs.FeatureViewer = Biojs.extend(
                     }
                 });
 
-                jQuery('#uniprotFeaturePainter-slider-values').html('Zoom - Start:' + start + ', End:' + stop);
+                this._getElementWithinTarget('uniprotFeaturePainter-slider-values').html('Zoom - Start:' + start + ', End:' + stop);
             }
         },
 
@@ -914,7 +930,7 @@ Biojs.FeatureViewer = Biojs.extend(
                     '</td>' +
                     '<td valign="bottom" align="right">' +
                     '<div id="uniprotFeaturePainter-printButton">' +
-                    '<input type="button" value="Export to image" onclick="Biojs_FeatureViewer_myself.exportFeaturesToImage();"/>' +
+                    '<input type="button" value="Export to image" onclick="Biojs_FeatureViewer_array['+(Biojs_FeatureViewer_array.length-1)+'].exportFeaturesToImage();"/>' +
                     '</div> ' +
                     '</td>' +
                     '</tr>' +
@@ -964,7 +980,7 @@ Biojs.FeatureViewer = Biojs.extend(
                     '<tr>' +
                     '<td valign="bottom" align="right">' +
                     '<div id="uniprotFeaturePainter-printButton">' +
-                    '<input type="button" value="Export to image" onclick="Biojs_FeatureViewer_myself.exportFeaturesToImage();"/>' +
+                    '<input type="button" value="Export to image" onclick="Biojs_FeatureViewer_array['+(Biojs_FeatureViewer_array.length-1)+'].exportFeaturesToImage();"/>' +
                     '</div> ' +
                     '</td>' +
                     '</tr>' +
@@ -1286,7 +1302,7 @@ Biojs.FeatureViewer = Biojs.extend(
                         " (" + obj.featureStart + ", " + obj.featureEnd + "; length " + (obj.featureEnd-obj.featureStart+1) + ")" +
                         "<br/>Type: " + obj.featureTypeLabel + " - " + obj.typeCode + " - " + obj.typeCategory +
                         "<br/>Evidence: " + obj.evidenceText + " - " + obj.evidenceCode;
-                    var myFeatureObj = jQuery("#" + "uniprotFeaturePainter_" + obj.featureId);
+                    var myFeatureObj = myself._getElementWithinTarget("uniprotFeaturePainter_" + obj.featureId);
                     //This one works fine: xph.tooltip.v0.7b
                     //myFeatureObj.tooltip({text: tooltip});
                     //This one works fine: bassistance.de
@@ -1723,4 +1739,4 @@ Biojs.FeatureViewer = Biojs.extend(
         }
     });
 
-var Biojs_FeatureViewer_myself = undefined;
+var Biojs_FeatureViewer_array = new Array();
