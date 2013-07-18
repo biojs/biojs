@@ -320,6 +320,7 @@ Biojs.FeatureViewer = Biojs.extend(
         slider_stop: 0,
         slider_start: 0,
         context: '',
+        instance: undefined,
         /*
          * Private variables
          */
@@ -345,10 +346,14 @@ Biojs.FeatureViewer = Biojs.extend(
         constructor: function(options) {
             //Biojs.console.enable();
             //jQuery.noConflict();
-            this.initRaphael();
+            Biojs_FeatureViewer_array.push(this);
+            this.instance = Biojs_FeatureViewer_array.length-1;
+            Biojs_FeatureViewer_array[this.instance].opt.json = jQuery.extend(true, {}, this.opt.json);
 
-            if (!Biojs.Utils.isEmpty(this.opt.json)) {
-                this.paintFeatures(this.opt.json)
+            Biojs_FeatureViewer_array[this.instance].initRaphael();
+
+            if (!Biojs.Utils.isEmpty(Biojs_FeatureViewer_array[this.instance].opt.json)) {
+                Biojs_FeatureViewer_array[this.instance].paintFeatures(Biojs_FeatureViewer_array[this.instance].opt.json)
             }
         },
 
@@ -687,7 +692,6 @@ Biojs.FeatureViewer = Biojs.extend(
          */
         _init: function() {
             //console.log(this.opt);
-            Biojs_FeatureViewer_array.push(this);
             var config = this.opt.json.configuration;
             //First create the slider, button, and holder
             var painter_div = jQuery("#" + this.opt.target);
@@ -930,7 +934,8 @@ Biojs.FeatureViewer = Biojs.extend(
                     '</td>' +
                     '<td valign="bottom" align="right">' +
                     '<div id="uniprotFeaturePainter-printButton">' +
-                    '<input type="button" value="Export to image" onclick="Biojs_FeatureViewer_array['+(Biojs_FeatureViewer_array.length-1)+'].exportFeaturesToImage();"/>' +
+                    '<input type="button" value="Export to image" ' +
+                    'onclick="Biojs_FeatureViewer_array['+this.instance+'].exportFeaturesToImage();"/>' +
                     '</div> ' +
                     '</td>' +
                     '</tr>' +
@@ -974,13 +979,13 @@ Biojs.FeatureViewer = Biojs.extend(
          * @ignore
          */
         _withButtonOnly: function (sizeX, sizeY, sizeYKey) {
-            var myself = this;
             var text =
                 '<table width="' + sizeX + 'px">' +
                     '<tr>' +
                     '<td valign="bottom" align="right">' +
                     '<div id="uniprotFeaturePainter-printButton">' +
-                    '<input type="button" value="Export to image" onclick="Biojs_FeatureViewer_array['+(Biojs_FeatureViewer_array.length-1)+'].exportFeaturesToImage();"/>' +
+                    '<input type="button" value="Export to image" ' +
+                    'onclick="Biojs_FeatureViewer_array['+this.instance+'].exportFeaturesToImage();"/>' +
                     '</div> ' +
                     '</td>' +
                     '</tr>' +
