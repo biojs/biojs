@@ -11,10 +11,7 @@
  * @class
  * @extends Biojs
  *
- * Main developer
- * @author <a href="mailto:ljgarcia@ebi.ac.uk">Leyla Jael Garcia Castro</a>
- * Collaborators
- * @author <a href="mailto:ljgarcia@ebi.ac.uk">Pablo Moreno</a>
+ * @author <a href="mailto:ljgarcia@ebi.ac.uk">Leyla Jael Garcia Castro</a>, <a href="mailto:pmoreno@ebi.ac.uk">Pablo Moreno</a> 
  * @version 1.1.0
  * @category 0
  *
