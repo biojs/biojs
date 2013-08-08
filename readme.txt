@@ -1,10 +1,10 @@
-More information about BioJS is available in http://code.google.com/p/biojs/
+More information about BioJS is available in http://biojs.github.io/biojs/
 
-To quickly build the registry web application execute the following commands:
+A BioJS registry to try components is available in http://www.ebi.ac.uk/Tools/biojs/registry/
 
-   mvn clean compile
-   mvn jsdoctk:jsdoc
+To quickly build the registry web application from this code, execute the command below. The web application will be made available in "target/registry".
 
-The web application will be made available in "target/registry".
+   mvn clean compile jsdoctk:jsdoc
 
-For more information please the following tutorial "Install the repository in the local machine".
+
+
