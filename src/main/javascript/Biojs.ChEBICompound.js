@@ -242,10 +242,10 @@ Biojs.ChEBICompound = Biojs.extend(
 	   		 // Encode both url and parameters under the param url
 	   		 httpRequest.data = [{ name: "url", value: urlSummary }];
 	
-	   		 // Data type 
-	   		 httpRequest.dataType = "text";
-	   	}
 
+	   	}
+        // Data type
+        httpRequest.dataType = "text";
 		jQuery.ajax(httpRequest);
 		
 	},
