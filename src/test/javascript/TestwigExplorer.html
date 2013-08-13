@@ -1,0 +1,1008 @@
+<!doctype html>
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!--[if lt IE 7]>
+<html class="no-js ie6 oldie" lang="en"> <![endif]-->
+<!--[if IE 7]>
+<html class="no-js ie7 oldie" lang="en"> <![endif]-->
+<!--[if IE 8]>
+<html class="no-js ie8 oldie" lang="en"> <![endif]-->
+<!-- Consider adding an manifest.appcache: h5bp.com/d/Offline -->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+
+<meta charset="utf-8">
+
+<!-- Use the .htaccess and remove these lines to avoid edge case issues.
+     More info: h5bp.com/b/378 -->
+<!-- <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"> --> <!-- Not yet implemented -->
+
+<!-- BIOJS meta tags -->
+<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+
+<title>Component overview &lt; BioJs &lt; EMBL-EBI</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+<meta name="description" content="JavaScript components for biological data">
+<!-- Describe what this page is about -->
+<meta name="keywords" content="bioinformatics, javascript, components">
+<!-- A few keywords that relate to the content of THIS PAGE (not the whol project) -->
+<meta name="author" content="John Gomez Carvajal et all">
+<!-- /BIOJS meta tags -->
+
+<!-- Mobile viewport optimized: j.mp/bplateviewport -->
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<!-- Place favicon.ico and apple-touch-icon.png in the root directory: mathiasbynens.be/notes/touch-icons -->
+
+<!-- CSS: implied media=all -->
+<!-- CSS concatenated and minified via ant build script-->
+<link rel="stylesheet" href="//www.ebi.ac.uk/web_guidelines/css/compliance/develop/boilerplate-style.css">
+<link rel="stylesheet" href="//www.ebi.ac.uk/web_guidelines/css/compliance/develop/ebi-global.css" type="text/css"
+      media="screen">
+<link rel="stylesheet" href="//www.ebi.ac.uk/web_guidelines/css/compliance/develop/ebi-visual.css" type="text/css"
+      media="screen">
+<link rel="stylesheet" href="//www.ebi.ac.uk/web_guidelines/css/compliance/develop/984-24-col-fluid.css" type="text/css"
+      media="screen">
+
+<!-- you can replace this with [projectname]-colours.css. See http://frontier.ebi.ac.uk/web/style/colour for details of how to do this -->
+<!-- also inform ES so we can host your colour palette file -->
+<!-- <link rel="stylesheet" href="//www.ebi.ac.uk/web_guidelines/css/compliance/develop/embl-petrol-colours.css" type="text/css" media="screen"> -->
+
+<!-- BIOJS color css -->
+<link href="style/biojs-colours_blue.css" rel="stylesheet" type="text/css"/>
+<link href="style/biojs.Tooltip.css" rel="stylesheet" type="text/css"/>
+<!-- /BIOJS color css -->
+
+<!-- for production the above can be replaced with -->
+<!--
+<link rel="stylesheet" href="//www.ebi.ac.uk/web_guidelines/css/compliance/mini/ebi-fluid-embl.css">
+-->
+
+<style type="text/css">
+        /* You have the option of setting a maximum width for your page, and making sure everything is centered */
+    body {
+        max-width: 1070px;
+        min-width: 1070px;
+        margin: 0 auto;
+    }
+</style>
+
+<!-- end CSS-->
+
+
+<!-- All JavaScript at the bottom, except for Modernizr / Respond.
+     Modernizr enables HTML5 elements & feature detects; Respond is a polyfill for min/max-width CSS3 Media Queries
+     For optimal performance, use a custom Modernizr build: www.modernizr.com/download/ -->
+
+<!-- Full build -->
+<!-- <script src="//www.ebi.ac.uk/web_guidelines/js/libs/modernizr.minified.2.1.6.js"></script> -->
+
+<!-- custom build (lacks most of the "advanced" HTML5 support -->
+<script src="//www.ebi.ac.uk/web_guidelines/js/libs/modernizr.custom.49274.js"></script>
+
+<!-- BIOJS css -->
+<link href="style/biojs.css" rel="stylesheet" type="text/css"/>
+<!-- /BIOJS css -->
+<!-- BIOJS javascript -->
+
+<!-- jQuery Library -->
+<script language="JavaScript" type="text/javascript" src="scripts/jquery-1.7.2.min.js"></script>
+
+<!-- core code -->
+<script language="JavaScript" type="text/javascript" src="src/Biojs.js"></script>
+
+<!-- Using my own Biojs Toolip component in here ;P by John Gomez johncar@gmail.com -->
+<script src="scripts/Biojs.Tooltip.js" language="JavaScript" type="text/javascript"></script>
+<link href="style/biojs.Tooltip.css" rel="stylesheet" type="text/css"/>
+
+<!-- dependencies -->
+
+
+<script src="http://d3js.org/d3.v2.min.js" type="text/javascript"></script>
+
+<script type="text/javascript" src="../biojs/dependencies/jquery/jquery-ui-1.8.2.custom.min.js"></script>
+
+<script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jquery/jquery-1.6.4.min.js"></script>
+
+<link rel="stylesheet" href="../biojs/css/biojs.wigExplorer.css"/>
+
+
+<!-- component code -->
+<script language="JavaScript" type="text/javascript" src="src/Biojs.wigExplorer.js"></script>
+
+<script language="JavaScript" type="text/javascript">
+window.onload = function () {
+    <!-- START - EBI classic Template -->
+    if (navigator.userAgent.indexOf('MSIE') != -1) {
+        document.getElementById('head').allowTransparency = true;
+    }
+    <!-- END - EBI classic Template -->
+
+
+    var instance = new Biojs.wigExplorer({
+                                              target: "YourOwnDivId",
+                                              selectionBackgroundColor: '#99FF00',
+                                              dataSet: [
+                                                  {
+                                                      start: 10,
+                                                      value: 15
+                                                  },
+                                                  {
+                                                      start: 20,
+                                                      value: 10
+                                                  },
+                                                  {
+                                                      start: 30,
+                                                      value: 5
+                                                  },
+                                                  {
+                                                      start: 40,
+                                                      value: 55
+                                                  },
+                                                  {
+                                                      start: 70,
+                                                      value: 45
+                                                  },
+                                                  {
+                                                      start: 80,
+                                                      value: 15
+                                                  },
+                                                  {
+                                                      start: 90,
+                                                      value: 25
+                                                  },
+                                                  {
+                                                      start: 100,
+                                                      value: 15
+                                                  },
+                                                  {
+                                                      start: 120,
+                                                      value: 10
+                                                  },
+                                                  {
+                                                      start: 130,
+                                                      value: 5
+                                                  },
+                                                  {
+                                                      start: 140,
+                                                      value: 55
+                                                  },
+                                                  {
+                                                      start: 170,
+                                                      value: 45
+                                                  },
+                                                  {
+                                                      start: 180,
+                                                      value: 15
+                                                  },
+                                                  {
+                                                      start: 190,
+                                                      value: 25
+                                                  },
+                                                  {
+                                                      start: 200,
+                                                      value: 20
+                                                  },
+                                                  {
+                                                      start: 210,
+                                                      value: 15
+                                                  },
+                                                  {
+                                                      start: 220,
+                                                      value: 10
+                                                  },
+                                                  {
+                                                      start: 230,
+                                                      value: 5
+                                                  },
+                                                  {
+                                                      start: 240,
+                                                      value: 55
+                                                  },
+                                                  {
+                                                      start: 270,
+                                                      value: 45
+                                                  },
+                                                  {
+                                                      start: 280,
+                                                      value: 15
+                                                  },
+                                                  {
+                                                      start: 290,
+                                                      value: 25
+                                                  },
+                                                  {
+                                                      start: 300,
+                                                      value: 20
+                                                  },
+                                                  {
+                                                      start: 320,
+                                                      value: 35
+                                                  },
+                                                  {
+                                                      start: 330,
+                                                      value: 10
+                                                  },
+                                                  {
+                                                      start: 340,
+                                                      value: 25
+                                                  },
+                                                  {
+                                                      start: 350,
+                                                      value: 15
+                                                  },
+                                                  {
+                                                      start: 420,
+                                                      value: 10
+                                                  },
+                                                  {
+                                                      start: 430,
+                                                      value: 5
+                                                  },
+                                                  {
+                                                      start: 440,
+                                                      value: 55
+                                                  },
+                                                  {
+                                                      start: 470,
+                                                      value: 45
+                                                  },
+                                                  {
+                                                      start: 480,
+                                                      value: 15
+                                                  },
+                                                  {
+                                                      start: 490,
+                                                      value: 25
+                                                  },
+                                                  {
+                                                      start: 500,
+                                                      value: 20
+                                                  },
+                                                  {
+                                                      start: 510,
+                                                      value: 35
+                                                  },
+                                                  {
+                                                      start: 530,
+                                                      value: 10
+                                                  },
+                                                  {
+                                                      start: 540,
+                                                      value: 25
+                                                  }
+                                              ]
+                                          });
+
+
+    $("#onClick").children().remove();
+
+    instance.onClick(
+            function (objEvent) {
+                $("#onClick").text("The character " + objEvent.selected + " was clicked.");
+            }
+    );
+    $("#onClick").data('code', 'instance.onClick%28%0A%20%20%20function%28%20objEvent%20%29%20%7B%0A%20%20%20%20%20%20%24%28%22%23onClick%22%29.text%28%22The%20character%20%22%20+%20objEvent.selected%20+%20%22%20was%20clicked.%22%29%3B%0A%20%20%20%7D%0A%29%3B');
+
+
+    $("#onHelloSelected").children().remove();
+
+    instance.onHelloSelected(
+            function (objEvent) {
+                $("#onHelloSelected").text("The word " + objEvent.textSelected + " was selected.");
+            }
+    );
+    $("#onHelloSelected").data('code', 'instance.onHelloSelected%28%0A%20%20%20function%28%20objEvent%20%29%20%7B%0A%20%20%20%20%20%20%24%28%22%23onHelloSelected%22%29.text%28%22The%20word%20%22%20+%20objEvent.textSelected%20+%20%22%20was%20selected.%22%29%3B%0A%20%20%20%7D%0A%29%3B');
+
+
+    function selectMenuOption() {
+
+        jQuery('#tabmenu ul li a').removeClass('selected');
+        jQuery(this).addClass('selected');
+
+        jQuery('#biojsContent').children().hide();
+        jQuery('#' + jQuery(this).attr('id').replace('Link', '')).show();
+
+    };
+
+
+    jQuery('#tabmenu ul li a').click(function () {
+        selectMenuOption.call(this);
+    });
+
+    //
+    // Biojs.Tooltip component with syntax highlighter for the method's examples
+    //
+    //
+
+    // The highlighter
+    var myBrush = new SyntaxHighlighter.brushes.JScript();
+    myBrush.init({ toolbar: false });
+
+    // function to render the code snippet
+    function drawJSCode(element) {
+        return myBrush.getHtml(unescape(jQuery(element).data('code')));
+    }
+
+    // Create the tooltip
+    var biojsTooltip = new Biojs.Tooltip({
+                                             targetSelector: ".methodExample, .event",
+                                             cbRender: drawJSCode,
+                                             arrowType: Biojs.Tooltip.ARROW_RIGHT_MIDDLE
+                                         });
+
+    //
+    // View the source code in a new window
+    //
+    var sourceCodeWindow;
+
+    jQuery('#viewInWindowButton').click(function () {
+
+        sourceCodeWindow = window.open('', '', "width=700,height=600,menubar=0,toolbar=0,status=0,scrollbars=1,resizable=1,location=0");
+
+        // We get it?
+        if (sourceCodeWindow) {
+
+            sourceCodeWindow.document.writeln(unescape(window.exampleCode));
+            sourceCodeWindow.document.close();
+
+        }
+        else {
+            alert("Please allow pop-up windows for this site in your browser");
+        }
+
+    });
+
+
+};
+
+</script>
+
+<!-- Syntax highlighting -->
+<link href="style/shCore.css" rel="stylesheet"/>
+<link href="style/shCoreEclipse.css" rel="stylesheet"/>
+<link href="style/shThemeEclipse.css" rel="stylesheet"/>
+
+<script src="scripts/shCore.js" type="text/javascript"></script>
+<script src="scripts/shBrushJScript.js" type="text/javascript"></script>
+<script src="scripts/shBrushXml.js" type="text/javascript"></script>
+
+<script language="JavaScript" type="text/javascript">
+    SyntaxHighlighter.all();
+</script>
+
+
+<!-- /BIOJS javascript -->
+
+
+</head>
+
+<body class="level2" id="biojs"><!-- add any of your classes or IDs -->
+<div id="skip-to">
+    <ul>
+        <li><a href="#content">Skip to main content</a></li>
+        <li><a href="#local-nav">Skip to local navigation</a></li>
+        <li><a href="#global-nav">Skip to EBI global navigation menu</a></li>
+        <li><a href="#global-nav-expanded">Skip to expanded EBI global navigation menu (includes all sub-sections)</a>
+        </li>
+    </ul>
+</div>
+
+<div id="wrapper" class="container_24">
+<header>
+
+    <div id="local-masthead" class="masthead grid_24 nomenu">
+
+        <!-- local-title -->
+        <!-- NB: for additional title style patterns, see http://frontier.ebi.ac.uk/web/style/patterns -->
+
+        <div class="grid_12 alpha" id="local-title">
+            <div class="biojsLocalTitle">
+                <a href="./index.html" title="Back to BioJS homepage"><img class="logo" src="images/biojs.png"
+                                                                           alt="Biojs"></a>
+
+                <div id="biojsTitle">Reusable components for presenting Biological data</div>
+            </div>
+        </div>
+
+        <!-- /local-title -->
+
+        <!-- local-search -->
+        <!-- NB: if you do not have a local-search, delete the following div, and drop the class="grid_12 alpha" class from local-title above -->
+        <!--
+      <div class="grid_12 omega">
+          <form id="local-search" name="local-search" action="[search-action]" method="post">
+
+              <fieldset>
+
+              <div class="left">
+                  <label>
+                  <input type="text" name="first" id="local-searchbox">
+                  </label>
+                  <span class="examples">Examples: <a href="[search-url-1]">[search-text-1]</a>, <a href="[search-url-1]">[search-text-2]</a>, <a href="[search-url-1]">[search-text-3]</a></span>
+              </div>
+
+              <div class="right">
+                  <input type="submit" name="submit" value="Search" class="submit">
+                  <span class="adv"><a href="../search" id="adv-search" title="Advanced">Advanced</a></span>
+              </div>
+
+              </fieldset>
+
+          </form>
+      </div>
+      -->
+        <!-- /local-search -->
+
+        <!-- local-nav -->
+
+        <nav>
+            <ul class="grid_24" id="local-nav">
+                <li class="first"><a href="./index.html" title="">Home</a></li>
+                <li class="active"><a href="./components.html" title="">Components</a></li>
+                <li><a href="http://code.google.com/p/biojs/">About BioJS</a></li>
+                <li class="last"><a href="http://www.ebi.ac.uk/support">Contact us</a></li>
+            </ul>
+        </nav>
+
+        <!-- /local-nav -->
+
+    </div>
+</header>
+
+
+<div id="content" role="main" class="grid_24 clearfix">
+
+<!-- If you require a breadcrumb trail, its root should be your service.
+        You don't need a breadcrumb trail on the homepage of your service... -->
+<!--
+<nav id="breadcrumb">
+     <p>
+        <a href="[service-url]">[service-name]</a> &gt;
+        [page-title]
+        </p>
+  </nav>
+  -->
+
+<div id="tabmenu" class="grid_24 alpha">
+    <h2 class="strapline title">Biojs.wigExplorer showcase</h2>
+    <ul>
+        <li><a href="#" id="overviewLink" class="selected">Overview</a></li>
+        <li><a href="#" id="sourceLink">Installation</a></li>
+        <li><a href="#" id="optionsLink">Options</a></li>
+        <li><a href="#" id="methodsLink">Methods</a></li>
+        <li><a href="#" id="eventsLink">Events</a></li>
+    </ul>
+</div>
+
+
+<div id="biojsContent">
+
+<!-- ============================== overview ============================ -->
+
+<div id="overview" class="grid_24">
+
+    <!-- ============================== component section ============================ -->
+
+    <div class="grid_18 alpha">
+
+        <div class="box_3dview" id="example">
+            <div id="YourOwnDivId"></div>
+        </div>
+        <br/>
+
+        <div style="text-align:right;">
+            <p class="warning">
+                PLEASE NOTE: the above example is being affected by the CSS rules of this site.
+                Click on 'view in window' to see the component by using its own CSS stylesheet(s) only.
+            </p>
+            <a id="viewInWindowButton" class="main_button" href="#">View in window</a>
+        </div>
+
+        <div>
+            <h3>Overview</h3>
+
+            <div class="intro">
+                <p>This is the description of the HelloWorld component. Here you can set any HTML text
+                    for putting on the generated documentation.
+                    <br/>Version
+                    1.0.0.<br/>
+
+                </p>
+            </div>
+        </div>
+
+    </div>
+    <!-- component section end  -->
+
+    <!-- ============================== side bar ============================ -->
+
+    <div class="grid_6 omega">
+        <aside>
+
+
+            <div class="main-right-box-no">
+                <div class="right_title"><span class="version">Events</span></div>
+                <div>
+                    <ul class="feat_list">
+
+
+                        <li>onClick
+                            <pre class="event" id="onClick"/>
+                        </li>
+
+
+                        <li>onHelloSelected
+                            <pre class="event" id="onHelloSelected"/>
+                        </li>
+
+
+                    </ul>
+                </div>
+            </div>
+
+
+            <div class="main-right-box-no">
+                <div class="right_title"><span class="version">Methods</span></div>
+                <div>
+                    <ul class="feat_list">
+
+
+                        <li><a href="#" id="paintFeatures1" class="methodExample">
+                            paintFeatures</a>
+                        </li>
+
+                        <li><a href="#" id="_updateDraw" class="methodExample">
+                            _updateDraw</a>
+                        </li>
+
+
+                        <li><a href="#" id="setSize1" class="methodExample">
+                            setSize</a>
+                        </li>
+
+
+                    </ul>
+                </div>
+            </div>
+
+
+            <div class="main-right-box-no">
+                <div class="right_title"><span class="version">Dependencies</span></div>
+                <div>
+                    <ul class="feat_list">
+
+                        <li><a href='http://d3js.org/'>D3</a></li>
+
+                        <li><a href=''>jQuery UI 1.8.2+</a></li>
+
+                        <li><a href='http://code.jquery.com/jquery-1.6.4.js'>jQuery Core 1.6.4</a></li>
+
+                        <li><a href='http://www.ebi.ac.uk/~jgomez/biojs/biojs/css/biojs.InteractionsD3.css'>InteractionsD3
+                            CSS</a></li>
+
+                    </ul>
+                </div>
+            </div>
+
+
+        </aside>
+    </div>
+    <!-- side bar end -->
+
+</div>
+<!-- overview -->
+
+<!-- ============================= installation ======================== -->
+
+<div id="source" class="grid_24" style="display:none;">
+    <p>To get the above Biojs.wigExplorer to work on your page, you need to do the following:</p>
+    <br/>
+    <ol>
+        <li>Include the file <a href="src/Biojs.wigExplorer.js">Biojs.wigExplorer.js</a> and its dependencies to your
+            page header.
+
+
+            <h4>Biojs scripts</h4>
+                                <pre class="brush: html; toolbar: false">&lt;script language="JavaScript" type="text/javascript" src="src/Biojs.js"&gt;</script>
+                                    <
+                                    script
+                                    language = "JavaScript"
+                                    type = "text/javascript"
+                                    src = "src/Biojs.wigExplorer.js" ></script></pre>
+
+
+            <h4>External script(s)</h4>
+                                <pre class="brush: html; toolbar: false">&lt;script src="http://d3js.org/d3.v2.min.js" type="text/javascript"&gt;</script>
+                                    <
+                                    script
+                                    type = "text/javascript"
+                                    src = "../biojs/dependencies/jquery/jquery-ui-1.8.2.custom.min.js" ></script>
+                                    <script language="JavaScript" type="text/javascript"
+                                            src="../biojs/dependencies/jquery/jquery-1.6.4.min.js"></script>
+</pre>
+
+
+            <h4>CSS stylesheet(s)</h4>
+                                <pre class="brush: html; toolbar: false">&lt;link rel="stylesheet" href="../biojs/css/biojs.wigExplorer.css" /&gt;
+</pre>
+
+
+        </li>
+
+        <li>Create a div tag which holds an unique identifier.
+                            <pre class="brush: html; toolbar: false">
+                                &lt;body&gt;
+                                ...
+                                &lt;div id="YourOwnDivId" /&gt;
+                                ...
+                                &lt;/body&gt;
+                            </pre>
+        </li>
+
+        <li>Create a code snippet within a &lt;script&gt; tag and instance Biojs.wigExplorer into.
+                            
+                                
+                                    
+                                    <pre class="brush: js; toolbar: false">window.onload = function() {
+var instance = new Biojs.wigExplorer({
+		target : "YourOwnDivId",
+		selectionBackgroundColor : '#99FF00'
+});
+
+};</pre>
+
+
+        </li>
+        <script language="JavaScript" type="text/javascript">
+            window.exampleCode = escape('<html><head><title>Biojs.wigExplorer</title>');
+            window.exampleCode += '%3Cscript%20language%3D%22JavaScript%22%20type%3D%22text/javascript%22%20src%3D%22src/Biojs.js%22%3E%3C/script%3E%3Cscript%20language%3D%22JavaScript%22%20type%3D%22text/javascript%22%20src%3D%22src/Biojs.wigExplorer.js%22%3E%3C/script%3E%3Cscript%20src%3D%22http%3A//d3js.org/d3.v2.min.js%22%20type%3D%22text/javascript%22%3E%3C/script%3E%0A%3Cscript%20type%3D%22text/javascript%22%20src%3D%22../biojs/dependencies/jquery/jquery-ui-1.8.2.custom.min.js%22%3E%3C/script%3E%0A%3Cscript%20language%3D%22JavaScript%22%20type%3D%22text/javascript%22%20src%3D%22../biojs/dependencies/jquery/jquery-1.6.4.min.js%22%3E%3C/script%3E%0A%3Clink%20rel%3D%22stylesheet%22%20href%3D%22../biojs/css/biojs.wigExplorer.css%22%20/%3E%0A%3Cscript%20language%3D%22JavaScript%22%20type%3D%22text/javascript%22%3Ewindow.onload%20%3D%20function%28%29%20%7B%0Avar%20instance%20%3D%20new%20Biojs.wigExplorer%28%7B%0A%09%09target%20%3A%20%22YourOwnDivId%22%2C%0A%09%09selectionBackgroundColor%20%3A%20%27%2399FF00%27%0A%7D%29%3B%0A%0A%7D%3B%3C/script%3E';
+            window.exampleCode += escape('</head><body><div id="YourOwnDivId"></div></body></html>');
+        </script>
+
+    </ol>
+</div>
+
+<!-- ============================== options ============================ -->
+
+<div id="options" class="grid_24" style="display:none;">
+
+
+    <div class="required">
+        <h3>Required Parameters</h3>
+        <ul>
+
+
+            <li>
+                <h4><a href="#" class="method_name">target
+                    | <span class="dataType">{string}</span> </a></h4>
+
+                <p class="method_desc"> Identifier of the DIV tag where the component should be displayed.</p>
+            </li>
+
+
+        </ul>
+    </div>
+
+    <div class="optional">
+        <h3>Optional Parameters</h3>
+        <ul>
+
+
+            <li>
+                <h4><a href="#" class="method_name">fontFamily | <span class="dataType">{string}</span> </a></h4>
+
+                <p class="method_desc">
+                    mono", courier, monospace']
+                    Font list to be applied to the component content.
+
+                    <br/>Default: '"Andale
+
+                </p>
+            </li>
+
+
+            <li>
+                <h4><a href="#" class="method_name">fontColor | <span class="dataType">{string}</span> </a></h4>
+
+                <p class="method_desc">
+                    HTML color code for the font.
+
+                    <br/>Default: "white"
+
+                </p>
+            </li>
+
+
+            <li>
+                <h4><a href="#" class="method_name">backgroundColor | <span class="dataType">{string}</span> </a></h4>
+
+                <p class="method_desc">
+                    Background color for the entire div content.
+
+                    <br/>Default: "#7BBFE9"
+
+                </p>
+            </li>
+
+
+            <li>
+                <h4><a href="#" class="method_name">selectionFontColor | <span class="dataType">{Object}</span> </a>
+                </h4>
+
+                <p class="method_desc">
+                    This color will be used to change the font color of selected text.
+
+                    <br/>Default: "white"
+
+                </p>
+            </li>
+
+
+            <li>
+                <h4><a href="#" class="method_name"> | <span class="dataType">{Object}</span> </a></h4>
+
+                <p class="method_desc">
+                    selectionBackgroundColor="yellow"]
+                    This color will be used to change the background of selected text.
+
+                </p>
+            </li>
+
+
+        </ul>
+    </div>
+
+</div>
+<!-- options end -->
+
+<!-- ============================== methods ============================ -->
+
+<div id="methods" class="grid_24" style="display:none;">
+
+
+    <!------------------- End of method -->
+
+
+    <h3 class="method_name">paintFeatures</h3><!-------------- Begin of method -->
+    <p class="method_desc">
+        Paint the features according to the values specified in the json object defined when creating the object.
+        This method initializes the holder, paints the slider and print button depending on the options, and
+        paints the features and legend.
+    </p>
+
+
+    <h4>Parameters:</h4>
+    <ul>
+
+        <li>
+            <span class="dataType">{Object}</span> <b>json</b>
+            <i>Optional</i>
+            <br/>The json object describing the configuration, features, and legend to be displayed.
+        </li>
+
+    </ul>
+
+
+    <h4>Example :</h4>
+    <pre class="brush: js">myPainter.paintFeatures();</pre>
+
+
+    <!------------------- End of method -->
+
+
+    <h3 class="method_name">setSize</h3><!-------------- Begin of method -->
+    <p class="method_desc">
+        Change the font size. Do nothing it no value is provided.
+    </p>
+
+
+    <h4>Parameters:</h4>
+    <ul>
+
+        <li>
+            <span class="dataType">{string}</span> <b>size</b>
+            <i>Optional</i>
+            <br/>The new font size in pixels.
+        </li>
+
+    </ul>
+
+
+    <h4>Example :</h4>
+    <pre class="brush: js">instance.setSize("72px");</pre>
+
+
+    <!------------------- End of method -->
+
+
+</div>
+<!-- methods section end -->
+
+<!-- ============================== events ============================ -->
+
+
+<div id="events" class="grid_24" style="display:none;">
+
+
+    <h3 class="method_name">onClick</h3><!-------------- Begin of event -->
+
+    <p></p>
+
+
+    <h4>Parameters:</h4>
+    <ul>
+
+        <li>
+            <span class="dataType">{function}</span> <b>actionPerformed</b>
+
+            <br/>A function which receives an <a href="../symbols/Biojs.Event.html">Biojs.Event</a> object as argument.
+        </li>
+
+    </ul>
+
+
+    <h4>Returned data in the Biojs.Event object:</h4>
+    <ul>
+
+        <li>
+            <span class="dataType">{Object}</span>
+            <b>source</b>
+
+            <br/> The component which did triggered the event.
+        </li>
+
+        <li>
+            <span class="dataType">{string}</span>
+            <b>type</b>
+
+            <br/> The name of the event.
+        </li>
+
+        <li>
+            <span class="dataType">{int}</span>
+            <b>selected</b>
+
+            <br/> Selected character.
+        </li>
+
+    </ul>
+
+
+    <br/>
+    <h4>Example :</h4>
+                                        <pre class="brush: js">instance.onClick(
+   function( objEvent ) {
+      alert("The character " + objEvent.selected + " was clicked.");
+   }
+);</pre>
+
+    <!------------------- End of event -->
+
+
+    <h3 class="method_name">onHelloSelected</h3><!-------------- Begin of event -->
+
+    <p></p>
+
+
+    <h4>Parameters:</h4>
+    <ul>
+
+        <li>
+            <span class="dataType">{function}</span> <b>actionPerformed</b>
+
+            <br/>A function which receives an <a href="../symbols/Biojs.Event.html">Biojs.Event</a> object as argument.
+        </li>
+
+    </ul>
+
+
+    <h4>Returned data in the Biojs.Event object:</h4>
+    <ul>
+
+        <li>
+            <span class="dataType">{Object}</span>
+            <b>source</b>
+
+            <br/> The component which did triggered the event.
+        </li>
+
+        <li>
+            <span class="dataType">{string}</span>
+            <b>type</b>
+
+            <br/> The name of the event.
+        </li>
+
+        <li>
+            <span class="dataType">{int}</span>
+            <b>textSelected</b>
+
+            <br/> Selected text, will be 'Hello' obviously.
+        </li>
+
+    </ul>
+
+
+    <br/>
+    <h4>Example :</h4>
+                                        <pre class="brush: js">instance.onHelloSelected(
+   function( objEvent ) {
+      alert("The word " + objEvent.textSelected + " was selected.");
+   }
+);</pre>
+
+    <!------------------- End of event -->
+
+
+</div>
+<!-- events section end -->
+
+
+</div>
+<!-- biojsContent -->
+
+
+</div>
+
+
+<footer>
+    <!-- Optional local footer (insert citation / project-specific copyright / etc here -->
+
+    <div id="local-footer" class="grid_24 clearfix">
+        <div id="biojsFooter">
+            Registry generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a>
+            2.3.2 on Tue Jul 16 2013 10:55:28 GMT+0100 (BST)
+        </div>
+    </div>
+
+    <!-- End optional local footer -->
+
+
+</footer>
+</div>
+<!--! end of #wrapper -->
+
+
+<!-- JavaScript at the bottom for fast page loading -->
+
+<!-- Grab Google CDN's jQuery, with a protocol relative URL; fall back to local if offline -->
+<!--
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="../js/libs/jquery-1.6.2.min.js"></script>')</script>
+-->
+
+
+<!-- Your custom JavaScript file scan go here... change names accordingly -->
+
+<!--
+<script defer="defer" src="//www.ebi.ac.uk/web_guidelines/js/plugins.js"></script>
+<script defer="defer" src="//www.ebi.ac.uk/web_guidelines/js/script.js"></script>
+-->
+<script defer="defer" src="//www.ebi.ac.uk/web_guidelines/js/cookiebanner.js"></script>
+<!-- <script defer="defer" src="//www.ebi.ac.uk/web_guidelines/js/foot.js"></script>-->
+<!-- end scripts-->
+
+<!-- Google Analytics details... -->
+<!-- Change UA-XXXXX-X to be your site's ID -->
+<!--
+<script>
+  window._gaq = [['_setAccount','UAXXXXXXXX1'],['_trackPageview'],['_trackPageLoadTime']];
+  Modernizr.load({
+    load: ('https:' == location.protocol ? '//ssl' : '//www') + '.google-analytics.com/ga.js'
+  });
+</script>
+-->
+
+
+<!-- Prompt IE 6 users to install Chrome Frame. Remove this if you want to support IE 6.
+     chromium.org/developers/how-tos/chrome-frame-getting-started -->
+<!--[if lt IE 7 ]>
+<script src="//ajax.googleapis.com/ajax/libs/chrome-frame/1.0.3/CFInstall.min.js"></script>
+<script>window.attachEvent('onload', function () {
+    CFInstall.check({mode: 'overlay'})
+})</script>
+<![endif]-->
+
+</body>
+</html>
