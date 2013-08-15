@@ -18,7 +18,7 @@
  * @dependency <script type="text/javascript" src="../biojs/dependencies/jquery/jquery-ui-1.8.2.custom.min.js"></script>
  *
  * @requires <a href='http://code.jquery.com/jquery-1.6.4.js'>jQuery Core 1.6.4</a>
- * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jquery/jquery-1.6.4.min.js"></script>
+ * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jquery/jquery-1.6.4.js"></script>
  *
  * @requires <a href='http://www.ebi.ac.uk/~jgomez/biojs/biojs/css/biojs.InteractionsD3.css'>InteractionsD3 CSS</a>
  * @dependency <link rel="stylesheet" href="../biojs/css/biojs.wigExplorer.css" />
@@ -41,19 +41,33 @@
  * @option {Object} [selectionFontColor="white"]
  *     This color will be used to change the font color of selected text.
  *
- * @option {Object} [ selectionBackgroundColor="yellow"]
+ * @option {Object} [selectionBackgroundColor="yellow"]
  *     This color will be used to change the background of selected text.
+ *
+ * @option {string} dataSet
+ *    File in TSV format including input data. Example of TSV file ... <br/>
+ *  <pre>start	value
+ *  10	34
+ *  20	41
+ *  30	46
+ *  40	49
+ *  ...</pre>
  *
  * @example
  * var instance = new Biojs.wigExplorer({
  *                                              target: "YourOwnDivId",
  *                                              selectionBackgroundColor: '#99FF00',
- *                                              dataSet: "data/test.tsv"
+ *                                              dataSet: "../biojs/data/wigExplorerDataSet.tsv"
  *                                          });
  *
  */
+
+
 Biojs.wigExplorer = Biojs.extend(
         /** @lends Biojs.wigExplorer# */
+
+     //todo: Check @option {string} dataSet is correct. I saw in your example dataSet is part of your input options.
+     //todo: I have also moved the test.tsv file from the registry to a data folder src/main/resources/data/wigExplorerDataSet.tsv
 
         {
           zoomSlider: '',
@@ -75,10 +89,9 @@ Biojs.wigExplorer = Biojs.extend(
             self.vis = null;
             self.color = null;
             self.foci = [];
-            self.setDataSource(self.opt.dataSet);
 
 
-            this.track = self.opt.dataSet;
+            this.track; // data
 
 
             this._container = $("#wigFeaturePainter-holder");
@@ -108,8 +121,8 @@ Biojs.wigExplorer = Biojs.extend(
                                   'user-select': 'none'
                                 });
 
-
-            this.paintFeatures(this.opt.json)
+            //todo: this.opt.json was undefined. I though this paintFeatures method could have json configuration and the input data. Since I do not know what kind of configuration you mean to use by now I am just providing the data.
+            this.paintFeatures(self.opt.dataSet);
 
           },
 
@@ -119,6 +132,7 @@ Biojs.wigExplorer = Biojs.extend(
            */
           opt: {
             target: "YourOwnDivId",
+            dataSet: "",
             fontFamily: '"Andale mono", courier, monospace',
             fontColor: "white",
             backgroundColor: "#7BBFE9",
@@ -180,28 +194,39 @@ Biojs.wigExplorer = Biojs.extend(
                 this._paintJson(undefined, this.slider_start, this.slider_stop);
             },
 
-            /**
+          //todo: I change the example to "instance" to make it consistent with the examples above
+          /**
            * Paint the features according to the values specified in the json object defined when creating the object.
            * This method initializes the holder, paints the slider and print button depending on the options, and
            * paints the features and legend.
            *
            * @example
-           * myPainter.paintFeatures();
+           * instance.paintFeatures("../biojs/data/wigExplorerDataSet2.tsv");
            *
-           * @param {Object} [json] The json object describing the configuration, features, and legend to be displayed.
+           * @param {string} dataSet Location of the file with the input data in TSV format.
+           *  <pre>start	value
+           *  10	34
+           *  20	41
+           *  30	46
+           *  40	49
+           *  ...</pre>
            */
-          paintFeatures: function (json) {
-            if (json) {
-              this.setDataSource(self.opt.dataSet);
+          paintFeatures: function (dataSet) {
+            //todo: The json variable was not used. It seems to me it would be useful to pass the input data plus configuration. By now I am just defining the input data since I am not sure about the configuration in json.
+            if (dataSet != undefined) {
+              this._setDataSource(dataSet);
+              this._init();
+            } else {
+                //todo: output error: no dataSet
             }
-            this._init();
+
           },
 
           /**
            * Private: Initializes the component.
            */
           _init: function () {
-            Biojs_wigExplorer_myself = this;
+            Biojs.wigExplorer.myself = this;
             //First create the slider, button, and holder
             var painter_div = jQuery("#" + this.opt.target);
             painter_div.text('');
@@ -228,24 +253,29 @@ Biojs.wigExplorer = Biojs.extend(
                     this.height = $("#wigFeaturePainter-holder").height(),
                     this.r = self.opt.radius;
 
+            //todo: when setting a new file I had problems with "self.opt.width" wich was not defined as string, so indexOf was not working.
+            self.opt.width = self.opt.width.toString();
             if (self.opt.width.indexOf("%") != -1)
               this.width = this.width * (self.opt.width.substring(0, self.opt.width.length - 1) * 1) / 100.0;
             else
               this.width = self.opt.width * 1;
-            self.opt.width = this.width;
+            self.opt.width = parseInt(this.width);
 
+            //todo: when setting a new file I had problems with "self.opt.width" wich was not defined as string, so indexOf was not working.
+            self.opt.height = self.opt.height.toString();
             if (self.opt.height.indexOf("%") != -1)
               this.height = this.height * (self.opt.height.substring(0, self.opt.height.length - 1) * 1) / 100.0;
             else
               this.height = self.opt.height * 1;
-            self.opt.height = this.height;
+            self.opt.height = parseInt(this.height);
+
 
             self.color = function () {
               return d3.scale.ordinal().range(self.colors);
             }();
 
 
-            d3.tsv(this.track, function (data, error) {
+            d3.tsv(self.opt.dataSet, function (data, error) {
               self.track = data;
               var length = data.length - 1;
               var start = parseInt(data[0].start);//config.requestedStart;
@@ -304,10 +334,10 @@ Biojs.wigExplorer = Biojs.extend(
             this.zoomSlider = jQuery('<div id="wigFeaturePainter-slider-bar" style="width:300px"></div>').appendTo(slider_div);
 
 
-            slider_div.html('<button id="button_left" onclick=Biojs_wigExplorer_myself._updateDraw(undefined,' + (-1 * diff) + ',' + (-1 * diff) + '); ><-</button>' +
-                            ' <button class="ui-button ui-icon ui-icon-arrowthick-1-e" onclick=Biojs_wigExplorer_myself._updateDraw(undefined,' + (1 * diff) + ',' + (1 * diff) + '); >-></button> ' +
-                            ' <button class="ui-button ui-icon ui-icon-plus" onclick=Biojs_wigExplorer_myself._updateDraw(undefined,' + (1 * diff) + ',' + (-1 * diff) + '); >+</button>' +
-                            ' <button class="ui-button ui-icon ui-icon-minus" onclick=Biojs_wigExplorer_myself._updateDraw(undefined,' + (-1 * diff) + ',' + (1 * diff) + '); >-</button>')
+            slider_div.html('<button id="button_left" onclick=Biojs.wigExplorer.myself._updateDraw(undefined,' + (-1 * diff) + ',' + (-1 * diff) + '); ><-</button>' +
+                            ' <button class="ui-button ui-icon ui-icon-arrowthick-1-e" onclick=Biojs.wigExplorer.myself._updateDraw(undefined,' + (1 * diff) + ',' + (1 * diff) + '); >-></button> ' +
+                            ' <button class="ui-button ui-icon ui-icon-plus" onclick=Biojs.wigExplorer.myself._updateDraw(undefined,' + (1 * diff) + ',' + (-1 * diff) + '); >+</button>' +
+                            ' <button class="ui-button ui-icon ui-icon-minus" onclick=Biojs.wigExplorer.myself._updateDraw(undefined,' + (-1 * diff) + ',' + (1 * diff) + '); >-</button>')
           },
 
 
@@ -487,10 +517,13 @@ Biojs.wigExplorer = Biojs.extend(
            * @ignore
            */
           _clear: function (withoutZoom) {
+            //todo: check withoutZoom is not used
             jQuery("#wigFeaturePainter-holder").html("");
           },
 
-          setDataSource: function (dataSet) {
+
+          _setDataSource: function (dataSet) {
+            //todo: lets make this function private since you already have paintFeatures which makes more sense to have it public
             this.opt.dataSet = dataSet;
           },
 
@@ -515,7 +548,7 @@ Biojs.wigExplorer = Biojs.extend(
           }
 
 
+        },{
+        //todo: Just check you are happy with this change. I am using "Biojs.wigExplorer.myself" instead of Biojs_wigExplorer_myself so the variable myself is still inside BioJS.
+            myself: undefined
         });
-
-
-var Biojs_wigExplorer_myself = undefined;
