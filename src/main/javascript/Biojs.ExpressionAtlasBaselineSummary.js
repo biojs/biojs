@@ -44,7 +44,7 @@
  * @example
  *    var instance = new Biojs.ExpressionAtlasBaselineSummary({
  *      geneQuery:"ENSG00000187003+ENSG00000185264",
- *      propertyType:"identifier",
+ *      propertyType:"bioentity_identifier",
  *      geneSetMatch:false,
  *      target : "YourOwnDivId"
  *    });
@@ -73,7 +73,7 @@ Biojs.ExpressionAtlasBaselineSummary = Biojs.extend(
 	 * @param {boolean} geneSetMatch If true collapse multiple returned gene profiles into one single line of average expression.
 	 * 
 	 * @example 
-	 * instance.setQuery("ENSG00000187003+ENSG00000185264","identifier",false);
+	 * instance.setQuery("ENSG00000187003+ENSG00000185264","bioentity_identifier",false);
 	 * 
 	 * @example 
 	 * instance.setQuery("Q61171","",false);
@@ -82,7 +82,7 @@ Biojs.ExpressionAtlasBaselineSummary = Biojs.extend(
 	 * instance.setQuery("P37173+Q9UER7+P10600+P35243+Q93074+P16234","",false);
 	 * 
 	 * @example 
-	 * instance.setQuery("ENSG000000000000","identifier",false);
+	 * instance.setQuery("ENSG000000000000","bioentity_identifier",false);
 	 * 
 	 */
 	setQuery: function(geneQuery, propertyType, geneSetMatch){
@@ -97,7 +97,7 @@ Biojs.ExpressionAtlasBaselineSummary = Biojs.extend(
 		if(this._identifierDb == Biojs.ExpressionAtlasBaselineSummary.ID_UNIPROT){
 			this.opt.propertyType = "";
 		} else if (this._identifierDb == Biojs.ExpressionAtlasBaselineSummary.ID_ENSEMBL){
-			this.opt.propertyType = "identifier";
+			this.opt.propertyType = "bioentity_identifier";
 		}	
 
 		/* Set url */
@@ -170,12 +170,12 @@ Biojs.ExpressionAtlasBaselineSummary = Biojs.extend(
 	     For example search with UniProt id P00846 returns the gene mt-atp6,
 	     a search for REACT_6900 returns genes belonging to this pathway.
 	     To narrow to search scope of a query term, please provide a type:
-	     &propertyType=identifier (here only the identifier property is searched)
+	     &propertyType=bioentity_identifier (here only the identifier property is searched)
 	     An additional parameter (&geneSetMatch=true) can be appended after
 	     the query term to collapse multiple returned gene profiles into one
 	     single line of average expression (this feature is still experimental).
 	     For multiple identifiers of the same species please use:
-	     geneQuery=ENSG00000187003+ENSG00000185264&propertyType=identifier
+	     geneQuery=ENSG00000187003+ENSG00000185264&propertyType=bioentity_identifier
 	     */
 	    featuresUrl:'http://www-test.ebi.ac.uk/gxa/widgets/heatmap/protein',
             geneQuery:"",
