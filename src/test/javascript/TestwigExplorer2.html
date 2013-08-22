@@ -1,0 +1,37 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US" xml:lang="en-US">
+	<head>
+
+      <script language="JavaScript" type="text/javascript" src="../../main/resources/dependencies/jquery/jquery-1.6.4.js"></script>
+ 	  <script language="JavaScript" type="text/javascript" src="../../main/resources/dependencies/jquery/jquery-ui-1.8.2.custom.min.js"></script>
+      <script language="JavaScript" type="text/javascript" src="../../main/resources/dependencies/d3.v2.min.js"></script>
+
+	  <script language="JavaScript" type="text/javascript" src="../../main/javascript/Biojs.js"></script>
+      <script language="JavaScript" type="text/javascript" src="../../main/javascript/Biojs.wigExplorer.js"></script>
+
+
+      <link rel="stylesheet" href="../../main/resources/css/biojs.wigExplorer.css"/>
+
+        <script language="JavaScript" type="text/javascript">
+        var instance;
+        window.onload = function () {
+            instance = new Biojs.wigExplorer({
+                  target: "holder",
+                  selectionBackgroundColor: '#99FF00',
+                  dataSet: "../../main/resources/data/wigExplorerDataSet.tsv"
+              });
+
+
+        };
+
+  	  </script>
+
+
+	</head>
+	<body>
+	  <div id="holder" />
+	  <div id="log" />
+	</body>
+</html>
+
