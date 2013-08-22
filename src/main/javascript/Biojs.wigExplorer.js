@@ -1,5 +1,5 @@
 /**
- * This is component uses the D3 library to visualise wig formatted file as a area chart, with panning and zooming functionality.
+ * This component uses the D3 library to visualise a wig formatted file as an area chart, with panning and zooming functionality.
  *
  * @class
  * @extends Biojs
@@ -19,7 +19,7 @@
  * @requires <a href='http://code.jquery.com/jquery-1.6.4.js'>jQuery Core 1.6.4</a>
  * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jquery/jquery-1.6.4.js"></script>
  *
- * @requires <a href='http://www.ebi.ac.uk/~jgomez/biojs/biojs/css/biojs.InteractionsD3.css'>InteractionsD3 CSS</a>
+ * @requires <a href=''>biojs.wigExplorer.css</a>
  * @dependency <link rel="stylesheet" href="../biojs/css/biojs.wigExplorer.css" />
  *
  *
@@ -58,10 +58,10 @@
  *
  * @example
  * var instance = new Biojs.wigExplorer({
- *                                              target: "YourOwnDivId",
- *                                              selectionBackgroundColor: '#99FF00',
- *                                              dataSet: "../biojs/data/wigExplorerDataSet.tsv"
- *                                          });
+ *      target: "YourOwnDivId",
+ *      selectionBackgroundColor: '#99FF00',
+ *      dataSet: "../biojs/data/wigExplorerDataSet.tsv"
+ * });
  *
  */
 
@@ -69,7 +69,6 @@
 Biojs.wigExplorer = Biojs.extend(
     /** @lends Biojs.wigExplorer# */
 
-    //todo: Check @option {string} dataSet is correct. I saw in your example dataSet is part of your input options.
 
     {
         zoomSlider: '',
@@ -249,20 +248,15 @@ Biojs.wigExplorer = Biojs.extend(
                 this.height = $("#wigFeaturePainter-holder").height(),
                 this.r = self.opt.radius;
 
-            //todo: when setting a new file I had problems with "self.opt.width" wich was not defined as string, so indexOf was not working.
-            //had similar problem before so I used contains and it should works
-
             self.opt.width = self.opt.width.toString();
-            if (self.opt.width.contains("%"))
+            if (self.opt.width.indexOf("%") != -1)
                 this.width = this.width * (self.opt.width.substring(0, self.opt.width.length - 1) * 1) / 100.0;
             else
                 this.width = self.opt.width * 1;
             self.opt.width = parseInt(this.width);
 
-            //todo: when setting a new file I had problems with "self.opt.width" wich was not defined as string, so indexOf was not working.
-            //had similar problem before so I used contains and it should works
             self.opt.height = self.opt.height.toString();
-            if (self.opt.height.contains("%"))
+            if (self.opt.height.indexOf("%") != -1)
                 this.height = this.height * (self.opt.height.substring(0, self.opt.height.length - 1) * 1) / 100.0;
             else
                 this.height = self.opt.height * 1;
