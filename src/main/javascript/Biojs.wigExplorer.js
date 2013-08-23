@@ -6,7 +6,7 @@
  *
  * @author <a href="http://www.tgac.ac.uk/bioinformatics/sequencing-informatics/core-bioinformatics/anil-thanki/">Anil Thanki</a>
  * @version 1.0.0
- * @category 1
+ * @category 2
  *
  *
  * @requires <a href='http://d3js.org/'>D3</a>
