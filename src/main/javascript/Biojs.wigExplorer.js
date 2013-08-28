@@ -19,9 +19,6 @@
  * @requires <a href='http://code.jquery.com/jquery-1.6.4.js'>jQuery Core 1.6.4</a>
  * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jquery/jquery-1.6.4.js"></script>
  *
- * @requires <a href='http://www.ebi.ac.uk/~jgomez/biojs/biojs/css/biojs.InteractionsD3.css'>InteractionsD3 CSS</a>
- * @dependency <link rel="stylesheet" href="../biojs/css/biojs.wigExplorer.css" />
- *
  *
  * @requires <a href='http://jqueryui.com/download/jquery-ui-1.8.20.custom.zip'>jQuery UI CSS 1.8.2</a>
  * @dependency <link rel="stylesheet" href="../biojs/dependencies/jquery/jquery-ui-1.8.2.css" />
@@ -157,7 +154,6 @@ Biojs.wigExplorer = Biojs.extend(
 
         /**
          * Repaints everything: ruler, shapes, and legend.
-         * @param {boolean} [withoutZoom=false] When false, it zooms according to the slider values.
          * @param {int} [newStart] Zoom from this sequence start value.
          * @param {int} [newStop] Zoom to this sequence end value.
          *
@@ -165,7 +161,7 @@ Biojs.wigExplorer = Biojs.extend(
          * instance._updateDraw();
          *
          */
-        _updateDraw: function (withoutZoom, newStart, newStop) {
+        _updateDraw: function (newStart, newStop) {
 
             //recalculate start and stop
             if (newStart && newStop) {
@@ -189,7 +185,7 @@ Biojs.wigExplorer = Biojs.extend(
                 this.slider_stop = this.data_last_start;
             }
 
-            this._paintJson(undefined, this.slider_start, this.slider_stop);
+            this.paintWig(this.slider_start, this.slider_stop);
         },
 
         /**
@@ -249,20 +245,21 @@ Biojs.wigExplorer = Biojs.extend(
                 this.height = $("#wigFeaturePainter-holder").height(),
                 this.r = self.opt.radius;
 
-            //todo: when setting a new file I had problems with "self.opt.width" wich was not defined as string, so indexOf was not working.
+            //todo: when setting a new file I had problems with "self.opt.width" which was not defined as string, so indexOf was not working.
             //had similar problem before so I used contains and it should works
-
+            console.log(self.opt.width)
             self.opt.width = self.opt.width.toString();
-            if (self.opt.width.contains("%"))
+            if (self.opt.width.indexOf("%") >= 1)
                 this.width = this.width * (self.opt.width.substring(0, self.opt.width.length - 1) * 1) / 100.0;
             else
                 this.width = self.opt.width * 1;
             self.opt.width = parseInt(this.width);
 
-            //todo: when setting a new file I had problems with "self.opt.width" wich was not defined as string, so indexOf was not working.
+            //todo: when setting a new file I had problems with "self.opt.width" which was not defined as string, so indexOf was not working.
             //had similar problem before so I used contains and it should works
             self.opt.height = self.opt.height.toString();
-            if (self.opt.height.contains("%"))
+            console.log(self.opt.height)
+            if (self.opt.height.indexOf("%") >= 1)
                 this.height = this.height * (self.opt.height.substring(0, self.opt.height.length - 1) * 1) / 100.0;
             else
                 this.height = self.opt.height * 1;
@@ -333,21 +330,21 @@ Biojs.wigExplorer = Biojs.extend(
             this.zoomSlider = jQuery('<div id="wigFeaturePainter-slider-bar" style="width:300px"></div>').appendTo(slider_div);
 
 
-            slider_div.html('<div class="ui-button ui-widget ui-corner-all ui-button-text-only" onclick=Biojs.wigExplorer.myself._updateDraw(undefined,' + (1 * diff) + ',' + (-1 * diff) + ');><span title="Zoom In" class="ui-button ui-icon ui-icon-zoomin"></span></div>' +
-                '<div class="ui-button ui-widget ui-corner-all ui-button-text-only"  onclick=Biojs.wigExplorer.myself._updateDraw(undefined,' + (-1 * diff) + ',' + (1 * diff) + '); ><span title="Zoom Out" class="ui-button ui-icon ui-icon-zoomout"></span></div>'+
-                '<div class="ui-button ui-widget ui-corner-all ui-button-text-only"  onclick=Biojs.wigExplorer.myself._updateDraw(undefined,' + (-1 * diff) + ',' + (-1 * diff) + ');><span title="Left" class="ui-button ui-icon ui-icon-arrowthick-1-w"></span></div>'+
-                '<div class="ui-button ui-widget ui-corner-all ui-button-text-only"  onclick=Biojs.wigExplorer.myself._updateDraw(undefined,' + (1 * diff) + ',' + (1 * diff) + ');><span title="Right" class="ui-button ui-icon ui-icon-arrowthick-1-e"></span></div>')
+            slider_div.html('<div class="ui-button ui-widget ui-corner-all ui-button-text-only" onclick=Biojs.wigExplorer.myself._updateDraw(' + (1 * diff) + ',' + (-1 * diff) + ');><span title="Zoom In" class="ui-button ui-icon ui-icon-zoomin"></span></div>' +
+                '<div class="ui-button ui-widget ui-corner-all ui-button-text-only"  onclick=Biojs.wigExplorer.myself._updateDraw(' + (-1 * diff) + ',' + (1 * diff) + '); ><span title="Zoom Out" class="ui-button ui-icon ui-icon-zoomout"></span></div>' +
+                '<div class="ui-button ui-widget ui-corner-all ui-button-text-only"  onclick=Biojs.wigExplorer.myself._updateDraw(' + (-1 * diff) + ',' + (-1 * diff) + ');><span title="Left" class="ui-button ui-icon ui-icon-arrowthick-1-w"></span></div>' +
+                '<div class="ui-button ui-widget ui-corner-all ui-button-text-only"  onclick=Biojs.wigExplorer.myself._updateDraw(' + (1 * diff) + ',' + (1 * diff) + ');><span title="Right" class="ui-button ui-icon ui-icon-arrowthick-1-e"></span></div>')
         },
 
 
         /**
-         * Private: Draws area chart from wig file using D3.js
-         * @param {boolean} [withoutZoom=false] When true, this method recalculates the total for each feature type.
-         * @param {int} [start=0] When true, this method recalculates the total for each feature type.
-         * @param {int} [end=max] When true, this method recalculates the total for each feature type.
-         * @ignore
+         * Draws area chart from wig file using D3.js based on the specified positions
+         *
+         * @example
+         * instance.paintWig(1000,100000)
+         *
          */
-        _paintJson: function (withoutZoom, start, end) {
+        paintWig: function (start, end) {
             var left = "50px";
             var top = "0px";
             var filtered_track = [];
@@ -373,7 +370,7 @@ Biojs.wigExplorer = Biojs.extend(
             var space = parseInt(width) / (end - start);
 
             var length = filtered_track.length - 1;
-            if(length > 0){
+            if (length > 0) {
 
                 this._clear();
 
@@ -518,7 +515,6 @@ Biojs.wigExplorer = Biojs.extend(
                     .attr("d", d3line2(pathinfo));
 
             }
-
 
 
         },
