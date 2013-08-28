@@ -250,31 +250,20 @@ Biojs.wigExplorer = Biojs.extend(
                 this.height = $("#wigFeaturePainter-holder").height(),
                 this.r = self.opt.radius;
 
-<<<<<<< HEAD
             //todo: when setting a new file I had problems with "self.opt.width" which was not defined as string, so indexOf was not working.
             //had similar problem before so I used contains and it should works
             console.log(self.opt.width)
             self.opt.width = self.opt.width.toString();
             if (self.opt.width.indexOf("%") >= 1)
-=======
             self.opt.width = self.opt.width.toString();
-            if (self.opt.width.indexOf("%") != -1)
->>>>>>> 876ff8874b12a9405612e8c882bbac3bee6f03d9
-                this.width = this.width * (self.opt.width.substring(0, self.opt.width.length - 1) * 1) / 100.0;
             else
-                this.width = self.opt.width * 1;
             self.opt.width = parseInt(this.width);
 
-<<<<<<< HEAD
-            //todo: when setting a new file I had problems with "self.opt.width" which was not defined as string, so indexOf was not working.
             //had similar problem before so I used contains and it should works
             self.opt.height = self.opt.height.toString();
-            console.log(self.opt.height)
             if (self.opt.height.indexOf("%") >= 1)
-=======
             self.opt.height = self.opt.height.toString();
             if (self.opt.height.indexOf("%") != -1)
->>>>>>> 876ff8874b12a9405612e8c882bbac3bee6f03d9
                 this.height = this.height * (self.opt.height.substring(0, self.opt.height.length - 1) * 1) / 100.0;
             else
                 this.height = self.opt.height * 1;
