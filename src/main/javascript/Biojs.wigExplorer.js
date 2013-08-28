@@ -19,12 +19,8 @@
  * @requires <a href='http://code.jquery.com/jquery-1.6.4.js'>jQuery Core 1.6.4</a>
  * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jquery/jquery-1.6.4.js"></script>
  *
-<<<<<<< HEAD
-=======
  * @requires <a href=''>biojs.wigExplorer.css</a>
  * @dependency <link rel="stylesheet" href="../biojs/css/biojs.wigExplorer.css" />
- *
->>>>>>> 876ff8874b12a9405612e8c882bbac3bee6f03d9
  *
  * @requires <a href='http://jqueryui.com/download/jquery-ui-1.8.20.custom.zip'>jQuery UI CSS 1.8.2</a>
  * @dependency <link rel="stylesheet" href="../biojs/dependencies/jquery/jquery-ui-1.8.2.css" />
