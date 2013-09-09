@@ -59,7 +59,7 @@
  * var instance = new Biojs.wigExplorer({
  *      target: "YourOwnDivId",
  *      selectionBackgroundColor: '#99FF00',
- *      dataSet: "../biojs/data/wigExplorerDataSet.tsv"
+ *      dataSet: "../biojs/data/wigExplorerDataSet3.tsv",
  * });
  *
  */
@@ -121,6 +121,8 @@ Biojs.wigExplorer = Biojs.extend(
                 'user-select': 'none'
             });
 
+            this.color = self.opt.color;
+
             this.paintFeatures(self.opt.dataSet);
 
         },
@@ -139,7 +141,8 @@ Biojs.wigExplorer = Biojs.extend(
             selectionBackgroundColor: "yellow",
             width: "100%",
             height: "130",
-            radius: 10
+            radius: 10,
+            color: "blue"
         },
 
         /**
@@ -248,7 +251,6 @@ Biojs.wigExplorer = Biojs.extend(
 
             //todo: when setting a new file I had problems with "self.opt.width" which was not defined as string, so indexOf was not working.
             //had similar problem before so I used contains and it should works
-            console.log(self.opt.width)
             self.opt.width = self.opt.width.toString();
             if (self.opt.width.indexOf("%") >= 1)
             self.opt.width = self.opt.width.toString();
@@ -264,7 +266,6 @@ Biojs.wigExplorer = Biojs.extend(
             else
                 this.height = self.opt.height * 1;
             self.opt.height = parseInt(this.height);
-
 
             self.color = function () {
                 return d3.scale.ordinal().range(self.colors);
@@ -326,7 +327,11 @@ Biojs.wigExplorer = Biojs.extend(
             slider_div.append('<label for="wigFeaturePainter-slider-values"></label>');
             slider_div.append('<div type="text" id="wigFeaturePainter-slider-values" style="margin-bottom:5px" />');
             var self = this;
-            var diff = self.track.length / 10;
+
+            var length = this.track.length - 1;
+            var difference  =    parseInt(this.track[length].start) - parseInt(this.track[0].start);
+
+            var diff = parseInt(difference / 20);
             this.zoomSlider = jQuery('<div id="wigFeaturePainter-slider-bar" style="width:300px"></div>').appendTo(slider_div);
 
 
@@ -365,8 +370,9 @@ Biojs.wigExplorer = Biojs.extend(
                 end = parseInt(this.track[length].start);
                 start = parseInt(this.track[0].start);
             }
-
-
+                     console.log(start)
+            console.log(end)
+            console.log(length)
             var space = parseInt(width) / (end - start);
 
             var length = filtered_track.length - 1;
@@ -475,6 +481,7 @@ Biojs.wigExplorer = Biojs.extend(
                 var filter_track_legend = [];
                 for (i = 0; i < length;) {
                     filter_track_legend.push(filtered_track[i]);
+                    console.log(filtered_track[i])
                     i += Math.floor(length / 10);
                 }
 
@@ -503,14 +510,14 @@ Biojs.wigExplorer = Biojs.extend(
                     .attr("height", 200)
                     .attr("class", "path")
 
-                    .attr('stroke', function () {
-                        return "blue";
-                    })
-                    .attr('stroke-width', function () {
-                        return "2px";
-                    })
+//                    .attr('stroke', function () {
+//                        return "blue";
+//                    })
+//                    .attr('stroke-width', function () {
+//                        return "2px";
+//                    })
                     .attr("fill", function () {
-                        return "lightblue";
+                        return "blue";
                     })
                     .attr("d", d3line2(pathinfo));
 
