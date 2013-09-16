@@ -6,7 +6,7 @@
  *
  * @author <a href="mailto:ljgarcia@ebi.ac.uk">Leyla Jael Garcia Castro</a>
  * @version 1.0.0
- * @category 3
+ * @category 2
  *
  *
  * @param {Object} options An object with the options for DASProteinFeatureViewer component.
