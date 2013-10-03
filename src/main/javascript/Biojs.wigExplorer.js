@@ -106,7 +106,6 @@ Biojs.wigExplorer = Biojs.extend(
                 'font-size': '36px',
                 'text-align': 'center',
                 'vertical-align': 'middle',
-//                                  'display': 'table-cell',
                 'width': '700px',
                 'height': '100px',
                 'bottom': '0px'
@@ -242,7 +241,7 @@ Biojs.wigExplorer = Biojs.extend(
                 throw "Error";
             }
             holder.innerHTML = "";
-            holder.style.height = "200px";
+            holder.style.height = "250px";
             holder.style.width = "700px";
             var self = this;
             this.width = $("#wigFeaturePainter-holder").width(),
@@ -253,14 +252,14 @@ Biojs.wigExplorer = Biojs.extend(
             //had similar problem before so I used contains and it should works
             self.opt.width = self.opt.width.toString();
             if (self.opt.width.indexOf("%") >= 1)
-            self.opt.width = self.opt.width.toString();
+                self.opt.width = self.opt.width.toString();
             else
-            self.opt.width = parseInt(this.width);
+                self.opt.width = parseInt(this.width);
 
             //had similar problem before so I used contains and it should works
             self.opt.height = self.opt.height.toString();
             if (self.opt.height.indexOf("%") >= 1)
-            self.opt.height = self.opt.height.toString();
+                self.opt.height = self.opt.height.toString();
             if (self.opt.height.indexOf("%") != -1)
                 this.height = this.height * (self.opt.height.substring(0, self.opt.height.length - 1) * 1) / 100.0;
             else
@@ -329,7 +328,7 @@ Biojs.wigExplorer = Biojs.extend(
             var self = this;
 
             var length = this.track.length - 1;
-            var difference  =    parseInt(this.track[length].start) - parseInt(this.track[0].start);
+            var difference = parseInt(this.track[length].start) - parseInt(this.track[0].start);
 
             var diff = parseInt(difference / 20);
             this.zoomSlider = jQuery('<div id="wigFeaturePainter-slider-bar" style="width:300px"></div>').appendTo(slider_div);
@@ -370,9 +369,6 @@ Biojs.wigExplorer = Biojs.extend(
                 end = parseInt(this.track[length].start);
                 start = parseInt(this.track[0].start);
             }
-                     console.log(start)
-            console.log(end)
-            console.log(length)
             var space = parseInt(width) / (end - start);
 
             var length = filtered_track.length - 1;
@@ -381,8 +377,8 @@ Biojs.wigExplorer = Biojs.extend(
                 this._clear();
 
                 var svg = d3.select("#wigFeaturePainter-holder").append("svg")
-                    .attr("width", this.width)
-                    .attr("height", this.height + 30)
+                    .attr("width", this.width + 20)
+                    .attr("height", this.height + 50)
                     .append("g")
                     .attr("transform", "translate(" + left + "," + top + ")");
 
@@ -399,6 +395,10 @@ Biojs.wigExplorer = Biojs.extend(
 
                 var end_val = parseInt(filtered_track[length].start) + parseInt(filtered_track[1].start - filtered_track[0].start);
                 var start_val = parseInt(filtered_track[0].start) - (parseInt(filtered_track[1].start - filtered_track[0].start));
+
+                if (start_val < 0) {
+                    start_val = 0;
+                }
 
                 // add a 0 to start position
                 filtered_track.splice(0, 0, {start: start_val, value: '0'});
@@ -479,10 +479,11 @@ Biojs.wigExplorer = Biojs.extend(
 
                 //select 10 positions to be displayed on x axis
                 var filter_track_legend = [];
-                for (i = 0; i < length;) {
+                for (i = 0; i <= length;) {
+                    console.log(i + ":" + length + ":" + filtered_track[i].start)
                     filter_track_legend.push(filtered_track[i]);
-                    console.log(filtered_track[i])
                     i += Math.floor(length / 10);
+                    console.log(i + ":" + length)
                 }
 
                 //draw selected 10 positions as legend
@@ -490,18 +491,51 @@ Biojs.wigExplorer = Biojs.extend(
                     .data(filter_track_legend);
 
                 legendtext.enter().append('svg:text')
-                    .attr('x', function (d) {
+                    .attr('x', 40)
+                    .attr('y', 155)
+                    .attr("transform", function (d, i) {
                         if (start > 0) {
-                            return (d.start - start) * space;
+                            return "translate(" + (((d.start - start) * space) + 150) + "," + 100 + ")rotate(90)";
                         }
                         else {
-                            return  (d.start ) * space;
+                            return  "translate(" + (((d.start) * space) + 150) + "," + 100 + ")rotate(90)";
                         }
                     })
-                    .attr('y', 150)
-                    .attr('text-anchor', 'middle')
                     .text(function (d) {
-                        return d.start;
+                        if (d.start > 1000000) {
+                            return parseInt(d.start / 1000000) + "M";
+                        } else if (d.start > 1000) {
+                            return parseInt(d.start / 1000) + "K";
+                        } else {
+                            return d.start;
+                        }
+                    });
+
+                // lines at bottom of diagram to show the positions
+                var line = svg.selectAll("line.bottom")
+                    .data(filter_track_legend);
+
+                line.enter().insert("svg:line")
+                    .attr("class", "line")
+                    .attr("x1", function (d) {
+                        if (start > 0) {
+                            return parseInt((d.start - start) * space);
+                        }
+                        else {
+                            return  parseInt((d.start ) * space);
+                        }
+                    })
+                    .attr("y1", 130)
+                    .attr("x2", function (d) {
+                        if (start > 0) {
+                            return parseInt((d.start - start) * space);
+                        }
+                        else {
+                            return  parseInt((d.start ) * space);
+                        }
+                    }).attr("y2", 140)
+                    .attr('stroke', function () {
+                        return "black";
                     });
 
                 //draw path from calculated chart axis
@@ -510,12 +544,12 @@ Biojs.wigExplorer = Biojs.extend(
                     .attr("height", 200)
                     .attr("class", "path")
 
-//                    .attr('stroke', function () {
-//                        return "blue";
-//                    })
-//                    .attr('stroke-width', function () {
-//                        return "2px";
-//                    })
+                    .attr('stroke', function () {
+                        return "steelblue";
+                    })
+                    .attr('stroke-width', function () {
+                        return "1px";
+                    })
                     .attr("fill", function () {
                         return "blue";
                     })
