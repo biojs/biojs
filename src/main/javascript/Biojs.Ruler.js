@@ -10,7 +10,7 @@
  * @class
  * @extends Biojs
  * 
- * @author <a href="gustavoadolfo.salazar@gmail.com">Gustavo A. Salazar</a>
+ * @author <a href="mailto:gustavoadolfo.salazar@gmail.com">Gustavo A. Salazar</a>
  * @version 1.0.1
  * @category 1
  * 
