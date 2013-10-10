@@ -184,6 +184,7 @@ Biojs.DasProteinFeatureViewer = Biojs.FeatureViewer.extend(
         /**
          * Default values for the options:
          * target: "",
+         * segment: "",
          * showSlider: true,
          * showPrintButton: true,
          * showFeatureTooltipOnMouseOver: true,
