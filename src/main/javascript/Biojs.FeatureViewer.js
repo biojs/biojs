@@ -11,7 +11,7 @@
  * @class
  * @extends Biojs
  *
- * @author <a href="mailto:ljgarcia@ebi.ac.uk">Leyla Jael Garcia Castro</a>, <a href="mailto:pmoreno@ebi.ac.uk">Pablo Moreno</a> 
+ * @author <a href="mailto:ljgarcia@ebi.ac.uk">Leyla Jael Garcia Castro</a>, <a href="mailto:gyachdav@gmail.com">Guy Yachdav</a>, <a href="mailto:pmoreno@ebi.ac.uk">Pablo Moreno</a>
  * @version 1.1.0
  * @category 0
  *
@@ -31,7 +31,7 @@
  * @dependency <link rel="stylesheet" href="../biojs/dependencies/jquery/jquery.tooltip.css"/>
  *
  * @requires <a href='http://github.com/DmitryBaranovskiy/raphael/raw/master/raphael-min.js'>raphael</a>
- * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/graphics/raphael.js"></script>
+ * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/graphics/raphael-2.1.2.js"></script>
  *
  * @requires <a href='http://code.google.com/p/canvg/source/browse/trunk/canvg.js'>canvg</a>
  * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/graphics/canvg.js"></script>
@@ -332,6 +332,7 @@ Biojs.FeatureViewer = Biojs.extend(
         _DARK_ORANGE: "#ff8c00",
         _originalColor: "",
         _previousClickedColor: "",
+        _previousClickedFillColor: "",
         _previousClickedShape: "",
         _previousClickedFeature: "",
         _clickCounter: 0,
@@ -384,18 +385,18 @@ Biojs.FeatureViewer = Biojs.extend(
          * @name Biojs.FeatureViewer-eventTypes
          */
         eventTypes: [
-	        /**
-	         * @name Biojs.FeatureViewer#onFeatureClick
-	         * @event
-	         * @param {function} actionPerformed A function which receives a {@link Biojs.Event} object as argument.
-	         * @eventData {Object} source The component which triggered the event.
-	         * @eventData {string} type The name of the event.
-	         * @eventData {Object} featureInfo A json object with the information for the selected feature, including id.
-	         * @example
-	         * //It is not recommended to use this event to highlight and sustain that highlight after a click on a
-	         * //feature, instead set to ture the options selectFeatureOnMouseClick.
-	         * myPainter.onFeatureClick(
-	         *    function( obj ) {
+        /**
+         * @name Biojs.FeatureViewer#onFeatureClick
+         * @event
+         * @param {function} actionPerformed A function which receives a {@link Biojs.Event} object as argument.
+         * @eventData {Object} source The component which triggered the event.
+         * @eventData {string} type The name of the event.
+         * @eventData {Object} featureInfo A json object with the information for the selected feature, including id.
+         * @example
+         * //It is not recommended to use this event to highlight and sustain that highlight after a click on a
+         * //feature, instead set to ture the options selectFeatureOnMouseClick.
+         * myPainter.onFeatureClick(
+         *    function( obj ) {
 	         *    var tooltip = obj.featureLabel +
 	         *          " (" + obj.featureStart + ", " + obj.featureEnd + "; length " + (obj.featureEnd-obj.featureStart+1) + ")" +
 	         *          "<br/>Type: " + obj.featureTypeLabel + " - " + obj.typeCode + " - " + obj.typeCategory +
@@ -403,23 +404,23 @@ Biojs.FeatureViewer = Biojs.extend(
 	         *       alert("Clicked: " + tooltip );
 	         *       Biojs.console.log(obj.shape); //rapha�l object
 	         *    }
-	         * );
-	         *
-	         * */
+         * );
+         *
+         * */
             "onFeatureClick",
-	        /**
-	         * @name Biojs.FeatureViewer#onFeatureOn
-	         * @event
-	         * @param {function} actionPerformed A function which receives a {@link Biojs.Event} object as argument.
-	         * @eventData {Object} source The component which triggered the event.
-	         * @eventData {string} type The name of the event.
-	         * @eventData {Object} featureInfo A json object with the information for the selected feature, including id.
-	         * @example
-	         * // It is not recommended to use this event to display a tooltip or highlight the features on mouse over,
-	         * // instead set to true the options showFeatureTooltipOnMouseOver and highlightFeatureOnMouseOver
-	         *
-	         * myPainter.onFeatureOn(
-	         *    function( obj ) {
+        /**
+         * @name Biojs.FeatureViewer#onFeatureOn
+         * @event
+         * @param {function} actionPerformed A function which receives a {@link Biojs.Event} object as argument.
+         * @eventData {Object} source The component which triggered the event.
+         * @eventData {string} type The name of the event.
+         * @eventData {Object} featureInfo A json object with the information for the selected feature, including id.
+         * @example
+         * // It is not recommended to use this event to display a tooltip or highlight the features on mouse over,
+         * // instead set to true the options showFeatureTooltipOnMouseOver and highlightFeatureOnMouseOver
+         *
+         * myPainter.onFeatureOn(
+         *    function( obj ) {
 	         *    var tooltip = obj.featureLabel +
 	         *           " (" + obj.featureStart + ", " + obj.featureEnd + "; length " + (obj.featureEnd-obj.featureStart+1) + ")" +
 	         *           "<br/>Type: " + obj.featureTypeLabel + " - " + obj.typeCode + " - " + obj.typeCategory +
@@ -427,21 +428,21 @@ Biojs.FeatureViewer = Biojs.extend(
 	         *       alert("On feature: " + tooltip );
 	         *       Biojs.console.log(obj.shape); //rapha�l object
 	         *    }
-	         * );
-	         *
-	         * */
+         * );
+         *
+         * */
             "onFeatureOn",
-	        /**
-	         * @name Biojs.FeatureViewer#onFeatureOff
-	         * @event
-	         * @param {function} actionPerformed A function which receives a {@link Biojs.Event} object as argument.
-	         * @eventData {Object} source The component which triggered the event.
-	         * @eventData {string} type The name of the event.
-	         * @eventData {Object} featureInfo A json object with the information for the selected feature, including id.
-	         * @example
-	         *
-	         * myPainter.onFeatureOff(
-	         *    function( obj ) {
+        /**
+         * @name Biojs.FeatureViewer#onFeatureOff
+         * @event
+         * @param {function} actionPerformed A function which receives a {@link Biojs.Event} object as argument.
+         * @eventData {Object} source The component which triggered the event.
+         * @eventData {string} type The name of the event.
+         * @eventData {Object} featureInfo A json object with the information for the selected feature, including id.
+         * @example
+         *
+         * myPainter.onFeatureOff(
+         *    function( obj ) {
 	         *    var tooltip = obj.featureLabel +
 	         *           " (" + obj.featureStart + ", " + obj.featureEnd + "; length " + (obj.featureEnd-obj.featureStart+1) + ")" +
 	         *           "<br/>Type: " + obj.featureTypeLabel + " - " + obj.typeCode + " - " + obj.typeCategory +
@@ -449,21 +450,21 @@ Biojs.FeatureViewer = Biojs.extend(
 	         *       alert("Off feature: " + tooltip );
 	         *       Biojs.console.log(obj.shape); //rapha�l object
 	         *    }
-	         * );
-	         *
-	         * */
+         * );
+         *
+         * */
             "onFeatureOff",
-	        /**
-	         * @name Biojs.FeatureViewer#onFeatureSelected
-	         * @event
-	         * @param {function} actionPerformed A function which receives a {@link Biojs.Event} object as argument.
-	         * @eventData {Object} source The component which triggered the event.
-	         * @eventData {string} type The name of the event.
-	         * @eventData {Object} featureInfo A json object with the information for the selected feature, including id.
-	         * @example
-	         * //Will only be raised if selectFeatureOnMouseClick is true
-	         * myPainter.onFeatureSelected(
-	         *    function( obj ) {
+        /**
+         * @name Biojs.FeatureViewer#onFeatureSelected
+         * @event
+         * @param {function} actionPerformed A function which receives a {@link Biojs.Event} object as argument.
+         * @eventData {Object} source The component which triggered the event.
+         * @eventData {string} type The name of the event.
+         * @eventData {Object} featureInfo A json object with the information for the selected feature, including id.
+         * @example
+         * //Will only be raised if selectFeatureOnMouseClick is true
+         * myPainter.onFeatureSelected(
+         *    function( obj ) {
 	         *    var tooltip = obj.featureLabel +
 	         *           " (" + obj.featureStart + ", " + obj.featureEnd + "; length " + (obj.featureEnd-obj.featureStart+1) + ")" +
 	         *           "<br/>Type: " + obj.featureTypeLabel + " - " + obj.typeCode + " - " + obj.typeCategory +
@@ -471,21 +472,21 @@ Biojs.FeatureViewer = Biojs.extend(
 	         *       alert("Selected feature: " + tooltip );
 	         *       Biojs.console.log(obj.shape); //rapha�l object
 	         *    }
-	         * );
-	         *
-	         * */
+         * );
+         *
+         * */
             "onFeatureSelected",
-	        /**
-	         * @name Biojs.FeatureViewer#onFeatureUnselected
-	         * @event
-	         * @param {function} actionPerformed A function which receives a {@link Biojs.Event} object as argument.
-	         * @eventData {Object} source The component which triggered the event.
-	         * @eventData {string} type The name of the event.
-	         * @eventData {Object} featureInfo A json object with the information for the selected feature, including id.
-	         * @example
-	         * //Will only be raised if selectFeatureOnMouseClick is true
-	         * myPainter.onFeatureUnselected(
-	         *    function( obj ) {
+        /**
+         * @name Biojs.FeatureViewer#onFeatureUnselected
+         * @event
+         * @param {function} actionPerformed A function which receives a {@link Biojs.Event} object as argument.
+         * @eventData {Object} source The component which triggered the event.
+         * @eventData {string} type The name of the event.
+         * @eventData {Object} featureInfo A json object with the information for the selected feature, including id.
+         * @example
+         * //Will only be raised if selectFeatureOnMouseClick is true
+         * myPainter.onFeatureUnselected(
+         *    function( obj ) {
 	         *    var tooltip = obj.featureLabel +
 	         *           " (" + obj.featureStart + ", " + obj.featureEnd + "; length " + (obj.featureEnd-obj.featureStart+1) + ")" +
 	         *           "<br/>Type: " + obj.featureTypeLabel + " - " + obj.typeCode + " - " + obj.typeCategory +
@@ -493,9 +494,9 @@ Biojs.FeatureViewer = Biojs.extend(
 	         *       alert("Unselected feature: " + tooltip );
 	         *       Biojs.console.log(obj.shape); //rapha�l object
 	         *    }
-	         * );
-	         *
-	         * */
+         * );
+         *
+         * */
             "onFeatureUnselected"
         ],
 
@@ -512,7 +513,7 @@ Biojs.FeatureViewer = Biojs.extend(
          * Private: Finds the first child element within the target div;
          * this element corresponds to the Raphaël canvas holder.
          * */
-        getHolder: function() {
+        _getHolder: function() {
             return jQuery('#'+this.opt.target).children("#uniprotFeaturePainter-holder")[0];
         },
 
@@ -577,7 +578,7 @@ Biojs.FeatureViewer = Biojs.extend(
                 config.horizontalGrid = paintHorizontalGrid;
                 config.verticalGrid = paintVerticalGrid;
                 this._updateFeaturesToStyle(selectedStyle);
-                var holder = this.getHolder();
+                var holder = this._getHolder();
                 holder.innerHTML = "";
                 holder.style.height = (config.sizeY+config.sizeYKey) + "px";
                 holder.style.width = config.sizeX + "px";
@@ -597,8 +598,7 @@ Biojs.FeatureViewer = Biojs.extend(
          * @param {Object} [json] The json object describing the configuration, features, and legend to be displayed.
          */
         paintFeatures: function(json) {
-            if ( json )
-            {
+            if ( json ) {
                 this.opt.json = json;
             }
             this._init();
@@ -631,7 +631,7 @@ Biojs.FeatureViewer = Biojs.extend(
                         width: config.sizeX+20
                     });
             } else {
-                svg = this.getHolder().innerHTML;
+                svg = this._getHolder().innerHTML;
                 var canvas = document.createElement("canvas");
                 canvg(canvas, svg);
                 dataURL = canvas.toDataURL();
@@ -703,7 +703,7 @@ Biojs.FeatureViewer = Biojs.extend(
             painter_div.append('<br/>');
             painter_div.append('<div id="uniprotFeaturePainter-holder"></div>');
 
-            var holder = this.getHolder();
+            var holder = this._getHolder();
             if (!holder) {
                 this.$errorMsg = jQuery('<div id="uniprotFeaturePainter-errorInit"></div>')
                     .html('There was an unexpected failure, the image cannot be displayed.')
@@ -1035,16 +1035,19 @@ Biojs.FeatureViewer = Biojs.extend(
             myself._clickCounter = myself._clickCounter + 1;
             if (onlySelect) {
                 myself._originalColor = raphaelObj.attrs.stroke;
+                myself._originalFillColor = raphaelObj.attrs.fill;
             } else {//both highlight and select
                 if (myself._clickCounter > 1) {//mouse has not leave the feature (it is down now but up is true already
                     myself._originalColor = raphaelObj.attrs.stroke;
+                    myself._originalFillColor = raphaelObj.attrs.fill;
                 }
             }
             raphaelObj.animate({"fill-opacity": 1.0}, 500);
             if (raphaelObj == myself._previousClickedShape) {//the second click will deselect
                 if (myself._originalColor == myself.opt.selectionColor) { //it is selected, will be deselected
                     myself._originalColor = myself._previousClickedColor;
-                    raphaelObj.attr({stroke: myself._previousClickedColor, fill: myself._previousClickedColor});
+                    myself._originalFillColor = myself._previousClickedFillColor;
+                    raphaelObj.attr({stroke: myself._previousClickedColor, fill: myself._previousClickedFillColor});
                     //only select this.animate({"fill-opacity": 1.0}, 500);
                     featureObj.isSelected = false;
                     myself._raiseEvent(myself, raphaelObj, featureObj, 'onFeatureUnselected');
@@ -1060,7 +1063,7 @@ Biojs.FeatureViewer = Biojs.extend(
                 //deselect the previous feature
                 if (myself._previousClickedShape && (myself._previousClickedShape != "")) {
                     try {
-                        myself._previousClickedShape.attr({stroke: myself._previousClickedColor, fill: myself._previousClickedColor});
+                        myself._previousClickedShape.attr({stroke: myself._previousClickedColor, fill: myself._previousClickedFillColor});
                         myself._previousClickedShape.animate({"fill-opacity": .5}, 500);
                         myself._previousClickedFeature.isSelected = false;
                         myself._raiseEvent(myself, myself._previousClickedShape, featureObj, 'onFeatureUnselected');
@@ -1068,6 +1071,7 @@ Biojs.FeatureViewer = Biojs.extend(
                 }
                 //keep the last clicked shape info
                 myself._previousClickedColor = myself._originalColor;
+                myself._previousClickedFillColor = myself._originalFillColor;
                 myself._previousClickedShape = raphaelObj;
                 myself._previousClickedFeature = featureObj;
                 //change colour to highlight colour
@@ -1120,6 +1124,14 @@ Biojs.FeatureViewer = Biojs.extend(
             } else if (obj.type == "diamond") {
                 shape = this.raphael.uniprotFeaturePainter_diamond(obj.cx, obj.cy, obj.r);
                 shape.attr({"fill": obj.fill, "stroke": obj.stroke, "fill-opacity": obj.fillOpacity});
+            } else if (obj.type == "bridge") {
+                shape = this.raphael.uniprotFeaturePainter_bridge(obj.cx, obj.cy, obj.width, obj.height);
+                obj.fill = "white";
+                shape.attr({
+                    "fill": obj.fill,
+                    "stroke": obj.stroke,
+                    "fill-opacity": 0.0
+                });
             } else if (obj.type == "triangle") {
                 shape = this.raphael.uniprotFeaturePainter_triangle(obj.cx, obj.cy, obj.r);
                 shape.attr({"fill": obj.fill, "stroke": obj.stroke, "fill-opacity": obj.fillOpacity});
@@ -1167,6 +1179,7 @@ Biojs.FeatureViewer = Biojs.extend(
                         shape.hover(
                             function() {//on
                                 myself._originalColor = shape.attrs.stroke;
+                                myself._originalFillColor = shape.attrs.fill;
                                 this.attr({stroke: myself.opt.selectionColor, fill: myself.opt.selectionColor});
                                 this.animate({"fill-opacity": 1.0}, 500);
                                 //raise ON event
@@ -1174,7 +1187,7 @@ Biojs.FeatureViewer = Biojs.extend(
                             },
                             function() {//off
                                 if (!_clickedShape) { //return to the original colour
-                                    this.attr({stroke: myself._originalColor, fill: myself._originalColor});
+                                    this.attr({stroke: myself._originalColor, fill: myself._originalFillColor});
                                 }
                                 _clickedShape = false;
                                 myself._clickCounter = 0;
@@ -1212,13 +1225,14 @@ Biojs.FeatureViewer = Biojs.extend(
                         shape.hover(
                             function() {//on
                                 myself._originalColor = this.attrs.stroke;
+                                myself._originalFillColor = shape.attrs.fill;
                                 this.attr({stroke: myself.opt.selectionColor, fill: myself.opt.selectionColor});
                                 this.animate({"fill-opacity": 1.0}, 500);
                                 //raise ON event
                                 myself._raiseEvent(myself, this, obj, 'onFeatureOn');
                             },
                             function() {//off
-                                this.attr({stroke: myself._originalColor, fill: myself._originalColor});
+                                this.attr({stroke: myself._originalColor, fill: myself._originalFillColor});
                                 this.animate({"fill-opacity": .5}, 500);
                                 //raise OFF event
                                 myself._raiseEvent(myself, this, obj, 'onFeatureOff');
@@ -1243,7 +1257,7 @@ Biojs.FeatureViewer = Biojs.extend(
                         );
                     }
                 }
-                if (obj.type != "rect") { //shapes are movable and have a link to the sequence line
+                if ((obj.type != "rect") && ((obj.type != "bridge"))){ //shapes are movable and have a link to the sequence line
                     //dragging
                     if (this.opt.dragSites) {
                         shape.drag(
@@ -1509,8 +1523,8 @@ Biojs.FeatureViewer = Biojs.extend(
         },
 
         /**
-    	 * @ignore
-    	 **/
+         * @ignore
+         **/
         initRaphael: function(){
             //var uniprotFeaturePainter_el;
 
@@ -1519,9 +1533,9 @@ Biojs.FeatureViewer = Biojs.extend(
              * x, y: coordinates of the top vertex
              * size: size of the internal square
              */
-        	/**
-        	 * @ignore
-        	 **/
+            /**
+             * @ignore
+             **/
             Raphael.fn.uniprotFeaturePainter_hexagon = function(x, y, size) {
                 x = x - (size/2);
                 var path = ["M", x, y];
@@ -1537,9 +1551,9 @@ Biojs.FeatureViewer = Biojs.extend(
              * x, y: coordinates of the top vertex
              * size: size of the bottom edge
              */
-        	/**
-        	 * @ignore
-        	 **/
+            /**
+             * @ignore
+             **/
             Raphael.fn.uniprotFeaturePainter_triangle = function(x, y, size) {
                 var path = ["M", x, y];
                 path = path.concat(["L", (x + size / 2), (y + size)]);
@@ -1553,9 +1567,9 @@ Biojs.FeatureViewer = Biojs.extend(
              * x, y: coordinates of the lowest top centered vertex /\./\
              * size: size of the bottom edge of the sub-triangles /_\
              */
-        	/**
-        	 * @ignore
-        	 **/
+            /**
+             * @ignore
+             **/
             Raphael.fn.uniprotFeaturePainter_wave = function(x, y, size) {
                 var path = ["M", x, y];
                 path = path.concat(["L", x-(size/2), y-size]); // \
@@ -1574,9 +1588,9 @@ Biojs.FeatureViewer = Biojs.extend(
              * x, y: coordinates of the top vertex
              * r: radius from the center
              */
-        	/**
-        	 * @ignore
-        	 **/
+            /**
+             * @ignore
+             **/
             Raphael.fn.uniprotFeaturePainter_diamond = function(x, y, r) {
                 var path = ["M", x, y];
                 path = path.concat(["L", x-r, y+r]);
@@ -1584,15 +1598,31 @@ Biojs.FeatureViewer = Biojs.extend(
                 path = path.concat(["L", x+r, y+r]);
                 return (this.path(path.concat(["Z"].join(" "))));
             }
+            /**
+             * Creates a bridge
+             * @param x coordinate
+             * @param y coordinate
+             * @param width
+             * @param height
+             * @returns {*|Array}
+             */
+            Raphael.fn.uniprotFeaturePainter_bridge = function (x, y,  width, height) {
+                //console.log(x,y,width, height);
+                var path = ["M", x, y-1];
+                path = path.concat(["L", x , y - 1 - height]);
+                path = path.concat(["L", x + width , y - 1 - height ]);
+                path = path.concat(["L", x+ width, y - 1 ]);
+                return (this.path(path));
+            }
             /*
              * Creates an N path
              * x, y: coordinates of the letter (as it would be painted as a String)
              * width
              * height
              */
-        	/**
-        	 * @ignore
-        	 **/
+            /**
+             * @ignore
+             **/
             Raphael.fn.uniprotFeaturePainter_NPath = function(x, y, width, height) {
                 var path = ["M", (x-width),(y+height)];
                 path = path.concat(["L", (x-width), y]);
@@ -1606,9 +1636,9 @@ Biojs.FeatureViewer = Biojs.extend(
              * width
              * height
              */
-        	/**
-        	 * @ignore
-        	 **/
+            /**
+             * @ignore
+             **/
             Raphael.fn.uniprotFeaturePainter_OPath = function(x, y, width, height) {
                 var path = ["M", (x), (y)];
                 path = path.concat(["C", (x-width), (y), (x-width), (y+height), (x), (y+height)]);
@@ -1622,9 +1652,9 @@ Biojs.FeatureViewer = Biojs.extend(
              * width
              * height
              */
-        	/**
-        	 * @ignore
-        	 **/
+            /**
+             * @ignore
+             **/
             Raphael.fn.uniprotFeaturePainter_CPath = function(x, y, width, height) {
                 var path = ["M", (x+width), (y)];
                 path = path.concat(["C", (x-width), (y), (x-width), (y+height), (x+width), (y+height)]);
@@ -1636,9 +1666,9 @@ Biojs.FeatureViewer = Biojs.extend(
              * width
              * height
              */
-        	/**
-        	 * @ignore
-        	 **/
+            /**
+             * @ignore
+             **/
             Raphael.fn.uniprotFeaturePainter_CONPath = function(x, y, width, height, space) {
                 //C
                 var path = ["M", (x-width-space), (y)];
@@ -1664,9 +1694,9 @@ Biojs.FeatureViewer = Biojs.extend(
             /*
              * Creates a dynamic connection (from http://raphaeljs.com/graffle.html)
              */
-        	/**
-        	 * @ignore
-        	 **/
+            /**
+             * @ignore
+             **/
             Raphael.fn.uniprotFeaturePainter_connection = function (obj1, obj2, line, bg) {
                 //console.log('connection');
                 //console.log(obj1);
