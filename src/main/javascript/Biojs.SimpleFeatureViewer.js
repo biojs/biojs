@@ -1,13 +1,19 @@
 /**
  * This component generates the JSON structure used by the FeatureViewer. It is a simplified version as it only
  * includes a non-overlapping view. Regions are represented as rectangles while one-base/aa are represented as lines.
+ * Some few shapes are also supported for one-base/aa features, particularly{"diamond", "triangle", "hexagon",
+ * "wave", "circle"}. In proteins, we recommend "diamond" for active sites, "triangle" for PTMs, "hexagon" for glycosylation,
+ * "wave" for lipids, and "circle" for metals. Any other shape will be rendered as a rectangle. Bridges can be specified
+ * with the type "bridge".
+ * The legend is generated based on the first feature of each "typeLabel"; thus, if features with the same "typeLabel"
+ * have different colours, only the first one will be used in the legend.
  *
  * @class
  * @extends Biojs.FeatureViewer
  *
  * @author <a href="mailto:ljgarcia@ebi.ac.uk">Leyla Jael Garcia Castro</a>
  * @version 1.0.0
- * @category 3
+ * @category 2
  *
  *
  * @param {Object} options An object with the options for SimpleFeatureViewer component.
@@ -42,25 +48,49 @@
  *    Sequence length
  *
  * @option {Array} features
- *     A JSON array containing the features to be displayed.
+ *     A JSON array containing the features to be displayed. type element for a feature is optional and can be either of
+ *     {"rect", "bridge", "diamond", "triangle", "hexagon", "wave", "circle"}
+ *     If you want bridges or one-single-position features to be rendered as rectangles, do not specify any type for the feature
+ *     In proteins, we recommend "diamond" for active sites, "triangle" for PTMs, "hexagon" for glycosylation,
+ *     "wave" for lipids, and "circle" for metals. Any other shape will be rendered as a rectangle
+ *     Colours can be specified in hexa, string, or rgb; if no colour is specified, black will be used.
  *     features = [
  *         {
- *             featureId":"UNIPROTKB_Q8LAX3_PROPEP_1_73",
- *             featureStart:1,featureEnd":73,
- *             typeLabel":"Propeptide",
- *             featureLabel":"Propeptide",
- * 			   typeCategory":"Molecule processing",typeCode:"SO:0001062",
- *             evidenceText":"UniProt",evidenceCode:"none",
- *             color": "#000000"
- *          }
- *         ,{
- * 	           featureId:"UNIPROTKB_Q8LAX3_PEPTIDE_74_96",
- *             featureStart:74,featureEnd:96,
+ *             featureId:"UNIPROTKB_Q8LAX3_PROPEP_1_73",
+ *             featureStart:1,featureEnd:73,
+ *             typeLabel:"Propeptide",
+ *             featureLabel:"Propeptide",
+ * 			   typeCategory:"Molecule processing",typeCode:"SO:0001062",
+ *             evidenceText:"UniProt",evidenceCode:"none",
+ *             color: "red"
+ *          },
+ *         {
+ * 	           featureId:"UNIPROTKB_Q8LAX3_PEPTIDE_54_96",
+ *             featureStart:54,featureEnd:96,
  *             typeLabel:"Peptide",
  *             featureLabel:"Elicitor peptide 3",
  *             typeCategory:"Molecule processing",typeCode:"SO:0001064",
  *             evidenceText:"UniProt",evidenceCode:"no ECO",
- *             color": "#000000"
+ *             color: "blue"
+ *         },
+ *         {
+ * 	           featureId:"UNIPROTKB_Q8LAX3_PEPTIDE_74_96",
+ *             featureStart:74,featureEnd:96,
+ *             typeLabel:"Active Site",
+ *             featureLabel:"Elicitor peptide 3",
+ *             typeCategory:"Molecule processing",typeCode:"SO:0001064",
+ *             evidenceText:"UniProt",evidenceCode:"no ECO",
+ *             type: "diamond"
+ *         },
+ *         {
+ * 	           featureId:"UNIPROTKB_Q8LAX3_DISULFID_75_96",
+ *             featureStart:75,featureEnd:96,
+ *             typeLabel:"Active Site",
+ *             featureLabel:"Elicitor peptide 3",
+ *             typeCategory:"Molecule processing",typeCode:"SO:0001064",
+ *             evidenceText:"UniProt",evidenceCode:"no ECO",
+ *             color: "#33FF66",
+ *             type: "bridge"
  *         }
  *     ];
  *
@@ -68,10 +98,50 @@
  *     Image width
  *
  * @example
+ * var myFT = [
+ *         {
+ *             featureId:"UNIPROTKB_Q8LAX3_PROPEP_1_73",
+ *             featureStart:1,featureEnd:73,
+ *             typeLabel:"Propeptide",
+ *             featureLabel:"Propeptide",
+ * 			   typeCategory:"Molecule processing",typeCode:"SO:0001062",
+ *             evidenceText:"UniProt",evidenceCode:"none",
+ *             color: "red"
+ *          },
+ *         {
+ * 	           featureId:"UNIPROTKB_Q8LAX3_PEPTIDE_54_96",
+ *             featureStart:54,featureEnd:96,
+ *             typeLabel:"Peptide",
+ *             featureLabel:"Elicitor peptide 3",
+ *             typeCategory:"Molecule processing",typeCode:"SO:0001064",
+ *             evidenceText:"UniProt",evidenceCode:"no ECO",
+ *             color: "blue"
+ *         },
+ *         {
+ * 	           featureId:"UNIPROTKB_Q8LAX3_PEPTIDE_74_96",
+ *             featureStart:74,featureEnd:96,
+ *             typeLabel:"Active Site",
+ *             featureLabel:"Elicitor peptide 3",
+ *             typeCategory:"Molecule processing",typeCode:"SO:0001064",
+ *             evidenceText:"UniProt",evidenceCode:"no ECO",
+ *             type: "diamond"
+ *         },
+ *         {
+ * 	           featureId:"UNIPROTKB_Q8LAX3_DISULFID_75_96",
+ *             featureStart:75,featureEnd:96,
+ *             typeLabel:"Active Site",
+ *             featureLabel:"Elicitor peptide 3",
+ *             typeCategory:"Molecule processing",typeCode:"SO:0001064",
+ *             evidenceText:"UniProt",evidenceCode:"no ECO",
+ *             color: "#33FF66",
+ *             type: "bridge"
+ *         }
+ *     ];
  * var myPainter = new Biojs.SimpleFeatureViewer({
  *    target: "YourOwnDivId",
  *    sequenceId: "a4_human",
- *    sequenceLength: 770
+ *    sequenceLength: 770,
+ *    features: myFT
  * });
  *
  */
@@ -291,66 +361,125 @@ Biojs.SimpleFeatureViewer = Biojs.FeatureViewer.extend(
             this.opt.json.configuration.sequenceLineY = 4 + this.opt.json.configuration.rulerY + this.opt.json.configuration.belowRuler;
             this.opt.json.configuration.pixelsDivision = 50;
 
-            this._tracks = this._organizeTracks(this.opt.features);
-            this.opt.json.configuration.sizeY = this.opt.json.configuration.sequenceLineY + this._tracks*(this._rectangleHeight+2) + this._rectangleHeight;
+            this._organizeTracks(this.opt.features);
+            if (this._trackShapes != 0) {
+                this.opt.json.configuration.sizeY = this.opt.json.configuration.sequenceLineY + (this._tracks+1)*(this._rectangleHeight+2) + this._rectangleHeight;
+                this.opt.json.configuration.sequenceLineY = this.opt.json.configuration.sequenceLineY + (this._trackShapes + 1)*this._rectangleHeight;
+            } else {
+                this.opt.json.configuration.sizeY = this.opt.json.configuration.sequenceLineY + this._tracks*(this._rectangleHeight+2) + this._rectangleHeight;
+            }
             this._renderFeatures(this.opt.features);
             this.opt.json.featuresArray = this.opt.features;
+            console.log(this.opt.json.featuresArray);
 
             sizeKey = this._generateLegend(this.opt.features);
             this.opt.json.configuration.sizeYKey = sizeKey + this.opt.json.configuration.sizeY;
         },
 
         /*
-         * Organizes the features in non-overlapping tracks
+         * Organizes the features in non-overlapping tracks and defines the shape corresponding to each feature.
          */
         _organizeTracks: function (features) {
             tracks = new Array();
-            features[0].track = 0;
-            tracks[0] = new Array(features[0]);
-            for (var i = 1; i < features.length; i++) {
+            trackShapes = new Array();
+            //features[0].track = 0;
+            //tracks[0] = new Array(features[0]);
+            for (var i = 0; i < features.length; i++) {
                 //console.log('feature ' + i);
+                var tryShape = false;
                 var found = false;
-                for (var j = 0; j < tracks.length; j++) {
-                    var overlapping = false;
-                    for (var m = 0; m < tracks[j].length; m++) {
-                        if ( features[i].featureStart ==  features[i].featureEnd) {
-                            if ( (features[i].featureStart < tracks[j][m].featureStart)
-                                && (features[i].featureEnd < tracks[j][m].featureStart) ) { //starts and ends before
-                                overlapping = false;
-                            } else if (features[i].featureStart > tracks[j][m].featureEnd) { //starts after
-                                overlapping = false;
-                            } else {
-                                overlapping = true;
-                                break;
-                            }
-                        } else {
-                            if ( (features[i].featureStart < tracks[j][m].featureStart) //starts and ends before
-                                && (features[i].featureEnd <= tracks[j][m].featureStart) ){
-                                overlapping = false;
-                            } else if ( (features[i].featureStart >= tracks[j][m].featureEnd)
-                                && (features[i].featureEnd > tracks[j][m].featureStart )) {
-                                overlapping = false;
-                            } else {
-                                overlapping = true;
-                                break;
-                            }
+                if (features[i].type != undefined) {
+                    if ( (features[i].type != "rect") && (features[i].type != "bridge") && (features[i].type != "circle")
+                        && (features[i].type != "diamond") && (features[i].type != "hexagon")
+                        && (features[i].type != "triangle") && (features[i].type != "wave")) {
+                        features[i].type = "rect";
+                    }
+                    if ( features[i].featureStart ==  features[i].featureEnd) {
+                        if ((features[i].type != "rect") && (features[i].type != "bridge")) {
+                            tryShape = true;
                         }
                     }
-                    if (!overlapping) {
-                        //console.log('tracks j ' + j);
-                        features[i].track = j;
-                        tracks[j][tracks[j].length] = features[i];
-                        found = true;
-                        break;
+                    if (features[i].type == "bridge") {
+                        features[i].track = 0;
+                        continue;
+                    }
+                } else {
+                    features[i].type = "rect";
+                }
+                if (!tryShape) { //rectangles
+                    for (var j = 0; j < tracks.length; j++) {
+                        var overlapping = false;
+                        for (var m = 0; m < tracks[j].length; m++) {
+                            if ( features[i].featureStart ==  features[i].featureEnd) {
+                                if ( (features[i].featureStart < tracks[j][m].featureStart)
+                                    && (features[i].featureEnd < tracks[j][m].featureStart) ) { //starts and ends before
+                                    overlapping = false;
+                                } else if (features[i].featureStart > tracks[j][m].featureEnd) { //starts after
+                                    overlapping = false;
+                                } else {
+                                    overlapping = true;
+                                    break;
+                                }
+                            } else {
+                                if ( (features[i].featureStart < tracks[j][m].featureStart) //starts and ends before
+                                    && (features[i].featureEnd <= tracks[j][m].featureStart) ){
+                                    overlapping = false;
+                                } else if ( (features[i].featureStart >= tracks[j][m].featureEnd)
+                                    && (features[i].featureEnd > tracks[j][m].featureStart )) {
+                                    overlapping = false;
+                                } else {
+                                    overlapping = true;
+                                    break;
+                                }
+                            }
+                        }
+                        if (!overlapping) {
+                            //console.log('tracks j ' + j);
+                            features[i].track = j;
+                            tracks[j][tracks[j].length] = features[i];
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        //console.log('tracks.length ' + tracks.length);
+                        features[i].track = tracks.length;
+                        tracks[tracks.length] = new Array(features[i]);
+                    }
+                } else { //shapes
+                    for (var j = 0; j < trackShapes.length; j++) {
+                        var overlapping = false;
+                        for (var m = 0; m < trackShapes[j].length; m++) {
+                            if ( features[i].featureStart ==  features[i].featureEnd) {
+                                if ( ((features[i].featureStart-3) < trackShapes[j][m].featureStart)
+                                    && ((features[i].featureEnd+3) < trackShapes[j][m].featureStart) ) { //starts and ends before
+                                    overlapping = false;
+                                } else if ((features[i].featureStart-3) > trackShapes[j][m].featureEnd) { //starts after
+                                    overlapping = false;
+                                } else {
+                                    overlapping = true;
+                                    break;
+                                }
+                            }
+                        }
+                        if (!overlapping) {
+                            //console.log('tracks j ' + j);
+                            features[i].track = j;
+                            trackShapes[j][trackShapes[j].length] = features[i];
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        //console.log('tracks.length ' + tracks.length);
+                        features[i].track = trackShapes.length;
+                        trackShapes[trackShapes.length] = new Array(features[i]);
                     }
                 }
-                if (!found) {
-                    //console.log('tracks.length ' + tracks.length);
-                    features[i].track = tracks.length;
-                    tracks[tracks.length] = new Array(features[i]);
-                }
             }
-            return tracks.length;
+            this._tracks = tracks.length + trackShapes.length;
+            this._trackRects = tracks.length;
+            this._trackShapes = trackShapes.length;
         },
 
         /*
@@ -374,18 +503,37 @@ Biojs.SimpleFeatureViewer = Biojs.FeatureViewer.extend(
          */
         _renderFeatures: function(features) {
             for (i=0; i < features.length; i++) {
-                features[i].type = "rect";
+                if (features[i].type == undefined) {
+                    features[i].type = "rect";
+                }
+                if (features[i].color == undefined) {
+                    features[i].color = "black";
+                }
                 features[i].fillOpacity = 0.5;
-                features[i].height = this._rectangleHeight;
                 features[i].path = "";
                 features[i].text = "";
-                features[i].r = this._rectangleHeight;
                 features[i].fill = features[i].color;
                 features[i].stroke = features[i].color;
                 features[i].strokeWidth = 1;
                 features[i].width = this.opt.json.configuration.unitSize * (features[i].featureEnd - features[i].featureStart + 1);
+                if (features[i].type == "rect") {
+                    features[i].height = this._rectangleHeight;
+                    features[i].cy = this.opt.json.configuration.sequenceLineY + features[i].track * (this._rectangleHeight) + (features[i].track+1)*2;
+                } else if (features[i].type == "bridge") {
+                    features[i].height = this._rectangleHeight;
+                    features[i].cy = this.opt.json.configuration.sequenceLineY;
+                } else {
+                    features[i].cy = this.opt.json.configuration.sequenceLineY - (features[i].track+2) * (this._rectangleHeight)// + (features[i].track+1)*2 -20;
+                    if (features[i].type == "triangle") {
+                        features[i].height = 10;
+                    } else if (features[i].type == "hexagon") {
+                        features[i].height = 7;
+                    } else {
+                        features[i].height = 5;
+                    }
+                }
+                features[i].r = features[i].height;
                 features[i].cx = this.opt.json.configuration.unitSize * (features[i].featureStart-1) + this.opt.json.configuration.leftMargin;
-                features[i].cy = this.opt.json.configuration.sequenceLineY + features[i].track * (this._rectangleHeight) + (features[i].track+1)*2;
                 features[i].x = features[i].cx;
                 features[i].y = features[i].cy;
             }
@@ -471,7 +619,7 @@ Biojs.SimpleFeatureViewer = Biojs.FeatureViewer.extend(
             totalRows = 1;
             for (i=0; i < mykey.length; i++) {
                 xPos = 0;
-                if (i == 0) {
+                if (cell == 0) {
                     xPos = this.opt.json.configuration.leftMargin;
                 } else {
                     xPos = cell * cellWidth;
