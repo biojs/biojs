@@ -1126,7 +1126,7 @@ Biojs.FeatureViewer = Biojs.extend(
                 shape.attr({"fill": obj.fill, "stroke": obj.stroke, "fill-opacity": obj.fillOpacity});
             } else if (obj.type == "bridge") {
                 shape = this.raphael.uniprotFeaturePainter_bridge(obj.cx, obj.cy, obj.width, obj.height);
-                obj.fill = "white";
+                obj.fill = "none";
                 shape.attr({
                     "fill": obj.fill,
                     "stroke": obj.stroke,
