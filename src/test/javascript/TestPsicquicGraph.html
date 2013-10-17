@@ -1,0 +1,71 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+		<title>Test Cytoscape</title>
+		
+		<!--JQuery LIb and CSS -->
+		<script src="../../main/resources/dependencies/jquery/jquery-1.9.1.min.js" type="text/javascript"></script>
+		
+		<!--Cytoscape-->
+		<script src="../../main/resources/dependencies/cytoscape/2.0.2/cytoscape.min.js" type="text/javascript"></script>
+		
+		<!-- BIOJS LIB and CSS -->
+		<script language="JavaScript" type="text/javascript" src="../../main/javascript/Biojs.js"></script>
+		<script language="JavaScript" type="text/javascript" src="../../main/javascript/Biojs.PsicquicGraph.js"></script>
+		    
+		<script language="JavaScript" type="text/javascript">
+			window.onload = function() {
+				
+               
+                
+				instance = new Biojs.PsicquicGraph({
+				    target: 'cy',
+                    proxyUrl:'../../main/resources/dependencies/proxy/proxy.php',
+                    cyoptions:{
+                        style: cytoscape.stylesheet().selector('node').css({
+                            'content': 'data(id)',
+                            'font-family': 'helvetica',
+                            'font-size': 14,
+                            'text-outline-width': 3,
+                            'text-outline-color': '#888',
+                            'text-valign': 'center',
+                            'color': '#fff',
+                            'width': 'mapData(weight, 30, 80, 20, 50)',
+                            'height': 'mapData(height, 0, 200, 10, 45)',
+                            'border-color': '#fff'
+                        }).selector(':selected').css({
+                            'background-color': '#000',
+                            'line-color': '#000',
+                            'target-arrow-color': '#000',
+                            'text-outline-color': '#000'
+                        }).selector('edge').css({
+                            'width': 2
+                        }),
+                        layout: {
+                            name: 'circle',
+                            fit: true, // whether to fit the viewport to the graph
+                            ready: undefined, // callback on layoutready
+                            stop: undefined, // callback on layoutstop
+                            rStepSize: 10, // the step size for increasing the radius if the nodes don't fit on screen
+                            padding: 30, // the padding on fit
+                            startAngle: 3/2 * Math.PI, // the position of the first node
+                            counterclockwise: false // whether the layout should go counterclockwise (true) or clockwise (false)
+                        },
+                        ready:function(){
+                            var cy = this;
+                            cy.nodes().click(function(e){
+                                console.log(e.cyTarget.id());
+                            });
+                        }
+                    }
+				});
+                
+                
+			};
+		</script>
+	</head>
+	<body>
+		<div id="cy" style="margin-top:2px;background-color:#EEEEEE;height:800px;width:100%;float:left;border-style:solid;border-width:1px;"></div>
+	</body>
+</html>
