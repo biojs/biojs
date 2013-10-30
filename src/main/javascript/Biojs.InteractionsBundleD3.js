@@ -1,12 +1,12 @@
 /**
- * This component uses the D3 library and specifically its implementation of the force algorithm to 
+ * This component uses the D3 library and specifically its implementation of the bundle algorithm to 
  * represent a network of protein interactions.  
  * 
  * @class
  * @extends Biojs
  * 
- * @author <a href="mailto:gustavoadolfo.salazar@gmail.com">Gustavo A. Salazar</a>
- * @version 0.9.1_beta
+ * @author <a href="gustavoadolfo.salazar@gmail.com">Gustavo A. Salazar</a>
+ * @version 0.9.0_alpha
  * @category 1
  * 
  * @requires <a href='http://code.jquery.com/query-1.7.2.min.js'>jQuery Core 1.7.2</a>
@@ -15,46 +15,50 @@
  * @requires <a href='http://d3js.org/'>D3</a>
  * @dependency <script src="http://d3js.org/d3.v2.min.js" type="text/javascript"></script>
  *
- * @requires <a href='http://www.ebi.ac.uk/~jgomez/biojs/biojs/css/biojs.InteractionsD3.css'>InteractionsD3 CSS</a>
- * @dependency <link rel="stylesheet" href="../biojs/css/biojs.InteractionsD3.css" />
+ * @requires <a href='http://www.ebi.ac.uk/~jgomez/biojs/biojs/css/biojs.interactionsBundleD3.css'>InteractionsD3 CSS</a>
+ * @dependency <link rel="stylesheet" href="../biojs/css/biojs.InteractionsBundleD3.css" />
  * 
  * @param {Object} options An object with the options for the InteractionsD3 component.
  * 
  * @option {string} target
  *    Identifier of the DIV tag where the component should be displayed.
  * @option {string} width
- *    Width of the SVG element, if given in percentage it will use it on proportion of the container 
+ *    Width of the SVG element, if given in percentage, it will use it on proportion of the container 
  * @option {string} height
- *    Height of the SVG element, if given in percentage it will use it on proportion of the container 
+ *    Height of the SVG element, if given in percentage, it will use it on proportion of the container 
  * @option {string} radius
  *    Radius of the nodes representing the proteins
- * @option {string} enableEdges
- * 	  Force the proteins to stay in the defined area of the SVG
+ * @option {string} textLength
+ *    Space in pixels to be reserved for the labels around the circle 
  * 
  * @example
- * 			var instance = new Biojs.InteractionsD3({
+ * 			var instance = new Biojs.InteractionsBundleD3({
  * 				target: "YourOwnDivId",
  * 			});	
- * 			for (var pid=1;pid<=15;pid++)
- *				instance.addProtein({ "id":pid,"name":pid,"showLegend":false,"typeLegend":"id","organism":"human"+pid%3,"features":{"f1":"val1","f2":"val2","f3":"val3"}});
- *			
- * 			for (var pid=1;pid<=30;pid++)
- *				instance.addInteraction(Math.floor((Math.random()*15)+1),Math.floor((Math.random()*15)+1) ,{score:Math.random()});
+ * 			var pid=1;
+ * 			for (var i=0;i<100;i++)
+ *				instance.addProtein({id:'p'+pid++,group:1,organism:"human"});
+ * 			for (var i=0;i<100;i++)
+ *				instance.addProtein({id:'p'+pid++,group:1,organism:"TB"});
+ * 			for (var i=1;i<200;i++){
+ *	 			instance.addInteraction("p"+(i),"p"+(100+i),{id:"p"+(i)+"_p"+(100+i),feature1:"value"});
+ *				instance.addInteraction("p"+(i),"p"+(i%17),{id:"p"+(i)+"_p"+(i%17),feature1:"value"});
+ *			}
  * 			instance.restart();
  */
-Biojs.InteractionsD3 = Biojs.extend (
-	/** @lends Biojs.InteractionsD3# */
+Biojs.InteractionsBundleD3 = Biojs.extend (
+	/** @lends Biojs.InteractionsBundleD3# */
 	{
-		force:null,
+		cluster:null,
+		bundle:null,
 		vis:null,
+		splines:[],
+		model:{},
+		organisms:{},
+		proteins:[],
 		interactions:[],
 		interactionsA:{},
-		proteins:[],
-		proteinsA:{},
-		node_drag:null,
-		color: null,
-		foci: [],
-		organisms: {},
+		svg:null,
 		
 		//Transformation values
 		tTranslate:null,
@@ -62,74 +66,82 @@ Biojs.InteractionsD3 = Biojs.extend (
 		
 		constructor: function (options) {
 			var self 	= this;
-			self.force	=null;
-			self.vis	=null;
-			self.interactions=[];
-			self.interactionsA={};
-			self.proteins=[];
-			self.proteinsA={};
-			self.node_drag=null;
-			self.color= null;
-			self.foci=[];
+			self.cluster=null;
+			self.bundle=null;
+			self.vis=null;
+			self.splines=[];
+			self.model={"name":"", "children":[] };
 			self.organisms={};
-
+			self.proteins=[];
+			self.interactions=[];
+			self.svg=null;
+			self.interactionsA={};
+			
 			this._container = $("#"+self.opt.target);
 			this._container.empty();
-			$(this._container).addClass("graphNetwork");
-			
-			var	width = $(this._container).width(),
-				height = $(this._container).height();
+			$(this._container).addClass("graphCircle");
 
-			if (self.opt.width.indexOf("%")!=-1)
-				width = width*(self.opt.width.substring(0, self.opt.width.length-1)*1)/100.0;
-			else
-				width=self.opt.width*1;
-			self.opt.width=width;
-			
-			if (self.opt.height.indexOf("%")!=-1)
-				height = height*(self.opt.height.substring(0, self.opt.height.length-1)*1)/100.0;
-			else
-				height=self.opt.height*1;
-			self.opt.height=height;
-			
-			this._container.width(width);
-			this._container.height(height);
-			
+			var	w = $(this._container).width(),
+			h = $(this._container).height();
+
+			w = (self.opt.width.indexOf("%")!=-1)?w*(self.opt.width.substring(0, self.opt.width.length-1)*1)/100.0:self.opt.width*1;
+			self.opt.width=w;
+		
+			h = (self.opt.height.indexOf("%")!=-1)?h*(self.opt.height.substring(0, self.opt.height.length-1)*1)/100.0:self.opt.height*1;
+			self.opt.height=h;
+
+			var rx = w / 2,
+		    	ry = h / 2;
+		    
+		    var tmpR=(rx<ry)?rx:ry;
+			self.cluster = d3.layout.cluster()
+				.size([360, tmpR-self.opt.textLength] )
+				.sort(function(a, b) { return d3.ascending(a.key, b.key); });
+
+			self.bundle = d3.layout.bundle();
+			self.line = d3.svg.line.radial()
+			    .interpolate("bundle")
+			    .tension(.45)
+			    .radius(function(d) { return d.y; })
+			    .angle(function(d) { return d.x / 180 * Math.PI; });
+
+			this._container.width(w);
+			this._container.height(h);
+
 			self.color = function() {
 			    return d3.scale.ordinal().range(self.colors);
-			}();
+			  }();
+			
+			self.vis = d3.select("#"+self.opt.target).insert("div", "h2")
+			    .style("width", w + "px")
+			    .style("height", h + "px");
 
 			self.zoom=d3.behavior.zoom().
-    		scaleExtent([(self.opt.enableEdges)?1:0.1, 10])
-    		.on("zoom", redraw);
-			self.vis = d3.select("#"+self.opt.target).append("svg")
-			    .attr("width", width)
-			    .attr("height", height)
-			    .attr("pointer-events", "all")
-			    .call(self.zoom)
-			    .append('svg:g');
-			
-			self.vis.append('svg:rect')
-			    .attr('width', width*20)
-			    .attr('height', height*20)
-			    .attr('x', -width*10)
-			    .attr('y', -height*10)
-			    .attr('fill', 'white')
-			    .attr('stroke','white');
-
-			self.rect= self.vis.append('svg:rect')
+	    		scaleExtent([1, 10])
+	    		.on("zoom", redraw);
+			self.svg=self.vis.append('svg:svg')
+				    .attr("width", w)
+				    .attr("height", h)
+				    .append("svg:g")
+				    	.attr("id", "innergroup")
+				    	.attr("transform", "translate(" + rx + "," + ry + ")")
+				    .attr("pointer-events", "all")
+				    .call(self.zoom)
+				    .append('svg:g');
+		
+			self.rect=self.svg.append('svg:rect')
 				.attr("class", "frame")
-			    .attr('width', width)
-			    .attr('height', height)
+			    .attr('width', w)
+			    .attr('height', h)
 			    .attr('fill', 'white')
-			    .attr('stroke','white')
+			    .attr('stroke','grey')
+		    	.attr("transform", "translate(-" + rx + ", -" + ry + ")")
 			    .attr("stroke-dasharray","5,5");
-
-
-			self.perspective=d3.select("#"+self.opt.target + " svg").append('svg:g');
 			
-			 
-			
+			self.svg.append("svg:path")
+			    .attr("class", "arc")
+			    .attr("d", d3.svg.arc().outerRadius(ry - 120).innerRadius(0).startAngle(0).endAngle(2 * Math.PI));
+
 			function redraw(x,y,scaleP) {
 				var trans=null,scale=null;
 				if (typeof x!="undefined" && typeof y!="undefined"){
@@ -141,114 +153,39 @@ Biojs.InteractionsD3 = Biojs.extend (
 				}
 				self.tTranslate=trans;
 				self.tScale=scale;
-				if (self.opt.enableEdges) {
-					if(scale<1)scale=1;
-					d3.behavior.zoom().scaleExtent([1, Infinity]);
-					  if (trans[0]>0)trans[0]=0;
-					  if (trans[1]>0)trans[1]=0;
-	
-					  var W = self.rect[0][0].width.animVal.value, H= self.rect[0][0].height.animVal.value;
-					  var Ws = W*scale, Hs = H*scale;
-					  if (Ws<W-trans[0]) trans[0]=W-Ws;
-					  if (Hs<H-trans[1]) trans[1]=H-Hs;
-				}
-				  self.vis.attr("transform",
+				  var W = self.rect[0][0].width.animVal.value, H= self.rect[0][0].height.animVal.value;
+				  var Ws = W*scale, Hs = H*scale;
+				  if (Ws/2<W/2+trans[0]) trans[0]=(Ws-W)/2;
+				  if (Hs/2<H/2+trans[1]) trans[1]=(Hs-H)/2;
+				  if (Ws/2<W/2-trans[0]) trans[0]=(W-Ws)/2;
+				  if (Hs/2<H/2-trans[1]) trans[1]=(H-Hs)/2;
+				  self.svg.attr("transform",
 				      "translate(" + trans + ")"
 				      + " scale(" + scale + ")");
 			};
 			self.redraw=redraw;
-			
-			self.force = d3.layout.force()
-			    .nodes(self.proteins)
-			    .links(self.interactions)
-			    .size([width, height]);
-			
-			
-			self.node_drag = d3.behavior.drag()
-				.on("dragstart", dragstart)
-				.on("drag", dragmove)
-				.on("dragend", dragend);
-
-			function dragstart(d, i) {
-				self.force.stop(); // stops the force auto positioning before you start dragging
-			}
-
-			function dragmove(d, i) {
-				d.px += d3.event.dx;
-				d.py += d3.event.dy;
-				d.x += d3.event.dx;
-				d.y += d3.event.dy; 
-				tick(d3.event); // this is the key to make it work together with updating both px,py,x,y on d !
-			}
-
-			function dragend(d, i) {
-				d.fixed = true; // of course set the node to fixed so the force doesn't include the node in its auto positioning stuff
-				tick(d3.event);
-				self.force.resume();
-			}
-			self.force.on("tick", tick);
-			function tick(e) {
-				if (e.type=="tick"){
-					var k = .1 * e.alpha;
-					self.proteins.forEach(function(o, i) {
-						o.y += (self.foci[self.organisms[o.organism]].y - o.y) * k;
-						o.x += (self.foci[self.organisms[o.organism]].x - o.x) * k;
-					});
-				}
-				self.vis.selectAll("path.figure")
-						.attr("transform", function(d) { 
-							if (self.opt.enableEdges)
-								return "translate(" + Math.max(r, Math.min(self.opt.width , d.x+r)) + "," + Math.max(r, Math.min(self.opt.height, d.y+r)) + ")";
-							else
-								return "translate(" + d.x + "," +  d.y + ")"; 
-						});
-
-				if (self.opt.enableEdges) 
-					self.vis.selectAll(".legend")
-						.attr("x", function(d) { return d.x = Math.max(r, Math.min(self.opt.width - r, d.x)); })
-						.attr("y", function(d) { return d.y = Math.max(r, Math.min(self.opt.height - r, d.y)); });
-				else
-					self.vis.selectAll(".legend")
-						.attr("x", function(d) { return d.x; })
-						.attr("y", function(d) { return d.y; });
-				if (self.opt.enableEdges) 
-					self.vis.selectAll("line.link")
-						.attr("x1", function(d) { return d.source.x+r; })
-						.attr("y1", function(d) { return d.source.y+r; })
-						.attr("x2", function(d) { return d.target.x+r; })
-						.attr("y2", function(d) { return d.target.y+r; });
-				else
-					self.vis.selectAll("line.link")
-						.attr("x1", function(d) { return d.source.x; })
-						.attr("y1", function(d) { return d.source.y; })
-						.attr("x2", function(d) { return d.target.x; })
-						.attr("y2", function(d) { return d.target.y; });
-			};
-			self.tick=tick;
-			//Binding the _resize method when resizing the window! 
-			//d3.select(window).on("resize", function(){self._resize(self);});
-			
+		    
 			self.restart();
 		},
 		/**
 		 *  Default values for the options
-		 *  @name Biojs.InteractionsD3-opt
+		 *  @name Biojs.InteractionsBundleD3-opt
 		 */
 		opt: {
 			target: "YourOwnDivId",
 			width: "100%",
 			height: "500", 
-			radius: 10,
-			enableEdges:false
+			radius: 4,
+			textLength: 120
 		},
 
 		/**
 		 * Array containing the supported event names
-		 * @name Biojs.InteractionsD3-eventTypes
+		 * @name Biojs.InteractionsBundleD3-eventTypes
 		 */
 		eventTypes : [
 			/**
-			 * @name Biojs.InteractionsD3#proteinClick
+			 * @name Biojs.InteractionsBundleD3#proteinClick
 			 * @event
 			 * @param {function} actionPerformed It is triggered when the user clicks on a protein
 			 * @eventData {@link Biojs.Event} objEvent Object containing the information of the event
@@ -257,14 +194,15 @@ Biojs.InteractionsD3 = Biojs.extend (
 			 * @example 
 			 * instance.proteinClick(
 			 *    function( objEvent ) {
-			 *       alert("The protein " + objEvent.protein.id + " was clicked.");
+			 *      instance.swapShowLegend("#node-" + objEvent.protein.key + " .legend",'#FF0000');
+			 *      alert("The protein " + objEvent.protein.id + " was clicked.");
 			 *    }
 			 * ); 
 			 * 
 			 * */
 			"proteinClick",
 			/**
-			 * @name Biojs.InteractionsD3#proteinMouseOver
+			 * @name Biojs.InteractionsBundleD3#proteinMouseOver
 			 * @event
 			 * @param {function} actionPerformed It is triggered when the mouse pointer is over a protein
 			 * @eventData {@link Biojs.Event} objEvent Object containing the information of the event
@@ -273,14 +211,17 @@ Biojs.InteractionsD3 = Biojs.extend (
 			 * @example 
 			 * instance.proteinMouseOver(
 			 *    function( objEvent ) {
-			 *       alert("The mouse is over the protein " + objEvent.protein.id);
+			 *      instance.highlight("path.link.target-" + objEvent.protein.key);
+			 *      instance.highlight("path.link.target-" + objEvent.protein.key);
+			 *      instance.setColor("#node-" + objEvent.protein.key,'#0f0');
+			 *      alert("The mouse is over of the protein " + objEvent.protein.id);
 			 *    }
 			 * ); 
 			 * 
 			 * */
 			"proteinMouseOver",
 			/**
-			 * @name Biojs.InteractionsD3#proteinMouseOut
+			 * @name Biojs.InteractionsBundleD3#proteinMouseOut
 			 * @event
 			 * @param {function} actionPerformed It is triggered when the mouse pointer leave the area of a protein
 			 * @eventData {@link Biojs.Event} objEvent Object containing the information of the event
@@ -289,44 +230,55 @@ Biojs.InteractionsD3 = Biojs.extend (
 			 * @example 
 			 * instance.proteinMouseOut(
 			 *    function( objEvent ) {
-			 *       alert("The mouse is out the protein " + objEvent.protein.id);
+			 *      instance.setColor("#node-" + objEvent.protein.key,'');
+			 *      instance.setColor("path.link.target-" + objEvent.protein.key,"");
+			 *      instance.setColor("path.link.target-" + objEvent.protein.key,"");
+			 *      alert("The mouse is out the protein " + objEvent.protein.id);
 			 *    }
 			 * ); 
 			 * 
 			 * */
 			"proteinMouseOut",
 			/**
-			 * @name Biojs.InteractionsD3#interactionClick
+			 * @name Biojs.InteractionsBundleD3#interactionClick
 			 * @event
-			 * @param {function} actionPerformed A function which receives an {@link Biojs.Event} object as argument.
-			 * @eventData {Object} source The component which did triggered the event.
-			 * @eventData {Object} interaction the information of the interaction that has been clicked.
+			 * @param {function} actionPerformed It is triggered when the user clicks over an interaction path
+			 * @eventData {@link Biojs.Event} objEvent Object containing the information of the event
+			 * @eventData {Object} objEvent.source The component which did triggered the event.
+			 * @eventData {Object} objEvent.interaction the information of the interaction that has been clicked.
 			 * @example 
 			 * instance.interactionClick(
 			 *    function( objEvent ) {
-			 *       alert("Click on the interaction " + objEvent.interaction.source.id +" - "+ objEvent.interaction.target.id);
+			 *      instance.swapShowLegend("#node-" + objEvent.interaction.source.key + " .legend",'#FF0000');
+			 *      instance.swapShowLegend("#node-" + objEvent.interaction.target.key + " .legend",'#FF0000');
+			 *      alert("Click on the interaction " + objEvent.interaction.id);
 			 *    }
 			 * ); 
 			 * 
 			 * */
 			"interactionClick",
 			/**
-			 * @name Biojs.InteractionsD3#interactionMouseOver
+			 * @name Biojs.InteractionsBundleD3#interactionMouseOver
 			 * @event
-			 * @param {function} actionPerformed A function which receives an {@link Biojs.Event} object as argument.
+			 * @param {function} actionPerformed It is triggered when the mouse pointer is over an interaction
+			 * @eventData {@link Biojs.Event} objEvent Object containing the information of the event
 			 * @eventData {Object} source The component which did triggered the event.
 			 * @eventData {Object} interaction the information of the interaction that has been mouseover.
 			 * @example 
 			 * instance.interactionMouseOver(
 			 *    function( objEvent ) {
-			 *       alert("The mouse is over the interaction " + objEvent.interaction.source.id +" - "+ objEvent.interaction.target.id);
+			 *      instance.highlight("#link-" + objEvent.interaction.source.key +"-"+ objEvent.interaction.target.key);
+			 *      instance.highlight("#link-" + objEvent.interaction.target.key +"-"+ objEvent.interaction.source.key );
+			 *      instance.setColor("#node-" + objEvent.interaction.source.key,'#0f0');
+			 *      instance.setColor("#node-" + objEvent.interaction.target.key,'#0f0');
+			 *      alert("The mouse is over the interaction " + objEvent.interaction.id);
 			 *    }
 			 * ); 
 			 * 
 			 * */
 			"interactionMouseOver",
 			/**
-			 * @name Biojs.InteractionsD3#interactionMouseOut
+			 * @name Biojs.InteractionsBundleD3#interactionMouseOut
 			 * @event
 			 * @param {function} actionPerformed It is triggered when the mouse pointer leave an interaction
 			 * @eventData {@link Biojs.Event} objEvent Object containing the information of the event
@@ -335,14 +287,18 @@ Biojs.InteractionsD3 = Biojs.extend (
 			 * @example 
 			 * instance.interactionMouseOut(
 			 *    function( objEvent ) {
-			 *      alert("The mouse is out of the interaction " + objEvent.interaction.source.id +" - "+ objEvent.interaction.target.id);
+			 *      instance.setColor("#link-" + objEvent.interaction.source.key +"-"+ objEvent.interaction.target.key,"");
+			 *      instance.setColor("#link-" + objEvent.interaction.target.key +"-"+ objEvent.interaction.source.key,"");
+			 *      instance.setColor("#node-" + objEvent.interaction.source.key,'');
+			 *      instance.setColor("#node-" + objEvent.interaction.target.key,'');
+			 *      alert("The mouse is out of the interaction " + objEvent.interaction.id);
 			 *    }
 			 * ); 
 			 * 
 			 * */
 			"interactionMouseOut",
 			/**
-			 * @name Biojs.InteractionsD3#sizeChanged
+			 * @name Biojs.InteractionsBundleD3#sizeChanged
 			 * @event
 			 * @param {function} actionPerformed It is triggered when the size of the SVG element has been changed. 
 			 * @eventData {@link Biojs.Event} objEvent Object containing the information of the event
@@ -358,9 +314,9 @@ Biojs.InteractionsD3 = Biojs.extend (
 			 * 
 			 * */
 			"sizeChanged"
+			
 		], 
 		/**
-		 * 
 		 * allows to resize the SVG element updating the gravity points
 		 * @param {string} width value of width to be assign to the SVG
 		 * @param {string} height value of height to be assign to the SVG
@@ -378,22 +334,28 @@ Biojs.InteractionsD3 = Biojs.extend (
 			    .attr('height', height);
 			d3.select("#"+self.opt.target+" .frame")
 			    .attr('width', width)
-			    .attr('height', height);
-
+			    .attr('height', height)
+				.attr("transform", "translate(-" + self.opt.width/2 + ",-" + self.opt.height/2 + ")");
 			self._container.width(width);
 			self._container.height(height);
-			var numberOfOrganism =Object.keys(self.organisms).length;
-			self.foci=[];
-			for (var i=0; i<numberOfOrganism; i++){
-				self.foci.push({x: (self.opt.width/(numberOfOrganism+1))*(i+1), y:self.opt.height/2});
-			}
-			if (self.tTranslate!=null) self.redraw(self.tTranslate[0], self.tTranslate[1], self.tScale);
+			var radious=self.opt.height;
+			if (radious<self.opt.width) radious=self.opt.width;
+			self.cluster.size([360, radious/2 - self.opt.textLength] );
+			d3.select("#innergroup")
+	    		.attr("transform", "translate(" + self.opt.width/2 + "," + self.opt.height/2 + ")");
+	    			
+			self.svg.selectAll("path.link").remove();
+			self.svg.selectAll("g.node").remove();
+			self.svg.selectAll("circle.figure").remove();
+			
 			self.restart();
 			self.raiseEvent('sizeChanged', {
 				width:width,
 				height:height
 			});
+			
 		},
+
 		/**
 		 * Adds an interaction between 2 proteins that are already in the graphic using their IDs
 		 * 
@@ -403,7 +365,10 @@ Biojs.InteractionsD3 = Biojs.extend (
 		 * 					to be stored in the interaction itself. useful for triggered events
 		 *
 		 * @example 
-		 * instance.addInteraction(Math.floor((Math.random()*15)+1),Math.floor((Math.random()*15)+1) ,{score:Math.random()});
+		 * 
+		 * for (var i=1;i<200;i++){
+		 *   instance.addInteraction("p"+(i),"p"+(i%23),{id:"p"+(i)+"_p"+(i%23),feature1:"value"});
+		 * }
 		 * instance.restart();
 		 */
 		addInteraction: function(proteinId1,proteinId2,extraAtributes) {
@@ -416,13 +381,15 @@ Biojs.InteractionsD3 = Biojs.extend (
 			// Getting the protein with the second id and checking exists in the graphic
 			var protein2= self.getProtein(proteinId2);
 			if (typeof protein2=="undefined")return false;
+
+			if (self.proteins[protein1.id].imports.indexOf(protein2.id)==-1)
+				self.proteins[protein1.id].imports.push(protein2.id);
 			
-			//Checking there is not an interaction between those proteins already in the graphic
-			if (typeof self.interactionsA[proteinId1]!="undefined" && self.interactionsA[proteinId1].indexOf(protein2)!=-1)
-				return self.interactionsA[proteinId1].indexOf(protein2);
-				
+			if (self.proteins[protein2.id].imports.indexOf(protein1.id)==-1)
+				self.proteins[protein2.id].imports.push(protein1.id);
+			
 			//creating and adding an interaction
-			var interaction = {source:protein1,target:protein2};
+			var interaction = {source:protein1,target:protein2,id:protein1.id+"-"+protein2.id};
 			//adding any parameters from the object extraAtributes to the interaction object
 			if (typeof extraAtributes!="undefined")
 				for (var key in extraAtributes)
@@ -442,56 +409,69 @@ Biojs.InteractionsD3 = Biojs.extend (
 
 			return n;
 		},
+		addOrganism: function(organism){
+			var self=this;
+			if (!self.organisms.hasOwnProperty(organism)){
+				self.organisms[organism] = {"key":organism,"name":organism,"parent":self.model,"children":[]};
+				self.model.children.push(self.organisms[organism]);
+			}
+		},
+
 		/**
 		 * Adds a protein to the graphic
 		 * 
 		 * @param {Object} protein An object containing information of the protein 
 		 *
 		 * @example 
-		 *  instance.addProtein({ "id":"new","name":"new","showLegend":true,"typeLegend":"id","organism":"human"+pid%3,"features":{"f1":"val1","f2":"val2","f3":"val3"}});
+		 * for (var i=0;i<50;i++)
+		 *   instance.addProtein({id:'new'+pid++,group:1,organism:"human"});
 		 * instance.restart();
 		 */
 		addProtein: function(protein) {
 			var self=this;
-			var n = self.proteins.indexOf(self.proteinsA[protein.id]);
-			if (n!=-1)
-				return n;
-			if (typeof self.fixedProteins[protein.id]=="undefined"){
-				protein.x=Math.floor((Math.random()*self.opt.width));
-				protein.y=Math.floor((Math.random()*self.opt.width));
-			}else{
-				protein.x=self.fixedProteins[protein.id][0];
-				protein.y=self.fixedProteins[protein.id][1];
-				protein.fixed=true;
-			}
 			if(typeof protein.size == "undefined") protein.size=1;
-			n= self.proteins.push(protein);
-			self.proteinsA[protein.id]=protein;
-			if (typeof self.interactionsA[protein.id] == "undefined")
-				self.interactionsA[protein.id]=[];
-			if (typeof self.organisms[protein.organism] == 'undefined'){
-				var numberOfOrganism =Object.keys(self.organisms).length;
-				self.organisms[protein.organism] = numberOfOrganism++;
-				self.foci=[];
-				for (var i=0; i<numberOfOrganism; i++){
-					self.foci.push({x: (self.opt.width/(numberOfOrganism+1))*(i+1), y:self.opt.height/2});
-				}
+			self.addOrganism(protein.organism);
+			if (!self.proteins.hasOwnProperty(protein.id)){
+				self.proteins[protein.id] = protein;
+				self.proteins[protein.id].key =protein.id;
+				self.proteins[protein.id].name =protein.id;
+				self.proteins[protein.id].parent = self.organisms[protein.organism];
+				self.proteins[protein.id].imports=[];
+				
+				self.organisms[protein.organism].children.push(self.proteins[protein.id]);
+				if (typeof self.interactionsA[protein.id] == "undefined")
+					self.interactionsA[protein.id]=[];
+				
 			}
-			return n;
+
+//			var n = self.proteins.indexOf(self.proteinsA[protein.id]);
+//			if (n!=-1)
+//				return n;
+//			n= self.proteins.push(protein);
+//			self.proteinsA[protein.id]=protein;
+//			if (typeof self.organisms[protein.organism] == 'undefined'){
+//				var numberOfOrganism =Object.keys(self.organisms).length;
+//				self.organisms[protein.organism] = numberOfOrganism++;
+//				self.foci=[];
+//				for (var i=0; i<numberOfOrganism; i++){
+//					self.foci.push({x: (self.opt.width/(numberOfOrganism+1))*(i+1), y:self.opt.height/2});
+//				}
+//			}
+//			return n;
 		},
 		/**
-		 * Gets the protein object by its id
+		 * gets the protein object by its id
 		 * 
 		 * @param {string} proteinId The id of the protein
 		 *  
 		 * @return {Object} protein An object containing information of the protein 
 		 *
 		 * @example 
-		 * alert(instance.getProtein('3'));
+		 * alert(instance.getProtein('p3'));
 		 */
 		getProtein: function(proteinId) {
 			var self=this;
-			return self.proteinsA[proteinId];
+			return self.proteins[proteinId];
 		},
 		/**
 		 * Gets the array index of the interaction object by the ids of the interactors
@@ -523,26 +503,36 @@ Biojs.InteractionsD3 = Biojs.extend (
 		 * @return {Object} An object containing information of the interaction 
 		 *
 		 * @example 
-		 * alert(instance.getInteraction('1','3'));
+		 *alert( instance.getInteraction('p1','p3'));
 		 */
 		getInteraction: function(proteinId1,proteinId2){
 			var self =this;
-			return self.getInteractionIndex(proteinId1,proteinId2);
+			var i = self.getInteractionIndex(proteinId1,proteinId2);
+			return (i==null)?i:self.interactions[i];
 		},
 		/**
-		 * Removes from the graphic the interaction by the id of its proteins
+		 * removes from the graphic the interaction by the id of its proteins
 		 * 
 		 * @param {string} proteinId1 The id of the first protein
 		 * @param {string} proteinId2 The id of the second protein
 		 *  
 		 * @example 
-		 * instance.removeInteraction('2','3');
+		 * for (var i=1;i<100;i+=1)
+		 *   instance.removeInteraction('p'+i,'p'+(100+i));
+		 * instance.restart();
 		 */
 		removeInteraction: function(proteinId1,proteinId2){
 			var self = this;
 			var intIndex = self.getInteractionIndex(proteinId1,proteinId2);
 			self.interactions.splice(intIndex--, 1);
 			
+			var pos = self.proteins[proteinId2].imports.indexOf(proteinId1);
+			if (pos!=-1)
+				self.proteins[proteinId2].imports.splice(pos,1);
+			pos = self.proteins[proteinId1].imports.indexOf(proteinId2);
+			if (pos!=-1)
+				self.proteins[proteinId1].imports.splice(pos,1);
+				
 			var p1=self.getProtein(proteinId1),
 				p2=self.getProtein(proteinId2);
 			
@@ -559,7 +549,8 @@ Biojs.InteractionsD3 = Biojs.extend (
 		 * @param {string} proteinId The id of the protein to delete
 		 *  
 		 * @example 
-		 * instance.removeProtein('2');
+		 * instance.removeProtein('p2');
+		 * instance.restart();
 		 */
 		removeProtein: function(proteinId, excludelist){
 			var self=this;
@@ -577,56 +568,91 @@ Biojs.InteractionsD3 = Biojs.extend (
 				}
 				if (self.interactionsA[proteinId].length==0){
 					delete self.interactionsA[proteinId];
-					for(var i=0; i<self.proteins.length; i++) {
+					for(var i in self.proteins) {
 						if(self.proteins[i].id == proteinId) {
 							self.proteins.splice(i, 1);
 							break;
 						}
 					}
-					delete self.proteinsA[proteinId];
-				}else{
-					self.proteinsA[proteinId].fixed=false;
+					for(var i in self.organisms) {
+						var prots = self.organisms[i].children;
+						for(var j in prots) {
+							if(prots[j].id == proteinId) {
+								self.organisms[i].children.splice(j, 1);
+							}
+						}
+					}
+					delete self.proteins[proteinId];
 				}
 			}
 		},
 		/**
 		 * 
-		 * Resets the graphic to zero proteins - zero interactions
+		 * Resets the graphic to zero proteins zero interactions
 		 * 
+		 *  
 		 * @example 
 		 * instance.resetGraphic();
 		 */
 		resetGraphic: function(){
 			var self=this;
 			self.proteins=[];
-			self.proteinsA={};
 			self.interactions=[];
+			self.interactionsA={};
 			self.restart();
 		},
-		_figuresOrder:[0,3,2,5,4,1],
+		clearAndRestartGraphic:function(){
+			var self=this;
+			self.svg.selectAll("path.link").remove();
+			self.svg.selectAll("g.node").remove();
+			self.restart();
+		},
+	    imports: function(nodes) {
+	    	var self =this;
+	        var map = {},
+	            imports = [];
+
+	        // Compute a map from name to node.
+	        nodes.forEach(function(d) {
+	          map[d.name] = d;
+	        });
+
+	        // For each import, construct a link from the source to target node.
+	        nodes.forEach(function(d) {
+	          if (d.imports) d.imports.forEach(function(i) {
+	        	var int =self.getInteraction(map[d.name].id,map[i].id);
+	            if (int!=null && imports.indexOf(int)==-1)
+	            	imports.push(int);
+	          });
+	        });
+
+	        return imports;
+	      },
+
 		/**
-		 * Restart the graphic to materialize the changes done on it(e.g. add/remove proteins)
-		 * It is here where the SVG elemnts are created.
+		 * Restart the graphic to materialize the changes don on it(e.g. add/remove proteins)
 		 * 
 		 * @example 
 		 * instance.restart();
+		 * 
 		 */
 		restart: function(){
 			var self = this;
-			
-			self.force
-			    .nodes(self.proteins)
-			    .links(self.interactions)
-				.charge(-self.opt.radius*(3+self.proteins.length))
-				.linkDistance(self.opt.radius*(3+self.proteins.length*0.05)).start();
 
-			var link =self.vis.selectAll(".graphNetwork line.link")
-				.data(self.interactions, function(d) { return d.source.id + "-" + d.target.id; });
+			var nodes = self.cluster.nodes(self.model),
+				links = self.imports(nodes);
 			
-			link.enter().insert("line" , ".node") //insert before the .node so lines won't hide the nodes
-				.attr("class", "link")
-				.attr("id", function(d) { return "link_"+d.source.id+"_"+d.target.id; })
-				.on("mouseover", function(d){ 
+			self.splines = self.bundle(links);
+
+			var path = self.svg.selectAll("path.link")
+				.data(links);
+			
+			path.enter().append("svg:path")
+				.attr("id", function(d) { return "link-" + d.source.key + "-" + d.target.key; })
+				.attr("class", function(d) { return "link source-" + d.source.key + " target-" + d.target.key; })
+				.attr("d", function(d, i) { return self.line(self.splines[i]); })
+				.style("pointer-events","visibleStroke")
+				.on("mouseover",  function(d){ 
 					self.raiseEvent('interactionMouseOver', {
 						interaction: d
 					});
@@ -636,45 +662,37 @@ Biojs.InteractionsD3 = Biojs.extend (
 						interaction: d
 					});
 				})
-				.on("click", function(d){ 
+				.on("click",  function(d){ 
 					self.raiseEvent('interactionClick', {
 						interaction: d
 					});
-				})
-				.attr("x1", function(d) { return d.source.x; })
-				.attr("y1", function(d) { return d.source.y; })
-				.attr("x2", function(d) { return d.target.x; })
-				.attr("y2", function(d) { return d.target.y; });
+				});
+
+			path.exit().remove();
+
+			var gnodes=self.svg.selectAll("g.node")
+				.data(nodes.filter(function(n) { return !n.children; }));
 			
-			link.exit().remove();
-	
-			var nodes= self.vis.selectAll(".graphNetwork .node")
-				.data(self.proteins, function(d) { return d.id;});
+			var svgNode=gnodes.enter().append("svg:g")
+					.attr("class", "node")
+					.attr("id", function(d) { return "node-" + d.key; })
+					.attr("transform", function(d) { return "rotate(" + (d.x - 90) + ")translate(" + d.y + ")"; });
 			
-			var node=nodes
-				.enter().append("g")
-				.attr("class", "node")
-				.attr("id", function(d) { return "node_"+d.id; })
-				.attr("organism", function(d) { return d.organism; })
-				.call(self.node_drag);
-			
-			node.append("path")
+			svgNode.append("svg:text")
+						.attr("class", "legend")
+						.attr("dx", function(d) { return d.x < 180 ? 8 : -8; })
+						.attr("dy", ".31em")
+						.attr("text-anchor", function(d) { return d.x < 180 ? "start" : "end"; })
+						.attr("transform", function(d) { return d.x < 180 ? null : "rotate(180)"; })
+						.attr("visibility",function(d) { return (d.showLegend)?"visible":"hidden";})
+						.text(function(d) { return d.key; });
+
+			svgNode.append("circle")
 				.attr("class", "figure")
-				.attr("d", d3.svg.symbol()
-						.size(function(d) {
-							return (2*self.opt.radius)*(2*self.opt.radius)*d.size*d.size;
-						})
-						.type(function(d) {
-							return d3.svg.symbolTypes[self._figuresOrder[self.organisms[d.organism]]];
-						})
-					)
 				.attr("id", function(d) { return "figure_"+d.id; })
-				.on("click", function(d){ 
-					self.raiseEvent('proteinClick', {
-						protein: d
-					});
-				})
-				.on("mouseover", function(d){ 
+				.attr("r", function(d) { return self.opt.radius*Math.sqrt(d.size); })
+				.attr("stroke-width",self.opt.radius*0.3)
+				.on("mouseover",  function(d){ 
 					self.raiseEvent('proteinMouseOver', {
 						protein: d
 					});
@@ -684,32 +702,19 @@ Biojs.InteractionsD3 = Biojs.extend (
 						protein: d
 					});
 				})
-				.attr("stroke-width",self.opt.radius*0.3);
-			
-
-			node
-				.append("svg:text")
-				.attr("class", "legend")
-				.attr("id", function(d) { return "legend_"+d.id; })
-				.text(function(d) { 
-					if (d.typeLegend=="id") 
-						return d.id;
-					else if (d.typeLegend.indexOf("features.")==0)
-						return d.features[d.typeLegend.substr(9)];
-					else
-						return d[d.typeLegend];
-					})
-				.attr("visibility",function(d) { return (d.showLegend)?"visible":"hidden";})
-				.attr("transform",function(d) {
-					return (self.organisms[d.organism] == 0)?"translate(-"+(self.opt.radius*1.9)+","+(self.opt.radius*0.4)+")":"translate(-"+(self.opt.radius*0.9)+","+(self.opt.radius*1.3)+")";
+				.on("click",  function(d){ 
+					self.raiseEvent('proteinClick', {
+						protein: d
+					});
 				});
+			gnodes.exit().remove();
 
-			nodes.exit().remove();
-			
-			self.perspective.selectAll(".legendBlock").remove();
+//			self.hide("g.node .legend");
+			self.svg.selectAll(".legendBlock").remove();
 			if (typeof self.legends!="undefined" && self.legends!=null)
 				self._paintLegends();
 		},
+		
 		_sortLegends:function(){
 			var self = this;
 			self.legends.sort(function(a,b){
@@ -726,8 +731,8 @@ Biojs.InteractionsD3 = Biojs.extend (
 		_paintLegend:function(legend,type){
 			var self = this;
 			legend.filter(function(d) { return d[0]== "label" && d[1]==type; }).append("text")
-				.attr("x", self.opt.width - 6)
-				.attr("y", 7)
+				.attr("x", self.opt.width/2 - 6)
+				.attr("y", 7-self.opt.height/2)
 				.attr("dy", ".35em")
 				.style("text-anchor", "end")
 				.style("font-size", "1.2em")
@@ -741,22 +746,24 @@ Biojs.InteractionsD3 = Biojs.extend (
 							return "M0,0L0,10M0,5L"+h+",5M"+h+",0L"+h+",10 ";
 					})
 					.attr("transform", function(d) { 
-						return "translate(" +  (self.opt.width - 18 - 2*self.opt.radius*Math.sqrt(d[0][2])) + "," +  0 + ")"; 
+						return "translate(" +  (self.opt.width/2 - 18 - 2*self.opt.radius*Math.sqrt(d[0][2])) + ", -" +  self.opt.height/2 + ")"; 
 					})
 					.style("fill", "transparent")
 					.style("stroke", "black");
 				legend.filter(function(d) { return d[0]!="label" && d[1]== type; }).append("text")
 					.attr("x", function(d) { 
-						return (self.opt.width - 22 - 5*self.opt.radius); 
+						return (self.opt.width/2 - 22 - 5*self.opt.radius); 
 					})
-					.attr("y", 7)
+					.attr("y", 7-self.opt.height/2 )
 					.attr("dy", ".35em")
 					.style("text-anchor", "end")
 					.text(function(d) { return (d[0][1]*1.0).toFixed(2); });
 				
 			}else{
+				
 				legend.filter(function(d) { return d[0]!="label" && d[1]==type; }).append("rect")
-					.attr("x", self.opt.width - 18) 
+					.attr("x", self.opt.width/2 - 18) 
+					.attr("y", -self.opt.height/2)
 					.attr("width", 13)
 					.attr("height", 13)
 					.style("fill", function(d,i) {
@@ -765,8 +772,8 @@ Biojs.InteractionsD3 = Biojs.extend (
 						return d[2];
 					});
 				legend.filter(function(d) { return d[0]!="label" && d[1]== type; }).append("text")
-					.attr("x", self.opt.width - 24)
-					.attr("y", 7)
+					.attr("x", self.opt.width/2 - 24)
+					.attr("y", 7-self.opt.height/2)
 					.attr("dy", ".35em")
 					.style("text-anchor", "end")
 					.text(function(d) { return d[0]; });
@@ -775,11 +782,12 @@ Biojs.InteractionsD3 = Biojs.extend (
 		_paintLegends: function(){
 			var self = this;
 			var w=18 + self.longestLegend*7 + 10;
-			var legendBlock = self.perspective.insert("g",".link")
+			var legendBlock = self.svg.insert("g",".link")
 				.attr("class", "legendBlock");
 			self._sortLegends();
 			legendBlock.append("rect")
-				.attr("x", self.opt.width -w)
+				.attr("x", self.opt.width/2 -w)
+				.attr("y", -self.opt.height/2)
 				.attr("height", 6 + self.legends.length *16)
 				.attr("width", w)
 				.style("fill", "#ddd")
@@ -789,9 +797,7 @@ Biojs.InteractionsD3 = Biojs.extend (
 				.data(self.legends)
 				.enter().insert("g")
 				.attr("class", "mainLegend")
-				.attr("transform", function(d, i) { 
-					return "translate(0," + (3 + i * 16) + ")"; 
-				});
+				.attr("transform", function(d, i) { return "translate(0," + (3 + i * 16) + ")"; });
 			for (var i=0; i< self.legendTypes.length; i++)
 				self._paintLegend(legend,self.legendTypes[i]);
 
@@ -837,6 +843,7 @@ Biojs.InteractionsD3 = Biojs.extend (
 						self.longestLegend=legends[i].length;
 				}
 		},
+		
 		/**
 		 * Hides the elements on the graphic that match the selector. 
 		 * Check the <a href="http://www.w3.org/TR/css3-selectors/">CSS3 selectors documentation</a> to build a selector string 
@@ -844,7 +851,7 @@ Biojs.InteractionsD3 = Biojs.extend (
 		 * @param {string} selector a string to represent a set of elements. Check the <a href="http://www.w3.org/TR/css3-selectors/">CSS3 selectors documentation</a> to build a selector string
 		 *  
 		 * @example 
-		 * instance.hide("[id = node_10]");
+		 * instance.hide('[id *="node-p1"]');
 		 */
 		hide: function(selector){
 			var self=this;
@@ -858,7 +865,7 @@ Biojs.InteractionsD3 = Biojs.extend (
 		 * @param {string} selector a string to represent a set of elements. Check the <a href="http://www.w3.org/TR/css3-selectors/">CSS3 selectors documentation</a> to build a selector string
 		 *  
 		 * @example 
-		 * instance.show("[id = node_10]");
+		 * instance.show('[id *="node-p1"]');
 		 */
 		show: function(selector){
 			var self=this;
@@ -872,11 +879,11 @@ Biojs.InteractionsD3 = Biojs.extend (
 		 * @param {string} selector a string to represent a set of elements. Check the <a href="http://www.w3.org/TR/css3-selectors/">CSS3 selectors documentation</a> to build a selector string
 		 *  
 		 * @example 
-		 * instance.highlight("[id *= node_1]");
+		 * instance.highlight(".figure");
 		 */
 		highlight: function(selector){
 			var self=this;
-			self.vis.selectAll(selector).style("stroke", '#3d6');
+			self.vis.selectAll(selector).style("stroke", '#0f0');
 		},
 		/**
 		 * Set the fill's color of the elements on the graphic that match the selector. 
@@ -900,35 +907,19 @@ Biojs.InteractionsD3 = Biojs.extend (
 		 * @param {string} color a color in web format eg. #FF0000
 		 *  
 		 * @example 
-		 * instance.setColor("[id *= node_2]","#FF0000");
+		 * instance.setColor(".figure","#FF0000");
 		 */
 		setColor: function(selector,color){
 			var self=this;
 			self.vis.selectAll(selector).style("stroke", color);
 		},
 		/**
-		 * If the protein has a fixed position in the graphic it gets released, or viceversa other wise
-		 * 
-		 * @param {string} protein the id of the protein to swap is position on the graphic
-		 *  
-		 * @example 
-		 * instance.swapFixed("3");
-		 */
-		swapFixed: function(protein){
-			var self=this;
-			var nodes=self.force.nodes();
-			nodes.forEach(function(d, i) {
-			  if (d.id==protein)
-				  d.fixed = !d.fixed;
-			});
-		},
-		/**
-		 * Shows the legend(id) of the protein
+		 * Shows/Hide the legend(id) of the protein
 		 * 
 		 * @param {string} protein the id of the protein to swap the visibility of the legend
 		 *  
 		 * @example 
-		 * instance.swapShowLegend("#node_5 .legend");
+		 * instance.swapShowLegend("#node-p"+(pid-1)+" .legend");
 		 */
 		showLegend: function(selector,typeLegend){
 			var self=this;
@@ -936,13 +927,13 @@ Biojs.InteractionsD3 = Biojs.extend (
 				d.typeLegend=typeLegend;
 				if (d.typeLegend=="id") 
 					return d.id;
-				else //if (d.typeLegend.indexOf("features.")==0)
+//				else if (d.typeLegend.indexOf("features.")==0)
+//					return d.features[d.typeLegend.substr(9)];
+				else
 					return d.features[d.typeLegend];
-//				else
-//					return d[d.typeLegend];
 				});
-//			self.restart();
 		}, 
+		
 		/**
 		 * Scales the area of a protein
 		 * 
@@ -950,19 +941,16 @@ Biojs.InteractionsD3 = Biojs.extend (
 		 * @param {integer} scale value to scale a node
 		 *  
 		 * @example 
-		 * instance.setSizeScale("#figure_1",4);
+		 * instance.setSizeScale("#figure_p188",4);
 		 */
 		setSizeScale: function(selector,scale){
 			var self=this;
-			self.vis.selectAll(selector).attr("d", d3.svg.symbol()
-					.size(function(d) {
-						d.size=scale;
-						return (2*self.opt.radius)*(2*self.opt.radius)*scale;
-					})
-					.type(function(d) {
-						return d3.svg.symbolTypes[self._figuresOrder[self.organisms[d.organism]]];
-					})
-				);
+			
+
+			self.vis.selectAll(selector).attr("r", function(d) { 
+				d.size=scale;
+				return self.opt.radius*Math.sqrt(d.size); 
+			});
 		}, 
 		/**
 		 * Scales the size of the proteins which value has been modify by other means
@@ -970,28 +958,26 @@ Biojs.InteractionsD3 = Biojs.extend (
 		 * @param {string} selector a CSS3 selector to choose the nodes to resize
 		 *  
 		 * @example 
-		 * for (var i=0;i<instance.proteins.length;i++)
-		 * 	instance.proteins[i].size=1+i%4;
+		 * var j=0;
+		 * for (var i in instance.proteins)
+		 * 	instance.proteins[i].size=1+(j++)%4;
 		 * instance.refreshSizeScale(".figure");
 		 */
 		refreshSizeScale: function(selector){
 			var self=this;
-			self.vis.selectAll(selector).attr("d", d3.svg.symbol()
-					.size(function(d) {
-						return (2*self.opt.radius)*(2*self.opt.radius)*d.size;
-					})
-					.type(function(d) {
-						return d3.svg.symbolTypes[self._figuresOrder[self.organisms[d.organism]]];
-					})
-				);
+			self.vis.selectAll(selector).attr("r", function(d) { 
+				return self.opt.radius*Math.sqrt(d.size); 
+			});
 		}, 
+
+		
 		/**
-		 * Hide the legend(id) of the protein
+		 * Shows/Hide the legend(id) of the protein
 		 * 
-		 * @param {string} selector a CSS3 selector to choose the nodes to hide its legend
+		 * @param {string} protein the id of the protein to swap the visibility of the legend
 		 *  
 		 * @example 
-		 * instance.hideLegend("#node_5 .legend");
+		 * instance.swapShowLegend("#node-p"+(pid-1)+" .legend");
 		 */
 		hideLegend: function(selector){
 			var self=this;
@@ -1003,7 +989,7 @@ Biojs.InteractionsD3 = Biojs.extend (
 		 * @param {string} protein the id of the protein to swap the visibility of the legend
 		 *  
 		 * @example 
-		 * instance.swapShowLegend("#node_5 .legend");
+		 * instance.swapShowLegend("#node-p"+(pid-1)+" .legend");
 		 */
 		swapShowLegend: function(selector){
 			var self=this;
@@ -1013,71 +999,21 @@ Biojs.InteractionsD3 = Biojs.extend (
 			});
 		},
 		/**
-		 * gets an array of objects with the list of proteins which poition has been fixed into the graphic
 		 * 
-		 * @example 
-		 * alert(instance.getFixedProteins());
-		 */
-		getFixedProteins:function(){
-			var self = this;
-			var prots=[];
-			for (var prot in self.proteinsA){
-				if (self.proteinsA[prot].fixed){
-					prots.push({
-						"protein":prot,
-						"x":self.proteinsA[prot].x,
-						"y":self.proteinsA[prot].y });
-				}
-			}
-			return prots;
-		},
-		fixedProteins:{},
-		/**
-		 * fix into the graphic a protein in a determined position
+		 * Resizing the graph depending on the size of the window.
 		 * 
-		 * @example 
-		 * instance.fixProteinAt("7",10,10);
-		 * instance.restart();
+		 * @param self
 		 */
-		fixProteinAt:function(protein,x,y){
-			var self = this;
-			if (typeof self.proteinsA[protein] == "undefined") {
-				self.fixedProteins[protein]=[x,y];
-				return;
-			}
-			self.proteinsA[protein].x=x;
-			self.proteinsA[protein].y=y;
-			self.proteinsA[protein].px=x;
-			self.proteinsA[protein].py=y;
-			self.proteinsA[protein].fixed=true;
-		//	self.tick();
+		_resize:  function (self) {
+			var width = window.innerWidth, height = window.innerHeight;
+			self.vis.attr("width", width).attr("height", height);
+			self.force.size([width, height]).resume();
 		},
-
-		colors: [ "#1f77b4", "#aec7e8", "#ff7f0e", "#ffbb78", "#2ca02c", "#98df8a", "#d62728", "#ff9896", "#9467bd", "#c5b0d5", 
-		          "#8c564b", "#c49c94", "#e377c2", "#f7b6d2", "#7f7f7f", "#c7c7c7", "#bcbd22", "#dbdb8d", "#17becf", "#9edae5",
-		          '#3399FF', '#99FF66', '#66FF99', '#CCFF00', '#6699CC', '#99CC00', '#99FFCC', '#993399', '#33FFFF', '#33CC33', 
-		         '#66CCFF', '#009999', '#00FFFF', '#CC66CC', '#FF9966', '#CC3300', '#009966', '#660000', '#99FF33', '#330066', 
-		         '#FFFF00', '#0099FF', '#FF6699', '#33FF00', '#FFFFCC', '#990000', '#99CC33', '#0033CC', '#006699', '#6699FF', 
-		         '#FFCC00', '#330099', '#999999', '#666633', '#FFCC99', '#00CCCC', '#006633', '#CCCC99', '#3300FF', '#33CC66', 
-		         '#339999', '#6666FF', '#33FF66', '#990033', '#33CC99', '#993300', '#00FF00', '#666699', '#00CC00', '#FF66CC', 
-		         '#00FFCC', '#FF9999', '#66FF00', '#003366', '#CCFF33', '#660066', '#6633CC', '#FF3366', '#99FF00', '#FF33CC', 
-		         '#CCFFCC', '#99CCCC', '#3300CC', '#0066FF', '#66CC33', '#3366CC', '#CCCCCC', '#FF0000', '#6666CC', '#336699', 
-		         '#999966', '#FFFF99', '#66CC99', '#FF0033', '#999933', '#CC99FF', '#FF0099', '#6600CC', '#CC9966', '#00CC66', 
-		         '#33CC00', '#666666', '#33CCCC', '#FF0066', '#00CC33', '#FFCC66', '#FF6600', '#9999FF', '#CC66FF', '#9933FF', 
-		         '#FF00CC', '#CC3399', '#CC6633', '#33FFCC', '#FF33FF', '#009900', '#660099', '#669999', '#CC3366', '#0099CC', 
-		         '#9900FF', '#669933', '#FFFFFF', '#CCCCFF', '#66CCCC', '#669966', '#0066CC', '#CC9900', '#663300', '#33FF99', 
-		         '#996666', '#3399CC', '#99FF99', '#66CC66', '#CC0066', '#CCFF66', '#663366', '#99CC66', '#000033', '#003333', 
-		         '#FF6666', '#009933', '#FFFF66', '#996699', '#FFCCCC', '#00CCFF', '#339966', '#3366FF', '#00CC99', '#336633', 
-		         '#FF99FF', '#663333', '#CCFF99', '#CC99CC', '#339933', '#33CCFF', '#333366', '#006666', '#CC6600', '#333300', 
-		         '#FFCC33', '#9966CC', '#003300', '#9966FF', '#996600', '#CC9933', '#9999CC', '#FF9933', '#006600', '#6633FF', 
-		         '#CC6699', '#FF3399', '#993333', '#CCFFFF', '#330033', '#FFCCFF', '#FFFF33', '#990066', '#CCCC66', '#CC0099', 
-		         '#CCCC00', '#339900', '#660033', '#FF00FF', '#333333', '#99CC99', '#66FFCC', '#003399', '#999900', '#99FFFF', 
-		         '#990099', '#3333FF', '#CC33CC', '#CC6666', '#3333CC', '#9900CC', '#9933CC', '#CC0033', '#CC00FF', '#FF99CC', 
-		         '#FF66FF', '#66FFFF', '#6600FF', '#66FF66', '#996633', '#669900', '#00FF99', '#CC9999', '#993366', '#CC33FF', 
-		         '#336666', '#0033FF', '#336600', '#CC0000', '#FF9900', '#33FF33', '#000000', '#99CCFF', '#000066', '#0000CC', 
-		         '#000099', '#00FF33', '#666600', '#66FF33', '#CCCC33', '#66CC00', '#FF3333', '#CC3333', '#663399', '#333399', 
-		         '#FF3300', '#0000FF', '#CC00CC', '#00FF66', '#330000', '#FF6633']
-
+		colors: [ "#1f77b4", "#aec7e8", "#ff7f0e", "#ffbb78", "#2ca02c", "#98df8a", "#d62728", "#ff9896", "#9467bd", "#c5b0d5", "#8c564b", "#c49c94", "#e377c2", "#f7b6d2", "#7f7f7f", "#c7c7c7", "#bcbd22", "#dbdb8d", "#17becf", "#9edae5",
+		          "#0077b4", "#11c7e8", "#227f0e", "#33bb78", "#44a02c", "#55df8a", "#662728", "#779896", "#8867bd", "#99b0d5", "#AA564b", "#BB9c94", "#CC77c2", "#DDb6d2", "#EE7f7f", "#FFc7c7", "#00bd22", "#11db8d", "#22becf", "#33dae5",
+		          "#1f00b4", "#ae11e8", "#ff220e", "#ff3378", "#2c442c", "#98558a", "#d66628", "#ff7796", "#9488bd", "#c599d5", "#8cAA4b", "#c4BB94", "#e3CCc2", "#f7DDd2", "#7fEE7f", "#c7FFc7", "#bc0022", "#db118d", "#1722cf", "#9e33e5",
+		          "#1f7700", "#aec711", "#ff7f22", "#ffbb33", "#2ca044", "#98df55", "#d62766", "#ff9877", "#946788", "#c5b099", "#8c56AA", "#c49cBB", "#e377FC", "#f7b6FD", "#7f7fEE", "#c7c7FF", "#bcbd00", "#dbdb11", "#17be22", "#9eda33"
+		          ]
 	});
 
 
