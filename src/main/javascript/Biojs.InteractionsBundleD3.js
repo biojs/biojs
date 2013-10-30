@@ -6,7 +6,7 @@
  * @extends Biojs
  * 
  * @author <a href="gustavoadolfo.salazar@gmail.com">Gustavo A. Salazar</a>
- * @version 0.9.0_alpha
+ * @version 0.9.1_beta
  * @category 1
  * 
  * @requires <a href='http://code.jquery.com/query-1.7.2.min.js'>jQuery Core 1.7.2</a>
