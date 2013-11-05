@@ -642,6 +642,7 @@ Biojs.InteractionsBundleD3 = Biojs.extend (
 			var nodes = self.cluster.nodes(self.model),
 				links = self.imports(nodes);
 			
+			if (typeof self.model.children == "undefined") self.model.children=[];
 			self.splines = self.bundle(links);
 
 			var path = self.svg.selectAll("path.link")
@@ -685,7 +686,14 @@ Biojs.InteractionsBundleD3 = Biojs.extend (
 						.attr("text-anchor", function(d) { return d.x < 180 ? "start" : "end"; })
 						.attr("transform", function(d) { return d.x < 180 ? null : "rotate(180)"; })
 						.attr("visibility",function(d) { return (d.showLegend)?"visible":"hidden";})
-						.text(function(d) { return d.key; });
+						.text(function(d) { 
+							if (d.typeLegend=="id") 
+								return d.id;
+							else if (d.typeLegend.indexOf("features.")==0)
+								return d.features[d.typeLegend.substr(9)];
+							else
+								return d[d.typeLegend];
+							});
 
 			svgNode.append("circle")
 				.attr("class", "figure")
