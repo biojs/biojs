@@ -20,9 +20,9 @@
                
                 
 				instance = new Biojs.PsicquicGraph({
-				    target: 'cy',
-                    proxyUrl:'../../main/resources/dependencies/proxy/proxy.php',
-                    cyoptions:{
+				    //target: 'cy',
+                    proxyUrl: '../../main/resources/dependencies/proxy/proxy.php',
+                    /*cyoptions:{
                         style: cytoscape.stylesheet().selector('node').css({
                             'content': 'data(id)',
                             'font-family': 'helvetica',
@@ -58,7 +58,7 @@
                                 console.log(e.cyTarget.id());
                             });
                         }
-                    }
+                    }*/
 				});
                 
                 
@@ -66,6 +66,6 @@
 		</script>
 	</head>
 	<body>
-		<div id="cy" style="margin-top:2px;background-color:#EEEEEE;height:800px;width:100%;float:left;border-style:solid;border-width:1px;"></div>
+		<div id="YourOwnDivId"></div>
 	</body>
 </html>

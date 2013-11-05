@@ -127,8 +127,8 @@ Biojs.PsicquicGraph = Biojs.extend(
             },
             ready:function(){
                 var cy = this;
-                cy.selector('node').click(function(e){
-                    console.log(e);
+                cy.nodes().click(function(e){
+                    console.log(e.cyTarget.id());
                 });
             }
         }
@@ -204,7 +204,6 @@ Biojs.PsicquicGraph = Biojs.extend(
                         score: line[14].split('|')
                     }
                 });
-                
             }
         }
         
@@ -213,6 +212,6 @@ Biojs.PsicquicGraph = Biojs.extend(
             edges: edges
         };
 
-        jQuery('#'+instance.opt.target).cytoscape(instance.opt.cyoptions);
+        jQuery('<div style="height:500px;width:100%;"></div>').appendTo('#'+instance.opt.target).cytoscape(instance.opt.cyoptions);
     }
 });
