@@ -294,8 +294,9 @@ Biojs.KEGGViewer = Biojs.extend(
                 var nodes = self._cy.nodes();
                 for(var j=0; j<nodes.length; j++){
                     for(var k=0; k<self.opt.expression.genes.length; k++){
-                            
-                        if(nodes[j].data().keggId == self.opt.expression.genes[k]){
+                        
+                        var inArray = jQuery.inArray( self.opt.expression.genes[k], nodes[j].data().keggId );
+                        if(inArray != -1){
                                 
                             var exp = condition.values[k];
                             var color = nodes[j].data().bkg_color;
@@ -367,7 +368,7 @@ Biojs.KEGGViewer = Biojs.extend(
             var node = {};
             node.data = {
                 id: d['@attributes'].id,
-                keggId: d['@attributes'].name,
+                keggId: d['@attributes'].name.split(' '),
                 name: name,
                 type: d['@attributes'].type,
                 link: d['@attributes'].link,
