@@ -1,8 +1,8 @@
 # Overview
 The aim of this project is to create a library of graphical components easy to reuse to represent biological information. A library easy to maintain and develop by identifying minimal functional units that could be used as building blocks for more complex applications. A browser independent JavaScript library easy to integrate in web applications regardless the programming language used to develop the server side.
 
-[Registry of components](http://www.ebi.ac.uk/Tools/biojs/registry)
-[Documentation for developers](https://code.google.com/p/biojs/wiki/Documentation)
+* [Registry of components](http://www.ebi.ac.uk/Tools/biojs/registry)
+* [Documentation for developers](https://code.google.com/p/biojs/wiki/Documentation)
 
 # Objectives
 * Represent consistently biological information across different projects
