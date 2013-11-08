@@ -10,7 +10,7 @@ The aim of this project is to create a library of graphical components easy to r
 * Standardize and facilitate components development
 
 # Use a BioJS component
-* Search and select a component in a BioJS registry. i.e. [EBI BioJS registry](http://wwwdev.ebi.ac.uk/Tools/biojs/registry/components.html)
+* Search and select a component in a BioJS registry. i.e. [EBI BioJS registry](http://www.ebi.ac.uk/Tools/biojs/registry/components.html)
 * Look at the "overview" section to see an example of how a component works
 * Check the "options", "methods" and "events" sections to see more information about the functionality provided by a component
 * Find inside the "installation" section the code and dependencies you will need to make a component working in a web page
