@@ -30,7 +30,7 @@
  * @requires <a href='http://jquery.bassistance.de/tooltip/jquery.tooltip.css'>jQuery.tooltip CSS</a>
  * @dependency <link rel="stylesheet" href="../biojs/dependencies/jquery/jquery.tooltip.css"/>
  *
- * @requires <a href='http://github.com/DmitryBaranovskiy/raphael/raw/master/raphael-min.js'>raphael</a>
+ * @requires Raphael 2.1.2
  * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/graphics/raphael-2.1.2.js"></script>
  *
  * @requires <a href='http://code.google.com/p/canvg/source/browse/trunk/canvg.js'>canvg</a>
