@@ -1,0 +1,8 @@
+To quickly build the registry web application from this code, execute the command below. The web application will be made available in "target/registry".
+
+   mvn clean compile jsdoctk:jsdoc
+
+For more information: 
+   https://github.com/biojs/biojs 
+   https://github.com/biojs/biojs/wiki/Documentation
+
