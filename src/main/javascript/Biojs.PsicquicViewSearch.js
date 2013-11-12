@@ -398,9 +398,9 @@ Biojs.PsicquicViewSearch = Biojs.extend({
 				}
 				jQuery(this).css({
 				width : '20%',
-				float : "left"
+				"float" : "left"
 				}).children().css({
-					float : "left"
+					"float" : "left"
 				});
 
 			}));
