@@ -620,9 +620,9 @@ Biojs.InteractionsBundleD3 = Biojs.extend (
 	        // For each import, construct a link from the source to target node.
 	        nodes.forEach(function(d) {
 	          if (d.imports) d.imports.forEach(function(i) {
-	        	var int =self.getInteraction(map[d.name].id,map[i].id);
-	            if (int!=null && imports.indexOf(int)==-1)
-	            	imports.push(int);
+	        	var inter =self.getInteraction(map[d["name"]].id,map[i].id);
+	            if (inter!=null && imports.indexOf(inter)==-1)
+	            	imports.push(inter);
 	          });
 	        });
 
