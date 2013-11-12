@@ -29,14 +29,18 @@
  * 	  Base URL of the REST service which provides the data
  * 
  * @option {string} [style='basic']
- * 	  Pptions to display this component: basic, collapsible or expanded
+ * 	  Options to display this component: basic, collapsible or expanded
+ *
+ * @option {string} [proxyUrl='../biojs/dependencies/proxy/proxy.php']
+ *    Proxy to bypass the same origin policy ({@link http://en.wikipedia.org/wiki/Same_origin_policy})
  * 
  * @example
  * var instance = new Biojs.EbiGlobalSearch({
  * 	  target: 'YourOwnDivId',
  * 	  query: 'p53',
  * 	  searchBaseURL: 'http://www.ebi.ac.uk/ebisearch/',
- * 	  style: 'collapsible' // basic | collapsible | expanded
+ * 	  proxyUrl: '../biojs/dependencies/proxy/proxy.php',
+ * 	  style: 'expanded' // basic | collapsible | expanded
  * });
  * 
  */
@@ -56,7 +60,8 @@ Biojs.EbiGlobalSearch = Biojs.extend(
 		target: "YourOwnDivId",
 		query: undefined,
 		searchBaseURL: 'http://www.ebi.ac.uk/ebisearch/',
-		style: 'collapsible'
+		style: 'collapsible',
+        proxyUrl: ''
 	},
 	
 	/**
@@ -122,6 +127,9 @@ Biojs.EbiGlobalSearch = Biojs.extend(
 	_updateSummary: function() {
 		var self = this;
 		var url = this.opt.searchBaseURL+"globalsearchsummary.ebi?query="+this.opt.query;
+        if(self.opt.proxyUrl != ""){
+      	    url = self.opt.proxyUrl + "?url=" + url;
+      	}
 		jQuery.ajax({
 			url: url,
 			context: this,
