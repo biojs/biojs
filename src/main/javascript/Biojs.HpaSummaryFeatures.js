@@ -28,9 +28,7 @@
  * 	  List of points including summary information for this feature
  * 
  * @option {string} [proxyUrl='../biojs/dependencies/proxy/proxy.php']
- *    Since the same origin policy ({@link http://en.wikipedia.org/wiki/Same_origin_policy}) in the browsers 
- *    Biojs include a proxy script in PHP which redirects Ajax requests from local to any other domain.
- *    You can use tour own proxy script by modifying this value. 
+ *    Proxy to bypass the same origin policy ({@link http://en.wikipedia.org/wiki/Same_origin_policy})
  * 
  * @example
  * var instance = new Biojs.HpaSummaryFeatures({
