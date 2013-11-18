@@ -19,13 +19,15 @@
         <link href="../../main/resources/css/smoothness/jquery-ui-1.8.18.custom.css" rel="stylesheet" type="text/css">
         
 		<script language="JavaScript" type="text/javascript">
-			window.onload = function() {
+            
+            window.onload = function() {
 				instance = new Biojs.KEGGViewer({
-				    proxyUrl:'../../main/resources/dependencies/proxy/proxyKegg.php',
-                    expression:{
+				    proxyUrl:'../../main/resources/dependencies/proxy/proxy.php',
+                    pathId: 'hsa04910',
+                    /*expression:{
                         upColor:'red',
                         downColor:'blue',
-                        genes: ['hsa:7248', 'hsa:51763', 'hsa:2002', 'hsa:2194'],
+                        genes: ['hsa:2998', 'hsa:5834', 'hsa:5499', 'hsa:2194'],
                         conditions: [
                             {
                                 name: 'condition 1',
@@ -40,7 +42,7 @@
                                 values: [0, 0.4, -0.2, 0.5]
                             }
                         ]
-                    } 
+                    }*/ 
 				});
 			};
 		</script>

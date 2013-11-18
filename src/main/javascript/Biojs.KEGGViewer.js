@@ -56,7 +56,7 @@
  * var instance = new Biojs.KEGGViewer({
  *      target: 'YourOwnDivId',
  *		pathId: 'hsa04910',
- *      proxyUrl: '../biojs/dependencies/proxy/proxyKegg.php',
+ *      proxyUrl: '../biojs/dependencies/proxy/proxy.php',
  *      expression:{
  *          upColor:'red',
  *          downColor:'blue',
@@ -99,7 +99,7 @@ Biojs.KEGGViewer = Biojs.extend(
 	opt: {
 		target: 'YourOwnDivId',
 		pathId: 'hsa04910',
-        proxyUrl: '../biojs/dependencies/proxy/proxyKegg.php',
+        proxyUrl: '../biojs/dependencies/proxy/proxy.php',
         expression:{
             upColor:'red',
             downColor:'blue',
@@ -247,13 +247,13 @@ Biojs.KEGGViewer = Biojs.extend(
         
         var self = this;
         $.ajax({
-            dataType: 'json',
+            dataType: 'xml',
             url: dataSet.proxyUrl,
             data: {
                 url:'http://rest.kegg.jp/get/'+dataSet.pathId+'/kgml'
             },
-            success: function(data){
-                self._renderPathway(data, self);
+            success: function(xml){
+                self._renderPathway(xml, self);
             }
         });
     },
@@ -294,8 +294,9 @@ Biojs.KEGGViewer = Biojs.extend(
                 var nodes = self._cy.nodes();
                 for(var j=0; j<nodes.length; j++){
                     for(var k=0; k<self.opt.expression.genes.length; k++){
-                            
-                        if(nodes[j].data().keggId == self.opt.expression.genes[k]){
+                        
+                        var inArray = jQuery.inArray( self.opt.expression.genes[k], nodes[j].data().keggId );
+                        if(inArray != -1){
                                 
                             var exp = condition.values[k];
                             var color = nodes[j].data().bkg_color;
@@ -326,16 +327,18 @@ Biojs.KEGGViewer = Biojs.extend(
             links = [],
             keggIds = [];
         
-        data.entry.forEach(function(d,i){
-            var type =  d['@attributes'].type;
+        $(data).find('entry').each(function(){
+            var entry = $(this);
+            var type =  entry.attr('type');
+            var graphics = entry.find('graphics');
             
             var text_valign = 'center', 
                 shape = 'rectangle',
                 bkg_color = '#99ff99',
                 opacity = 0.9,
                 border_width = 0,
-                width = +d.graphics['@attributes'].width,
-                height = +d.graphics['@attributes'].height;
+                width = $(graphics).attr('width'),
+                height = $(graphics).attr('height');
             
             if(type == 'gene'){
                 border_width = 2;
@@ -354,23 +357,23 @@ Biojs.KEGGViewer = Biojs.extend(
                 //bkg_color = '#ffffff';
                 width = undefined;
                 height = undefined;
-                d.component.forEach(function(n,j){
-                    node_map[n['@attributes'].id].data.parent = d['@attributes'].id;
+                entry.find('component').each(function(){
+                    node_map[$(this).attr('id')].data.parent = entry.attr('id');
                 });
             }
             
-            var name = '';
-            if(d.graphics['@attributes'].name !== undefined){
-                name = d.graphics['@attributes'].name.split(',')[0];
+            var names = [];
+            if(graphics.attr('name') !== undefined){
+                names = graphics.attr('name').split(',');
             }
             
             var node = {};
             node.data = {
-                id: d['@attributes'].id,
-                keggId: d['@attributes'].name,
-                name: name,
-                type: d['@attributes'].type,
-                link: d['@attributes'].link,
+                id: entry.attr('id'),
+                keggId: names,
+                name: names[0],
+                type: type,
+                link: entry.attr('link'),
                 width: width,
                 height: height,
                 shape: shape,
@@ -379,28 +382,26 @@ Biojs.KEGGViewer = Biojs.extend(
                 'border-width': border_width
             }
             
-            keggIds.push(d['@attributes'].name);
+            keggIds.push(entry.attr('name'));
             
-            node_map[d['@attributes'].id] = node;
+            node_map[entry.attr('id')] = node;
             nodes.push(node);
             
-            positions[d['@attributes'].id] = {
-                x : +d.graphics['@attributes'].x,
-                y : +d.graphics['@attributes'].y
+            positions[entry.attr('id')] = {
+                x : +graphics.attr('x'),
+                y : +graphics.attr('y')
             }
             
         });
         
-        data.relation.forEach(function(d,i){
-            var type = d['@attributes'].type;
+        $(data).find('relation').each(function(){
+            var rel = $(this);
+            var type =  rel.attr('type');
             
             var subtypes = [];
-            if(d.subtype != undefined)
-                subtypes = [].concat(d.subtype);
-            
-            subtypes.forEach(function(s,j){
-                
-                var name = s['@attributes'].name,
+            rel.find('subtype').each(function(){
+                var sub = $(this);
+                var name = sub.attr('name'),
                     line_style = 'solid',
                     target_arrow_shape = 'none',
                     text = '';
@@ -442,9 +443,9 @@ Biojs.KEGGViewer = Biojs.extend(
                 
                 links.push({
                     data:{
-                        source: d['@attributes'].entry1,
-                        target: d['@attributes'].entry2,
-                        name: s['@attributes'].name,
+                        source: rel.attr('entry1'),
+                        target: rel.attr('entry2'),
+                        name: name,
                         reaction: type,
                         line_style: line_style,
                         target_arrow_shape: target_arrow_shape,
