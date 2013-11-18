@@ -6,7 +6,8 @@
                 'http://wwwdev.ebi.ac.uk',
                 'http://das.proteinatlas.org',
                 'http://www.ensembl.org',
-		'http://www-test.ebi.ac.uk'
+		        'http://www-test.ebi.ac.uk',
+                'http://rest.kegg.jp/'
         );
         
 /* GET THE URL TO PROXY */
