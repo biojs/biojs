@@ -370,8 +370,9 @@ Biojs.KEGGViewer = Biojs.extend(
             var node = {};
             node.data = {
                 id: entry.attr('id'),
-                keggId: names,
+                keggId: entry.attr('name').split(' '),
                 name: names[0],
+                names: names,
                 type: type,
                 link: entry.attr('link'),
                 width: width,
