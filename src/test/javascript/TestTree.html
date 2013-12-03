@@ -22,6 +22,7 @@
 
 		<!--<script language="JavaScript" type="text/javascript" src="../../main/resources/dependencies/jquery/jquery-1.7.2.min.js"></script> -->
 		<script type="text/javascript" src="../../main/resources/dependencies/extern/jquery.tipsy.js"></script> 	
+		<script type="text/javascript" src="../../main/resources/dependencies/extern/flexigrid.pack.js"></script> 	
 		<!-- <script language="JavaScript" type="text/javascript" src="../../main/resources/dependencies/jquery/jquery-1.7.2.min.js"></script> -->
 	   <!-- <script type="text/javascript" src="../../main/resources/dependencies/joyride-master/jquery.cookie.js"></script> -->
 	    <!-- <script type="text/javascript" src="../../main/resources/dependencies/joyride-master/modernizr.mq.js"></script> -->
@@ -139,7 +140,8 @@
           <li><a href="#">Ensembl</a></li>
           <li><a href="#">UniProt</a></li>
           <li class="divider"></li>
-          <li><a href="#">Separated link</a></li>
+          <li><a id="focus_tree" href="#">Focus tree</a></li>
+          <li><a id="reset_tree" href="#">Reset_tree</a></li>
           <li class="divider"></li>
           <li><a href="#">One more separated link</a></li>
         </ul>
@@ -186,16 +188,20 @@
     </div>
   </div>
 </div>
-	<div id="my_custom_menu" style="display:none">
+	<div id="my_custom_menu" style="display:none;z-index: 2;">
 		<ul class="context-menu-list context-menu-root" style="width: 122px; ">
-			<li class="context-menu-item icon icon-edit"><span>Name: </span></li>
+			<!--<li class="context-menu-item icon icon-edit"><span>Name: </span></li>
 			<li class="context-menu-item icon icon-cut"><span>Information: </span></li>
 			<li class="context-menu-item context-menu-separator not-selectable"></li>
-			<li class="context-menu-item icon icon-copy"><span>Copy</span></li>
-			<li class="context-menu-item icon icon-paste"><span>Paste</span></li>
+			<li id="focus_here" class="context-menu-item icon icon-copy"><span id="focus_here">Focus here</span></li>
+			<li class="context-menu-item icon icon-copy"><a href="#"><span>Reroot tree here</span></a></li>
+			<li class="context-menu-item icon icon-paste"><span>swap children</span></li>
 			<li class="context-menu-item icon icon-delete"><span>Delete</span></li>
 			<li class="context-menu-item context-menu-separator not-selectable"></li>
-			<li class="context-menu-item icon icon-quit"><span>Quit</span></li>
+			<li class="context-menu-item icon icon-delete"><span>annotate this node</span></li>
+			<li class="context-menu-item icon icon-delete"><span>set node annotation to null</span></li>
+			<li class="context-menu-item context-menu-separator not-selectable"></li>
+			<li class="context-menu-item icon icon-quit"><span>Quit</span></li> -->
 		</ul>	
 	</div>
 	<div id="YourOwnDivId" class="col-md-12">

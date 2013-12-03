@@ -138,7 +138,8 @@
  *					// tree parameters
  *				    json_tree : model_json_tree, 
  *					alignment_file : alignment_file,
- 					show_real_branchlength : "false",
+ *					show_real_branchlength : "false",
+ *					annotation_option : "seq_domains",
  *					domains_file : domain_file,
  *				    two_window : true,
  *				    image_path : image_path,
@@ -176,7 +177,7 @@ Biojs.Tree = Biojs.extend(
 		//show_species_tree: false,
 		show_lost_taxa: false, // alignment, domains, seq_domains, speciestree || false
 		tree_view: "", // reconciledView
-		annotation_option: "domains", // alignment, domains, seq_domains, speciestree || false
+		annotation_option: "annotation_grid", // alignment, domains, seq_domains, speciestree || false
 		species_nodes: 190,
 		alignment_length : "",
 		domains_file : "",
@@ -198,7 +199,7 @@ Biojs.Tree = Biojs.extend(
 		json_alignment_string : "",
 		json_domain_string : "",
 		root : "",
-		show_real_branchlength: true,
+		show_real_branchlength: false,
 		alignment_font_size:8,
 		//domainScale : d3.scale.linear().domain([20,4000]).range([1, 250]),
 		
@@ -222,7 +223,7 @@ Biojs.Tree = Biojs.extend(
 		link_type : "elbow",
 		leaf_space : "300",
 		i : 0, 
-		duration : 1900, 
+		duration : 500, 
 		two_window: false,
 		root: "",
 		diagonal: "",
@@ -344,120 +345,15 @@ Biojs.Tree = Biojs.extend(
 		jQuery('<div id="annotation_spinner"><img  src="http://www.mapmatters.org/img/spinner_large.gif" alt="Loading annotation" height="22" width="22">Loading annotation data...</div>').appendTo("#"+this.opt.annot_target);
 		jQuery("#tree_spinner").hide();	
 		jQuery("#annotation_spinner").hide();	
+		
+		// this is important!!!
+		// because we are getting data via an asyncronous ajax call, the function will continue
+		// we have to be aware the things are getting executed within the "success" function
 		this.tree_data = this.readTree({'load_from_variable': this.opt.load_from_variable,'tree_format' : this.opt.formatOptions.tree,
 										'tree_data': this.opt.json_tree,'tree_data_variable' : this.opt.json_tree_string,
 										'load_from_web' : this.opt.load_from_web});
 	
-		/*
-		
-		jQuery('<div id="tree_panel" ></div><div id="annotation_panel" ></div>').appendTo("#"+this.opt.target);
-		//jQuery('<div id="tree_panel" class="col-md-6"></div><div id="annotation_panel" class="col-md-6"></div>').appendTo("#"+this.opt.target);
-		
-		console.log("did we add something");
-		// Read annotation
-		if(self.opt.two_window){
-			// this will be the main div
-			this.opt.tree_target = "tree_panel";
-			this.opt.annot_target = "annotation_panel"
-			console.log("current target is "+this.opt.target);
-			// read annotations?
-			if(this.opt.annotation_option){
-				jQuery('<img id="tree_spinner" src="http://www.mapmatters.org/img/spinner_large.gif" alt="Loading tree" height="22" width="22">...loading tree data').appendTo("#"+this.opt.tree_target);
-				jQuery('<img id="annotation_spinner" src="http://www.mapmatters.org/img/spinner_large.gif" alt="Loading annotation" height="22" width="22">...loading annotation data').appendTo("#"+this.opt.annot_target);
-				//if(this.opt.annotation_option == "alignment"){
-					console.log("reading alignment annotations");
-				//					this.alignment_data = this.readAnnotation({'load_from_variable': this.opt.load_from_variable,'format' : "json",
-				//																'data_source': this.opt.alignment_file,'data_variable' : this.opt.json_alignment_string});	 
-				//}
-				//else if(this.opt.annotation_option == "domains"){
-					console.log("reading domain annotations");
-					this.domain_data = this.readAnnotation({load_from_variable: this.opt.load_from_variable,format : "json",
-															data_source: this.opt.domains_file,data_variable : this.opt.json_domain_string});	
-				//}
-			}
-			else{
-				jQuery('No annotation available').appendTo("#"+this.opt.annot_target);
-				
-			}
-			
-			
-		}
-										
-										
-		// set padding for tree window
-		this.padding = {
-		     "top":    0,
-		     "right":  10,
-		     "bottom": 0,
-		     "left":   10
-		  };		
-		// set correct height
-
-    	this.opt.tree = d3.layout.cluster();
-		
-    	var tree = this.opt.tree;
-    	var nodes = tree.nodes(this.tree_data);
-		// set correct height
-  		this.opt.height = nodes.length * 11;
-		// get available width of div
-		this.opt.div_width = parseInt(d3.select("#"+this.opt.target).style("width"));	
-		if(self.opt.two_window){ 
-			if(this.opt.show_alignments){
-				// setting width of annotation div to max alignment length
-				this.opt.max_annot_div_width = d3.max(self.alignment_data, function(d) { return +d.alignment_length;} ) * this.opt.alignment_font_size;		
-			}
-			else{
-				div_width = d3.select("#"+self.opt.target).style("width");
-				div_width_half = div_width.replace("px","");
-				div_width_half = parseInt(div_width_half /2);
-				this.opt.div_width_half = div_width_half;
-				this.opt.max_annot_div_width = div_width_half;
-				this.opt.max_seq_representation = div_width_half;
-			}
-		}
-		// build the svg(s)
-		// if using two divs/windows, there will be one div to hold the tree and another one to hold the annotation
-  		this._setVisualSpace({'width':div_width,'height':this.opt.height, "two_window": self.opt.two_window, "annot_div_width" : this.opt.max_annot_div_width});
-
-		// set visual area to this.opt.vis
-		var width = this.opt.width - this.padding.left - this.padding.right;
-		var height = this.opt.height - this.padding.top - this.padding.bottom;
-		var div_width;
-		
-		//
-		if(self.opt.two_window){
-			div_width = parseInt(d3.select("#"+this.opt.tree_target).style("width"));	
-			this.opt.leaf_space = parseInt( div_width/ 4);
-			this.opt.tree = d3.layout.cluster()
-									 .separation(function(a, b) { 
-										 return a.parent === b.parent ? 4 : 4; 
-									 })
-									 .sort(this.comparator)
-									 .size([height, self.opt.div_width_half-this.opt.leaf_space]);
-		}
-		else{ 
-			div_width= parseInt(d3.select("#"+this.opt.target).style("width")) - 400;	
-			this.opt.leaf_space = parseInt( div_width/ 2);
-			this.opt.tree = d3.layout.cluster()
-									 .separation(function(a, b) { return a.parent === b.parent ? 4 : 4; })
-									 .size([height, div_width-this.opt.leaf_space]);
-		}
-		this.opt.diagonal = d3.svg.diagonal().projection(function(d) { return [d.y, d.x]; });
-
-  		// define colors used to draw the domains
-  		if(!self.opt.two_window){
-			console.log("domaincolors: opt.vis");
-			this.setDomainColors({target : this.opt.vis});
-		}
-		else{
-			console.log("domaincolors: opt.annot_panel");
-			this.setDomainColors({target : this.opt.annot_panel});
-		}
-		// draw the tree
-	  	this.update(this.tree_data); 
-		*/
-
-	},
+										},
 	/**
 	 * Setting the svg
 	 * @param {string} seq The sequence strand.
@@ -931,7 +827,7 @@ _setTreeSpace: function ( args ) {
 		    //  "translate(" + d3.event.translate + ")"
 		      //+ " scale(" + d3.event.scale + ")");
 	},
-	/**
+	/*
 	 * readTree in different formats
 	 * @param {string} load_from_variable whether to read the annotation from a file or variable.
 	 * @param {string} data_source file/variable.
@@ -984,6 +880,7 @@ _setTreeSpace: function ( args ) {
 						  console.log("have result");
 						  //return result;
 					  		json_annotation_data = result;
+							self.annotation_data = result;
 							self.update_annotation(json_annotation_data);
 							//console.log(result);
 					  },
@@ -1039,7 +936,41 @@ _setTreeSpace: function ( args ) {
 		
 		
 	},
-	
+	collapseTree: function(){
+		var self = this;
+		var found_node;
+		jQuery.each(self.selected_nodes, function(i,d){
+		
+			if(d.name == self.opt.highlight_gene){
+				found_node = d;	
+				return false;
+			}		
+		});
+		if(found_node){
+			var curr_node = found_node;
+		
+			while(parent = curr_node.parent){
+				parent.children.forEach(function(d) {
+					if(d.name === curr_node.name){
+						curr_node = parent;
+							return false;
+					}
+			if (d.children) {
+				d._collapsed_children = get_all_childs(d).length - 1;
+				d._children = d.children;
+				d.children = null;
+			
+			}		
+				});
+				curr_node = parent;
+			}
+		}
+		
+		self.root = self.selected_nodes[0];
+			
+		self.update_tree(self.selected_nodes[0]);
+		self.update_annotation();
+	},	
 	readTree: function(args){
 		var self = this;
 		var load_from_variable = args.load_from_variable;
@@ -1084,21 +1015,34 @@ _setTreeSpace: function ( args ) {
 			          success: function(result){
 						  console.log("have result");
 					  		json_tree_data = result;
+							self.root = json_tree_data;
+							self.all_data= json_tree_data;
+
+
 							self.update_tree(json_tree_data);
 						// ok, do we read annotations as well?
 					  		if(self.opt.two_window){
 								console.log("remove spinner");
 								jQuery("#tree_spinner").remove;
 								$('#tree_spinner').remove()
-							}	
-							self.domain_data = self.readAnnotation({load_from_variable: self.opt.load_from_variable,format : "json",
+								self.domain_data = self.readAnnotation({load_from_variable: self.opt.load_from_variable,format : "json",
 															data_source: self.opt.domains_file,data_variable : self.opt.json_domain_string});	
-							if(self.opt.two_window){
 								console.log("remove spinner");
 								jQuery("#annotation_spinner").remove;
 								$('#annotation_spinner').remove()
+							}
+							else{
+								// so annotation is in the tree json
+								var domains = rects.selectAll(".domain").data(function(d) { return d.domains; })
+								self.update_annotation();
 							}	
-			}
+
+							if(self.opt.highlight_gene){
+								self.collapseTree();
+							} 	
+
+
+					}
 					  
 					  });
 			
@@ -1397,6 +1341,24 @@ _setTreeSpace: function ( args ) {
 	show_uniprot_annotation: function(){
 			show_leaf_uniprot({target:this.opt.target});
 	},
+	toggleAll: function(d) {
+	        if (d.children) {
+	          d.children.forEach(toggle);
+	          //click(d);
+	        }
+	},
+      
+// Toggle children.
+	toggle: function(d) {
+	  if (d.children) {
+	    d._children = d.children;
+	    d.children = null;
+	  } else {
+	    d.children = d._children;
+	    d._children = null;
+	  }
+	} ,
+
 	toggle_branchlength: function(){
 		// remove everything in annotation div
 		var all_nodes = jQuery('.annotation_panel .node');
@@ -1462,7 +1424,7 @@ _setTreeSpace: function ( args ) {
 		d3.select("#"+this.opt.target+" svg").selectAll(".innerNode_label").attr("visibility", "hidden");
 		//d3.select("#tree svg").selectAll(".innerNode_label").attr("visibility", "hidden");
 	},
-	/**
+	/*
 	 * Updates a tree layout.
 	 * 
 	 * @example 
@@ -1471,13 +1433,13 @@ _setTreeSpace: function ( args ) {
 	 */
 	update_tree: function(source){
 		var self = this;
-		var root = source;
+		var root = this.root;
 		var i = 0;
-
+		// get tree data
 		this.opt.tree = d3.layout.cluster();
-		
     	var tree = this.opt.tree;
-    	var nodes = tree.nodes(root);
+    	var nodes = tree.nodes(root).reverse();
+							
 		// set correct height
   		this.opt.height = nodes.length * 11;
 		// get available width of div
@@ -1498,8 +1460,9 @@ _setTreeSpace: function ( args ) {
 		}
 		// build the svg(s)
 		// if using two divs/windows, there will be one div to hold the tree and another one to hold the annotation
-  		this._setVisualSpace({'width':div_width,'height':this.opt.height, "two_window": self.opt.two_window, "annot_div_width" : this.opt.max_annot_div_width});
-
+		if (!$('#tree_panel svg').length){
+			this._setVisualSpace({'width':div_width,'height':this.opt.height, "two_window": self.opt.two_window, "annot_div_width" : this.opt.max_annot_div_width});
+		}
 		// set visual area to this.opt.vis
 		var width = this.opt.width - this.padding.left - this.padding.right;
 		var height = this.opt.height - this.padding.top - this.padding.bottom;
@@ -1509,7 +1472,8 @@ _setTreeSpace: function ( args ) {
 		if(self.opt.two_window){
 			div_width = parseInt(d3.select("#"+this.opt.tree_target).style("width"));	
 			this.opt.leaf_space = parseInt( div_width/ 4);
-			this.opt.tree = d3.layout.cluster()
+			//this.opt.tree = d3.layout.cluster()
+									this.opt.tree
 									 .separation(function(a, b) { 
 										 return a.parent === b.parent ? 4 : 4; 
 									 })
@@ -1519,7 +1483,7 @@ _setTreeSpace: function ( args ) {
 		else{ 
 			div_width= parseInt(d3.select("#"+this.opt.target).style("width")) - 400;	
 			this.opt.leaf_space = parseInt( div_width/ 2);
-			this.opt.tree = d3.layout.cluster()
+									this.opt.tree
 									 .separation(function(a, b) { return a.parent === b.parent ? 4 : 4; })
 									 .size([height, div_width-this.opt.leaf_space]);
 		}
@@ -1539,14 +1503,14 @@ _setTreeSpace: function ( args ) {
 		var tree_target = d3.select(".treearea");
 		var annot_target = d3.select(".annotationarea");
 		
-    	var tree = this.opt.tree;
-    	var nodes = tree.nodes(root);
+    	//var tree = this.opt.tree;
+    	var nodes = this.opt.tree.nodes(root);
 		// set correct height
-  		this.opt.height = nodes.length * 11;
+  		//this.opt.height = nodes.length * 11;
 
 		// get the tree's nodes
-		var selected_nodes;
-	
+		var selected_nodes = nodes;
+
 		if(self.opt.formatOptions.tree == "json"){
 			console.log("using json in branch length test");
 			selected_nodes = nodes.slice(0);
@@ -1558,9 +1522,10 @@ _setTreeSpace: function ( args ) {
 		}
 		
 		// from here on --> all nodes should be in self.selected_nodes
-		
 		self.selected_nodes = selected_nodes;
-		nodes = selected_nodes;
+			
+		selected_nodes = self.selected_nodes;
+		nodes = self.selected_nodes;
 		// showing ultrametric tree or using real branch length
 		// sets the "branch_length" field of each node
 		if(self.opt.show_real_branchlength){
@@ -1596,46 +1561,29 @@ _setTreeSpace: function ( args ) {
 		//	return d.id || (d.id = ++i); 
 		//});
 		this.nodeEnter = node.enter().append("svg:g").attr("class", "node")
-									//.on("click", function(d){console.log("clicked!!!!");self._collapseNode(d);})
-									//function(d){
-									//	console.log("clicked on "+d.name+" x:"+d3.event.x+" y:"+d3.event.y);
-									// Some code to allow right clicks on nodes
-								//	click(d);
+									.on("click", function(d){
+											console.log("clicked!!!!");
+											//self._focus(d);
+											console.log("clicked!!!!");
+											self._collapseNode(d);
+											})
+									//.on("dblclick", function(d) { self._reset_tree(d) })
 								.on("contextmenu", function(d, index) {
-   										 var position = d3.mouse(this);
+											var position = d3.mouse(this);
 											var offsetLeft = document.getElementById("tree_panel").offsetLeft;
 											var offsetTop = document.getElementById("tree_panel").offsetTop;
 											var mouse_x =d3.event.x ;
 											var mouse_y =d3.event.y ;
+											this.current_d = d;
     										d3.select('#my_custom_menu')
       											.style('position', 'absolute')
       											.style('left', mouse_x + "px")
       											.style('top',  mouse_y + "px") 
       											.style('display', 'block');
+   										 self._buildContextMenu(d);
 
     											d3.event.preventDefault();
-									})
-    					/*d3.select('#my_custom_menu')
-      											.style('position', 'absolute')
-      											.style('left', position[0] + "px")
-      											.style('top', position[1] + "px")
-      											.style('display', 'block');
-
-    											d3.event.preventDefault(); */
-							//	}) 		
-									/*	d3.select('#popup_menu')
-										      .style('position', 'absolute').style('left', d3.event.x + "px")
-										      .style('top', d3.event.y + "px").style('display', 'block');
-											  //d3.event.preventDefault();
-											  var html_for_popup;
-											  html_for_popup = "<a href='#' target='_blank'>get all IDs for node</a><br>";
-											  html_for_popup += "<a href='#' target='_blank'>highlight subtree</a>";
-											  d3.select('#popup_menu').html(html_for_popup);
-									*/	
-										//})
-									//.on("click", function(d) { 
-									//	console.log("toggeled");
-									//	toggle(d); self.update(d); })
+											})
 									.on("mouseover", function(d){
 										var test = this;self._highlightSpeciesData(test,d)
 									})
@@ -1681,23 +1629,11 @@ _setTreeSpace: function ( args ) {
 		var texts = draw_taxon_names({nodeEnter : this.nodeEnter, show_taxa: this.opt.show_taxa,highlight_gene : this.opt.highlight_gene,  default_view : this.opt.default_view});
 		var bootstrap_texts = draw_bootstraps({nodeEnter : this.nodeEnter, visibility : "hidden"});     // Draw bootstrap values 
 		self.setTooltips();
-		
-		/*jQuery('node').contextMenu({
-        selector: 'li', 
-        callback: function(key, options) {
-            var m = "clicked: " + key + " on " + $(this).text();
-            window.console && console.log(m) || alert(m); 
-        },
-        items: {
-            "edit": {name: "Edit", icon: "edit"},
-            "cut": {name: "Cut", icon: "cut"},
-            "copy": {name: "Copy", icon: "copy"},
-            "paste": {name: "Paste", icon: "paste"},
-            "delete": {name: "Delete", icon: "delete"},
-            "sep1": "---------",
-            "quit": {name: "Quit", icon: "quit"}
-        }
-    });	*/
+	
+		//self.root.children.forEach(self._toggleAll);
+
+		//collapse nodes
+
 	},
 
 
@@ -1826,26 +1762,8 @@ _setTreeSpace: function ( args ) {
 			return d.id || (d.id = ++i); 
 		});
 		this.nodeEnter = node.enter().append("svg:g").attr("class", "node")
-									.on("click", function(d){console.log("uff, clicked");self._collapseNode(d);})
-									//function(d){
-									//	console.log("clicked on "+d.name+" x:"+d3.event.x+" y:"+d3.event.y);
-									// Some code to allow right clicks on nodes
-										
-									//	click(d);
-										/*
-										d3.select('#popup_menu')
-										      .style('position', 'absolute').style('left', d3.event.x + "px")
-										      .style('top', d3.event.y + "px").style('display', 'block');
-											  //d3.event.preventDefault();
-											  var html_for_popup;
-											  html_for_popup = "<a href='#' target='_blank'>get all IDs for node</a><br>";
-											  html_for_popup += "<a href='#' target='_blank'>highlight subtree</a>";
-											  d3.select('#popup_menu').html(html_for_popup);
-										*/
-										//})
-									//.on("click", function(d) { 
-									//	console.log("toggeled");
-									//	toggle(d); self.update(d); })
+									//.on("click", function(d){console.log("uff, clicked");self._collapseNode(d);})
+									.on("click", function(d){console.log("uff, clicked");self._focus(d);})
 									//.on("mouseover", function(d){var test = this;self._highlightSpeciesData(test,d)})
 									//.on("mouseout", function(d){var test = this;self._deHighlightSpeciesData(test,d)})
 		// Update the links…
@@ -1932,7 +1850,7 @@ _setTreeSpace: function ( args ) {
 	update_annotation: function(source){
 		var self = this;
 	//	var root = this.tree_data;
-		var annotation_data = source;
+		var annotation_data = self.annotation_data;
 		var target = d3.select(".treearea");
 		var tree_target = d3.select(".treearea");
 		var annot_target = d3.select(".annotationarea");
@@ -1964,6 +1882,7 @@ _setTreeSpace: function ( args ) {
 		}
 		else if(this.opt.annotation_option == "alignment" 
 			|| this.opt.annotation_option == "domains"
+			|| this.opt.annotation_option == "annotation_grid"
 			|| this.opt.annotation_option == "seq_domains"){
 				var nodeindex = self.getNodeIndices({selected_nodes : this.nodes});
 		
@@ -1980,7 +1899,11 @@ _setTreeSpace: function ( args ) {
 						console.log("adding seq_domains");
 						self.showSeqDomains({nodeindex : nodeindex, annot_target : annot_target});
 						break;
-						
+					case "annotation_grid":
+						console.log("adding annotation_grid");
+						self.showAnnotationGrid({nodeindex : nodeindex, annot_target : annot_target});
+						break;
+				
 						
 					default:
 						console.log("no annotation selected");
@@ -2066,7 +1989,7 @@ _setTreeSpace: function ( args ) {
 									
 	},
 	
-	showSeqDomains: function(args){
+	showAnnotationGrid: function(args){
 		var nodeindex = args.nodeindex;
 		var annot_target = args.annot_target;
 		var self = this;
@@ -2076,6 +1999,79 @@ _setTreeSpace: function ( args ) {
 		        if (obj.hasOwnProperty(key)) size++;
 		    }
 		    return size;
+		};
+		
+		var size = Object.size(nodeindex);
+
+		// columns are: protein_id, sf_name, definition, organism, gene_id, gene_symbol, molecular function, biological process, cellular component, protein class
+		// well, which of those do we need?
+		// expande
+		var table_html = "<table>";
+		jQuery.each(self.annotation_data, function(seq_no,d){
+				table_html += "<tr>";		
+						if(d.xref){
+							if(d.xref.protein_id){table_html += "<td>"+d.xref.protein_id+"</td>"}
+							else {table_html += "<td></td>"}
+							if(d.xref.sf_name){table_html += "<td>"+d.xref.sf_name+"</td>"}
+							else {table_html += "<td></td>"}
+							if(d.xref.definition){table_html += "<td>"+d.xref.definition+"</td>"}
+							else {table_html += "<td></td>"}
+							if(d.xref.gene_id){table_html += "<td>"+d.xref.gene_id+"</td>"}
+							else {table_html += "<td></td>"}
+							if(d.xref.molecular_function){table_html += "<td>"+d.xref.molecular_function+"</td>"}
+							else {table_html += "<td></td>"}
+							if(d.xref.biological_process){table_html += "<td>"+d.xref.biological_process+"</td>"}
+							else {table_html += "<td></td>"}
+							if(d.xref.cellular_component){table_html += "<td>"+d.xref.cellular_component+"</td>"}
+							else {table_html += "<td></td>"}
+							if(d.xref.protein_class){table_html += "<td>"+d.xref.protein_class+"</td>"}
+							else {table_html += "<td></td>"}
+
+						}
+				table_html += "</tr>";
+				});
+				table_html += "</table>";
+		jQuery(table_html).appentTo("#annotation_panel");
+
+		},
+
+		showSeqDomains: function(args){
+		var nodeindex = args.nodeindex;
+		var annot_target = args.annot_target;
+		var self = this;
+		Object.size = function(obj) {
+		    var size = 0, key;
+		    for (key in obj) {
+		        if (obj.hasOwnProperty(key)) size++;
+		    }
+		    return size;
+
+
+		// bind data to nodes
+		var annot_node = annot_target.selectAll("g.node").data(self.annotation_data);
+		// enter selection
+		this.annot_nodeEnter = annot_node.enter()
+									.append("svg:g").filter(function(d){ 
+											var test = d;
+											if(nodeindex.hasOwnProperty(d.name)){ 
+												console.log("take "+d.name); 
+											}
+											else{
+												console.log("could not map "+d.name);	
+											}
+											return nodeindex.hasOwnProperty(d.name)})
+									.attr("class", "xref_node")
+		
+		// exit selection
+		annot_node.exit().remove();
+		if(self.opt.two_window){
+											this.nodeEnter = this.annot_nodeEnter;
+		}			
+		// draw conservation patterns
+		var alignment_length = this.opt.max_value;
+		//var rects = this.annot_nodeEnter.filter(function(d){ return typeof d.children == 'undefined' });
+		draw_xref_nodes({two_window:self.opt.two_window, nodeEnter : this.nodeEnter, nodeindex: nodeindex, node : annot_node, source : self.tree_data  , tree_representation_type : this.opt.tree_representation_type});
+
 		};
 		
 		var size = Object.size(nodeindex);
@@ -2093,7 +2089,6 @@ _setTreeSpace: function ( args ) {
 			todo: foreach position in alignment count number of gaps until here
 			dict[curr_pos-gaps] = curr_pos
 		*/
-	
 		var offset_dictionary = {};	
 		jQuery.each(self.domain_data, function(seq_no,d){
 			var gap_counter = 0,
@@ -2152,10 +2147,10 @@ _setTreeSpace: function ( args ) {
 									.append("svg:g").filter(function(d){ 
 											var test = d;
 											if(nodeindex.hasOwnProperty(d.name)){ 
-												//console.log("take "+d.name); 
+												console.log("take "+d.name); 
 											}
 											else{
-												//console.log("could not map "+d.name);	
+												console.log("could not map "+d.name);	
 											}
 											return nodeindex.hasOwnProperty(d.name)})
 									.attr("class", "node")
@@ -2511,7 +2506,7 @@ _setTreeSpace: function ( args ) {
 		
 	},
 	
-	/**
+	/*
 	 * Sets controls.
 	 * @param {string} seq The sequence strand.
 	 * @param {string} [identifier] Sequence identifier.
@@ -2522,7 +2517,7 @@ _setTreeSpace: function ( args ) {
 	 */
 	setControls: function(){},
 	
-	/**
+	/*
 	 * Sets domain colors.
 	 * @param {string} seq The sequence strand.
 	 * @param {string} [identifier] Sequence identifier.
@@ -2611,9 +2606,12 @@ _setTreeSpace: function ( args ) {
 			d._children = null;
 		}
 		this.update_tree(d);
+		this.update_annotation(d);
 	},	
 	expandNode: function(arg){},	
-	/**
+
+	
+	/*
 	 * Get maximal length of domain/aligned_seq.
 	 * @param {array} leaves The leaves of the tree with annotated domains.
 	 * 
@@ -2639,7 +2637,7 @@ _setTreeSpace: function ( args ) {
 		return max_seq_length;
 	},
 	
-	/**
+	/*
 	 * Sets model organism.
 	 * @param {string} seq The sequence strand.
 	 * @param {string} [identifier] Sequence identifier.
@@ -2921,6 +2919,28 @@ _setTreeSpace: function ( args ) {
 						//var wasItPruned = prune(copy_of_nodes, "Macaca_mulatta"); 
 
 	},
+	_focus: function(d) {
+		var self = this;
+			
+		// determine the subset of 
+		if(self.current_d){
+			self.root = self.current_d;
+		}
+		else{
+			self.root = d;
+		}
+		self.update_tree();
+	}
+	,
+	_reset_tree: function(d) {
+		var self = this;
+		
+		// determine the subset of 
+
+		this.root = this.all_data;
+		self.update_tree();
+		self.update_annotation();
+	},
 	_prune: function(array, label) {
 		var self = this;
 		for (var i = 0; i < array.length; ++i) {
@@ -2966,6 +2986,14 @@ _setTreeSpace: function ( args ) {
 		jQuery("#"+target).html(html_text);
 		console.log("added to #legend_panel: "+html_text);
 	},
+
+	_buildContextMenu: function(d){
+			var self = this;
+			jQuery("<li class=\"context-menu-item icon icon-cut\"><span>Information: </span></li>").appendTo('#my_custom_menu ul');
+			jQuery("<li class=\"context-menu-item icon icon-cut\"><a id='collapseNode' href='#' onclick=self._collapseNode()<span>collapse: </span></a></li>").appendTo('#my_custom_menu ul');
+			jQuery("<li class=\"context-menu-item icon icon-cut\"><a id='focus' href='#' <span id='focus'>focus on this node: </span></a></li>").appendTo('#my_custom_menu ul');
+	},
+
 	_buildDivs: function () {
 		var self = this;
 		
