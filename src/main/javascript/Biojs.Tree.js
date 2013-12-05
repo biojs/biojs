@@ -9,44 +9,44 @@
  * @category 3
  * 
  * @requires <a href='http://code.jquery.com/'>jQuery Core 1.9.2</a>
- * @dependency <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
- * 
+ * @dependency <script src="../biojs/dependencies/jquery/jquery-1.9.1.min.js"></script>
+ *
  * @requires <a href='http://onehackoranother.com/projects/jquery/tipsy/'>jQuery Tipsy</a>
- * @dependency <script language="JavaScript" type="text/javascript" src="http://www.treefam.org/static/javascripts/jquery/jquery.tipsy.js"></script>
+ * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jquery/jquery.tipsy.js"></script>
  *
  * @requires <a href='http://d3js.org/'>D3</a>
- * @dependency <script language="JavaScript" type="text/javascript" src="http://www.treefam.org/static/javascripts//d3/d3.v3.min.js"></script>
- * @requires <a href='http://www.ebi.ac.uk/~fs/static_files/tree_functions.js'>Additional tree functions</a>
- * @dependency <script language="JavaScript" type="text/javascript" src="http://www.ebi.ac.uk/~fs/static_files/tree_functions.js"></script>
+ * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/d3.v3.min.js"></script>
+ * @requires <a href='../biojs/dependencies/tree/tree_functions.js'>Additional tree functions</a>
+ * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/tree/tree_functions.js"></script>
 
  * @requires <a href='http://dev.treefam.org/static/css/Biojs.Tree.css'>BioJS Tree css</a>
- * @dependency <link href="http://dev.treefam.org/static/css/Biojs.Tree.css" rel="stylesheet" type="text/css" />
+ * @dependency <link href="../biojs/css/Biojs.Tree.css" rel="stylesheet" type="text/css" />
 
- * @requires <a href='http://dev.treefam.org/static/css/tipsy.css'>jQuery Tipsy</a>
- * @dependency <link href="http://dev.treefam.org/static/css/tipsy.css" rel="stylesheet" type="text/css" />
+ * @requires <a href='http://onehackoranother.com/projects/jquery/tipsy/'>jQuery Tipsy</a>
+ * @dependency <link href="../biojs/css/jquery/tipsy.css" rel="stylesheet" type="text/css" />
  *
  *
- * @param {Object} options An object with the options for Sequence component.
+ * @param {Object} options An object with the options for Tree component.
  *    
  * @option {string} target 
  *    Identifier of the DIV tag where the component should be displayed.
  *    
-     
+ *
  * @option {file} tree 
  * 	  JSON that contains the tree information. 
  *    <pre class="brush: js" title="Syntax:"> 
  *    [
  *    	// 
  *    	{ name: &lt;name&gt;, 
-		  display_label: &lt;display_label&gt;,
-		  duplication: &lt;duplication&gt;, 
-		  branch_length: &lt;endVal1&gt;, 
-		  common_name: &lt;common_name&gt;,
-		  seq_length: &lt;seq_length&gt;,
-		  type: &lt;type&gt;,
-		  uniprot_name: &lt;uniprot_name&gt;,
-
-		  children: []}, 
+ *		  display_label: &lt;display_label&gt;,
+ *		  duplication: &lt;duplication&gt;,
+ *		  branch_length: &lt;endVal1&gt;,
+ *		  common_name: &lt;common_name&gt;,
+ *		  seq_length: &lt;seq_length&gt;,
+ *		  type: &lt;type&gt;,
+ *		  uniprot_name: &lt;uniprot_name&gt;,
+ *
+ *		  children: []},
  *    	//
  *    	// Any others nodes
  *    	...,  
@@ -118,11 +118,11 @@
  *
  * 
  * @example 
- *			var alignment_file = "/target/test/data/just_sequences.json";
- *			var domain_file = "/target/test/data/just_domains.TF105041.json";
- *			var model_json_tree = "/target/test/data/TF105041_model.json";
+ *			var alignment_file = "../biojs/data/tree/just_sequences.json";
+ *			var domain_file = "../biojs/data/tree/just_domains.TF105041.json";
+ *			var model_json_tree = "../biojs/data/tree/TF105041_model.json";
  *
- *			var image_path = "http://www.ebi.ac.uk/~fs/d3treeviewer/data/images/species_files/";
+ *			var image_path = "../biojs/data/tree/images/species_files/";
  *			//var highlight_gene = "ENSBTAP00000001311";
  *			var highlight_gene = "";
  *			//var newick_tree = "../data/trees/newick_tree.nh";
@@ -133,7 +133,7 @@
  * myTree = new Biojs.Tree({
  *			        target : "YourOwnDivId",
  *					formatOptions : {
- *						tree:'json',
+ *						tree:'json'
  *			  		},
  *					// tree parameters
  *				    json_tree : model_json_tree, 
@@ -154,6 +154,7 @@ Biojs.Tree = Biojs.extend(
 /** @lends Biojs.Tree# */
 {	
 	constructor: function (options) {
+        //Biojs.console.enable();
 		var self = this;
 
 		this._container = jQuery( "#" + this.opt.target );
@@ -167,13 +168,13 @@ Biojs.Tree = Biojs.extend(
 	
 	/**
 	 * Default values for the options
-	 * @name Biojs.Sequence-opt
+	 * @name Biojs.Tree-opt
 	 */
 	opt : {
 		
 		// new opts for tree
-		//show_alignments: false,
-		//show_domains: false,
+		//__show_alignments: false,
+		//__show_domains: false,
 		//show_species_tree: false,
 		show_lost_taxa: false, // alignment, domains, seq_domains, speciestree || false
 		tree_view: "", // reconciledView
@@ -248,64 +249,9 @@ Biojs.Tree = Biojs.extend(
 	
 	/**
 	 * Array containing the supported event names
-	 * @name Biojs.Sequence-eventTypes
+	 * @name Biojs.Tree-eventTypes
 	 */
-	eventTypes : [
-		/**
-		 * @name Biojs.Sequence#onSelectionChanged
-		 * @event
-		 * @param {function} actionPerformed An function which receives an {@link Biojs.Event} object as argument.
-		 * @eventData {Object} source The component which did triggered the event.
-		 * @eventData {string} type The name of the event.
-		 * @eventData {int} start A number indicating the start of the selection.
-		 * @eventData {int} end A number indicating the ending of selection.
-		 * @example 
-		 * mySequence.onSelectionChanged(
-		 *    function( objEvent ) {
-		 *       alert("Selected: " + objEvent.start + ", " + objEvent.end );
-		 *    }
-		 * ); 
-		 * 
-		 * */
-		"onSelectionChanged",
-		
-		/**
-		 * @name Biojs.Sequence#onSelectionChange
-		 * @event
-		 * @param {function} actionPerformed An function which receives an {@link Biojs.Event} object as argument.
-		 * @eventData {Object} source The component which did triggered the event.
-		 * @eventData {string} type The name of the event.
-		 * @eventData {int} start A number indicating the start of the selection.
-		 * @eventData {int} end A number indicating the ending of selection.
-		 * @example 
-		 * mySequence.onSelectionChange(
-		 *    function( objEvent ) {
-		 *       alert("Selection in progress: " + objEvent.start + ", " + objEvent.end );
-		 *    }
-		 * );  
-		 * 
-		 * 
-		 * */
-		"onSelectionChange",
-		
-		/**
-		 * @name Biojs.Sequence#onAnnotationClicked
-		 * @event
-		 * @param {function} actionPerformed An function which receives an {@link Biojs.Event} object as argument.
-		 * @eventData {Object} source The component which did triggered the event.
-		 * @eventData {string} type The name of the event.
-		 * @eventData {string} name The name of the selected annotation.
-		 * @eventData {int} pos A number indicating the position of the selected amino acid.
-		 * @example 
-		 * mySequence.onAnnotationClicked(
-		 *    function( objEvent ) {
-		 *       alert("Clicked " + objEvent.name + " on position " + objEvent.pos );
-		 *    }
-		 * );  
-		 * 
-		 * */
-		"onAnnotationClicked"
-	],
+	eventTypes : [],
 
 	// internal members
 	_headerDiv : null,
@@ -316,12 +262,12 @@ Biojs.Tree = Biojs.extend(
 	_initialize: function () {
 		var self = this;
 
-		//this.setModelOrganisms();
+		//this.__setModelOrganisms();
 		// Read tree data
 		//if(self.opt.tree_view == "reconciledView"){
 			// have to set this to the species tree
 			//this.opt.json_tree = this.opt.species_tree;
-		//	console.log("changed to species tree");
+		//	Biojs.console.enable("changed to species tree");
 		//}
 		// read tree
 		// read also annotation	
@@ -349,12 +295,12 @@ Biojs.Tree = Biojs.extend(
 		// this is important!!!
 		// because we are getting data via an asyncronous ajax call, the function will continue
 		// we have to be aware the things are getting executed within the "success" function
-		this.tree_data = this.readTree({'load_from_variable': this.opt.load_from_variable,'tree_format' : this.opt.formatOptions.tree,
+		this.tree_data = this.__readTree({'load_from_variable': this.opt.load_from_variable,'tree_format' : this.opt.formatOptions.tree,
 										'tree_data': this.opt.json_tree,'tree_data_variable' : this.opt.json_tree_string,
 										'load_from_web' : this.opt.load_from_web});
 	
 										},
-	/**
+	/*
 	 * Setting the svg
 	 * @param {string} seq The sequence strand.
 	 * @param {string} [identifier] Sequence identifier.
@@ -391,7 +337,7 @@ Biojs.Tree = Biojs.extend(
 			div_width_half = div_width.replace("px","");
 			div_width_half = parseInt(div_width_half /2);
 			computed_div_width = div_width_half+"px";
-			console.log("half width is "+div_width_half+" ("+div_width+"), "+computed_div_width+"");						
+			Biojs.console.enable("half width is "+div_width_half+" ("+div_width+"), "+computed_div_width+"");
 		}
 		else{
 			div_width = d3.select("#"+this.opt.target).style("width");							
@@ -399,7 +345,7 @@ Biojs.Tree = Biojs.extend(
 		}
 		
 		self.opt.div_width_half = div_width_half;
-		console.log("heigth is "+div_heigth+" and width is "+div_width);
+		Biojs.console.enable("heigth is "+div_heigth+" and width is "+div_width);
 		//blaaaa
 		self.opt.availablewidth = div_width;
 		
@@ -409,8 +355,8 @@ Biojs.Tree = Biojs.extend(
 		    g = d.getElementsByTagName('body')[0],
 		    x = w.innerWidth || e.clientWidth || g.clientWidth,
 		    y = w.innerHeight|| e.clientHeight|| g.clientHeight;
-		console.log("x: "+x+" y: "+y);
-		console.log("setting height to "+(height * 2));
+		Biojs.console.enable("x: "+x+" y: "+y);
+		Biojs.console.enable("setting height to "+(height * 2));
 		
 		if(self.opt.two_window){
 		this.opt.tree_panel = d3.select("#"+this.opt.tree_target).append("svg:svg")
@@ -433,7 +379,7 @@ Biojs.Tree = Biojs.extend(
 		this.opt.annot_panel = d3.select("#"+this.opt.annot_target).append("svg:svg");
   		this.opt.annot_panel.append("svg:g").attr("class","axisarea");
 		
-		console.log("annotation svg with: "+annot_div_width);
+		Biojs.console.enable("annotation svg with: "+annot_div_width);
 		this.opt.annot_panel.attr("class","svg_container")
 								    .attr("width", annot_div_width)
 								    .attr("height", height + 200)
@@ -502,7 +448,7 @@ _setTreeSpace: function ( args ) {
 			div_width_half = div_width.replace("px","");
 			div_width_half = parseInt(div_width_half /2);
 			computed_div_width = div_width_half+"px";
-			console.log("half width is "+div_width_half+" ("+div_width+"), "+computed_div_width+"");						
+			Biojs.console.enable("half width is "+div_width_half+" ("+div_width+"), "+computed_div_width+"");
 		}
 		else{
 			div_width = d3.select("#"+this.opt.target).style("width");							
@@ -517,8 +463,8 @@ _setTreeSpace: function ( args ) {
 		    g = d.getElementsByTagName('body')[0],
 		    x = w.innerWidth || e.clientWidth || g.clientWidth,
 		    y = w.innerHeight|| e.clientHeight|| g.clientHeight;
-		console.log("x: "+x+" y: "+y);
-		console.log("setting height to "+(height * 2));
+		Biojs.console.enable("x: "+x+" y: "+y);
+		Biojs.console.enable("setting height to "+(height * 2));
 		
 		if(self.opt.two_window){
 			this.opt.tree_panel = d3.select("#"+this.opt.tree_target).append("svg:svg")
@@ -561,12 +507,13 @@ _setTreeSpace: function ( args ) {
 								}
 								
 	},
-	slideZoom: function(zoom_level){
+
+	__slideZoom: function(zoom_level){
 		
-		console.log("ready to zoom-slide:"+zoom_level);
+		Biojs.console.enable("ready to zoom-slide:"+zoom_level);
 		//self.zoomObject = d3.behavior.zoom().scaleExtent([0.2, 8]).on("zoom", zoom);
-		//console.log(this.zoomObject);
-		//console.log(this.zoomObject.scale);
+		//Biojs.console.enable(this.zoomObject);
+		//Biojs.console.enable(this.zoomObject.scale);
 		//this.zoomObject.translate([0,0]).scale(1);
 		//var currentScale = d3.event.scale;
 		//this.zoomObject.scale(currentScale);
@@ -575,17 +522,17 @@ _setTreeSpace: function ( args ) {
 		zoom_slider({scale: [zoom_level] });
 	},
 	_addZoom: function(args){
-		//console.log("add zoom");
+		//Biojs.console.enable("add zoom");
 		var self = this;
 		self.zoom_behavior =d3.behavior.zoom()
 			              .scaleExtent([0.5, 2])
 			              .on("zoom", zoom);
 		if(self.opt.two_window){
-			console.log("adding to annot");
+			Biojs.console.enable("adding to annot");
 			d3.select("#"+this.opt.annot_target+" svg").call(self.zoom_behavior);
 		}
 		else{
-			console.log("not adding to annot");
+			Biojs.console.enable("not adding to annot");
 			d3.select("#"+this.opt.target+" svg").call(self.zoom_behavior);
 		}	
 			 // self.zoomObject = d3.behavior.zoom().scaleExtent([0.2, 8]).on("zoom", zoom);
@@ -593,9 +540,9 @@ _setTreeSpace: function ( args ) {
 		
 	},
 	
-	removeZoom: function(args){
-		//console.log("add zoom");
-		//this.opt.vis.call(d3.behavior.zoom().on("zoom", this.redraw({vis : this.opt.vis})))
+	__removeZoom: function(args){
+		//Biojs.console.enable("add zoom");
+		//this.opt.vis.call(d3.behavior.zoom().on("zoom", this.__redraw({vis : this.opt.vis})))
 		//					.append('svg:g');	
 		
 		self.zoom_behavior = d3.behavior.zoom()
@@ -603,10 +550,10 @@ _setTreeSpace: function ( args ) {
 			              .on("zoom", null);
 		d3.select("#"+this.opt.target+" svg").call(self.zoom_behavior);
 	},
-	resetZoom: function(args){
+	__resetZoom: function(args){
 		var self = this;
-		//console.log("add zoom");
-		//this.opt.vis.call(d3.behavior.zoom().on("zoom", this.redraw({vis : this.opt.vis})))
+		//Biojs.console.enable("add zoom");
+		//this.opt.vis.call(d3.behavior.zoom().on("zoom", this.__redraw({vis : this.opt.vis})))
 		//					.append('svg:g');	
 		self.zoom_behavior = d3.behavior.zoom()
 			              .scaleExtent([0.5, 2])
@@ -619,7 +566,7 @@ _setTreeSpace: function ( args ) {
 		//.call(self.zoom_behavior);
 	},
 	
-	comparator: function (a, b) {
+	__comparator: function (a, b) {
 		var a_name = a.children? a.name.replace(/_\d+/g, '') : a.taxon;
 		var b_name = b.children? b.name.replace(/_\d+/g, '') : b.taxon;
 		var species2index = new Object();
@@ -815,29 +762,29 @@ _setTreeSpace: function ( args ) {
 		
 		
 		var comparison = species2index[a_name] > species2index[b_name];
-		//console.log("comparing "+a_name+" ("+species2index[a_name]+") and "+b_name+" ("+species2index[b_name]+") : "+comparison);
+		//Biojs.console.enable("comparing "+a_name+" ("+species2index[a_name]+") and "+b_name+" ("+species2index[b_name]+") : "+comparison);
 		return comparison;
 	},
 
-	redraw: function(args){
+	__redraw: function(args){
 		var vis = args.vis;
-		console.log("in zoom");
-		//console.log("here", d3.event.translate, d3.event.scale);
+		Biojs.console.enable("in zoom");
+		//Biojs.console.enable("here", d3.event.translate, d3.event.scale);
 		  //vis.attr("transform",
 		    //  "translate(" + d3.event.translate + ")"
 		      //+ " scale(" + d3.event.scale + ")");
 	},
 	/*
-	 * readTree in different formats
+	 * __readTree in different formats
 	 * @param {string} load_from_variable whether to read the annotation from a file or variable.
 	 * @param {string} data_source file/variable.
 	 * @param {string} format nhx|json.
 	 * 
 	 * @example 
-	 * myTree.readTree();
+	 * myTree.__readTree();
 	 * 
 	 */
-	readAnnotation: function(args){
+	__readAnnotation: function(args){
 		var self = this;
 		var load_from_variable = args.load_from_variable;
 		var format = args.format;
@@ -845,24 +792,24 @@ _setTreeSpace: function ( args ) {
 		var data_variable = args.data_variable;
 		var load_from_web = args.load_from_web;
 		var json_annotation_data;
-		console.log("load annotation from web is: "+load_from_variable);
+		Biojs.console.enable("load annotation from web is: "+load_from_variable);
 		
 		if(load_from_variable){
-				console.log("load from variable selected");
-				console.log(data_variable);
+				Biojs.console.enable("load from variable selected");
+				Biojs.console.enable(data_variable);
 				//json_tree_data = JSON.parse( 
 				json_annotation_data = JSON.parse(data_variable);
-				//self.update({'root' : json_tree_data}); 
-				//self.update({'root' : tree_data_variable}); 
+				//self.__update({'root' : json_tree_data}); 
+				//self.__update({'root' : tree_data_variable}); 
 		}
 		else if(load_from_web){
 			json_annotation_data = data_variable;
 		}
 
 		if(format == "json" ){
-			console.log("json selected");
+			Biojs.console.enable("json selected");
 			var test_url  = data_source;
-			console.log("loading annotation from "+test_url);
+			Biojs.console.enable("loading annotation from "+test_url);
 			jQuery.ajax({
 			          url: test_url,
 					  dataType: "json",
@@ -877,12 +824,12 @@ _setTreeSpace: function ( args ) {
 			          //data: {list_item: selected_from_list},
 
 			          success: function(result){
-						  console.log("have result");
+						  Biojs.console.enable("have result");
 						  //return result;
 					  		json_annotation_data = result;
 							self.annotation_data = result;
-							self.update_annotation(json_annotation_data);
-							//console.log(result);
+							self.__update_annotation(json_annotation_data);
+							//Biojs.console.enable(result);
 					  },
 					  error: function(){
 					      alert('Failed to retrieve annotations from '+test_url);
@@ -892,35 +839,35 @@ _setTreeSpace: function ( args ) {
 			
 			
 		 	//d3.json(tree_data, function(json_tree_data) {
-			//	  //gTree.update(root = json);
-			//	  console.log("setting json data from "+tree_data+" ");
-			//	  console.log(json_tree_data);
+			//	  //gTree.__update(root = json);
+			//	  Biojs.console.enable("setting json data from "+tree_data+" ");
+			//	  Biojs.console.enable(json_tree_data);
 			//	  self.tree_data = json_tree_data;
 			//	  some_test = json_tree_data;
 			//	  //var pruned_tree = self._iterateTree(json_tree_data);
-			//	  console.log(some_test);
-			//	  console.log("done with d3.json");
+			//	  Biojs.console.enable(some_test);
+			//	  Biojs.console.enable("done with d3.json");
 			//	  return json_tree_data;
-  			//	  //self.update(self.opt.root = json_tree_data); 
+  			//	  //self.__update(self.opt.root = json_tree_data); 
 			//});
-			//console.log("well, we are outside the json read routine");
-			//console.log(json_tree_data);
+			//Biojs.console.enable("well, we are outside the json read routine");
+			//Biojs.console.enable(json_tree_data);
 			//return json_tree_data;
 		}
 		//test
-		//console.log(json_annotation_data);
+		//Biojs.console.enable(json_annotation_data);
 		return json_annotation_data;
 		
 	},
 	
 	
-	readNHFormat: function(args){
+	__readNHFormat: function(args){
 		var self = this;
 		var result = args.result;
 		var json_tree_data;
-		  console.log("have result");
+		  Biojs.console.enable("have result");
 		var x = newick.parse(result);
-		console.log(x);
+		Biojs.console.enable(x);
 		var cluster = d3.layout.cluster()
 						    .size([360, 1])
 						    .sort(null)
@@ -930,13 +877,13 @@ _setTreeSpace: function ( args ) {
 		json_tree_data = cluster(x);
 		var nodes = cluster.nodes(x);
 		
-		//console.log(json_tree_data);
+		//Biojs.console.enable(json_tree_data);
 		//json_tree_data = x;
   		return json_tree_data;	
 		
 		
 	},
-	collapseTree: function(){
+	__collapseTree: function(){
 		var self = this;
 		var found_node;
 		jQuery.each(self.selected_nodes, function(i,d){
@@ -968,10 +915,10 @@ _setTreeSpace: function ( args ) {
 		
 		self.root = self.selected_nodes[0];
 			
-		self.update_tree(self.selected_nodes[0]);
-		self.update_annotation();
+		self.____update_tree(self.selected_nodes[0]);
+		self.__update_annotation();
 	},	
-	readTree: function(args){
+	__readTree: function(args){
 		var self = this;
 		var load_from_variable = args.load_from_variable;
 		var tree_format = args.tree_format;
@@ -979,25 +926,25 @@ _setTreeSpace: function ( args ) {
 		var tree_data_variable = args.tree_data_variable;
 		var load_from_web = args.load_from_web;
 		var json_tree_data;
-		console.log("load from web is: "+load_from_web);
+		Biojs.console.enable("load from web is: "+load_from_web);
 		
 		if(load_from_variable){
-				console.log("load from variable selected");
-				console.log(tree_data_variable);
+				Biojs.console.enable("load from variable selected");
+				Biojs.console.enable(tree_data_variable);
 				//json_tree_data = JSON.parse( 
 					if(tree_format == "json" ){
 						json_tree_data = JSON.parse(tree_data_variable);
 					}
 					else{
-						console.log("read nh tree");
-						json_tree_data = self.readNHFormat({result : tree_data_variable});
+						Biojs.console.enable("read nh tree");
+						json_tree_data = self.__readNHFormat({result : tree_data_variable});
 					}
 		}
 		else if(load_from_web){
 			json_tree_data = tree_data_variable;
 		}
 		else if(tree_format == "json" ){
-			console.log("json selected");
+			Biojs.console.enable("json selected");
 			
 			jQuery.ajax({
 			          url: tree_data,
@@ -1013,32 +960,32 @@ _setTreeSpace: function ( args ) {
 			          //data: {list_item: selected_from_list},
 
 			          success: function(result){
-						  console.log("have result");
+						  Biojs.console.enable("have result");
 					  		json_tree_data = result;
 							self.root = json_tree_data;
 							self.all_data= json_tree_data;
 
 
-							self.update_tree(json_tree_data);
+							self.____update_tree(json_tree_data);
 						// ok, do we read annotations as well?
 					  		if(self.opt.two_window){
-								console.log("remove spinner");
+								Biojs.console.enable("remove spinner");
 								jQuery("#tree_spinner").remove;
 								$('#tree_spinner').remove()
-								self.domain_data = self.readAnnotation({load_from_variable: self.opt.load_from_variable,format : "json",
+								self.domain_data = self.__readAnnotation({load_from_variable: self.opt.load_from_variable,format : "json",
 															data_source: self.opt.domains_file,data_variable : self.opt.json_domain_string});	
-								console.log("remove spinner");
+								Biojs.console.enable("remove spinner");
 								jQuery("#annotation_spinner").remove;
 								$('#annotation_spinner').remove()
 							}
 							else{
 								// so annotation is in the tree json
 								var domains = rects.selectAll(".domain").data(function(d) { return d.domains; })
-								self.update_annotation();
+								self.__update_annotation();
 							}	
 
 							if(self.opt.highlight_gene){
-								self.collapseTree();
+								self.__collapseTree();
 							} 	
 
 
@@ -1048,25 +995,25 @@ _setTreeSpace: function ( args ) {
 			
 			
 		 	//d3.json(tree_data, function(json_tree_data) {
-			//	  //gTree.update(root = json);
-			//	  console.log("setting json data from "+tree_data+" ");
-			//	  console.log(json_tree_data);
+			//	  //gTree.__update(root = json);
+			//	  Biojs.console.enable("setting json data from "+tree_data+" ");
+			//	  Biojs.console.enable(json_tree_data);
 			//	  self.tree_data = json_tree_data;
 			//	  some_test = json_tree_data;
 			//	  //var pruned_tree = self._iterateTree(json_tree_data);
-			//	  console.log(some_test);
-			//	  console.log("done with d3.json");
+			//	  Biojs.console.enable(some_test);
+			//	  Biojs.console.enable("done with d3.json");
 			//	  return json_tree_data;
-  			//	  //self.update(self.opt.root = json_tree_data); 
+  			//	  //self.__update(self.opt.root = json_tree_data); 
 			//});
-			//console.log("well, we are outside the json read routine");
-			//console.log(json_tree_data);
+			//Biojs.console.enable("well, we are outside the json read routine");
+			//Biojs.console.enable(json_tree_data);
 			//return json_tree_data;
 		}
 		else{
-			console.log("nh selected");
+			Biojs.console.enable("nh selected");
 			var test_url  = "../../main/resources/dependencies/data/trees/life.txt";
-			console.log("loading tree from "+test_url);
+			Biojs.console.enable("loading tree from "+test_url);
 			
 			jQuery.ajax({
 			          url: test_url,
@@ -1076,10 +1023,10 @@ _setTreeSpace: function ( args ) {
 			          //data: {list_item: selected_from_list},
 
 			          success: function(result){
-						  console.log("have result");
-						  json_tree_data = self.readNHFormat({result : result});
+						  Biojs.console.enable("have result");
+						  json_tree_data = self.__readNHFormat({result : result});
 			  		  	//var x = newick.parse(result);
-			  			//console.log(x);
+			  			//Biojs.console.enable(x);
 			  			//var cluster = d3.layout.cluster()
 			  			//					    .size([360, 1])
 			  			//					    .sort(null)
@@ -1087,7 +1034,7 @@ _setTreeSpace: function ( args ) {
 			  			//					    .children(function(d) { return d.branchset !== undefined; })
 			  			//					    .separation(function(a, b) { return 1; });
 			  		  	//json_tree_data = cluster(x);
-			  		  	//console.log(json_tree_data);
+			  		  	//Biojs.console.enable(json_tree_data);
 			  			//json_tree_data = x;
 					  	return json_tree_data;	
 					  },
@@ -1099,21 +1046,21 @@ _setTreeSpace: function ( args ) {
 			
 		}
 		
-		//console.log("end of  'read_tree'")
-		//console.log(some_test);
-		console.log(json_tree_data);
+		//Biojs.console.enable("end of  'read_tree'")
+		//Biojs.console.enable(some_test);
+		Biojs.console.enable(json_tree_data);
 		
 		//test
 		return json_tree_data;
 		
 	},
-	/**
+	/*
 	 * Sets controls.
 	 * @param {string} seq The sequence strand.
 	 * @param {string} [identifier] Sequence identifier.
 	 * 
 	 * @example 
-	 * myTree.update();
+	 * myTree.__update();
 	 * 
 	 */
 	
@@ -1122,11 +1069,11 @@ _setTreeSpace: function ( args ) {
 		var self = this;
 	    for(var key in obj) { // iterate, `key` is the property key
 	        var elem = obj[key]; // `obj[key]` is the value
-			//console.log(key);
+			//Biojs.console.enable(key);
 	        if(key === "taxon") { // found "text" property
-				console.log(elem);
+				Biojs.console.enable(elem);
 				if(elem == "Homo_sapiens"){
-					console.log("delete it");
+					Biojs.console.enable("delete it");
 					delete(elem);
 				}
 	            //count++;
@@ -1141,11 +1088,11 @@ _setTreeSpace: function ( args ) {
 	
 
 
-	/**
+	/*
 	 * clears the div
 	 * 
 	 * @example 
-	 * myTree.showModelTree();
+	 * myTree.__showModelTree();
 	 * 
 	 */	
 	_clear_divs: function(){
@@ -1155,23 +1102,23 @@ _setTreeSpace: function ( args ) {
 		jQuery('#annotation_panel').empty();
 		jQuery('#YourOwnDivId').empty();
 		
-		console.log("cleared divs");
+		Biojs.console.enable("cleared divs");
 	},
-	showModelTree: function(){
+	__showModelTree: function(){
 		//var full_tree = this.tree_data;
 		this.opt.modelTreeOn = "on";
-		console.log("model tree with "+full_tree.length);
-		//console.log(full_tree);
-		this.update(); 
+		Biojs.console.enable("model tree with "+full_tree.length);
+		//Biojs.console.enable(full_tree);
+		this.__update(); 
 	},
-	showFullTree: function(full_tree){
+	__showFullTree: function(full_tree){
 		//var full_tree = this.tree_data;
 		this.opt.modelTreeOn = "";
-		console.log("full tree with "+full_tree.length);
-		var new_tree_data = this.readTree({'load_from_variable': this.opt.load_from_variable,'tree_format' : this.opt.formatOptions.tree,
+		Biojs.console.enable("full tree with "+full_tree.length);
+		var new_tree_data = this.__readTree({'load_from_variable': this.opt.load_from_variable,'tree_format' : this.opt.formatOptions.tree,
 										'tree_data': full_tree,'tree_data_variable' : this.opt.json_tree_string,
 										'load_from_web' : this.opt.load_from_web});
-		//console.log(full_tree);
+		//Biojs.console.enable(full_tree);
     	var tree_layout = d3.layout.cluster();
     	var nodes = tree_layout.nodes(new_tree_data);
 		// set correct height
@@ -1179,18 +1126,18 @@ _setTreeSpace: function ( args ) {
   		var new_height = nodes.length * 11;
 		this.opt.tree.size([new_height, this.opt.div_width_half-this.opt.leaf_space]);
 		d3.select("#"+this.opt.tree_target+" svg").style("height", new_height);	
-		this.update(new_tree_data); 
+		this.__update(new_tree_data); 
 	},
 	
 	
-	addAxis: function(args){
+	__addAxis: function(args){
 		var max_value = args.max_value;
 		var max_width = args.max_width;
 		var self = this;
 		// AXIS
 		//var annotation_scale = d3.scale.linear().domain([0, max_seq_length+((max_seq_length * 20) / 100)]).range([0, 400]);
 		max_value = max_value+((max_value * 20) / 100);
-		console.log("adding axis :max_seq_length "+max_value+"  max_width:"+max_width+" max_value: "+max_value);
+		Biojs.console.enable("adding axis :max_seq_length "+max_value+"  max_width:"+max_width+" max_value: "+max_value);
 		
 		var annotation_scale = d3.scale.linear().domain([0, max_value]).range([0, this.opt.max_seq_representation]);
 		
@@ -1224,7 +1171,7 @@ _setTreeSpace: function ( args ) {
 	_highlightGeneData: function(test,d){
 		var self = this;
 		
-		console.log("looking at "+d.name);
+		Biojs.console.enable("looking at "+d.name);
 		var name = d.name;
 
 		//var found_nodes = d3.select(".treearea").selectAll("[taxon="+name+"]");
@@ -1239,7 +1186,7 @@ _setTreeSpace: function ( args ) {
 			//var test = this;
 			//var group_circle_box = d3.select(d).select("svg circle");
 			//group_circle_box.attr("r", 6);
-			//console.log("looking at node "+d.name);
+			//Biojs.console.enable("looking at node "+d.name);
 			var this_node = d3.select(this);
 			this_node.name = "ahhhhh";
 			//var d_node = d3.select(d);
@@ -1254,13 +1201,13 @@ _setTreeSpace: function ( args ) {
 			//self._highlightSpeciesData(test,d);
 		})
 		// now have to find species in gene tree
-		console.log("some test here");
+		Biojs.console.enable("some test here");
 
 	},
 	
 	_highlightSpeciesData: function(test,d){
 			if(!d.children){ 
-				//console.log("mouseovered a leaf");
+				//Biojs.console.enable("mouseovered a leaf");
 				var group_circle_box = d3.select(test).select("svg circle");
 				group_circle_box.attr("r", 6);
 				//var group_image = d3.select(test).select("svg image");
@@ -1271,9 +1218,9 @@ _setTreeSpace: function ( args ) {
 	},
 	_deHighlightSpeciesData: function(test,d){
 			if(!d.children){ 
-				//console.log("mouseovered a leaf");
+				//Biojs.console.enable("mouseovered a leaf");
 				var group_circle_box = d3.select(test).select("svg circle");
-				//console.log(group_circle_box);
+				//Biojs.console.enable(group_circle_box);
 				group_circle_box.attr("r", 0);
 				//var group_image = d3.select(test).select("svg image");
 				//group_image.attr("width", 20).attr("height", 20);
@@ -1282,13 +1229,13 @@ _setTreeSpace: function ( args ) {
 			}
 	},
 	
-	set_branchlengths: function(n, offset) {
+	__set_branchlengths: function(n, offset) {
 		var self = this;
 		var plot_domain = self.opt.plottableDomain;
 		var max_branch_length = self.opt.max_branch_length;
 		//  
 		//	
-		//console.log(n.name+" has "+n.branch_length);
+		//Biojs.console.enable(n.name+" has "+n.branch_length);
 		//if (n.length != null) offset += n.length * 115;
 		//  n.y = offset;
 		  
@@ -1307,12 +1254,12 @@ _setTreeSpace: function ( args ) {
 		  else if(n.branch_length >  2){
 		  	//offset += 115;
 		  	offset += plot_domain(max_branch_length);
-			//console.log("found branch_length: offset += n.data.length * 115: "+offset+" += "+n.branch_length);
+			//Biojs.console.enable("found branch_length: offset += n.data.length * 115: "+offset+" += "+n.branch_length);
 		  }
 		  else{
 			    //offset += n.branch_length * 115;
 			    offset += plot_domain(n.branch_length);
-				//console.log("found branch_length: offset += n.data.length * 115: "+offset+" += "+n.branch_length);
+				//Biojs.console.enable("found branch_length: offset += n.data.length * 115: "+offset+" += "+n.branch_length);
 			}
 		}
 		else{
@@ -1322,34 +1269,34 @@ _setTreeSpace: function ( args ) {
 		
 	  //if (n.data && n.data.length != null){
 	   // offset += n.data.length * 115;
-	    //console.log("offset += n.data.length * 115: "+offset+" += "+n.data.length);
+	    //Biojs.console.enable("offset += n.data.length * 115: "+offset+" += "+n.data.length);
 	  //}
-	  //console.log("setting n.y to "+offset);
+	  //Biojs.console.enable("setting n.y to "+offset);
 	  //offset = plot_domain(offset); 
 	  n.y = offset;
 	  var offset_test = offset;
 	  if (n.children)
-	    //console.log("has children");
+	    //Biojs.console.enable("has children");
 	    n.children.forEach(function(n) {
-		    //console.log(n)
-	      self.set_branchlengths(n, offset_test);
+		    //Biojs.console.enable(n)
+	      self.__set_branchlengths(n, offset_test);
 	    });
 	},
-	show_gene_annotation: function(){
+	__show_gene_annotation: function(){
 			show_leaf_common_name({target: this.opt.target});
 	},
-	show_uniprot_annotation: function(){
+	__show_uniprot_annotation: function(){
 			show_leaf_uniprot({target:this.opt.target});
 	},
-	toggleAll: function(d) {
+	__toggleAll: function(d) {
 	        if (d.children) {
 	          d.children.forEach(toggle);
 	          //click(d);
 	        }
 	},
-      
+
 // Toggle children.
-	toggle: function(d) {
+	__toggle: function(d) {
 	  if (d.children) {
 	    d._children = d.children;
 	    d.children = null;
@@ -1359,21 +1306,21 @@ _setTreeSpace: function ( args ) {
 	  }
 	} ,
 
-	toggle_branchlength: function(){
+	__toggle_branchlength: function(){
 		// remove everything in annotation div
 		var all_nodes = jQuery('.annotation_panel .node');
-		console.log("Found "+all_nodes.length+" nodes");
+		Biojs.console.enable("Found "+all_nodes.length+" nodes");
 		all_nodes.remove();
-		console.log("about to toggle branch length is: "+this.opt.show_real_branchlength)
+		Biojs.console.enable("about to toggle branch length is: "+this.opt.show_real_branchlength)
 		if(this.opt.show_real_branchlength){
 			this.opt.show_real_branchlength = false;
 		}
 		else{
 			this.opt.show_real_branchlength = true;
 		}
-		this.update_tree(); 
+		this.____update_tree();
 	},
-	show_alignments: function(){
+	__show_alignments: function(){
 		// remove everything in annotation div
 		//var all_nodes = jQuery("#annotation_panel").delete;
 	//	jQuery('<div id="annotation_panel" class="col-md-6"></div>').appendTo("#tree_panel");
@@ -1385,12 +1332,12 @@ _setTreeSpace: function ( args ) {
 		//jQuery('<div id="annotation_panel" class="col-md-6"></div>').appendTo("#tree_panel");
 
 		this.opt.annotation_option = "alignment";
-		console.log("showing alignments now");
-		this.update(); 
+		Biojs.console.enable("showing alignments now");
+		this.__update();
 	},
-	show_domains: function(){
+	__show_domains: function(){
 		//var full_tree = this.tree_data;
-		//console.log("about to toggle branch length is: "+this.opt.show_real_branchlength)
+		//Biojs.console.enable("about to toggle branch length is: "+this.opt.show_real_branchlength)
 		//this.opt.show_real_branchlength = "on";
 		//jQuery('#annotation_panel').empty();
 		//jQuery('#annotation_panel').empty();
@@ -1398,40 +1345,40 @@ _setTreeSpace: function ( args ) {
 		while (myNode.firstChild) {
 		    myNode.removeChild(myNode.firstChild);
 		}
-		this.opt.show_alignments = false;
-		this.opt.show_domains = true;
+		this.opt.__show_alignments = false;
+		this.opt.__show_domains = true;
 		this.opt.annotation_option = "domains";
-		
-		console.log("showing domains now");
-		//console.log("model tree with "+full_tree.length);
-		//console.log(full_tree);
-		this.update(); 
+
+		Biojs.console.enable("showing domains now");
+		//Biojs.console.enable("model tree with "+full_tree.length);
+		//Biojs.console.enable(full_tree);
+		this.__update();
 	},
-	
-	show_bootstrap: function(){
+
+	__show_bootstrap: function(){
 		d3.select("#"+this.opt.target+" svg").selectAll(".bootstrap").attr("visibility", "");
 		//d3.select("#tree svg").selectAll(".bootstrap").attr("visibility", "");
 	},
-	hide_bootstrap: function(){
+	__hide_bootstrap: function(){
 		d3.select("#"+this.opt.target+" svg").selectAll(".bootstrap").attr("visibility", "hidden");
 		//d3.select("#tree svg").selectAll(".bootstrap").attr("visibility", "hidden");
 	},
-	show_taxlevel: function(){
+	__show_taxlevel: function(){
 		d3.select("#"+this.opt.target+" svg").selectAll(".innerNode_label").attr("visibility", "");
 		//d3.select("#tree svg").selectAll(".innerNode_label").attr("visibility", "");
 	},
-	hide_taxlevel: function(){
+	__hide_taxlevel: function(){
 		d3.select("#"+this.opt.target+" svg").selectAll(".innerNode_label").attr("visibility", "hidden");
 		//d3.select("#tree svg").selectAll(".innerNode_label").attr("visibility", "hidden");
 	},
 	/*
-	 * Updates a tree layout.
-	 * 
-	 * @example 
-	 * myTree.update();
-	 * 
+	 * __updates a tree layout.
+	 *
+	 * @example
+	 * myTree.__update();
+	 *
 	 */
-	update_tree: function(source){
+	____update_tree: function(source){
 		var self = this;
 		var root = this.root;
 		var i = 0;
@@ -1439,15 +1386,15 @@ _setTreeSpace: function ( args ) {
 		this.opt.tree = d3.layout.cluster();
     	var tree = this.opt.tree;
     	var nodes = tree.nodes(root).reverse();
-							
+
 		// set correct height
   		this.opt.height = nodes.length * 11;
 		// get available width of div
-		this.opt.div_width = parseInt(d3.select("#"+this.opt.target).style("width"));	
-		if(self.opt.two_window){ 
-			if(this.opt.show_alignments){
+		this.opt.div_width = parseInt(d3.select("#"+this.opt.target).style("width"));
+		if(self.opt.two_window){
+			if(this.opt.__show_alignments){
 				// setting width of annotation div to max alignment length
-				this.opt.max_annot_div_width = d3.max(self.alignment_data, function(d) { return +d.alignment_length;} ) * this.opt.alignment_font_size;		
+				this.opt.max_annot_div_width = d3.max(self.alignment_data, function(d) { return +d.alignment_length;} ) * this.opt.alignment_font_size;
 			}
 			else{
 				div_width = d3.select("#"+self.opt.target).style("width");
@@ -1467,21 +1414,21 @@ _setTreeSpace: function ( args ) {
 		var width = this.opt.width - this.padding.left - this.padding.right;
 		var height = this.opt.height - this.padding.top - this.padding.bottom;
 		var div_width;
-		
+
 		//
 		if(self.opt.two_window){
-			div_width = parseInt(d3.select("#"+this.opt.tree_target).style("width"));	
+			div_width = parseInt(d3.select("#"+this.opt.tree_target).style("width"));
 			this.opt.leaf_space = parseInt( div_width/ 4);
 			//this.opt.tree = d3.layout.cluster()
 									this.opt.tree
-									 .separation(function(a, b) { 
-										 return a.parent === b.parent ? 4 : 4; 
+									 .separation(function(a, b) {
+										 return a.parent === b.parent ? 4 : 4;
 									 })
-									 .sort(this.comparator)
+									 .sort(this.__comparator)
 									 .size([height, self.opt.div_width_half-this.opt.leaf_space]);
 		}
-		else{ 
-			div_width= parseInt(d3.select("#"+this.opt.target).style("width")) - 400;	
+		else{
+			div_width= parseInt(d3.select("#"+this.opt.target).style("width")) - 400;
 			this.opt.leaf_space = parseInt( div_width/ 2);
 									this.opt.tree
 									 .separation(function(a, b) { return a.parent === b.parent ? 4 : 4; })
@@ -1491,18 +1438,18 @@ _setTreeSpace: function ( args ) {
 
   		// define colors used to draw the domains
   		if(!self.opt.two_window){
-			console.log("domaincolors: opt.vis");
-			this.setDomainColors({target : this.opt.vis});
+			Biojs.console.enable("domaincolors: opt.vis");
+			this.__setDomainColors({target : this.opt.vis});
 		}
 		else{
-			console.log("domaincolors: opt.annot_panel");
-			this.setDomainColors({target : this.opt.annot_panel});
+			Biojs.console.enable("domaincolors: opt.annot_panel");
+			this.__setDomainColors({target : this.opt.annot_panel});
 		}
 
 		var target = d3.select(".treearea");
 		var tree_target = d3.select(".treearea");
 		var annot_target = d3.select(".annotationarea");
-		
+
     	//var tree = this.opt.tree;
     	var nodes = this.opt.tree.nodes(root);
 		// set correct height
@@ -1512,40 +1459,40 @@ _setTreeSpace: function ( args ) {
 		var selected_nodes = nodes;
 
 		if(self.opt.formatOptions.tree == "json"){
-			console.log("using json in branch length test");
+			Biojs.console.enable("using json in branch length test");
 			selected_nodes = nodes.slice(0);
 	 	}
 		else{
-			console.log("well, selecting nodes and setting branch lengths");
+			Biojs.console.enable("well, selecting nodes and setting branch lengths");
 			selected_nodes = nodes[0].slice(0);
-			//self.set_branchlengths(selected_nodes[0], 0);
+			//self.__set_branchlengths(selected_nodes[0], 0);
 		}
-		
+
 		// from here on --> all nodes should be in self.selected_nodes
 		self.selected_nodes = selected_nodes;
-			
+
 		selected_nodes = self.selected_nodes;
 		nodes = self.selected_nodes;
 		// showing ultrametric tree or using real branch length
 		// sets the "branch_length" field of each node
 		if(self.opt.show_real_branchlength){
-			console.log("switched on real branch length");
+			Biojs.console.enable("switched on real branch length");
 			if(!self.opt.formatOptions.tree === "json"){
-				console.log("well, selecting nodes and setting branch lengths");
+				Biojs.console.enable("well, selecting nodes and setting branch lengths");
 				selected_nodes = nodes[0].slice(0);
 			}
 			self.opt.plottable_tree_space = self.opt.div_width_half-self.opt.leaf_space;
 			self.opt.max_branch_length= d3.max(selected_nodes, function(d) { return +d.branch_length;} );
-			
+
 			self.opt.max_depth= d3.max(selected_nodes, function(d) { return +d.depth;} );
 			var max_estimated_tree_length = self.opt.max_depth * self.opt.max_branch_length;
 			self.opt.plottableDomain = d3.scale.linear().domain([0,max_estimated_tree_length]).range([0, self.opt.plottable_tree_space]);
-			self.set_branchlengths(selected_nodes[0], 0);
+			self.__set_branchlengths(selected_nodes[0], 0);
 		}
 		self.nodes = nodes;
-		
+
 	/*	if(self.opt.two_window){
-			console.log("remove spinner");
+			Biojs.console.enable("remove spinner");
 			jQuery("#tree_spinner").remove;
 			jQuery("#annotation_spinner").remove;
 			$('#tree_spinner').remove()
@@ -1553,18 +1500,18 @@ _setTreeSpace: function ( args ) {
 		} */
 		this.opt.domainScale = d3.scale.linear().domain([0,4000]).range([0, 400]);
 		this.opt.divScale = d3.scale.linear().domain([0,5]).range([0, this.opt.availablewidth]);
-		
-		
-	  	// Recompute the layout: update the nodes
+
+
+	  	// Recompute the layout: __update the nodes
 		var node = target.selectAll("g.node").data(selected_nodes, function(d) { return d.id || (d.id = ++i); });
-		//var node = target.selectAll("g.node").data(tree.nodes(root), function(d) { 
-		//	return d.id || (d.id = ++i); 
+		//var node = target.selectAll("g.node").data(tree.nodes(root), function(d) {
+		//	return d.id || (d.id = ++i);
 		//});
 		this.nodeEnter = node.enter().append("svg:g").attr("class", "node")
 									.on("click", function(d){
-											console.log("clicked!!!!");
+											Biojs.console.enable("clicked!!!!");
 											//self._focus(d);
-											console.log("clicked!!!!");
+											Biojs.console.enable("clicked!!!!");
 											self._collapseNode(d);
 											})
 									//.on("dblclick", function(d) { self._reset_tree(d) })
@@ -1578,7 +1525,7 @@ _setTreeSpace: function ( args ) {
     										d3.select('#my_custom_menu')
       											.style('position', 'absolute')
       											.style('left', mouse_x + "px")
-      											.style('top',  mouse_y + "px") 
+      											.style('top',  mouse_y + "px")
       											.style('display', 'block');
    										 self._buildContextMenu(d);
 
@@ -1588,38 +1535,38 @@ _setTreeSpace: function ( args ) {
 										var test = this;self._highlightSpeciesData(test,d)
 									})
 									.on("mouseout", function(d){var test = this;self._deHighlightSpeciesData(test,d)})
-		// Update the links…
+		// __update the links…
 		var link = target.selectAll("path.link").data(tree.links(nodes), function(d) { return d.source.id + "-" + d.target.id; });
 
 		draw_nodes({nodeEnter : this.nodeEnter, node : node, source : self.tree_data  , circle_size : this.opt.circle_size,tree_representation_type : this.opt.tree_representation_type, availablewidth : this.opt.availablewidth});
-		
+
 		var species_silhouette = self.opt.tree_view == "reconciledView"? true: false;
 		set_links({link: link, link_type : this.opt.link_type, duration : this.opt.duration, species_silhouette : species_silhouette});
-		
-		
+
+
 		// colors based on taxonomy
 		var subtree_colors = get_subtree_color_data({nodeEnter : this.nodeEnter, highlight_gene : this.opt.highlight_gene, target : this.opt.target});
 		jQuery('.clade_tax_rect').remove();
-		var color_codes = color_subtrees({subtree_colors : subtree_colors, target : this.opt.target});		
-		//console.log("here are the color codes: ");
-		this._addLegend({target : "legend_panel", legend_dictionary : color_codes})		
-		
+		var color_codes = color_subtrees({subtree_colors : subtree_colors, target : this.opt.target});
+		//Biojs.console.enable("here are the color codes: ");
+		this._addLegend({target : "legend_panel", legend_dictionary : color_codes})
+
 		// shall we print the species tree silhouette here?
 		if(self.opt.tree_view == "reconciledView"){
 			//collect_data_from_plotted_tree({target : this.opt.target});
 			//print_species_tree_silhouette({link: link, link_type : this.opt.link_type, duration : this.opt.duration, species_silhouette : species_silhouette});
-			self.showSpeciesTreeSilhouette({annot_target : annot_target});
+			self.____showSpeciesTreeSilhouette({annot_target : annot_target});
 		}
-		
-		//console.log(color_codes);
-		
+
+		//Biojs.console.enable(color_codes);
+
 
 		var how_to_color_hash = get_gene_color_stats({nodeEnter : this.nodeEnter, highlight_gene : this.opt.highlight_gene, target : this.opt.target});
 
 
-		// remove on update
+		// remove on __update
 		jQuery('.tax_color_rect').remove();
-		
+
 		var circles = draw_circles({nodeEnter : this.nodeEnter, circle_size : this.opt.circle_size});   // Draw the little symbols for each node
 		var images = draw_images({nodeEnter : this.nodeEnter , image_path : this.opt.image_path}); 		// Draw images for species
 
@@ -1627,9 +1574,9 @@ _setTreeSpace: function ( args ) {
 
 		// Draw taxon names (leaf nodes)
 		var texts = draw_taxon_names({nodeEnter : this.nodeEnter, show_taxa: this.opt.show_taxa,highlight_gene : this.opt.highlight_gene,  default_view : this.opt.default_view});
-		var bootstrap_texts = draw_bootstraps({nodeEnter : this.nodeEnter, visibility : "hidden"});     // Draw bootstrap values 
-		self.setTooltips();
-	
+		var bootstrap_texts = draw_bootstraps({nodeEnter : this.nodeEnter, visibility : "hidden"});     // Draw bootstrap values
+		self.__setTooltips();
+
 		//self.root.children.forEach(self._toggleAll);
 
 		//collapse nodes
@@ -1637,7 +1584,7 @@ _setTreeSpace: function ( args ) {
 	},
 
 
-	update: function(source){
+	__update: function(source){
 		var self = this;
 	//	var root = this.tree_data;
 		var root = source;
@@ -1653,31 +1600,31 @@ _setTreeSpace: function ( args ) {
     	var nodes = tree.nodes(root);
 		// get the tree's nodes
 		var selected_nodes;
-		//nodes.forEach(function(d) { 
+		//nodes.forEach(function(d) {
 		//	if(d.depth == 0){ d.y = 10;}
 		//	else{
-		//		d.y = d.depth * 180; 
+		//		d.y = d.depth * 180;
 		//	}
 		//	});
 		/*if(self.opt.show_lost_taxa){
-			console.log("show lost taxa");
+			Biojs.console.enable("show lost taxa");
 			var copy_of_nodes = nodes.slice(0);
 			for (var i = 0 ; i < nodes.length; i++) {
-				//console.log(selected_nodes[i]);
+				//Biojs.console.enable(selected_nodes[i]);
 					var node = nodes[i];
 					var name = node.name;
-					//console.log("node "+name+" has lost taxa and "+node.children.length+" children");
-					
+					//Biojs.console.enable("node "+name+" has lost taxa and "+node.children.length+" children");
+
 					if(node.lost_taxa){
 							var n = {name: "lost_taxon","branch_length":"1536","taxon":"Danio_rerio","x":95, "y":689,"children":[]};
 							//node.children.push(node.lost_taxa);
-							console.log("node "+name+" has lost taxa");
-							//console.log("now "+node.children.length+" children");
+							Biojs.console.enable("node "+name+" has lost taxa");
+							//Biojs.console.enable("now "+node.children.length+" children");
 							//selected_nodes.push(node.lost_taxa);
-							
+
 							if (node.children){
 								node.children.push(n);
-							} 
+							}
 							else{
 								node.children = [n];
 							}
@@ -1689,115 +1636,115 @@ _setTreeSpace: function ( args ) {
 							  //selected_nodes.insert(i,n);
 							  var all = first_part.concat(n,second_part);
 							  copy_of_nodes = all.slice(0);
-							  console.log("test");
-							
+							  Biojs.console.enable("test");
+
 					}
 					//var x = node.x;
 					//nodeindex[name] = x;
-		
+
 			}
 			//sdf
 			nodes = copy_of_nodes.slice(0);
 		}	*/
-		
+
 		/*var n = {id: nodes.length, name : "lost_taxon", taxon: "lost_taxon", type: "leaf"},
 		      p = nodes[4];
 		  if (p.children) p.children.push(n); else p.children = [n];
 		  nodes.push(n);
 		*/
-		//self.set_branchlengths(nodes[0], 0);
-		// make a copy of all nodes 
-		
+		//self.__set_branchlengths(nodes[0], 0);
+		// make a copy of all nodes
+
 		if(self.opt.formatOptions.tree == "json"){
-			console.log("using json in branch length test");
+			Biojs.console.enable("using json in branch length test");
 			selected_nodes = nodes.slice(0);
 	 	}
 		else{
-			console.log("well, selecting nodes and setting branch lengths");
+			Biojs.console.enable("well, selecting nodes and setting branch lengths");
 			selected_nodes = nodes[0].slice(0);
-			self.set_branchlengths(selected_nodes[0], 0);
+			self.__set_branchlengths(selected_nodes[0], 0);
 		}
-		
+
 		// from here on --> all nodes should be in self.selected_nodes
-		
+
 		self.selected_nodes = selected_nodes;
 		nodes = selected_nodes;
 		self.nodes = nodes;
 		// showing ultrametric tree or using real branch length
 		// sets the "branch_length" field of each node
 		if(self.opt.show_real_branchlength){
-			console.log("switched on real branch length");
-			self.set_branchlengths(nodes[0], 0);
+			Biojs.console.enable("switched on real branch length");
+			self.__set_branchlengths(nodes[0], 0);
 		}
-		
+
 		if(self.opt.two_window){
-			console.log("remove spinner");
+			Biojs.console.enable("remove spinner");
 			jQuery("#tree_spinner").remove;
 			jQuery("#annotation_spinner").remove;
 			$('#tree_spinner').remove()
 			$('#annotation_spinner').remove()
 		}
 
-		//console.log(selected_nodes);
-		// get the max of either 
+		//Biojs.console.enable(selected_nodes);
+		// get the max of either
 		//  - length of aligned sequence
-		//  - domain 
+		//  - domain
 		//  - length of unaligned sequence
 		var max_seq_length, max_value, max_width;
-		this.get_max_values();
+		this.__get_max_values();
 		 // this will add an axis to the top of the annotation panel
 		if(this.opt.annotation_option && this.opt.annotation_option != "speciestree" && this.opt.two_window){
-			this.addAxis({max_value : this.opt.max_value, max_width: this.opt.max_width});
+			this.__addAxis({max_value : this.opt.max_value, max_width: this.opt.max_width});
 		}
 		// since the annotation space is limited, we define a domain that maps all input values to a certain range.
 		// e.g. an unaligned sequence might be 3432 AA long, so we can do domainScale(3432) and get the value e.g. 374
 		// set domain scale
 		this.opt.domainScale = d3.scale.linear().domain([0,this.opt.max_seq_length]).range([0, this.opt.max_seq_representation]);
 		this.opt.divScale = d3.scale.linear().domain([0,5]).range([0, this.opt.availablewidth]);
-		
-		
-	  	// Recompute the layout: update the nodes
+
+
+	  	// Recompute the layout: __update the nodes
 		//var node = target.selectAll("g.node").data(selected_nodes, function(d) { return d.id || (d.id = ++i); });
-		var node = target.selectAll("g.node").data(tree.nodes(root), function(d) { 
-			return d.id || (d.id = ++i); 
+		var node = target.selectAll("g.node").data(tree.nodes(root), function(d) {
+			return d.id || (d.id = ++i);
 		});
 		this.nodeEnter = node.enter().append("svg:g").attr("class", "node")
-									//.on("click", function(d){console.log("uff, clicked");self._collapseNode(d);})
-									.on("click", function(d){console.log("uff, clicked");self._focus(d);})
+									//.on("click", function(d){Biojs.console.enable("uff, clicked");self._collapseNode(d);})
+									.on("click", function(d){Biojs.console.enable("uff, clicked");self._focus(d);})
 									//.on("mouseover", function(d){var test = this;self._highlightSpeciesData(test,d)})
 									//.on("mouseout", function(d){var test = this;self._deHighlightSpeciesData(test,d)})
-		// Update the links…
+		// __update the links…
 		var link = target.selectAll("path.link").data(tree.links(nodes), function(d) { return d.source.id + "-" + d.target.id; });
 
 		draw_nodes({nodeEnter : this.nodeEnter, node : node, source : self.tree_data  , circle_size : this.opt.circle_size,tree_representation_type : this.opt.tree_representation_type, availablewidth : this.opt.availablewidth});
-		
+
 		var species_silhouette = self.opt.tree_view == "reconciledView"? true: false;
 		set_links({link: link, link_type : this.opt.link_type, duration : this.opt.duration, species_silhouette : species_silhouette});
-		
-		
+
+
 		// colors based on taxonomy
 		var subtree_colors = get_subtree_color_data({nodeEnter : this.nodeEnter, highlight_gene : this.opt.highlight_gene, target : this.opt.target});
 		jQuery('.clade_tax_rect').remove();
-		var color_codes = color_subtrees({subtree_colors : subtree_colors, target : this.opt.target});		
-		//console.log("here are the color codes: ");
-		this._addLegend({target : "legend_panel", legend_dictionary : color_codes})		
-		
+		var color_codes = color_subtrees({subtree_colors : subtree_colors, target : this.opt.target});
+		//Biojs.console.enable("here are the color codes: ");
+		this._addLegend({target : "legend_panel", legend_dictionary : color_codes})
+
 		// shall we print the species tree silhouette here?
 		if(self.opt.tree_view == "reconciledView"){
 			//collect_data_from_plotted_tree({target : this.opt.target});
 			//print_species_tree_silhouette({link: link, link_type : this.opt.link_type, duration : this.opt.duration, species_silhouette : species_silhouette});
-			self.showSpeciesTreeSilhouette({annot_target : annot_target});
+			self.____showSpeciesTreeSilhouette({annot_target : annot_target});
 		}
-		
-		//console.log(color_codes);
-		
+
+		//Biojs.console.enable(color_codes);
+
 
 		var how_to_color_hash = get_gene_color_stats({nodeEnter : this.nodeEnter, highlight_gene : this.opt.highlight_gene, target : this.opt.target});
 
 
-		// remove on update
+		// remove on __update
 		jQuery('.tax_color_rect').remove();
-		
+
 		var circles = draw_circles({nodeEnter : this.nodeEnter, circle_size : this.opt.circle_size});   // Draw the little symbols for each node
 		var images = draw_images({nodeEnter : this.nodeEnter , image_path : this.opt.image_path}); 		// Draw images for species
 
@@ -1805,49 +1752,49 @@ _setTreeSpace: function ( args ) {
 
 		// Draw taxon names (leaf nodes)
 		var texts = draw_taxon_names({nodeEnter : this.nodeEnter, show_taxa: this.opt.show_taxa,highlight_gene : this.opt.highlight_gene,  default_view : this.opt.default_view});
-		var bootstrap_texts = draw_bootstraps({nodeEnter : this.nodeEnter, visibility : "hidden"});     // Draw bootstrap values 
-		
-		
-		
-		console.log("showing annotation: "+this.opt.annotation_option);
+		var bootstrap_texts = draw_bootstraps({nodeEnter : this.nodeEnter, visibility : "hidden"});     // Draw bootstrap values
+
+
+
+		Biojs.console.enable("showing annotation: "+this.opt.annotation_option);
 		if(this.opt.annotation_option == "speciestree"){
-			console.log("showing speciestree");
-				self.showSpeciesTree({annot_target : annot_target});
+			Biojs.console.enable("showing speciestree");
+				self.__showSpeciesTree({annot_target : annot_target});
 		}
-		else if(this.opt.annotation_option == "alignment" 
+		else if(this.opt.annotation_option == "alignment"
 			|| this.opt.annotation_option == "domains"
 			|| this.opt.annotation_option == "seq_domains"){
-				var nodeindex = self.getNodeIndices({selected_nodes : selected_nodes});
-		
+				var nodeindex = self.__getNodeIndices({selected_nodes : selected_nodes});
+
 				switch(this.opt.annotation_option){
 					case "alignment":
-						console.log("adding alignment");
-						self.showAlignments({nodeindex : nodeindex, annot_target : annot_target});
+						Biojs.console.enable("adding alignment");
+						self.__showAlignments({nodeindex : nodeindex, annot_target : annot_target});
 						break;
 					case "domains":
-						console.log("adding domains");
-						self.showDomains({nodeindex : nodeindex, annot_target : annot_target});
+						Biojs.console.enable("adding domains");
+						self.__showDomains({nodeindex : nodeindex, annot_target : annot_target});
 						break;
 					case "seq_domains":
-						console.log("adding seq_domains");
-						self.showSeqDomains({nodeindex : nodeindex, annot_target : annot_target});
+						Biojs.console.enable("adding seq_domains");
+						self.__showSeqDomains({nodeindex : nodeindex, annot_target : annot_target});
 						break;
-						
-						
+
+
 					default:
-						console.log("no annotation selected");
+						Biojs.console.enable("no annotation selected");
 				}
-		}		
-			self.setTooltips();
-		
+		}
+			self.__setTooltips();
+
 	},
-	/* Updates a tree annotationlayout.
-	 * 
-	 * @example 
-	 * myTree.update_annotation();
-	 * 
+	/* __updates a tree annotationlayout.
+	 *
+	 * @example
+	 * myTree.__update_annotation();
+	 *
 	 */
-	update_annotation: function(source){
+	__update_annotation: function(source){
 		var self = this;
 	//	var root = this.tree_data;
 		var annotation_data = self.annotation_data;
@@ -1857,64 +1804,64 @@ _setTreeSpace: function ( args ) {
 		//this.opt.target;
 		var i = 0;
 		self.domain_data = annotation_data;
-		//console.log(selected_nodes);
-		// get the max of either 
+		//Biojs.console.enable(selected_nodes);
+		// get the max of either
 		//  - length of aligned sequence
-		//  - domain 
+		//  - domain
 		//  - length of unaligned sequence
 		var max_seq_length, max_value, max_width;
-		this.get_max_values({annotation : annotation_data});
+		this.__get_max_values({annotation : annotation_data});
 		 // this will add an axis to the top of the annotation panel
 		if(this.opt.annotation_option && this.opt.annotation_option != "speciestree" && this.opt.two_window){
-			this.addAxis({max_value : this.opt.max_value, max_width: this.opt.max_width});
+			this.__addAxis({max_value : this.opt.max_value, max_width: this.opt.max_width});
 		}
 		// since the annotation space is limited, we define a domain that maps all input values to a certain range.
 		// e.g. an unaligned sequence might be 3432 AA long, so we can do domainScale(3432) and get the value e.g. 374
 		// set domain scale
 		this.opt.domainScale = d3.scale.linear().domain([0,this.opt.max_seq_length]).range([0, this.opt.max_seq_representation]);
 		this.opt.divScale = d3.scale.linear().domain([0,5]).range([0, this.opt.availablewidth]);
-		
 
-		console.log("showing annotation: "+this.opt.annotation_option);
+
+		Biojs.console.enable("showing annotation: "+this.opt.annotation_option);
 		if(this.opt.annotation_option == "speciestree"){
-			console.log("showing speciestree");
-				self.showSpeciesTree({annot_target : annot_target});
+			Biojs.console.enable("showing speciestree");
+				self.__showSpeciesTree({annot_target : annot_target});
 		}
-		else if(this.opt.annotation_option == "alignment" 
+		else if(this.opt.annotation_option == "alignment"
 			|| this.opt.annotation_option == "domains"
 			|| this.opt.annotation_option == "annotation_grid"
 			|| this.opt.annotation_option == "seq_domains"){
-				var nodeindex = self.getNodeIndices({selected_nodes : this.nodes});
-		
+				var nodeindex = self.__getNodeIndices({selected_nodes : this.nodes});
+
 				switch(this.opt.annotation_option){
 					case "alignment":
-						console.log("adding alignment");
-						self.showAlignments({nodeindex : nodeindex, annot_target : annot_target});
+						Biojs.console.enable("adding alignment");
+						self.__showAlignments({nodeindex : nodeindex, annot_target : annot_target});
 						break;
 					case "domains":
-						console.log("adding domains");
-						self.showDomains({nodeindex : nodeindex, annot_target : annot_target});
+						Biojs.console.enable("adding domains");
+						self.__showDomains({nodeindex : nodeindex, annot_target : annot_target});
 						break;
 					case "seq_domains":
-						console.log("adding seq_domains");
-						self.showSeqDomains({nodeindex : nodeindex, annot_target : annot_target});
+						Biojs.console.enable("adding seq_domains");
+						self.__showSeqDomains({nodeindex : nodeindex, annot_target : annot_target});
 						break;
 					case "annotation_grid":
-						console.log("adding annotation_grid");
-						self.showAnnotationGrid({nodeindex : nodeindex, annot_target : annot_target});
+						Biojs.console.enable("adding annotation_grid");
+						self.__showAnnotationGrid({nodeindex : nodeindex, annot_target : annot_target});
 						break;
-				
-						
+
+
 					default:
-						console.log("no annotation selected");
+						Biojs.console.enable("no annotation selected");
 				}
-		}		
-			self.setTooltips();
-		
+		}
+			self.__setTooltips();
+
 	},
-	
-	
-	get_max_values: function(args){
+
+
+	__get_max_values: function(args){
 		var annotation = args.annotation;
 		if(this.opt.two_window){
 				if(this.opt.annotation_option){
@@ -1924,7 +1871,7 @@ _setTreeSpace: function ( args ) {
 							 this.opt.max_seq_length = this.opt.max_value;
 						 }
 						 else{
-							 this.opt.max_width = d3.max(annotation, function(d) { return +d.seq_length;} );		
+							 this.opt.max_width = d3.max(annotation, function(d) { return +d.seq_length;} );
 							 this.opt.max_value = this.opt.max_width;
 							 this.opt.max_seq_length = this.opt.max_width;
 						 }
@@ -1936,40 +1883,40 @@ _setTreeSpace: function ( args ) {
 			  this.opt.max_seq_length = this.opt.max_width;
 		 }
 	},
-	
-	getNodeIndices: function(args){
+
+	__getNodeIndices: function(args){
 		var selected_nodes = args.selected_nodes;
 		var nodeindex = new Object();
-		//console.log(selected_nodes);
+		//Biojs.console.enable(selected_nodes);
 		for (var i = 0 ; i < selected_nodes.length; i++) {
-			//console.log(selected_nodes[i]);
+			//Biojs.console.enable(selected_nodes[i]);
 				var node = selected_nodes[i];
 				var name = node.name;
 				var x = node.x;
 				nodeindex[name] = x;
-		
+
 		}
 		if(nodeindex.length < 1){
-			console.log("could not map annotations");
+			Biojs.console.enable("could not map annotations");
 			// need to capture this case
 		}
 		return nodeindex;
 	},
-	
-	showAlignments: function(args){
+
+	__showAlignments: function(args){
 		var nodeindex = args.nodeindex;
 		var annot_target = args.annot_target;
 		var self = this;
 
-		console.log("nodeindex is: ");
-		console.log(nodeindex);
+		Biojs.console.enable("nodeindex is: ");
+		Biojs.console.enable(nodeindex);
 
 		var annot_node = annot_target.selectAll("g.node").data(self.alignment_data);
 		annot_node.exit().remove();
 		this.annot_nodeEnter = annot_node.enter()
 									.append("svg:g").filter(function(d){ return nodeindex.hasOwnProperty(d.name)})
 									.attr("class", "node")
-									//.on("click", function(d) { toggle(d); self.update(d); })
+									//.on("click", function(d) { __toggle(d); self.__update(d); })
 									.on("mouseover", function(d){var test = this;self._highlightSpeciesData(test,d)})
 									.on("mouseout", function(d){var test = this;self._deHighlightSpeciesData(test,d)});
 				if(self.opt.two_window){
@@ -1989,7 +1936,7 @@ _setTreeSpace: function ( args ) {
 									
 	},
 	
-	showAnnotationGrid: function(args){
+	__showAnnotationGrid: function(args){
 		var nodeindex = args.nodeindex;
 		var annot_target = args.annot_target;
 		var self = this;
@@ -2035,7 +1982,7 @@ _setTreeSpace: function ( args ) {
 
 		},
 
-		showSeqDomains: function(args){
+		__showSeqDomains: function(args){
 		var nodeindex = args.nodeindex;
 		var annot_target = args.annot_target;
 		var self = this;
@@ -2054,10 +2001,10 @@ _setTreeSpace: function ( args ) {
 									.append("svg:g").filter(function(d){ 
 											var test = d;
 											if(nodeindex.hasOwnProperty(d.name)){ 
-												console.log("take "+d.name); 
+												Biojs.console.enable("take "+d.name); 
 											}
 											else{
-												console.log("could not map "+d.name);	
+												Biojs.console.enable("could not map "+d.name);	
 											}
 											return nodeindex.hasOwnProperty(d.name)})
 									.attr("class", "xref_node")
@@ -2076,9 +2023,9 @@ _setTreeSpace: function ( args ) {
 		
 		var size = Object.size(nodeindex);
 		var offset_dictionary = {};
-		console.log("looking at the domains, nodeindex: "+size);
-		//console.log(nodeindex);
-		console.log(self.domain_data);
+		Biojs.console.enable("looking at the domains, nodeindex: "+size);
+		//Biojs.console.enable(nodeindex);
+		Biojs.console.enable(self.domain_data);
 		var alignment_length;
 		
 		/*
@@ -2147,10 +2094,10 @@ _setTreeSpace: function ( args ) {
 									.append("svg:g").filter(function(d){ 
 											var test = d;
 											if(nodeindex.hasOwnProperty(d.name)){ 
-												console.log("take "+d.name); 
+												Biojs.console.enable("take "+d.name); 
 											}
 											else{
-												console.log("could not map "+d.name);	
+												Biojs.console.enable("could not map "+d.name);	
 											}
 											return nodeindex.hasOwnProperty(d.name)})
 									.attr("class", "node")
@@ -2159,7 +2106,7 @@ _setTreeSpace: function ( args ) {
 		
 		// exit selection
 		annot_node.exit().remove();
-		//console.log(this.annot_nodeEnter);
+		//Biojs.console.enable(this.annot_nodeEnter);
 		if(self.opt.two_window){
 											this.nodeEnter = this.annot_nodeEnter;
 		}			
@@ -2188,13 +2135,13 @@ _setTreeSpace: function ( args ) {
 											sequence_start_y : this.opt.sequence_start_y,
 											two_window : this.opt.two_window,
 											nodeindex : nodeindex,
-											visibility : "",
+											visibility : ""
 											});							
 		// Domains
 		var domains = rects.selectAll(".domain").data(function(d) { return d.domains; })
 		var leaves = rects.selectAll(".leaf_label");
-						//console.log(domains);
-						//console.log(" after specified domains/leaves");
+						//Biojs.console.enable(domains);
+						//Biojs.console.enable(" after specified domains/leaves");
 		//this.opt.domainScale = d3.scale.linear().domain([0,this.opt.max_seq_length]).range([0, this.opt.max_seq_representation]);
 		this.all_domains =  draw_domains({domains : domains, sequence_start_y : this.opt.sequence_start_y, 
 															domainScale: this.opt.cigarScale, sequence_rect_width : this.opt.sequence_rect_width,
@@ -2203,7 +2150,7 @@ _setTreeSpace: function ( args ) {
 	
 	},
 	
-	showDomains: function(args){
+	__showDomains: function(args){
 		var nodeindex = args.nodeindex;
 		var annot_target = args.annot_target;
 		var self = this;
@@ -2223,7 +2170,7 @@ _setTreeSpace: function ( args ) {
 		var annot_node = annot_target.selectAll("g.node").data(self.domain_data);
 		this.annot_nodeEnter = annot_node.enter()
 									.append("svg:g").filter(function(d){ 
-											//if(nodeindex.hasOwnProperty(d.name)){ console.log("take "+d.name); }
+											//if(nodeindex.hasOwnProperty(d.name)){ Biojs.console.enable("take "+d.name); }
 											return nodeindex.hasOwnProperty(d.name)})
 									.attr("class", "node")
 									.on("mouseover", function(d){var test = this;self._highlightSpeciesData(test,d)})
@@ -2243,16 +2190,16 @@ _setTreeSpace: function ( args ) {
 											visibility : ""});
 	//
 
-											console.log("after sequence drawn");
+											Biojs.console.enable("after sequence drawn");
 
 						// Domains
 						var domains = rects.selectAll(".domain").data(function(d) { return d.domains; })
 						var leaves = rects.selectAll(".leaf_label");
-						//console.log(domains);
-						//console.log(" after specified domains/leaves");
-						console.log("setting domainscale to "+this.opt.max_seq_length);
+						//Biojs.console.enable(domains);
+						//Biojs.console.enable(" after specified domains/leaves");
+						Biojs.console.enable("setting domainscale to "+this.opt.max_seq_length);
 						this.opt.domainScale = d3.scale.linear().domain([0,this.opt.max_seq_length]).range([0, this.opt.max_seq_representation]);
-						console.log(" after domainscale");
+						Biojs.console.enable(" after domainscale");
 						this.all_domains =  draw_domains({domains : domains, sequence_start_y : this.opt.sequence_start_y, 
 															domainScale: this.opt.domainScale, sequence_rect_width : this.opt.sequence_rect_width,
 															two_window : this.opt.two_window,
@@ -2260,14 +2207,14 @@ _setTreeSpace: function ( args ) {
 	
 	},
 		
-	showSpeciesTreeSilhouette: function(args){
+	____showSpeciesTreeSilhouette: function(args){
 		var annot_target = args.annot_target;
 		var right2left = false;
 		var class_type_path = "species_link";
 		var class_type_node = "species_node";
 		var i = 0;
-		console.log("before reading tree")
-			this.species_tree_data = this.readTree({'load_from_variable': this.opt.load_from_variable,'tree_format' : this.opt.formatOptions.tree,
+		Biojs.console.enable("before reading tree")
+			this.species_tree_data = this.__readTree({'load_from_variable': this.opt.load_from_variable,'tree_format' : this.opt.formatOptions.tree,
 													'tree_data': this.opt.species_tree,'tree_data_variable' : this.opt.json_tree_string,
 													'load_from_web' : this.opt.load_from_web});
 
@@ -2278,14 +2225,14 @@ _setTreeSpace: function ( args ) {
             //var species_height = this.opt.species_nodes * 11;
             var species_height = temp_nodes.length * 11;							
             jQuery("#annotation_svg_container").height(species_height);
-            console.log("d3.layout.cluster: "+species_height+", "+this.opt.div_width_half+"-"+this.opt.leaf_space+"");
+            Biojs.console.enable("d3.layout.cluster: "+species_height+", "+this.opt.div_width_half+"-"+this.opt.leaf_space+"");
 										
 			var available_width = this.opt.div_width_half-this.opt.leaf_space;							
 			var species_tree = d3.layout.cluster()
 										.separation(function(a, b) { return a.parent === b.parent ? 4 : 4; })
 										.size([species_height , available_width ]);
-										console.log("read tree");
-			console.log(this.species_tree_data);
+										Biojs.console.enable("read tree");
+			Biojs.console.enable(this.species_tree_data);
 										
 			// get the tree's nodes
 			var species_nodes = species_tree.nodes(this.species_tree_data);
@@ -2303,7 +2250,7 @@ _setTreeSpace: function ( args ) {
 			draw_nodes({nodeEnter : this.speciesnodeEnter, node : species_node, source : this.species_tree_data, 
 						right2left : right2left,
 						circle_size : this.opt.circle_size,tree_representation_type : this.opt.tree_representation_type, availablewidth : this.opt.div_width_half});
-		  // Update the links…
+		  // __update the links…
 		    var link = annot_target.selectAll("path."+class_type_path).data(species_tree.links(species_nodes), function(d) { return d.target.id; });
 
 			set_links({link: link, link_type : this.opt.link_type, duration : this.opt.duration, right2left : right2left, availablewidth : this.opt.div_width_half,
@@ -2311,14 +2258,14 @@ _setTreeSpace: function ( args ) {
 			//var species_subtree_colors = get_subtree_color_data({nodeEnter : this.speciesnodeEnter, highlight_gene : this.opt.highlight_gene, target : this.opt.annot_target});
 			//jQuery('.clade_tax_rect').remove();
 			//var species_color_codes = color_subtrees({subtree_colors : species_subtree_colors, target : this.opt.annot_target, right2left : right2left});		
-			//console.log("here are the color codes: ");
-			//console.log(color_codes);
+			//Biojs.console.enable("here are the color codes: ");
+			//Biojs.console.enable(color_codes);
 
 			//this._addLegend({target : "legend_panel", legend_dictionary : color_codes})
 			//var how_to_color_hash = get_gene_color_stats({nodeEnter : this.speciesnodeEnter, highlight_gene : this.opt.highlight_gene, target : this.opt.target});
 
 
-			// remove on update
+			// remove on __update
 			//jQuery('.tax_color_rect').remove();
 			// Draw the little symbols for each node
 			//var circles = draw_circles({nodeEnter : this.speciesnodeEnter, circle_size : this.opt.circle_size});
@@ -2333,29 +2280,29 @@ _setTreeSpace: function ( args ) {
 		
 	},	
 		
-	showSpeciesTree: function(args){
+	__showSpeciesTree: function(args){
 		var annot_target = args.annot_target;
 		var class_type_path = "species_link";
 		var class_type_node = "species_node";
 		var right2left = true;
 		var self = this;
-		console.log("before reading tree")
-			this.species_tree_data = this.readTree({'load_from_variable': this.opt.load_from_variable,'tree_format' : this.opt.formatOptions.tree,
+		Biojs.console.enable("before reading tree")
+			this.species_tree_data = this.__readTree({'load_from_variable': this.opt.load_from_variable,'tree_format' : this.opt.formatOptions.tree,
 										'tree_data': this.opt.species_tree,'tree_data_variable' : this.opt.json_tree_string,
 										'load_from_web' : this.opt.load_from_web});
 
 
             var species_height = this.opt.species_nodes * 5;
             jQuery("#annotation_svg_container").height(species_height);
-            console.log("d3.layout.cluster: "+species_height+", "+this.opt.div_width_half+"-"+this.opt.leaf_space+"");
+            Biojs.console.enable("d3.layout.cluster: "+species_height+", "+this.opt.div_width_half+"-"+this.opt.leaf_space+"");
 										
 			var available_width = this.opt.div_width_half-this.opt.leaf_space;							
 			var species_tree = d3.layout.cluster()
 										.separation(function(a, b) { return a.parent === b.parent ? 1 : 1; })
 										.size([species_height , available_width ]);
 										
-			console.log("read tree");
-			console.log(this.species_tree_data);
+			Biojs.console.enable("read tree");
+			Biojs.console.enable(this.species_tree_data);
 			
 			// get gt node data
 			var geneNode2Coordinate = {};
@@ -2378,7 +2325,7 @@ _setTreeSpace: function ( args ) {
 			draw_nodes({nodeEnter : this.speciesnodeEnter, node : species_node, source : this.species_tree_data  , 
 						right2left : right2left,
 						circle_size : this.opt.circle_size,tree_representation_type : this.opt.tree_representation_type, availablewidth : this.opt.div_width_half});
-		  // Update the links…
+		  // __update the links…
 		    var link = annot_target.selectAll("path.link").data(species_tree.links(species_nodes), function(d) { return d.target.id; });
 
 			// ok, we want to show branches leading to species not in the gene tree with different lines
@@ -2388,14 +2335,14 @@ _setTreeSpace: function ( args ) {
 			//var species_subtree_colors = get_subtree_color_data({nodeEnter : this.speciesnodeEnter, highlight_gene : this.opt.highlight_gene, target : this.opt.annot_target});
 			//jQuery('.clade_tax_rect').remove();
 			//var species_color_codes = color_subtrees({subtree_colors : species_subtree_colors, target : this.opt.annot_target, right2left : right2left});		
-			//console.log("here are the color codes: ");
-			//console.log(color_codes);
+			//Biojs.console.enable("here are the color codes: ");
+			//Biojs.console.enable(color_codes);
 
 			//this._addLegend({target : "legend_panel", legend_dictionary : color_codes})
 			//var how_to_color_hash = get_gene_color_stats({nodeEnter : this.speciesnodeEnter, highlight_gene : this.opt.highlight_gene, target : this.opt.target});
 
 
-			// remove on update
+			// remove on __update
 			//jQuery('.tax_color_rect').remove();
 			// Draw the little symbols for each node
 			var circles = draw_circles({nodeEnter : this.speciesnodeEnter, circle_size : this.opt.circle_size});
@@ -2444,7 +2391,7 @@ _setTreeSpace: function ( args ) {
 					}
 				}
 				else{
-					//console.log("skipping "+species_name);
+					//Biojs.console.enable("skipping "+species_name);
 
 				}
 			});*/
@@ -2492,14 +2439,14 @@ _setTreeSpace: function ( args ) {
 				}
 			}
 			else{
-				//console.log("skipping "+species_name);
+				//Biojs.console.enable("skipping "+species_name);
 
 			}
 		});*/
 		
 	},
 	
-	setTooltips: function(){
+	__setTooltips: function(){
 		add_tipsy({where : ".leaf_label", default_view:this.opt.default_view});	
 		add_tipsy({where : ".domain", default_view:this.opt.default_view});	
 		add_tipsy({where : ".clade_tax_rect", default_view:this.opt.default_view});	
@@ -2515,7 +2462,7 @@ _setTreeSpace: function ( args ) {
 	 * myTree.setControls();
 	 * 
 	 */
-	setControls: function(){},
+	__setControls: function(){},
 	
 	/*
 	 * Sets domain colors.
@@ -2523,12 +2470,12 @@ _setTreeSpace: function ( args ) {
 	 * @param {string} [identifier] Sequence identifier.
 	 * 
 	 * @example 
-	 * myTree.setDomainColors();
+	 * myTree.__setDomainColors();
 	 * 
 	 */
-	setDomainColors: function(arg){
+	__setDomainColors: function(arg){
 		var target = arg.target;
-		console.log("set domain colors to: "+target);
+		Biojs.console.enable("set domain colors to: "+target);
 		var domain_colors = new Object();
 		domain_colors[0] = "domain_gradient";
 		domain_colors[1] = "domain_gradient2";
@@ -2591,7 +2538,7 @@ _setTreeSpace: function ( args ) {
 	
 	_collapseNode: function(d){
 		//var d = arg.d;
-		console.log("collapsing "+d.name);
+		Biojs.console.enable("collapsing "+d.name);
 		//d3.select(d).append("svg:circle")
 		  //        .attr("r", function(d){ 
 			//		  return d.children ? circle_size : 0; })
@@ -2605,10 +2552,10 @@ _setTreeSpace: function ( args ) {
 			d.children = d._children;
 			d._children = null;
 		}
-		this.update_tree(d);
-		this.update_annotation(d);
+		this.____update_tree(d);
+		this.__update_annotation(d);
 	},	
-	expandNode: function(arg){},	
+	__expandNode: function(arg){},	
 
 	
 	/*
@@ -2616,18 +2563,18 @@ _setTreeSpace: function ( args ) {
 	 * @param {array} leaves The leaves of the tree with annotated domains.
 	 * 
 	 * @example 
-	 * myTree.getMaxSeqLength();
+	 * myTree.__getMaxSeqLength();
 	 * 
 	 */
-	getMaxSeqLength: function(args){
+	__getMaxSeqLength: function(args){
 		var self = this;
 		var leaves = args.leaves;
 		var max_seq_length;
-		console.log("looking at "+leaves.length+" leaves");
+		Biojs.console.enable("looking at "+leaves.length+" leaves");
 		for (var i = 0; i < leaves.length; i++) {
-			console.log("first leaf is: ");
-			console.log(leaves[i]);
-			console.log(leaves[i].seq_length);
+			Biojs.console.enable("first leaf is: ");
+			Biojs.console.enable(leaves[i]);
+			Biojs.console.enable(leaves[i].seq_length);
 			var temp_x, temp_y;
 			var temp_seq_length = leaves[i].seq_length;
 	
@@ -2643,10 +2590,10 @@ _setTreeSpace: function ( args ) {
 	 * @param {string} [identifier] Sequence identifier.
 	 * 
 	 * @example 
-	 * myTree.setModelOrganisms();
+	 * myTree.__setModelOrganisms();
 	 * 
 	 */
-	setModelOrganisms: function (){
+	__setModelOrganisms: function (){
 		
 		var model_organisms = new Object(); // or just {}
 			model_organisms['Homo_sapiens'] = "red";
@@ -2664,7 +2611,7 @@ _setTreeSpace: function ( args ) {
 
 
 
-	/**
+	/*
 	 * Prunes a tree given a selected subset of species
 	 * @param {string} a list of nodes of the tree.
 	 * 
@@ -2678,7 +2625,7 @@ _setTreeSpace: function ( args ) {
 		var nodes2delete = new Array();
 		for (var i = selected_nodes.length; i >= 0; i--) {
 			if(!selected_nodes[i]){
-				console.log("could not look at node "+i);
+				Biojs.console.enable("could not look at node "+i);
 				continue;
 			}
 			var node = selected_nodes[i];
@@ -2686,40 +2633,40 @@ _setTreeSpace: function ( args ) {
 			var parent = node.parent;
 			var taxon = selected_nodes[i].taxon;
 			
-			console.log("Looking at node: "+name+" taxon: "+taxon);
+			Biojs.console.enable("Looking at node: "+name+" taxon: "+taxon);
 			//continue;
 		// Leaf	
 			if(!node.children){
-				console.log("is a leaf");
+				Biojs.console.enable("is a leaf");
 			}
 			// can implement inner node deletions here
 			//if(!self.opt.innerNodes[taxon] && node.children){
 			if(!self.opt.model_organisms[taxon] && !node.children){
-					//console.log("should be deleted");
+					//Biojs.console.enable("should be deleted");
 					// tell parent
 					var parent = node.parent;
 					if (typeof parent.children2hide == 'undefined' || parent.children2hide.length == 0) {
-						//console.log("creating empty children2hash in parent: "+parent.name);
+						//Biojs.console.enable("creating empty children2hash in parent: "+parent.name);
 						parent.children2hide = {};
 					}
 					parent.children2hide[name] = 1;
-					//console.log("adding node "+name+" to be deleted in parent: "+parent.name);
+					//Biojs.console.enable("adding node "+name+" to be deleted in parent: "+parent.name);
 					selected_nodes.splice(i, 1);
 					//nodes2delete.push(node);
 			}
 				else{	
-					//console.log("keep it");
+					//Biojs.console.enable("keep it");
 				}
 				//}
 			//else{
 		// Inner Node		
-				console.log("is a innerNode");
-				//console.log("list of children2hide");
-				//console.log(node.children2hide);
-				//console.log("list of children2add");
-				//console.log(node.children2add);
-				console.log(node.children2hide);	
-				console.log(node.children2add);
+				Biojs.console.enable("is a innerNode");
+				//Biojs.console.enable("list of children2hide");
+				//Biojs.console.enable(node.children2hide);
+				//Biojs.console.enable("list of children2add");
+				//Biojs.console.enable(node.children2add);
+				Biojs.console.enable(node.children2hide);	
+				Biojs.console.enable(node.children2add);
 				if(node.children2hide){
 					// since we are changing a node's children, let's make a backup.
 					node._children = node.children;
@@ -2727,36 +2674,36 @@ _setTreeSpace: function ( args ) {
 					    for (key in node.children2hide) {
 					        if (node.children2hide.hasOwnProperty(key)) size++;
 					    }
-					//console.log("has "+node.children.length+" children and to hide: "+size);
+					//Biojs.console.enable("has "+node.children.length+" children and to hide: "+size);
 					if(size == node.children.length && typeof node.parent != 'undefined'){
-						console.log("hide all children");
+						Biojs.console.enable("hide all children");
 						// hide children (d3 will look for .children by default)
 						node.children = null;
 						// tell the parent about this
 						if (typeof parent.children2hide == 'undefined' || parent.children2hide.length == 0) {
-							//console.log("creating empty children2hash in parent: "+parent.name);
+							//Biojs.console.enable("creating empty children2hash in parent: "+parent.name);
 							parent.children2hide = {};
 						}
-						console.log("splice current node from selected nodes");
+						Biojs.console.enable("splice current node from selected nodes");
 						parent.children2hide[name] = 1;
 						//selected_nodes.splice(i, 1);
 						//nodes2delete.push(node);
 						
 						// tell parent
-						//console.log("now we have: 0 nodes");
+						//Biojs.console.enable("now we have: 0 nodes");
 					}
 					else{
 						//hide only a few nodes
-						//console.log("looping over "+node.children.length+" children");
-						//console.log(node.children);
+						//Biojs.console.enable("looping over "+node.children.length+" children");
+						//Biojs.console.enable(node.children);
 						
 						var copy_of_children = node.children.slice(0);
 						for (var j = 0 ; j < node.children.length; j++) {
 							var curr_child = node.children[j];
 					      	var child_name = node.children[j].name;
-							console.log("looking at child: "+child_name);
+							Biojs.console.enable("looking at child: "+child_name);
 						  if(node.children2hide[child_name]){
-							  console.log("slicing it no: "+j+" out!")
+							  Biojs.console.enable("slicing it no: "+j+" out!")
 							  copy_of_children.splice(j, 1);
 						  }
 						  //else{
@@ -2780,38 +2727,38 @@ _setTreeSpace: function ( args ) {
 					//for(var k=0; k < node.children2add.length; k++){
 						
 					//if (typeof node.children == 'undefined' || node.children.length == 0) {
-					//	console.log("setting children to 0");
+					//	Biojs.console.enable("setting children to 0");
 					//	node.children = [];
 					//}	
 					node.children = ( typeof node.children != 'undefined' && node.children instanceof Array ) ? node.children : [];
 					
 					for (key in node.children2add) {
-						//console.log("will add node "+key)
+						//Biojs.console.enable("will add node "+key)
 						node.children.push(node.children2add[key]);
 					}
-					//console.log("has "+node.children.length+" children and to add: "+size_children2add);
-					//console.log("afterwards has "+node.children.length+" children");
+					//Biojs.console.enable("has "+node.children.length+" children and to add: "+size_children2add);
+					//Biojs.console.enable("afterwards has "+node.children.length+" children");
 				}
 
 				if(typeof node.children != 'undefined' && node.children instanceof Array){
-					console.log("now we have: "+node.children.length+" nodes");
+					Biojs.console.enable("now we have: "+node.children.length+" nodes");
 					if(node.children.length == 1 && typeof node.parent != 'undefined'){
 						if (typeof parent.children2add == 'undefined' || parent.children2add.length == 0) {
-							//console.log("adding empty children2add array");
+							//Biojs.console.enable("adding empty children2add array");
 							parent.children2add = {};
 						}
-						//console.log("well, let's keep node "+node.children[0].name+" in the parent");
+						//Biojs.console.enable("well, let's keep node "+node.children[0].name+" in the parent");
 						parent.children2add[node.children[0].name] = node.children[0];
-						//console.log("ok, we tell the parent "+parent.name+" to add child "+curr_child.name);
-						//console.log(parent.children2add);
+						//Biojs.console.enable("ok, we tell the parent "+parent.name+" to add child "+curr_child.name);
+						//Biojs.console.enable(parent.children2add);
 					
-						console.log("wow, just one child. tell my parent to hide/ignore this inner node!");
+						Biojs.console.enable("wow, just one child. tell my parent to hide/ignore this inner node!");
 						if (typeof parent.children2hide == 'undefined' || parent.children2hide.length == 0) {
-							//console.log("creating empty children2hash in parent: "+parent.name);
+							//Biojs.console.enable("creating empty children2hash in parent: "+parent.name);
 							parent.children2hide = {};
 						}
 						parent.children2hide[name] = 1;
-						console.log("splice current node from selected nodes");
+						Biojs.console.enable("splice current node from selected nodes");
 						selected_nodes.splice(i, 1);
 						//nodes2delete.push(node);
 					}
@@ -2820,19 +2767,19 @@ _setTreeSpace: function ( args ) {
 				  //}
 		}
 
-		console.log("done with the nodes");
+		Biojs.console.enable("done with the nodes");
 		
-		//console.log("have to delete "+nodes2delete.length+" nodes");
+		//Biojs.console.enable("have to delete "+nodes2delete.length+" nodes");
 		//for (var i = 0; i < nodes2delete.length; ++i) {
 		//       var obj = nodes2delete[i];
-		//	   console.log("delete: "+obj.name);
+		//	   Biojs.console.enable("delete: "+obj.name);
 		//}
 		//sdsdad
 
 		// get a list of leaf
 		
 		//var selected_nodes = selected_nodes
-		/*			console.log("showing model tree only");
+		/*			Biojs.console.enable("showing model tree only");
 						var filtered_nodes = copy_of_nodes.filter(function(d){ 
 
 							var current_node = d;
@@ -2851,7 +2798,7 @@ _setTreeSpace: function ( args ) {
 									  		}
 											else{i++;}
 									  	}
-									  	console.log("parent now has: "+parent.children+" childen");
+									  	Biojs.console.enable("parent now has: "+parent.children+" childen");
 									  	if(!parent.children){
 										  var parent_of_parent
 									  	}
@@ -2870,20 +2817,20 @@ _setTreeSpace: function ( args ) {
 						    for (var i = 0; i < array.length; ++i) {
 						        var obj = array[i];
 								var taxon = obj.taxon;
-								console.log("looking at taxon: "+taxon);
+								Biojs.console.enable("looking at taxon: "+taxon);
 						        if (taxon === label) {
 								//if(!self.opt.model_organisms[taxon]){
 						            // splice out 1 element starting at position i
 						            array.splice(i, 1);
 						            //return true;
 									//continue;
-									console.log("found label: "+taxon);
+									Biojs.console.enable("found label: "+taxon);
 						        }
 						        if (typeof obj.children !== 'undefined' && obj.children.length > 0) {
 									var no_children = obj.children.length;
 									obj.node_type = "innerNode";
-									console.log("internal node with "+no_children+" children");
-									console.log("node_type is "+obj.node_type);
+									Biojs.console.enable("internal node with "+no_children+" children");
+									Biojs.console.enable("node_type is "+obj.node_type);
 						            if (prune(obj.children, label)) {
 						                if (obj.children.length === 0) {
 						                    // delete children property when empty
@@ -2897,10 +2844,10 @@ _setTreeSpace: function ( args ) {
 						        }
 								else{ 
 									if(obj.node_type == "innerNode"){
-										console.log("is an innerNode, but is empty. splicing i:"+i);
+										Biojs.console.enable("is an innerNode, but is empty. splicing i:"+i);
 							            array.splice(i, 1);
 									}
-									console.log("must be a leaf");
+									Biojs.console.enable("must be a leaf");
 								}
 						
 						    }
@@ -2929,7 +2876,7 @@ _setTreeSpace: function ( args ) {
 		else{
 			self.root = d;
 		}
-		self.update_tree();
+		self.____update_tree();
 	}
 	,
 	_reset_tree: function(d) {
@@ -2938,8 +2885,8 @@ _setTreeSpace: function ( args ) {
 		// determine the subset of 
 
 		this.root = this.all_data;
-		self.update_tree();
-		self.update_annotation();
+		self.____update_tree();
+		self.__update_annotation();
 	},
 	_prune: function(array, label) {
 		var self = this;
@@ -2976,7 +2923,7 @@ _setTreeSpace: function ( args ) {
 		
 		//html_text += "<ul>";
 		for (var key in legend_dictionary) {
-			console.log("<span style='background-color:"+legend_dictionary[key]+"'>"+key+"</span><br>");
+			Biojs.console.enable("<span style='background-color:"+legend_dictionary[key]+"'>"+key+"</span><br>");
 			html_text += "<rect width='10' height='5'  style='fill:"+legend_dictionary[key]+";stroke-width:1;stroke:rgb(0,0,0)'/><text>"+key+"</text>";
 			//html_text += "<li><span style='position:static;opacity:0.1;background-color:"+legend_dictionary[key]+"'><font style='color:black'>"+key+"</font></span></li>";
 		}
@@ -2984,7 +2931,7 @@ _setTreeSpace: function ( args ) {
 		html_text += "</svg>";
 		
 		jQuery("#"+target).html(html_text);
-		console.log("added to #legend_panel: "+html_text);
+		Biojs.console.enable("added to #legend_panel: "+html_text);
 	},
 
 	_buildContextMenu: function(d){
@@ -3018,13 +2965,13 @@ _setTreeSpace: function ( args ) {
 					'</a>'+
 				//'</td>'+
 				//'<td align="left" style="vertical-align: middle;">'+
-					'<a href="#" onclick="show_bootstrap();return false">'+
+					'<a href="#" onclick="__show_bootstrap();return false">'+
 					'<img class="hide_domains added_button" style="width: 24px; height: 24px;" src="http://dev.treefam.org/static/images/tree_controls/bootstrap_onoff_active.svg.png" title="show bootstrap values">'+
 					'</a>'+
 				//'</td>'+
 
 				//'<td align="left" style="vertical-align: middle;">'+
-					'<a href="#" onclick="hide_bootstrap();return false">'+
+					'<a href="#" onclick="__hide_bootstrap();return false">'+
 					'<img class="hide_domains added_button" style="width: 24px; height: 24px;" src="http://dev.treefam.org/static/images/tree_controls/bootstrap_onoff_disabled.svg.png" title="hide bootstrap values">'+
 					'</a>'+
 				//'</td>'+
@@ -3038,7 +2985,7 @@ _setTreeSpace: function ( args ) {
 					
 				//	'<td align="left" style="vertical-align: middle;">'+
 				//		'<a href="#" onclick="show_images();return false">'+
-				//		'<img class="show_domains dotted_line" style="width: 20px; height: 20px;" //src="http://dev.treefam.org/static/images/tree_controls/dataset_colorstripOL_active.svg.png" title="show images">'+
+				//		'<img class="__show_domains dotted_line" style="width: 20px; height: 20px;" //src="http://dev.treefam.org/static/images/tree_controls/dataset_colorstripOL_active.svg.png" title="show images">'+
 //						'</a>'+
 //					'</td>'+
 //					'<td align="left" style="vertical-align: middle;">'+
@@ -3076,8 +3023,8 @@ _setTreeSpace: function ( args ) {
 						'</a>'
 					//'</td>'+
 				//	'<td align="left" style="vertical-align: middle;">'+
-				//		'<a href="#" onclick="show_domains();return false">'+
-				//		'<img class="show_domains dotted_line" style="width: 24px; height: 24px;" src="http://dev.treefam.org/static/images/tree_controls/dataset_protein_domains_active.svg.png" title="show protein domains">'+
+				//		'<a href="#" onclick="__show_domains();return false">'+
+				//		'<img class="__show_domains dotted_line" style="width: 24px; height: 24px;" src="http://dev.treefam.org/static/images/tree_controls/dataset_protein_domains_active.svg.png" title="show protein domains">'+
 				//		'</a>'+
 				//	'</td>'+
 				//	'<td align="left" style="vertical-align: middle;">'+
@@ -3096,7 +3043,7 @@ _setTreeSpace: function ( args ) {
 		//	'</table>'
 		).appendTo('#tv_controls');
 		//jQuery('<p>Lappen</p>').appendTo('#tv_controls');
-		console.log("finished building div");
+		Biojs.console.enable("finished building div");
 		//jQuery('<div  class="tree_container" id="tree"></div>').appentTo(jQuery("#tv_controls"));
 
 
@@ -3114,13 +3061,13 @@ _setTreeSpace: function ( args ) {
 
 		
 	},
-	/**
+	/*
 	 * Shows the columns indicated by the indexes array.
 	 * @param {string} seq The sequence strand.
 	 * @param {string} [identifier] Sequence identifier.
 	 * 
 	 * @example 
-	 * myTree.setModelOrganisms();
+	 * myTree.__setModelOrganisms();
 	 * 
 	 */
 	_setTaxaToShow: function (){
@@ -3136,8 +3083,8 @@ _setTreeSpace: function ( args ) {
 		
 		this.opt.show_taxa = show_taxa;
 	},
-	drawProteinDomains: function (){
-		console.log("drawing protein domains");
+	__drawProteinDomains: function (){
+		Biojs.console.enable("drawing protein domains");
 		// Sequences
 		var rects = draw_sequences({nodeEnter: this.nodeEnter, 
 										domainScale : this.opt.domainScale , 
@@ -3154,7 +3101,7 @@ _setTreeSpace: function ( args ) {
 											domain_colors : this.opt.domain_colors,
 											visibility: "" });
 		
-	},
+	}
 },
 {
 	EVT_ON_SELECTION_CHANGE: "onSelectionChange",
