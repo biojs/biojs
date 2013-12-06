@@ -16,7 +16,7 @@ The aim of this project is to create a library of graphical components easy to r
 * Find inside the "installation" section the code and dependencies you will need to make a component working in a web page
 
 # Develop a component
-BioJS components are framework agnostic, only requiring the code to be written in JavaScript?. The developer of a new component is thus free to use any framework (e.g. [JQuery](http://jquery.com/), [YUI](http://yuilibrary.com/)) and to include any other library (e.g. [Raphael](http://raphaeljs.com/), [D3](http://d3js.org/)).
+BioJS components are framework agnostic, only requiring the code to be written in JavaScript. The developer of a new component is thus free to use any framework (e.g. [JQuery](http://jquery.com/), [YUI](http://yuilibrary.com/)) and to include any other library (e.g. [Raphael](http://raphaeljs.com/), [D3](http://d3js.org/)).
 
 Any component by definition extends the BioJS reference implementation incorporating the rules provided by the [BioJS specification](https://docs.google.com/document/d/1gG036Bvwl4i-KX5BTHddGzeE_5eospL-864BrnsAS_s/edit). The BioJS specification defines:
 
@@ -36,7 +36,7 @@ Before coding we suggest to collect [requirements](https://github.com/biojs/bioj
 
 # Wrap JavaScript functionality as BioJS
 
-If you already have some JavaScript? functionality you could make it BioJS creating a wrapper on top of it. A wrapper is simply a new BioJS components using your JavaScript? functionality as a dependency. We do not have a specific tutorial for this, but you could use the tutorials we have to create a component.
+If you already have some JavaScript functionality you could make it BioJS creating a wrapper on top of it. A wrapper is simply a new BioJS components using your JavaScript functionality as a dependency. We do not have a specific tutorial for this, but you could use the tutorials we have to create a component.
 
 # Feedback
 Please feel free to send us feature requests and/or ideas of what it should be considered in the development of BioJS through the [issue tracker](https://github.com/biojs/biojs/issues) or the [BioJS mailing list](biojs@googlegroups.com).

@@ -1,4 +1,4 @@
-To quickly build the registry web application from this code, execute the command below. The web application will be made available in "target/registry".
+To quickly build the registry web application from this code, execute the command below. The web application will be available in "target/registry". Remember to make the BioJS files accessible through a web server like "Apache HTTP Server".
 
    mvn clean compile jsdoctk:jsdoc
 
