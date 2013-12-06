@@ -36,7 +36,7 @@ Before coding we suggest to collect [requirements](https://github.com/biojs/bioj
 
 # Wrap JavaScript functionality as BioJS
 
-If you already have some JavaScript? functionality you could make it BioJS creating a wrapper on top of it. A wrapper is simply a new BioJS components using your JavaScript? functionality as a dependency. We do not have a specific tutorial for this, but you could use the tutorials we have to create a component.
+If you already have some JavaScript functionality you could make it BioJS creating a wrapper on top of it. A wrapper is simply a new BioJS components using your JavaScript functionality as a dependency. We do not have a specific tutorial for this, but you could use the tutorials we have to create a component.
 
 # Feedback
 Please feel free to send us feature requests and/or ideas of what it should be considered in the development of BioJS through the [issue tracker](https://github.com/biojs/biojs/issues) or the [BioJS mailing list](biojs@googlegroups.com).
