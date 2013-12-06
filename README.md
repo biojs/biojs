@@ -16,7 +16,7 @@ The aim of this project is to create a library of graphical components easy to r
 * Find inside the "installation" section the code and dependencies you will need to make a component working in a web page
 
 # Develop a component
-BioJS components are framework agnostic, only requiring the code to be written in JavaScript?. The developer of a new component is thus free to use any framework (e.g. [JQuery](http://jquery.com/), [YUI](http://yuilibrary.com/)) and to include any other library (e.g. [Raphael](http://raphaeljs.com/), [D3](http://d3js.org/)).
+BioJS components are framework agnostic, only requiring the code to be written in JavaScript. The developer of a new component is thus free to use any framework (e.g. [JQuery](http://jquery.com/), [YUI](http://yuilibrary.com/)) and to include any other library (e.g. [Raphael](http://raphaeljs.com/), [D3](http://d3js.org/)).
 
 Any component by definition extends the BioJS reference implementation incorporating the rules provided by the [BioJS specification](https://docs.google.com/document/d/1gG036Bvwl4i-KX5BTHddGzeE_5eospL-864BrnsAS_s/edit). The BioJS specification defines:
 
