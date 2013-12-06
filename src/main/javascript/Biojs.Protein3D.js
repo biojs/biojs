@@ -60,11 +60,11 @@
  * 
  * 
  * // Example of loading a pdb file by means of an HTTP request to
- * // 'http://www.ebi.ac.uk/pdbe-srv/view/files/1wq6.pdb' through the local proxy 'proxy.php'.
+ * // 'http://www.ebi.ac.uk/pdbe/entry-files/pdb1wq6.ent' through the local proxy 'proxy.php'.
  * // Note that instance.setPdb(data) is invoked once the data have been arrived. 
  * jQuery.ajax({
  * 		url: '../biojs/dependencies/proxy/proxy.php',
- * 		data: 'url=http://www.ebi.ac.uk/pdbe-srv/view/files/1wq6.pdb',
+ * 		data: 'url=http://www.ebi.ac.uk/pdbe/entry-files/pdb1wq6.ent',
  * 		dataType: 'text',
  * 		success: function(pdbFile){
  * 			instance.setPdb(pdbFile);
@@ -347,7 +347,7 @@ Biojs.Protein3D = Biojs.extend(
     * 
     * jQuery.ajax({
 	* 		url: '../biojs/dependencies/proxy/proxy.php',
-	* 		data: 'url=http://www.ebi.ac.uk/pdbe-srv/view/files/3u01.pdb',
+	* 		data: 'url=http://www.ebi.ac.uk/pdbe/entry-files/pdb3u01.ent',
 	* 		dataType: 'text',
 	* 		success: function(pdbFile){
 	* 			instance.setPdb(pdbFile);

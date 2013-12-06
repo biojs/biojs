@@ -13,7 +13,7 @@
  * 
  * @param {Object} options An object with the options for the component.
  * 
- * @option {string} [pdbUrl="http://www.ebi.ac.uk/pdbe-srv/view/files"] 
+ * @option {string} [pdbUrl="http://www.ebi.ac.uk/pdbe/entry-files"]
  *    Url of the web service in order to require the pdb file.
  * 
  * @option {string} [id]
@@ -44,7 +44,7 @@ Biojs.Protein3DWS = Biojs.Protein3D.extend(
 	
 	opt: {
 	   id: undefined,
-	   pdbUrl: 'http://www.ebi.ac.uk/pdbe-srv/view/files',
+	   pdbUrl: 'http://www.ebi.ac.uk/pdbe/entry-files',
 	   proxyUrl: '../biojs/dependencies/proxy/proxy.php'
 	},
 	
@@ -86,7 +86,7 @@ Biojs.Protein3DWS = Biojs.Protein3D.extend(
 		
 		jQuery.ajax({
 			url: self.opt.proxyUrl,
-			data: 'url='+self.opt.pdbUrl+'/'+pdbId+'.pdb',
+			data: 'url='+self.opt.pdbUrl+'/pdb'+pdbId+'.ent',
 			dataType: 'text',
 			success: function (pdbContent) {
 				Biojs.console.log("DATA ARRIVED");

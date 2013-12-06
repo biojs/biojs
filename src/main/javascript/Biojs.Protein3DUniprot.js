@@ -303,7 +303,7 @@ Biojs.Protein3DUniprot = Biojs.Protein3DWS.extend(
 
             jQuery.ajax({
                 url: self.opt.proxyUrl,
-                data: 'url='+self.opt.pdbUrl+'/'+pdbId+'.pdb',
+                data: 'url='+self.opt.pdbUrl+'/pdb'+pdbId+'.ent',
                 dataType: 'text',
                 success: function (pdbContent) {
                     Biojs.console.log("DATA ARRIVED");
