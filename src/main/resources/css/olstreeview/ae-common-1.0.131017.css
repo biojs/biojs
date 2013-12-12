@@ -1,0 +1,950 @@
+/*
+ Mitigating ugliness of ebi-visual.css
+ */
+
+* {
+    text-align: inherit;
+    font-weight: inherit
+}
+
+
+#content section img {
+    margin: 0
+}
+
+#content form {
+    font-size: 100%
+}
+
+#content form input
+, #content form textarea {
+    font-family: inherit
+}
+
+#content table {
+    width: auto;
+    margin: 0;
+    padding: 0;
+    border: 0 none
+}
+
+#content th, #content td {
+    padding: 0;
+    border:  0 none;
+    border-collapse: collapse;
+    vertical-align: middle
+}
+
+.container_24 {
+    min-width: 984px
+}
+
+.logo-title {
+    display: inline-block
+}
+
+span.searchterm {
+    padding: 0.1em 0.4em 0.1em 0.2em
+}
+
+.icon-awesome:before {
+    font-family: 'FontAwesome';
+    font-size: 100%;
+    color: #bbb;
+    content: attr(data-icon);
+    margin: 0 0.3em 0 0
+}
+
+ul#secondary-nav li.active a {
+    font-weight: normal
+}
+
+ul#secondary-nav li.active > a {
+    font-weight: bold !important
+}
+
+/*
+ Palette color codes
+
+ Palette URL: http://colorschemedesigner.com/#3B61ThNE8w0w0
+ */
+
+.primary-1 { background-color: #5E8CC0 }
+.primary-2 { background-color: #597390 }
+.primary-3 { background-color: #1E4B7D }
+.primary-4 { background-color: #8AB2DF }
+.primary-5 { background-color: #A1BEDF }
+
+.secondary-a-1 { background-color: #7068C8 }
+.secondary-a-2 { background-color: #656096 }
+.secondary-a-3 { background-color: #2A2282 }
+.secondary-a-4 { background-color: #9991E3 }
+.secondary-a-5 { background-color: #ADA7E3 }
+
+.secondary-b-1 { background-color: #56C1A1 }
+.secondary-b-2 { background-color: #54917F }
+.secondary-b-3 { background-color: #1C7E60 }
+.secondary-b-4 { background-color: #83E0C4 }
+.secondary-b-5 { background-color: #9CE0CB }
+
+.complement-1 { background-color: #FFC771 }
+.complement-2 { background-color: #BFA070 }
+.complement-3 { background-color: #A67325 }
+.complement-4 { background-color: #FFD595 }
+.complement-5 { background-color: #FFE0B1 }
+
+/* EBI template colour substitutions */
+
+/* These style rules will over-ride the core EBI styles and apply
+    your custom colour palette in a consistent manner */
+
+/* Links */
+a:link,
+a:visited { border-bottom-color: #5E8CC0; }
+
+a:hover,
+a:focus,
+a:active {
+    color: #5E8CC0;
+    border-bottom: 1px solid #5E8CC0;
+}
+
+a.special:hover,
+a.special:focus,
+a.special:active {
+    color: #5E8CC0;
+    border-bottom: 3px double #5E8CC0;
+}
+
+
+a:link { color: #2A2282; }
+
+a:hover,
+a:focus,
+a:active { color: #1C7E60; }
+
+a.special { background-color: #9CE0CB; }
+
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 { color: #222222; }
+
+h1 { color: #5E8CC0; }
+
+h2 { color: #1E4B7D; }
+
+h3 { color: #BFA070; }
+
+h1 a:link,
+h2 a:link,
+h3 a:link,
+h4 a:link,
+h5 a:link,
+h6 a:link,
+h1 a:visited,
+h2 a:visited,
+h3 a:visited,
+h4 a:visited,
+h5 a:visited,
+h6 a:visited {
+    border-bottom-color: #5E8CC0;
+}
+
+
+/* Table heading cells */
+th { background-color: #EEEEEE; }
+
+
+/* Form submission button */
+form input.submit {
+    /* colours */
+    color: #fff;
+    text-shadow: #1E4B7D 1px 1px;
+    border-top: 1px solid #A1BEDF;
+    border-left: 1px solid #A1BEDF;
+    border-right: 1px solid #1E4B7D;
+    border-bottom: 1px solid #1E4B7D;
+
+    background-image: -moz-linear-gradient(top, #5E8CC0, #597390);
+    background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #ccc),color-stop(1, #597390));
+    background-image: -webkit-linear-gradient(#5E8CC0, #597390);
+    background-image: linear-gradient(top, #5E8CC0, #597390);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#5E8CC0', EndColorStr='#597390');
+}
+
+/* Define the basic colour your local masthead */
+div#local-masthead { background-color: #A1BEDF; }
+
+/* Colour the faux-underline for local menu items */
+div#local-masthead ul li a:hover,
+div#local-masthead ul li a:focus,
+div#local-masthead ul li a:active {
+    border-bottom: 3px solid #5E8CC0;
+}
+
+/* --------------------------------- */
+
+::-webkit-input-placeholder {
+    font-style: italic;
+    color: #999
+}
+:-moz-placeholder {
+    font-style: italic;
+    color: #999
+}
+::-moz-placeholder {
+    font-style: italic;
+    color: #999
+}
+:-ms-input-placeholder {
+    font-style: italic;
+    color: #999
+}
+
+/* --------------------------------- */
+
+#ae-login *
+, #ae-feedback * {
+    box-sizing: border-box;
+    -moz-box-sizing: border-box
+}
+
+#ae-login
+, #ae-feedback {
+    position: absolute;
+    top: 2px;
+    right: 5px;
+    background-color: #EEE;
+    color: #000;
+    border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    box-shadow: 0 3px 9px rgba(0, 0, 0, 0.5);
+    -webkit-box-shadow: 0 3px 9px rgba(0, 0, 0, 0.5);
+    -moz-box-shadow: 0 3px 9px rgba(0, 0, 0, 0.5);
+    padding: 0;
+    z-index: 40001
+}
+
+#ae-login {
+    left: 55%
+}
+
+#ae-feedback {
+    left: 50%;
+    background-color: #FFE0B1
+}
+
+#ae-login > h3
+, #ae-feedback > h3 {
+    font-size: 123.1%;
+    color: black;
+    background-color: rgba(0, 0, 0, 0.1);
+    margin: 0;
+    padding: 7px 9px 2px;
+    border-top-left-radius: 5px;
+    -webkit-border-top-left-radius: 5px;
+    -moz-border-radius-topleft: 5px;
+    border-top-right-radius: 5px;
+    -webkit-border-top-right-radius: 5px;
+    -moz-border-radius-topright: 5px
+}
+
+#ae-login > h3 a
+, #ae-feedback > h3 a {
+    float: right;
+    font-size: 87%;
+    border-bottom-style: none
+}
+
+#ae-login .icon-functional:hover:before
+, #ae-feedback .icon-functional:hover:before {
+    color: #444
+}
+
+#ae-login .icon-functional:before
+, #ae-feedback .icon-functional:before {
+    margin: 0
+}
+
+#ae-login form
+, #ae-feedback form {
+    position: relative;
+    margin: 0;
+    padding: 20px 20px 10px;
+    width: 100%;
+    overflow: auto
+}
+
+#ae-login form {
+    padding: 20px 20px 10px
+}
+
+#ae-login form
+, #ae-login form *
+, #ae-feedback form
+, #ae-feedback form * {
+    font-size: 100%
+}
+
+#ae-login-form fieldset
+, #ae-forgot-form fieldset
+, #ae-feedback fieldset {
+    padding: 0;
+    margin: 0;
+    border: 0 none;
+    width: 100%
+}
+
+#ae-login-form fieldset {
+    float: left;
+    width: 50%
+}
+
+#ae-login input[type = 'checkbox'] {
+    vertical-align: baseline;
+    margin: 0 3px
+}
+
+#ae-login input[type = 'checkbox'] + label {
+    font-size: 93%;
+    vertical-align: middle
+}
+
+#ae-login fieldset
+, #ae-feedback fieldset
+, #ae-feedback span {
+    background-color: transparent;
+    color: inherit
+}
+
+#ae-login-form fieldset:first-child {
+    padding: 0 10px 0 0
+}
+
+#ae-feedback fieldset:first-child
+, #ae-forgot-form fieldset:first-child {
+    padding: 0;
+    margin-bottom: 10px
+}
+
+#ae-forgot-form div {
+    margin-top: 10px
+}
+
+#ae-login fieldset label
+, #ae-feedback fieldset label {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    font-size: 100%;
+    display: inline-block
+}
+
+#ae-login fieldset label a.forgot {
+    font-style: italic
+}
+
+#ae-login fieldset input
+, #ae-feedback fieldset input {
+    width: 100%;
+    margin: 0 0 5px 0;
+    padding: 0;
+    font-size: 100%
+}
+
+#ae-feedback fieldset textarea {
+    width: 100%;
+    margin: 0 0 5px 0;
+    padding: 0;
+    font-size: 100%;
+    height: 10em
+}
+
+#ae-login input[type='submit']
+, #ae-feedback input[type='submit'] {
+    float: right
+}
+
+#ae-login input[type='submit']:last-child {
+    position: absolute;
+    bottom: 10px;
+    right: 20px
+}
+
+#ae-login-remember-option {
+    float: left;
+    margin: 8px 0 0
+}
+
+#ae-login-forgot {
+    clear: both;
+    text-align: center
+}
+
+#ae-login .ae-login-status {
+    clear: both;
+    padding: 5px 0;
+    text-align: center
+}
+
+#ae-accession-field {
+    width: 150px !important
+}
+
+/* --------------------------------- */
+
+#ae-content {
+}
+
+#ae-content h4 {
+    border-bottom: 1px solid #CCC;
+    margin-bottom: 10px;
+}
+
+#ae-content span.icon::before {
+    color: inherit !important;
+    margin: 0;
+}
+
+/* --------------------------------- */
+
+#ae-infotext {
+    font-size: 108%;
+    text-align: center;
+}
+
+.text-hit {
+    background-color: #FFFF00;
+}
+
+.text-syn {
+    background-color: #CCFFAA;
+}
+
+.text-efo {
+    background-color: #FFCCAA;
+}
+
+/* home page stuff */
+
+#ae-news {
+    background-image: url(../images/bg-news.gif);
+    padding: 10px 0;
+    margin: 10px 0
+}
+
+p.intro {
+    font-size: 108%;
+}
+
+p.justify {
+    text-align: justify;
+}
+
+/* browse page stuff */
+
+#ae-filters *
+, #ae-query * {
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+}
+
+#ae-filters form
+, #ae-query form {
+    margin: 0;
+    padding: 0
+}
+
+#ae-filters form fieldset {
+    padding: 10px;
+    margin: 0 0 9px;
+    border: 0 none;
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    background-color: #E3E1F2 !important
+}
+
+#ae-filters legend {
+    padding: 0.25em 0.5em;
+    background-color: #C7C4D7;
+    border: 0 none;
+    border-radius: 3px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px
+}
+
+#ae-filters label,
+#ae-filters input[type='text'],
+#ae-filters select {
+    margin: 3px 0
+}
+
+#ae-filters label,
+#ae-query label {
+    font-size: 100%;
+    display: inline-block
+}
+
+#ae-filters input[type = 'checkbox']
+, #ae-query input[type = 'checkbox'] {
+    vertical-align: baseline;
+    margin: 0 3px
+}
+
+#ae-filters input[type = 'checkbox'] + label
+, #ae-query input[type = 'checkbox'] + label {
+    font-size: 93%;
+    vertical-align: middle
+}
+
+/*
+#ae-filters select {
+    font-family: Verdana,sans-serif;
+    font-size: 12px;
+}
+*/
+
+#ae-filters .option
+, #ae-query .option {
+    float: left;
+    margin-right: 10px;
+    font-size: 100%
+}
+
+#ae-filters input[type='submit']
+, #ae-query input[type='submit'] {
+    float: right
+}
+
+#ae-query {
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    background-color: #E3E1F2;
+    padding: 10px;
+    margin: 0 9px 9px
+}
+
+#ae-query fieldset {
+    padding: 0;
+    margin: 0;
+    border: 0 none;
+    background-color: inherit;
+}
+
+#ae-query input[type='text'] {
+    width: 100%;
+    font-size: 100%;
+    margin: 3px 0 8px 0;
+}
+
+/* browse table stuff */
+
+#ae-browse {
+    margin: 0 9px;
+}
+
+#ae-browse table {
+    table-layout: fixed;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    border: 0 none;
+}
+
+#ae-browse th {
+    font-size: 108%;
+    font-weight: normal;
+    vertical-align: bottom;
+    white-space: nowrap;
+    background-color: #EEEEEE;
+    border-bottom: 2px solid #5E8CC0;
+}
+
+#ae-browse table.floating-header th.col_pager {
+    /* border-top: 1px solid #CCCCCC; */
+}
+
+#ae-browse th.sortable a:link,
+#ae-browse th.sortable a:visited,
+#ae-browse th {
+    color: #666
+}
+
+#ae-browse th.sortable a:hover,
+#ae-browse th.sortable a:focus,
+#ae-browse th.sortable a:active {
+    color: #1C7E60;
+}
+
+#ae-browse th.sortable i {
+    margin: 0 0 0 2px
+}
+
+#ae-browse tbody tr:nth-child(odd) {
+    background-color: #E8F1FC
+}
+
+#ae-browse tbody tr:nth-child(even) {
+    background-color: #FFF
+}
+
+#ae-browse td {
+    vertical-align: bottom;
+    font-size: 93%;
+}
+
+#ae-browse th
+, #ae-browse td {
+    padding: 3px 5px
+}
+
+#ae-browse .experiments td {
+    vertical-align: top;
+}
+
+#ae-browse td div {
+    white-space: nowrap;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -moz-text-overflow: ellipsis;
+    -o-text-overflow: ellipsis;
+    -webkit-text-overflow: ellipsis;
+}
+
+#ae-browse .experiments td div {
+    white-space: normal;
+}
+
+#ae-browse td.col_accession span.icon {
+    float: right;
+}
+
+#ae-browse .floating-header {
+    position: fixed;
+    top: 0;
+    box-shadow: 0 3px 5px #CCC;
+    -moz-box-shadow: 0 3px 5px #CCC;
+    -webkit-box-shadow:  0 3px 5px #CCC;
+    visibility: hidden;
+}
+
+#ae-browse .col_pager {
+    font-size: 100%;
+    padding: 3px 5px;
+    border-bottom: 2px solid #FFF;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    -moz-border-radius-topleft: 5px;
+    -moz-border-radius-topright: 5px;
+    -webkit-border-top-left-radius: 5px;
+    -webkit-border-top-right-radius: 5px;
+}
+
+#ae-browse .ae-stats {
+    position: relative;
+    text-align: center;
+    pointer-events: none;
+    margin: 0
+}
+
+#ae-browse .ae-pager {
+    float: left;
+    text-align: left
+}
+
+#ae-browse .ae-page-size {
+    float: right;
+    text-align: right
+}
+
+#ae-browse .ae-pager,
+#ae-browse .ae-page-size {
+    width: 33%
+}
+
+#ae-browse .col_pager div {
+    color: #A67325;
+}
+
+#ae-browse .col_pager a {
+    padding: 2px 3px 0 3px;
+    margin: 0 2px;
+    color: #A67325;
+}
+
+#ae-browse .col_pager span {
+    padding: 2px 3px;
+    margin: 0 2px;
+    border-radius: 3px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+}
+
+#ae-browse .col_pager a:link,
+#ae-browse .col_pager a:visited {
+}
+
+#ae-browse .col_pager a:hover,
+#ae-browse .col_pager a:focus,
+#ae-browse .col_pager a:active {
+    padding: 2px 3px;
+    margin: 0 2px;
+    border-radius: 3px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-bottom: 0 none;
+    background-color: #A67325;
+    color: #FFF;
+}
+
+#ae-browse .col_pager span {
+    background-color: #68798D;
+    color: #FFF;
+}
+
+#ae-browse .col_footer {
+    font-size: 93%;
+    text-align: center;
+    padding: 0 5px 3px 5px;
+    border-top: 2px solid #FFF;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    -moz-border-radius-bottomleft: 5px;
+    -moz-border-radius-bottomleft: 5px;
+    -webkit-border-bottom-left-radius: 5px;
+    -webkit-border-bottom-right-radius: 5px;
+    background-color: #EEE;
+}
+
+#ae-browse .col_footer a {
+    padding: 0;
+    margin: 0 0 0 20px;
+}
+
+#ae-browse .col_footer a:first-child {
+    margin: 0;
+}
+
+/* detailed entity */
+
+#ae-detail {
+    margin: 0 9px;
+}
+
+#ae-detail * {
+    font-style: inherit;
+}
+
+#ae-detail table {
+    width: 100%;
+    table-layout: fixed;
+}
+
+#ae-detail tr:nth-child(odd) {
+    background-color: #E8F1FC
+}
+
+#ae-detail tr:nth-child(even) {
+    background-color: #FFF
+}
+
+#ae-detail tr table
+, #ae-detail tr tr:nth-child(n) {
+    background-color: transparent
+}
+
+#ae-detail th
+, #ae-detail td {
+    font-size: 100%
+}
+
+#ae-detail td {
+    vertical-align: top
+}
+
+#ae-detail td.name {
+    white-space: nowrap;
+    font-size: 108%;
+    color: #666;
+    background-image: url(../images/bg-ltgray.gif);
+    text-align: right;
+    vertical-align: top;
+    padding: 5px 10px;
+    width: 150px;
+}
+
+#ae-detail td.value {
+    text-align: justify;
+    vertical-align: top;
+    padding: 7px 10px;
+}
+
+#ae-detail td.value > div {
+    padding: 0 0 0.5em 0;
+}
+
+#ae-detail td.value > div:last-child {
+    padding-bottom: 0;
+}
+
+#ae-detail td em {
+    font-style: italic
+}
+
+#ae-detail td th {
+    font-size: 100%;
+    font-weight: normal;
+    color: #666;
+    background-color: transparent
+}
+
+#ae-detail td th.name
+, #ae-detail td td.name {
+    font-size: 100%;
+    text-align: left;
+    background-image: none;
+    padding: 0 10px 0 0;
+    width: 30%
+}
+
+#ae-detail td td.name {
+    color: #000;
+}
+
+#ae-detail td th.value
+, #ae-detail td td.value {
+    text-align: left;
+    padding: 0;
+    width: 70%
+}
+
+#ae-detail td i {
+    padding: 0 3px
+}
+
+#ae-detail a img {
+    vertical-align: top
+}
+
+/* help pages stuff */
+
+#ae-help table {
+    width: 99%;
+    padding: 0 9px;
+    margin: 9px auto;
+    border: 5px solid #EEEEEE;
+}
+
+#ae-help th, #ae-help td {
+    padding: 1px 5px 5px 5px;
+    border: 1px solid #EEEEEE;
+    border-collapse: collapse;
+    vertical-align: top;
+}
+
+#ae-help p {
+    overflow: auto;
+    clear: both
+}
+
+#ae-help a > img {
+    float: left
+}
+
+/* autocomplete-related classes */
+.ac_results {
+    padding: 0;
+    background-color: #FFF;
+    overflow: hidden;
+    z-index: 99999;
+    font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+    font-size: 11px;
+}
+
+.ac_results ul {
+    width: 100%;
+    list-style-position: outside;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.ac_results li {
+    margin: 0;
+    padding: 0 3px;
+    cursor: default;
+    display: block;
+    height: 16px;
+    overflow: hidden;
+    position: relative;
+}
+
+.ac_tree_level
+, .ac_tree_control {
+    float: left;
+    width: 16px;
+    height: 16px;
+}
+
+.ac_tree_control div {
+    width: 9px;
+    height: 9px;
+    margin: 3px 3px 3px 3px;
+    overflow: hidden;
+}
+
+.ac_tree_collapsed .ac_tree_control div {
+    background: url(../images/_old_/tminmax.gif) 0 0 no-repeat;
+}
+
+.ac_tree_expanded .ac_tree_control div {
+    background: url(../images/_old_/tminmax.gif) 0 -9px no-repeat;
+}
+
+.ac_loading {
+    background: #FFF url('../images/busy.gif') right center no-repeat;
+}
+
+.ac_over {
+    background-color: #5E8CC0;
+    color: #FFF;
+}
+
+.ac_over .ac_efo
+, .ac_over .ac_field {
+    color: #FFF;
+}
+
+.ac_outer {
+    background-color: #FFF;
+    color: #000;
+    cursor: default;
+    box-shadow: 0 3px 9px rgba(0, 0, 0, 0.5);
+    -moz-box-shadow: 0 3px 9px rgba(0, 0, 0, 0.5);
+    -webkit-box-shadow: 0 3px 9px rgba(0, 0, 0, 0.5);
+}
+
+.ac_outer > div {
+    padding: 1px;
+}
+
+.ac_field
+, .ac_efo {
+    position: absolute;
+    top: 0;
+    right: 2px;
+    color: #5E8CC0;
+}
+
+.ac_field {
+    font-style: italic;
+}
+
+.ac_efo {
+    font-weight: bold;
+}

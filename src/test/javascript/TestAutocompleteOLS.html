@@ -1,0 +1,31 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US" xml:lang="en-US">
+
+<head>
+    <link rel="stylesheet" href="http://www.ebi.ac.uk/arrayexpress/assets/stylesheets/ae-common-1.0.131017.css" type="text/css">
+    <script language="JavaScript" type="text/javascript" src="../../main/resources/dependencies/jquery/jquery-1.8.2.min.js"></script>
+    <script language="JavaScript" type="text/javascript" src="../../main/resources/dependencies/olstreeview/jquery.caret.range-1.0.js"></script>
+    <script language="JavaScript" type="text/javascript" src="../../main/resources/dependencies/olstreeview/jquery-autocomplete-ols.js"></script>
+    <script type="text/javascript" src="../../main/javascript/Biojs.js"></script>
+    <script type="text/javascript" src="../../main/javascript/Biojs.AutocompleteOLS.js"></script>
+
+    <script type="text/javascript">
+
+            var instance = new Biojs.AutocompleteOLS({
+                target: "local-searchbox",
+                ontology: "EFO"
+            });
+
+    </script>
+
+</head>
+
+<body>
+    <h2>OLS widget</h2>
+
+    <div>
+        <input style="width: 300px;" type="text" name="query" id="local-searchbox" class="ac_input">
+    </div>
+
+    </body>
+</html>
