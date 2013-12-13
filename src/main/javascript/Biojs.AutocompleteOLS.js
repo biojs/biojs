@@ -8,7 +8,7 @@
  *
  * @author <a href="mailto:dwelter@ebi.ac.uk">Dani Welter</a>, <a href="mailto:jupp@ebi.ac.uk">Simon Jupp</a>, <a href="mailto:kolais@ebi.ac.uk">Nikolay Kolesnikov</a>
  * @version 0.5.0_beta
- * @category 0
+ * @category 1
  *
  * @requires <a href='http://code.jquery.com/jquery-1.8.2.min.js'>jQuery Core 1.8.2</a>
  * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jquery/jquery-1.8.2.min.js"></script>
@@ -46,6 +46,7 @@ Biojs.AutocompleteOLS = Biojs.extend (
             var self = this;
 
             this._container = jQuery("#" + self.opt.target);
+            this._container.append(jQuery("<input style='width: 300px;' type='text' name='query' id='local-searchbox' class='ac_input'>"));
 
             if ($ == undefined) {
                 throw "jQuery not loaded";
@@ -59,7 +60,7 @@ Biojs.AutocompleteOLS = Biojs.extend (
                     $(this).removeAttr('autocomplete');
                 };
 
-                $("#" + self.opt.target).autocomplete(
+                $("#local-searchbox").autocomplete(
                     "http://www.ebi.ac.uk/ontology-lookup/term.view"
                     , { matchContains: false
                         , selectFirst: false
@@ -84,7 +85,13 @@ Biojs.AutocompleteOLS = Biojs.extend (
         opt: {
             target: "",
             ontology: "EFO"
-        }
+        },
+
+        /**
+       	 * Array containing the supported event names
+       	 * @name Biojs.AutocompleteOLS-opt
+       	 */
+       	eventTypes: []
 
     }
 
