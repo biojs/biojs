@@ -330,20 +330,22 @@ function inheritedMembers(components, remain ) {
 					}
 				}
 				
-				// copy both dependencies and options from the parent to this 
-				parent.requires.map( function($) { node.requires.push($) } );  
-				parent.comment.getTag('dependency').map( function($) { node.comment.tags.push($) } );
-				parent.comment.getTag('option').map( function($) { node.comment.tags.push($) } );
+        if (parent) {
+          // copy both dependencies and options from the parent to this 
+          parent.requires.map( function($) { node.requires.push($) } );  
+          parent.comment.getTag('dependency').map( function($) { node.comment.tags.push($) } );
+          parent.comment.getTag('option').map( function($) { node.comment.tags.push($) } );
 				
-				// create a dependency to the parent
-				var tag = new JSDOC.DocTag();
-				tag.title = 'dependency';
-				tag.desc = '<script language="JavaScript" type="text/javascript" src="src/'+parent.alias+'.js"></script>';
-				node.comment.tags.push( tag );
+          // create a dependency to the parent
+          var tag = new JSDOC.DocTag();
+          tag.title = 'dependency';
+          tag.desc = '<script language="JavaScript" type="text/javascript" src="src/'+parent.alias+'.js"></script>';
+          node.comment.tags.push( tag );
 
-				node.requires.push( 
-                    new JSDOC.DocTag('@requires <a href="' + parent.alias + '.html">' + parent.alias +'</a>') 
-				);
+          node.requires.push( 
+                      new JSDOC.DocTag('@requires <a href="' + parent.alias + '.html">' + parent.alias +'</a>') 
+          );
+        }
 				
 				// Remove the first
 				inheritedMembers(components, remain.slice(1));
