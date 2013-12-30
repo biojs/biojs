@@ -8,18 +8,59 @@
 
   var ListWidgets = require('list-widgets');
 
-  /**
-   * @lends Biojs.InterMine
-   */
   var module = (biojs.InterMine || (biojs.InterMine = {}));
 
-  /**
-   * @lends Biojs.InterMine.ListAnalysis
-   **/
   module.ListAnalysis = ListAnalysis;
 
   /** Match strings that look like element ids, and not query selectors. **/
   var ELEMENT_ID = /^[a-z0-9_-]+$/i;
+
+  /**
+   * Click handlers that receive an identifier and a type, identifying a single entity.
+   * @callback 
+   * @param {string} identifier The public unique identifier of this object, eg: "FGBN01234"
+   * @param {string} type The type of the entity, eg: "Gene"
+   */
+
+  /**
+   * Click handlers that receive a definition of a result set as a query.
+   * @callback 
+   * @param {InterMineQuery} query The definition of the result set as a query.
+   */
+
+  /**
+   * @typedef {Object} InterMineQuery
+   * @property {string} [name=null] The name, for debugging.
+   * @property {string[]} view The selected columns.
+   * @property {Object[]} constraints The query constraints.
+   * @property {Object[]} sortOrder The sort order elements.
+   * @property {Object} joins The join information.
+   * @property {string} constraintLogic The way to combine the constraints.
+   */
+
+  /**
+   * typedef {function} WidgetLoader
+   * @param {string} toolName The tool to use.
+   * @param {string} listName The list to analyse.
+   * @param {string|HTMLElement} element The place to render the tool.
+   * @param {Object} options Optional parameters.
+   */
+
+  /**
+   * The InterMine Service type.
+   * @external intermine.Service
+   * @see {@link http://intermine.github.io/imjs}
+   */
+
+  /**
+   * @typedef {Object} ListWidgets
+   * @property {intermine.Service} imjs The connected service.
+   * @property {WidgetLoader} chart Load a chart.
+   * @property {WidgetLoader} enrichment Load enrichment information.
+   */
+
+  /** @class
+   * @name Biojs.InterMine.ListAnalysis */
 
   /**
   * InterMine.ListAnalysis - Analyse a Set of Items Stored as an InterMine List
@@ -31,13 +72,15 @@
   * aggregate, through statistical analysis, graphical visualisation or
   * simple table display.
   *
+  * @name Biojs.InterMine.ListAnalyis
   * @constructor
-  * @class
   *
   * @requires <a href="https://github.com/intermine/intermine-apps-c">apps-c 2.0.4</a>
   *
   * @dependency <link rel="stylesheet" href="http://cdn.intermine.org/js/intermine/apps-c/list-widgets/2.0.4/app.bundle.prefixed.min.css">
   * @dependency <script src="http://cdn.intermine.org/js/intermine/apps-c/list-widgets/2.0.4/app.bundle.min.js"></script>
+  *
+  * @param {Object} options The options.
   *
   * @option {string|HTMLElement|jQuery} target
   *   The place in the DOM to load the table. The value of this can be anything
@@ -107,7 +150,10 @@
 
     constructor: ListAnalysis
 
-     /** The events that this component may emit. **/
+     /**
+      * The events that this component may emit.
+      * @memberof Biojs.InterMine.ListWidgets
+      */
     ,eventTypes: [
 
       /**
@@ -157,7 +203,50 @@
         ]
 
     /**
+     * The ListWidgets instance this component wraps.
+     * @memberof Biojs.InterMine.ListWidgets
+     * @instance
+     * @member {ListWidgets}
+     */
+    ,widgets: null
+
+    /**
+     * Listen for <code>onClickMatch</code> events.
+     * @memberof Biojs.InterMine.ListWidgets
+     * @instance
+     *
+     * @param {ListAnalysis~clickMatchHandler} handler The click handler.
+     */
+    ,onClickMatch: function (handler) {
+      this.addListener('onClickMatch', handler);
+    }
+
+    /**
+     * Listen for <code>onClickViewResults</code> events.
+     * @memberof Biojs.InterMine.ListWidgets
+     * @instance
+     *
+     * @param {ListAnalysis~queryDefinitionHandler} handler The click handler.
+     */
+    ,onClickViewResults: function (handler) {
+      this.addListener('onClickViewResults', handler);
+    }
+
+    /**
+     * Listen for <code>onClickCreateList</code> events.
+     * @memberof Biojs.InterMine.ListWidgets
+     * @instance
+     *
+     * @param {ListAnalysis~queryDefinitionHandler} handler The click handler.
+     */
+    ,onClickCreateList: function (handler) {
+      this.addListener('onClickCreateList', handler);
+    }
+
+    /**
      * Add a event handler for the named event.
+     * @memberof Biojs.InterMine.ListWidgets
+     * @instance
      *
      * @param {string} eventName
      *  The name of the event to handle.
@@ -188,6 +277,8 @@
      * The event type is not defined, so this listener should be capable of
      * handling variadic arguments.
      *
+     * @memberof Biojs.InterMine.ListWidgets
+     * @instance
      * @param {function} callback
      * @eventData {string} eventName The name of the event.
      * @eventData {Object...} args The event arguments.
@@ -205,6 +296,8 @@
      * This method should always be called if the component is to be disposed of,
      * or else event handler callbacks will likely result in memory leaks.
      *
+     * @memberof Biojs.InterMine.ListWidgets
+     * @instance
      * @example
      * widget.destroy();
      *
@@ -220,6 +313,8 @@
     /**
      * Fire an event with the given name and event data.
      *
+     * @memberof Biojs.InterMine.ListWidgets
+     * @instance
      * @private
      * @param {string} eventName
      *  The name of the event to trigger.
@@ -265,5 +360,7 @@
       return target;
     }
   }
+
+
 
 })(window.Biojs || (window.Biojs = {}));
