@@ -5,6 +5,9 @@
  *
  * Please remember to use jQuery in <a href="http://docs.jquery.com/Using_jQuery_with_Other_Libraries">compatibility mode</a>, particularly a good idea if you use other libraries.
  *
+ * @class
+ * @extends Biojs
+ *
  * @author <a href="mailto:gyachdav@rostlab.org">Guy Yachdav</a>
  * @version 1.0.0
  * @category 0
@@ -61,13 +64,13 @@
  *		}]
  *	</pre>
  *
- * @optional {Onject} user_defined_config
+ * @option {Onject} [user_defined_config={colorLow: 'blue', colorMed: 'white', colorHigh: 'red'}]
  *     Configuration options for the component
  *     
- * @optional {Onject} show_zoom_panel
+ * @option {Onject} [show_zoom_panel=true]
  *      Display the zoom panel. default: true
  *      
- * @optional {Onject} showScale
+ * @option {Onject} [showScale=true]
  *      Display the scale object. default: true
  *      
  * @example
@@ -106,15 +109,12 @@
  *						target: 'YourOwnDivId',
  *				});
  *
- *
- * 
- * 
- * @class
- * @extends Biojs
  */
 
-Biojs.HeatmapViewer = Biojs.extend({
-	/** @lends Biojs.HeatmapViewer */
+Biojs.HeatmapViewer = Biojs.extend(
+    /** @lends Biojs.HeatmapViewer */
+    {
+
 	/**
 	 * public variables
 	 */
