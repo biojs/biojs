@@ -10,7 +10,7 @@
  *
  * @author <a href="mailto:gyachdav@rostlab.org">Guy Yachdav</a>
  * @version 1.0.0
- * @category 0
+ * @category 2
  *
  * @requires <a href='http://code.jquery.com/jquery-1.9.1.min.js'>jQuery Core 1.9.1</a>
  * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jquery/jquery-1.9.1.min.js"></script>
@@ -106,7 +106,7 @@
  *							colorMed: 'white',
  *							colorHigh: 'red'
  *						},
- *						target: 'YourOwnDivId',
+ *						target: 'YourOwnDivId'
  *				});
  *
  */
@@ -118,7 +118,7 @@ Biojs.HeatmapViewer = Biojs.extend(
 	/**
 	 * public variables
 	 */
-	targetDiv: undefined,
+	target: undefined,
 
 	/**
 	 * private variables
@@ -170,7 +170,7 @@ Biojs.HeatmapViewer = Biojs.extend(
 
 	constructor: function(options) {
 		this._origData = this.opt.jsonData;
-		this.targetDiv = this.opt.targetDiv;
+		this.target = this.opt.target;
 		this._init();
 		this._draw();
 
@@ -179,13 +179,13 @@ Biojs.HeatmapViewer = Biojs.extend(
 	opt: {
 		 /**
          * Default values for the options:
-         * targetDIV: "YourOwnDivId",
+         * target: "YourOwnDivId",
          * jsonData: {},
          * showScale: true,
          * showExportToImageButton: false,
          * @name Biojs.HeatmapViewer-opt
          */
-		targetDiv: 'YourOwnDivId',
+		target: 'YourOwnDivId',
 		jsonData: {},
 		showScale: true,
 		showExportToImageButton: false,
@@ -215,7 +215,7 @@ Biojs.HeatmapViewer = Biojs.extend(
 		var my = {};
 		var dataLow, dataMid, dataHigh;
 		var colorLow, colorMid, colorHigh;
-		var targetDiv;
+		var target;
 		var svg;
 		var d, i;
 
@@ -239,7 +239,7 @@ Biojs.HeatmapViewer = Biojs.extend(
 			var colorLow = _config.colorLow;
 			var colorMid = _config.colorMid;
 			var colorHigh = _config.colorHigh;
-			var targetDiv = _config.targetDiv;
+			var target = _config.target;
 
 			for (var idx = scoreLow; idx <= scoreHigh; idx++)
 				data_array.push(idx);
@@ -254,8 +254,8 @@ Biojs.HeatmapViewer = Biojs.extend(
 			var x = 50,
 				y = 20;
 
-			var svg = d3.select("#" + targetDiv)
-				.append("svg").attr("id", targetDiv + "_svg")
+			var svg = d3.select("#" + target)
+				.append("svg").attr("id", target + "_svg")
 				.attr("width", "100%")
 			// .attr("width", heatmapviewer_config.heatmap_config.dimensions.canvas_width + heatmapviewer_config.heatmap_config.canvas_margin.right + heatmapviewer_config.heatmap_config.canvas_margin.left)
 			.attr("height", "40");
@@ -320,7 +320,7 @@ Biojs.HeatmapViewer = Biojs.extend(
 			min_font_size = 11;
 
 		var jsonData = undefined,
-			targetDiv = undefined;
+			target = undefined;
 
 		var config = {
 			axis_line_stroke: '2',
@@ -341,16 +341,16 @@ Biojs.HeatmapViewer = Biojs.extend(
 
 		};
 
-		my.setTargetDIV = function(_targetDiv) {
-			targetDiv = _targetDiv;
+		my.settarget = function(_target) {
+			target = _target;
 			return my;
 		},
-		my.getTargetDIV = function() {
-			return this.targetDiv;
+		my.gettarget = function() {
+			return this.target;
 		}
 		my.init = function(_configObj, _jsonData, _targteDiv) {
 			config = $.extend(config, _configObj);
-			this.setTargetDIV(_targteDiv);
+			this.settarget(_targteDiv);
 			jsonData = _jsonData;
 			return my;
 		}
@@ -411,8 +411,8 @@ Biojs.HeatmapViewer = Biojs.extend(
 		 */
 		var draw_heatmap = function(argument) {
 
-			svg = d3.select("#" + targetDiv)
-				.append("svg").attr("id", targetDiv + "_svg")
+			svg = d3.select("#" + target)
+				.append("svg").attr("id", target + "_svg")
 				.attr("width", config.dimensions.canvas_width + config.canvas_margin.right + config.canvas_margin.left)
 				.attr("height", config.dimensions.canvas_height + config.canvas_margin.top + config.canvas_margin.bottom)
 				.append("g")
@@ -513,7 +513,7 @@ Biojs.HeatmapViewer = Biojs.extend(
 	 * @ignore
 	 */
 	_draw: function() {
-		var $hmDiv = jQuery("#" + this.opt.targetDiv);
+		var $hmDiv = jQuery("#" + this.opt.target);
 
 		[this._MAIN_HEAT_MAP_DIV, this._SCALE_DIV, this._ZOOM_HEAT_MAP_DIV].forEach(function(entry) {
 			$hmDiv.append(jQuery('<div>')
@@ -532,7 +532,7 @@ Biojs.HeatmapViewer = Biojs.extend(
 				scoreLow: this.viewer_config.scoreLow,
 				scoreMid: this.viewer_config.scoreMed,
 				scoreHigh: this.viewer_config.scoreHigh,
-				targetDiv: this._SCALE_DIV
+				target: this._SCALE_DIV
 
 			})
 
@@ -613,7 +613,7 @@ Biojs.HeatmapViewer = Biojs.extend(
 		var jsonData, tmpStart;
 		tmpStart = 0;
 
-		var $hmDiv = jQuery("#" + this.targetDiv);
+		var $hmDiv = jQuery("#" + this.target);
 		dimensions.canvas_width = $hmDiv.width();
 		if (this._origData) {
 			if (typeof this.opt.jsonData != 'undefined') {
