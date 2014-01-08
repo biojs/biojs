@@ -13,11 +13,11 @@
  * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jquery/jquery-1.9.1.min.js"></script>
  *
  * @requires <a href='http://d3js.org/d3.v3.min.js'>D3 Version 3</a>
- * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jquery/d3.v3.min.js"></script>
+ * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/d3.v3.min.js"></script>
  *
  * @param {Object} options An object with the options for HeatmapViewer component.
  *
- * @option {string} targetDiv
+ * @option {string} target
  *    Identifier of the DIV tag where the component should be displayed.
  *
  * @option {string} jsonData
@@ -72,13 +72,38 @@
  *      
  * @example
  * var painter = new Biojs.HeatmapViewer({
- *						jsonData: data,
+ *						jsonData:
+ *    		[{
+ *		    "col": 0,
+ *		    "row": 0,
+ *		    "label": "M",
+ *		    "score": 27,
+ *		    "row_label": "A"
+ *		}, {
+ *		    "col": 0,
+ *		    "row": 1,
+ *		    "label": "M",
+ *		    "score": 5,
+ *		    "row_label": "C"
+ *		}, {
+ *		    "col": 1,
+ *		    "row": 0,
+ *		    "label": "M",
+ *		    "score": 43,
+ *		    "row_label": "D"
+ *		}, {
+ *		    "col": 1,
+ *		    "row": 1,
+ *		    "label": "M",
+ *		    "score": 58,
+ *		    "row_label": "E"
+ *		}],
  *						user_defined_config: {
  *							colorLow: 'blue',
  *							colorMed: 'white',
  *							colorHigh: 'red'
  *						},
- *						targetDiv: 'heatmapContainer',
+ *						target: 'YourOwnDivId',
  *				});
  *
  *
@@ -122,11 +147,11 @@ Biojs.HeatmapViewer = Biojs.extend({
 			top: 30,
 			right: 30,
 			bottom: 30,
-			left: 30,
+			left: 30
 		},
 		labels: {
 			max_font_size: 20,
-			min_font_size: 11,
+			min_font_size: 11
 		},
 		main_heatmap: {
 			min_cell_width: 2,
@@ -138,7 +163,7 @@ Biojs.HeatmapViewer = Biojs.extend({
 		},
 		slider: {
 			start_value: 0,
-			increments: 50,
+			increments: 50
 		}
 
 	},
@@ -477,7 +502,7 @@ Biojs.HeatmapViewer = Biojs.extend({
 			.style("cursor", "-webkit-grab")
 			.style("cursor", "-moz-grab")
 			.data([{
-				"x": x,
+				"x": x
 			}])
 			.attr("transform", "translate(" + x + "," + y + ")")
 			.call(drag);
@@ -623,5 +648,5 @@ Biojs.HeatmapViewer = Biojs.extend({
 		this.viewer_config.x_axis = x_axis;
 		this.viewer_config.y_axis = y_axis;
 		this.viewer_config.slider.increments = Math.floor((dimensions.canvas_width / this.viewer_config.zoom_area.cell_width) - 1);
-	},
+	}
 });
