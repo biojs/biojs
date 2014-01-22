@@ -78,7 +78,7 @@
  *			   }
  *			);
  *			//trigger to download the zip file containing the pdb structure from the server and unzip  the file on the client
- *			instance.setPdb(pdbId.toLowerCase());
+ *			instance.setPdb('2al6');
  *
  * 
  */
@@ -165,7 +165,7 @@ Biojs.Protein3DCanvas = Biojs.Protein3D.extend(
 	*	);
 	*	
 	*	//trigger the downloading of the zip containing the pdb file from the server and unzip  the file on the client
-	*	instance.setPdb(pdbId.toLowerCase());
+	*	instance.setPdb('2al6');
     *
     * 
     */
