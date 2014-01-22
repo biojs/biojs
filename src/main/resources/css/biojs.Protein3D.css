@@ -1,0 +1,79 @@
+@CHARSET "UTF-8";
+
+div.Protein3D {
+	padding: 0px;
+	margin: 0px;
+	overflow: hidden;
+	display: block;
+}
+
+div.Protein3D_loadingImage {
+	background-image: url('images/ajax-loader-1.gif'); 
+	background-repeat: no-repeat;
+	background-position: center;
+	width: 100%;
+	height: 100%;
+}
+
+div.Protein3D_applet {
+	position: relative;
+	float: right;
+	width: 65%;
+	height: 100%;
+}
+
+div.Protein3D_tab {
+	width: 35%;
+	height: 100%;
+	position: relative;
+	float: left;
+	background-color: #FFF;
+	background-image: url('images/panel1.png');
+	background-repeat: repeat-y;
+	background-position-x: right;
+	color: #EEE;
+}
+
+div.Protein3D_tab div.content {
+	font-family: "Heveltica Neue", Arial, "sans serif";
+	font-size: 12px;
+	position:relative;
+	float: left;
+	background-color: #000;
+}
+
+div.Protein3D_tab div.content h1 {
+	margin: 5px 7px 0 7px;
+	font-size: 12px;
+}
+
+div.Protein3D_tab div.content input, select {
+  	text-align: left;
+  	line-height: 1.1;
+  	margin: 0 5px 0 7px;
+}
+
+/* Button to hide/show the left panel */
+div.Protein3D_tab div.toggle {
+	width: 24px;
+	height: 24px;
+	position:relative;
+	float: right;
+	background-image: url('Rocky32px/iconset.png');
+}
+
+div.Protein3D_tab div:hover.toggle { 
+	background-image: url('Rocky32px/iconset_hover.png'); 
+}
+
+div.Protein3D_tab div.collapse { 
+	background-position: 0 0; 
+}
+
+div.Protein3D_tab div.expand { 
+	background-position: 0 -24px; 
+}
+
+
+
+

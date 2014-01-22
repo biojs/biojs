@@ -1,0 +1,1393 @@
+<!doctype html>
+<html class="no-js" lang="en">
+<head>
+    <title>Developing a new BioJS component</title>
+    <style type="text/css">
+        body { max-width: 700px; margin: 0 auto; }
+        pre {
+            background: #9E9E9E;
+        }
+        code {
+            background-color: rgb(220, 220, 220);
+            display: block;
+            padding: 0.1em 1em;
+            border: 1px solid #bebab0;
+        }
+        .emphasis {
+            font-weight: bolder;
+            color: darkblue;
+        }
+        .attention {
+            font-weight: bolder;
+            font-size: larger;
+            color: red;
+        }
+    </style>
+    <!-- end CSS-->
+
+    <script>
+        function toggle(obj) {
+            var el = document.getElementById(obj);
+            el.style.display = (el.style.display != 'none' ? 'none' : '' );
+        }
+    </script>
+
+</head>
+
+<body>
+<p>
+<a href="../2013-06-17_biojs_workshop.html">Tutorial menu</a>
+</p>
+
+<div class="contents clearfix" id="contents clearfix">
+<h1>Developing a new BioJS component</h1>
+<p>
+    This tutorial shows how to develop a new BioJS component. We will develop a simple component to visualize summary gene information following a list of <a target="_blank" href="https://docs.google.com/document/d/1j6VY_KxO1ZHoEL0i7N4Lzh2aXOH1i8ph7dYJfs9MHb8/edit">predefined requirements</a>.
+
+<h2>Requirements and recommendations</h2>
+
+    <p>
+        To follow this tutorial you will need to <a href="ebiWorkshopBiojsInstall.html">download the BioJS source code and place it on a web server folder</a>.
+
+
+<h2>Tutorial</h2>
+
+<section id="step1">
+    <h3>Step 1 - Create the component</h3>
+<p>
+In this step we provide you with <a href="javascript: toggle('step1page');">code to create a basic BioJS component</a> we will be completing in further steps. Following <a target="_bkank" href="https://docs.google.com/document/d/1j6VY_KxO1ZHoEL0i7N4Lzh2aXOH1i8ph7dYJfs9MHb8/edit">the requirements</a> we created a new "option" named "inputData". We are starting with a simple <a href="javascript: toggle('step1json');">JSON input providing just the title information</a> about the gene summary. We also use the constructor to present the information provided in the "inputData" option.
+		<div id="step1json" style="display: none">
+		<pre><code>
+&quot;inputData&quot;: {
+	&quot;title&quot;: {
+		&quot;text&quot;: &quot;Amyloid beta (A4) precursor protein&quot;,
+		&quot;link&quot;: {
+			&quot;text&quot;: &quot;View in Ensembl&quot;,
+			&quot;url&quot;: &quot;http://www.ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000142192;db=core&quot;
+		}
+	}
+}
+		</code></pre>
+		</div>
+		<div id="step1page" style="display: none">
+		<pre><code>
+/** 
+ * Component displaying a ENSEMBL gene view summary
+ * 
+ * @class
+ * @extends Biojs
+ * 
+ * @author &lt;a href=&quot;MyEmail@my.email&quot;&gt;My Name&lt;/a&gt;, &lt;a href=&quot;mailto:MyCollaboratorEmail@mycollaborator.email&quot;&gt;Mycollaborator Name&lt;/a&gt;
+ * @version 1.0.0
+ * @category 0
+ * <span class="emphasis">
+ * @requires &lt;a href='http://code.jquery.com/jquery-1.9.1.min.js'&gt;jQuery Core 1.9.1&lt;/a&gt;
+ * @dependency &lt;script language=&quot;JavaScript&quot; type=&quot;text/javascript&quot; src=&quot;../biojs/dependencies/jquery/jquery-1.9.1.min.js&quot;&gt;&lt;/script&gt;</span>
+ * 
+ * @param {Object} options An object with the options to display the component.
+ *    
+ * @option {string} target 
+ *    Identifier of the DIV tag where the component should be displayed.
+ * <span class="emphasis">
+ * @option {Object} inputData
+ * 	  Input data</span>
+ *     
+ * @example 
+ * var instance = new Biojs.EnsemblGeneSummaryView({
+ * 		&quot;target&quot;: &quot;YourOwnDivId&quot;,<span class="emphasis">
+ * 		&quot;inputData&quot;: {
+ * 			&quot;title&quot;: {
+ * 				&quot;text&quot;: &quot;Amyloid beta (A4) precursor protein&quot;,
+ * 				&quot;link&quot;: {
+ * 					&quot;text&quot;: &quot;View in Ensembl&quot;,
+ * 					&quot;url&quot;: &quot;http://www.ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000142192;db=core&quot;
+ * 				}
+ * 			}
+ * 		}</span>
+ * });	
+ * 
+ */
+Biojs.EnsemblGeneSummaryView = Biojs.extend (
+/** @lends Biojs.EnsemblGeneSummaryView# */
+{
+  constructor: function (options) {<span class="emphasis">
+	// Print HTML
+	this._container = jQuery(&quot;#&quot;+this.opt.target);
+	this._container.append(&quot;&lt;h1&gt;&quot; + this.opt.inputData.title.text + &quot;&lt;/h1&gt;&quot;);
+	this._container.append(&quot;&lt;div&gt;&lt;a href ='&quot; + this.opt.inputData.title.link.url + &quot;'&gt;&quot; + this.opt.inputData.title.link.text + &quot;&lt;/a&gt;&lt;div&gt;&quot;);</span>
+  },
+
+
+  /**
+   *  Default values for the options
+   *  @name Biojs.EnsemblGeneSummaryView-opt
+   */
+  opt: {
+     target: &quot;YourOwnDivId&quot;,<span class="emphasis">
+     inputData: {} </span>
+  },
+  
+  
+  /**
+   * Array containing the supported event names
+   * @name Biojs.EnsemblGeneSummaryView-eventTypes
+   */
+  eventTypes : [
+     
+  ]
+  
+});
+
+		</code></pre>
+   		</div> 
+</p>
+<ul>
+	<li>
+		Copy the code and create a JavaScript file named “Biojs.EnsemblGeneSummaryView.js” in "biojs/src/main/javascript/"
+	</li>
+</ul>
+
+
+
+</section>
+
+<br/>
+<section id="step2">
+    <h3>Step 2 - Test the component</h3>
+	<ul>
+		<li>
+			To test the component create a HTML page “TestEnsemblGeneSummaryView.html” in "biojs/src/test/javascript/".
+		</li>
+		<li>
+		Your web page should look like this (<a href="javascript: toggle('step2page');">show/hide</a>).
+    			<div id="step2page" style="display: none">
+			<pre><code>
+&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD XHTML 1.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd&quot;&gt;
+&lt;html xmlns=&quot;http://www.w3.org/1999/xhtml&quot; lang=&quot;en-US&quot; xml:lang=&quot;en-US&quot;&gt;
+	&lt;head&gt;
+	  &lt;script type=&quot;text/javascript&quot; src=&quot;../../main/javascript/Biojs.js&quot;&gt;&lt;/script&gt;		
+	  &lt;script type=&quot;text/javascript&quot; src=&quot;../../main/javascript/Biojs.EnsemblGeneSummaryView.js&quot;&gt;&lt;/script&gt;
+	  &lt;script language=&quot;JavaScript&quot; type=&quot;text/javascript&quot; src=&quot;../../main/resources/dependencies/jquery/jquery-1.9.1.min.js&quot;&gt;&lt;/script&gt;
+	  
+	  &lt;script type=&quot;text/javascript&quot;&gt;       
+		var geneView;
+		window.onload = function() {		 
+			geneView = new Biojs.EnsemblGeneSummaryView({
+			        &quot;target&quot; : &quot;holder&quot;,
+			        &quot;inputData&quot;: {
+ 						&quot;title&quot;: {
+			 			&quot;text&quot;: &quot;Amyloid beta (A4) precursor protein&quot;,
+			 				&quot;link&quot;: {
+			 					&quot;text&quot;: &quot;View in Ensembl&quot;,
+			 					&quot;url&quot;: &quot;http://www.ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000142192;db=core&quot;
+			 				}
+			 			}
+			 		}
+			});
+		};	    
+		
+		    	   
+	   &lt;/script&gt;	
+	&lt;/head&gt;
+	&lt;body&gt;
+	  &lt;div id=&quot;holder&quot;&gt;&lt;/div&gt;
+	  &lt;div id=&quot;log&quot;&gt;&lt;/div&gt;
+	&lt;/body&gt;
+&lt;/html&gt;
+			</code></pre>
+    			</div>
+		</li>
+    <li>
+Try in <a href="http://localhost/biojs/src/test/javascript/TestEnsemblGeneSummaryView.html">http://localhost/biojs/src/test/javascript/TestEnsemblGeneSummaryView.html</a>
+        
+    </li>
+</ul>
+</section>
+
+<br/>
+
+<section id="step3">
+    <h3>Step 3 - Create new method</h3>
+    <p>
+Following <a target="_blank" href="https://docs.google.com/document/d/1j6VY_KxO1ZHoEL0i7N4Lzh2aXOH1i8ph7dYJfs9MHb8/edit">the requirements</a> create a new method "setInputData".
+</p>
+
+<h5>Advice</h5>
+<ul>
+<li>"setInputData" should take as argument an "inputData" object. </li>
+<li>Inside the method replace the input data "this.opt.inputData" with the new input data</li>
+<li>Do not forget the requirements also mention this method should also display the content</li>
+<li>If a new input has to be display you will have to clear the previous content</li>
+<li>Do not forget to document the new method and provide an example</li>
+ 
+</ul>
+
+<br/>
+<p>
+        Your JavaScript file should look like this (<a href="javascript: toggle('step3page');">show/hide</a>).
+    </p>
+
+    <div id="step3page" style="display: none">
+<p>
+In this example we created a public method setInputData. This method reasigns the new inputData, clears any content in the main HTML container, and draws the title information. Notice that functions preceded with underscore "_" are consider private methods and its comments start wil "/*" instead of "/**"
+</p>
+<pre><code>
+/** 
+ * Component displaying a ENSEMBL gene view summary
+ * 
+ * @class
+ * @extends Biojs
+ * 
+ * @author &lt;a href=&quot;MyEmail@my.email&quot;&gt;My Name&lt;/a&gt;, &lt;a href=&quot;mailto:MyCollaboratorEmail@mycollaborator.email&quot;&gt;Mycollaborator Name&lt;/a&gt;
+ * @version 1.0.0
+ * @category 1
+ * 
+ * @requires &lt;a href='http://code.jquery.com/jquery-1.9.1.min.js'&gt;jQuery Core 1.9.1&lt;/a&gt;
+ * @dependency &lt;script language=&quot;JavaScript&quot; type=&quot;text/javascript&quot; src=&quot;../biojs/dependencies/jquery/jquery-1.9.1.min.js&quot;&gt;&lt;/script&gt;
+ * 
+ * 
+ * @param {Object} options An object with the options to display the component.
+ *    
+ * @option {string} target 
+ *    Identifier of the DIV tag where the component should be displayed.
+ * 
+ * @option {Object} inputData
+ * 	  Input data
+ *     
+ * @example 
+ * var instance = new Biojs.EnsemblGeneSummaryView({
+ * 		&quot;target&quot;: &quot;YourOwnDivId&quot;,
+ * 		&quot;inputData&quot;: {
+ * 			&quot;title&quot;: {
+ * 				&quot;text&quot;: &quot;Amyloid beta (A4) precursor protein&quot;,
+ * 				&quot;link&quot;: {
+ * 					&quot;text&quot;: &quot;View in Ensembl&quot;,
+ * 					&quot;url&quot;: &quot;http://www.ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000142192;db=core&quot;
+ * 				}
+ * 			}
+ * 		}
+ * });	
+ * 
+ */
+Biojs.EnsemblGeneSummaryView = Biojs.extend (
+/** @lends Biojs.EnsemblGeneSummaryView# */
+{
+  constructor: function (options) {<span class="emphasis">
+	  this.setInputData(this.opt.inputData);</span>
+  },
+
+  /**
+   *  Default values for the options
+   *  @name Biojs.EnsemblGeneSummaryView-opt
+   */
+  opt: {
+     target: &quot;YourOwnDivId&quot;,
+     inputData: {} 
+  },<span class="emphasis">
+  
+	/**
+	 * Set a new input.
+	 * @param {object} inputData Input Data.
+	 * 
+	 * @example 
+	 * instance.setInputData(
+	 * 			        	{
+ 	 *						&quot;title&quot;: {
+	 *			 			&quot;text&quot;: &quot;Amyloid beta (A4) precursor protein&quot;,
+	 *			 				&quot;link&quot;: {
+	 *			 					&quot;text&quot;: &quot;View in Ensembl&quot;,
+	 *			 					&quot;url&quot;: &quot;http://www.ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000142192;db=core&quot;
+	 *			 				}
+	 *			 			}
+	 *			 		}
+	 * );
+	 * 
+	 */
+	setInputData: function(inputData){
+		this.opt.inputData = inputData;
+		this._container = jQuery(&quot;#&quot;+this.opt.target);
+		this._clearData();	
+		this._drawData();
+	},
+	
+    /* 
+     * Function: Biojs.EnsemblGeneSummaryView._drawTemplate
+     * Purpose:  Clear data inside the main container
+     * Returns:  -
+     * Inputs:  -
+     */
+	_clearData: function(){
+		this._container.html(&quot;&quot;);
+	},
+	
+    /* 
+     * Function: Biojs.EnsemblGeneSummaryView._drawData
+     * Purpose:  Draw different sections of the display
+     * Returns:  -
+     * Inputs:  -
+     */
+	_drawData: function(){
+		this._drawTitle();
+	},
+	
+    /* 
+     * Function: Biojs.EnsemblGeneSummaryView._drawTitle
+     * Purpose:  Draw title
+     * Returns:  -
+     * Inputs:  -
+     */
+	_drawTitle: function(){
+		var title = jQuery('&lt;div class=&quot;EnsemblGeneSummaryView_title&quot;&gt;&lt;/div&gt;').appendTo(this._container);
+		if (this.opt.inputData.title !== undefined){
+			title.append(&quot;&lt;h1&gt;&quot; + this.opt.inputData.title.text + &quot;&lt;/h1&gt;&quot;);
+			title.append(&quot;&lt;div&gt;&lt;a href ='&quot; + this.opt.inputData.title.link.url + &quot;'&gt;&quot; + this.opt.inputData.title.link.text + &quot;&lt;/a&gt;&lt;div&gt;&quot;);	
+		}
+	},
+  
+  /**
+   * Array containing the supported event names
+   * @name Biojs.EnsemblGeneSummaryView-eventTypes
+   */
+  eventTypes : [
+     
+  ]
+  
+});
+</code></pre>
+    </div>
+</section>
+
+
+<br/>
+<section id="step4">
+    <h3>Step 4 - Try your new method</h3>
+
+<ul>
+	<li>Modify "biojs/src/test/javascript/TestEnsemblGeneSummaryView.html</li>
+	<li>
+	Change the display after 3 seconds using the following <a href="javascript: toggle('step4input');">inputData</a>
+    <div id="step4input" style="display: none">
+<pre><code>
+var newInputData = {
+	&quot;title&quot;: {
+		&quot;text&quot;: &quot;Breast cancer 2, early onset&quot;,
+		&quot;link&quot;: {
+			&quot;text&quot;: &quot;View in Ensembl&quot;,
+			&quot;url&quot;: &quot;http://www.ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000139618;db=core&quot;
+		}
+	}
+};
+</code></pre>
+</div>
+	</li>
+	<li>Your HTML page should look like this (<a href="javascript: toggle('step4page');">show/hide</a>).
+
+
+    <div id="step4page" style="display: none">
+<pre><code>
+&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD XHTML 1.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd&quot;&gt;
+&lt;html xmlns=&quot;http://www.w3.org/1999/xhtml&quot; lang=&quot;en-US&quot; xml:lang=&quot;en-US&quot;&gt;
+	&lt;head&gt;
+	  &lt;script type=&quot;text/javascript&quot; src=&quot;../../main/javascript/Biojs.js&quot;&gt;&lt;/script&gt;		
+	  &lt;script type=&quot;text/javascript&quot; src=&quot;../../main/javascript/Biojs.EnsemblGeneSummaryView.js&quot;&gt;&lt;/script&gt;
+	  &lt;script language=&quot;JavaScript&quot; type=&quot;text/javascript&quot; src=&quot;../../main/resources/dependencies/jquery/jquery-1.9.1.min.js&quot;&gt;&lt;/script&gt;
+	  
+	  &lt;script type=&quot;text/javascript&quot;&gt;       
+		var geneView;
+		window.onload = function() {		 
+			geneView = new Biojs.EnsemblGeneSummaryView({
+			        &quot;target&quot; : &quot;holder&quot;,
+			        &quot;inputData&quot;: {
+ 						&quot;title&quot;: {
+			 			&quot;text&quot;: &quot;Amyloid beta (A4) precursor protein&quot;,
+			 				&quot;link&quot;: {
+			 					&quot;text&quot;: &quot;View in Ensembl&quot;,
+			 					&quot;url&quot;: &quot;http://www.ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000142192;db=core&quot;
+			 				}
+			 			}
+			 		}
+			});
+		};<span class="emphasis">
+
+
+		/* Set new inpput data after 3 seconds */
+		var newInputData = {
+ 						&quot;title&quot;: {
+			 			&quot;text&quot;: &quot;Breast cancer 2, early onset&quot;,
+			 				&quot;link&quot;: {
+			 					&quot;text&quot;: &quot;View in Ensembl&quot;,
+			 					&quot;url&quot;: &quot;http://www.ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000139618;db=core&quot;
+			 				}
+			 			}
+			 		};
+
+		setInterval(function(){
+			geneView.setInputData(newInputData);
+		},3000);</span>	    
+		
+		    	   
+	   &lt;/script&gt;	
+	&lt;/head&gt;
+	&lt;body&gt;
+	  &lt;div id=&quot;holder&quot;&gt;&lt;/div&gt;
+	  &lt;div id=&quot;log&quot;&gt;&lt;/div&gt;
+	&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+    </div>
+</section>
+</li>
+</ul>
+
+
+<br/>
+<section id="step5">
+    <h3>Step 5 - Display a new input with more summary data</h3>
+    <p>
+We started with a simplified input. Now we will work with a <a href="javascript: toggle('step5input');">full JSON input</a> to display the four sections describe in <a target="_blank" href="https://docs.google.com/document/d/1j6VY_KxO1ZHoEL0i7N4Lzh2aXOH1i8ph7dYJfs9MHb8/edit">the requirements</a>
+    </p>
+
+
+    <div id="step5input" style="display: none">
+<pre><code>
+var inputData = {
+    &quot;title&quot;: {
+    &quot;text&quot;: &quot;Amyloid beta (A4) precursor protein&quot;,
+        &quot;link&quot;: {
+            &quot;text&quot;: &quot;View in Ensembl&quot;,
+            &quot;url&quot;: &quot;http://www.ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000142192;db=core&quot;
+        }
+    },
+    &quot;image&quot;: {
+        &quot;text&quot;: &quot;Gene structure&quot;,
+        &quot;url&quot;: &quot;http://www.ensembl.org/Homo_sapiens/Component/Location/Web/MultiBottom?export=png;g=ENSG00000142192;db=core;i_width=750&quot;
+    },
+    &quot;provenance&quot;: {
+        &quot;text&quot;: [
+            &quot;The Ensembl project produces genome databases for vertebrates and other eukaryotic species, and makes this information freely available online.&quot;,
+            &quot;The current release 71 ( April 2013 ) of the Ensembl provides access to the genomic, comparative, functional and variation data from 61 species.&quot;
+        ],
+        &quot;link&quot;: [
+            {
+                &quot;text&quot;: &quot;View more information in Ensembl.&quot;,
+                &quot;url&quot;: &quot;http://www.ensembl.org&quot;
+            }
+        ]
+    },
+    &quot;summary&quot;: [
+        {
+            &quot;title&quot;: {
+                &quot;text&quot;: &quot;Variations&quot;
+            },
+            &quot;text&quot;: [
+                &quot;APP has 6265 SNPs.&quot;
+            ],
+            &quot;link&quot;: [
+                {
+                    &quot;text&quot;: &quot;View sequence variations such as polymorphisms, along with genotypes and disease associations in Ensembl.&quot;,
+                    &quot;url&quot;: &quot;http://www.ensembl.org/Homo_sapiens/Gene/Variation_Gene/Image?g=ENSG00000142192;db=core&quot;
+                }
+            ]
+        },
+        {
+            &quot;title&quot;: {
+                &quot;text&quot;: &quot;Orthologues&quot;
+            },
+            &quot;text&quot;: [
+                &quot;APP has 62 orthologues.&quot;
+            ],
+            &quot;link&quot;: [
+                {
+                    &quot;text&quot;: &quot;View homology between species inferred from a gene tree in Ensembl.&quot;,
+                    &quot;url&quot;: &quot;http://www.ensembl.org/Homo_sapiens/Gene/Compara_Ortholog?g=ENSG00000142192;db=core&quot;
+                }
+            ]
+        },
+        {
+            &quot;title&quot;: {
+                &quot;text&quot;: &quot;Gene Information and Sequence&quot;
+            },
+            &quot;text&quot;: [
+                &quot;APP spans 290585 bps of chromosome 21 from 27252861 to 27543446.&quot;,
+                &quot;APP has 19 transcripts containing a total of 56 exons on the reverse strand.&quot;,
+                &quot;Annotation for this gene includes both automatic annotation from Ensembl and Havana manual curation, see article.&quot;
+            ],
+            &quot;link&quot;: [
+                {
+                    &quot;text&quot;: &quot;View the gene sequence in Ensembl.&quot;,
+                    &quot;url&quot;: &quot;http://www.ensembl.org/Homo_sapiens/Gene/Sequence?g=ENSG00000142192;db=core&quot;
+                },
+                {
+                    &quot;text&quot;: &quot;View the chromosome region for this gene in Ensembl&quot;,
+                    &quot;url&quot;: &quot;http://www.ensembl.org/Homo_sapiens/Location/View?g=ENSG00000142192;db=core&quot;
+                }
+            ]
+        }
+    ] 
+};
+</code></pre>
+    </div>
+</section>
+
+<ul>
+	<li>Modify "biojs/src/main/javascript/Biojs.EnsemblGeneSummaryView.js"</li>
+	<li>Implement methods to display four sections following the sketch from <a target="_blank" href="https://docs.google.com/document/d/1j6VY_KxO1ZHoEL0i7N4Lzh2aXOH1i8ph7dYJfs9MHb8/edit">our requirements</a></li>
+	<li>
+        Your JavaScript should look like this (<a href="javascript: toggle('step5page');">show/hide</a>).
+
+
+
+    <div id="step5page" style="display: none">
+<br/><p>We created one method per section to additionally display the image, the summary information and the provenance.</p>
+<pre><code>
+/** 
+ * Component displaying a ENSEMBL gene view summary
+ * 
+ * @class
+ * @extends Biojs
+ * 
+ * @author &lt;a href=&quot;MyEmail@my.email&quot;&gt;My Name&lt;/a&gt;, &lt;a href=&quot;mailto:MyCollaboratorEmail@mycollaborator.email&quot;&gt;Mycollaborator Name&lt;/a&gt;
+ * @version 1.0.0
+ * @category 0
+ * 
+ * @requires &lt;a href='http://code.jquery.com/jquery-1.9.1.min.js'&gt;jQuery Core 1.9.1&lt;/a&gt;
+ * @dependency &lt;script language=&quot;JavaScript&quot; type=&quot;text/javascript&quot; src=&quot;../biojs/dependencies/jquery/jquery-1.9.1.min.js&quot;&gt;&lt;/script&gt;
+ * 
+ * @param {Object} options An object with the options to display the component.
+ *    
+ * @option {string} target 
+ *    Identifier of the DIV tag where the component should be displayed.
+ * 
+ * @option {Object} inputData
+ * 	  Input data
+ *     
+ * @example 
+ * var instance = new Biojs.EnsemblGeneSummaryView({
+ * 		&quot;target&quot;: &quot;YourOwnDivId&quot;,
+ * 		&quot;inputData&quot;: {
+ * 			&quot;title&quot;: {
+ * 				&quot;text&quot;: &quot;Amyloid beta (A4) precursor protein&quot;,
+ * 				&quot;link&quot;: {
+ * 					&quot;text&quot;: &quot;View in Ensembl&quot;,
+ * 					&quot;url&quot;: &quot;http://www.ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000142192;db=core&quot;
+ * 				}
+ * 			},<span class="emphasis">
+ * 			&quot;image&quot;: {
+ * 				&quot;text&quot;: &quot;Gene structure&quot;,
+ * 				&quot;url&quot;: &quot;http://www.ensembl.org/Homo_sapiens/Component/Location/Web/MultiBottom?export=png;g=ENSG00000142192;db=core;i_width=750&quot;
+ * 			},
+ * 			&quot;provenance&quot;: {
+ * 				&quot;text&quot;: [
+ * 					&quot;The Ensembl project produces genome databases for vertebrates and other eukaryotic species, and makes this information freely available online.&quot;,
+ * 					&quot;The current release 71 ( April 2013 ) of the Ensembl provides access to the genomic, comparative, functional and variation data from 61 species.&quot;
+ * 				],
+ * 				&quot;link&quot;: [
+ * 					{
+ * 						&quot;text&quot;: &quot;View more information in Ensembl.&quot;,
+ * 						&quot;url&quot;: &quot;http://www.ensembl.org&quot;
+ * 					}
+ * 				]
+ * 			},
+ * 			&quot;summary&quot;: [
+ * 				{
+ * 					&quot;title&quot;: {
+ * 						&quot;text&quot;: &quot;Variations&quot;
+ * 					},
+ * 					&quot;text&quot;: [
+ * 						&quot;APP has 6265 SNPs.&quot;
+ * 					],
+ * 					&quot;link&quot;: [
+ * 						{
+ * 							&quot;text&quot;: &quot;View sequence variations such as polymorphisms, along with genotypes and disease associations in Ensembl.&quot;,
+ * 							&quot;url&quot;: &quot;http://www.ensembl.org/Homo_sapiens/Gene/Variation_Gene/Image?g=ENSG00000142192;db=core&quot;
+ * 						}
+ * 					]
+ * 				},
+ * 				{
+ * 					&quot;title&quot;: {
+ * 						&quot;text&quot;: &quot;Orthologues&quot;
+ * 					},
+ * 					&quot;text&quot;: [
+ * 						&quot;APP has 62 orthologues.&quot;
+ * 					],
+ * 					&quot;link&quot;: [
+ * 						{
+ * 							&quot;text&quot;: &quot;View homology between species inferred from a gene tree in Ensembl.&quot;,
+ * 							&quot;url&quot;: &quot;http://www.ensembl.org/Homo_sapiens/Gene/Compara_Ortholog?g=ENSG00000142192;db=core&quot;
+ * 						}
+ * 					]
+ * 				},
+ * 				{
+ * 					&quot;title&quot;: {
+ * 						&quot;text&quot;: &quot;Gene Information and Sequence&quot;
+ * 					},
+ * 					&quot;text&quot;: [
+ * 						&quot;APP spans 290585 bps of chromosome 21 from 27252861 to 27543446.&quot;,
+ * 						&quot;APP has 19 transcripts containing a total of 56 exons on the reverse strand.&quot;,
+ * 						&quot;Annotation for this gene includes both automatic annotation from Ensembl and Havana manual curation, see article.&quot;
+ * 					],
+ * 					&quot;link&quot;: [
+ * 						{
+ * 							&quot;text&quot;: &quot;View the gene sequence in Ensembl.&quot;,
+ * 							&quot;url&quot;: &quot;http://www.ensembl.org/Homo_sapiens/Gene/Sequence?g=ENSG00000142192;db=core&quot;
+ * 						},
+ * 						{
+ * 							&quot;text&quot;: &quot;View the chromosome region for this gene in Ensembl&quot;,
+ * 							&quot;url&quot;: &quot;http://www.ensembl.org/Homo_sapiens/Location/View?g=ENSG00000142192;db=core&quot;
+ * 						}
+ * 					]
+ * 				}
+ * 			] 
+ * 		}</span>
+ * });	
+ * 
+ */
+Biojs.EnsemblGeneSummaryView = Biojs.extend (
+/** @lends Biojs.EnsemblGeneSummaryView# */
+{
+  constructor: function (options) {
+	  this.setInputData(this.opt.inputData);
+  },
+
+  /**
+   *  Default values for the options
+   *  @name Biojs.EnsemblGeneSummaryView-opt
+   */
+  opt: {
+     target: &quot;YourOwnDivId&quot;,
+     inputData: {} 
+  },
+  
+	/**
+	 * Set a new input.
+	 * @param {object} inputData Input Data.
+	 * 
+	 * @example 
+	 * instance.setInputData(
+	 * 			        	{
+ 	 *						&quot;title&quot;: {
+	 *			 			&quot;text&quot;: &quot;Amyloid beta (A4) precursor protein&quot;,
+	 *			 				&quot;link&quot;: {
+	 *			 					&quot;text&quot;: &quot;View in Ensembl&quot;,
+	 *			 					&quot;url&quot;: &quot;http://www.ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000142192;db=core&quot;
+	 *			 				}
+	 *			 			},<span class="emphasis">
+	 *			 			&quot;image&quot;: {
+	 *			 				&quot;text&quot;: &quot;Gene structure&quot;,
+	 *			 				&quot;url&quot;: &quot;http://www.ensembl.org/Homo_sapiens/Component/Location/Web/MultiBottom?export=png;g=ENSG00000142192;db=core;i_width=750&quot;
+	 *			 			},
+	 *			 			&quot;provenance&quot;: {
+	 *			 				&quot;text&quot;: [
+	 *			 					&quot;The Ensembl project produces genome databases for vertebrates and other eukaryotic species, and makes this information freely available online.&quot;,
+	 *			 					&quot;The current release 71 ( April 2013 ) of the Ensembl provides access to the genomic, comparative, functional and variation data from 61 species.&quot;
+	 *			 				],
+	 *			 				&quot;link&quot;: [
+	 *			 					{
+	 *			 						&quot;text&quot;: &quot;View more information in Ensembl.&quot;,
+	 *			 						&quot;url&quot;: &quot;http://www.ensembl.org&quot;
+	 *			 					}
+	 *			 				]
+	 *			 			}</span>
+	 *			 		}
+	 * );
+	 * 
+	 */
+	setInputData: function(inputData){
+		this.opt.inputData = inputData;
+		this._container = jQuery(&quot;#&quot;+this.opt.target);
+		this._clearData();	
+		this._drawData();
+	},
+	
+    /* 
+     * Function: Biojs.EnsemblGeneSummaryView._drawTemplate
+     * Purpose:  Clear data inside the main container
+     * Returns:  -
+     * Inputs:  -
+     */
+	_clearData: function(){
+		this._container.html(&quot;&quot;);
+	},
+	
+    /* 
+     * Function: Biojs.EnsemblGeneSummaryView._drawData
+     * Purpose:  Draw different sections of the display
+     * Returns:  -
+     * Inputs:  -
+     */
+	_drawData: function(){
+		this._drawTitle();<span class="emphasis">
+		this._drawImage();
+		this._drawSummary();
+		this._drawProvenance();</span>
+	},
+	
+    /* 
+     * Function: Biojs.EnsemblGeneSummaryView._drawTitle
+     * Purpose:  Draw title
+     * Returns:  -
+     * Inputs:  -
+     */
+	_drawTitle: function(){
+		var title = jQuery('&lt;div class=&quot;EnsemblGeneSummaryView_title&quot;&gt;&lt;/div&gt;').appendTo(this._container);
+		if (this.opt.inputData.title !== undefined){
+			title.append(&quot;&lt;h1&gt;&quot; + this.opt.inputData.title.text + &quot;&lt;/h1&gt;&quot;);
+			title.append(&quot;&lt;div&gt;&lt;a href ='&quot; + this.opt.inputData.title.link.url + &quot;'&gt;&quot; + this.opt.inputData.title.link.text + &quot;&lt;/a&gt;&lt;div&gt;&quot;);	
+		}
+	},<span class="emphasis">
+	
+    /* 
+     * Function: Biojs.EnsemblGeneSummaryView._drawImage
+     * Purpose:  Draw image
+     * Returns:  -
+     * Inputs:  -
+     */
+	_drawImage: function(){
+		var image = jQuery('&lt;div class=&quot;EnsemblGeneSummaryView_image&quot;&gt;&lt;/div&gt;').appendTo(this._container);
+		if (this.opt.inputData.image !== undefined){
+			image.append(&quot;&lt;img alt='&quot; + this.opt.inputData.image.text + &quot;' src ='&quot; + this.opt.inputData.image.url + &quot;'/&gt;&quot;);		
+		}
+	},
+	
+    /* 
+     * Function: Biojs.EnsemblGeneSummaryView._drawSummary
+     * Purpose:  Draw summary
+     * Returns:  -
+     * Inputs:  -
+     */
+	_drawSummary: function(){
+		if (this.opt.inputData.summary !== undefined){
+			var summary = jQuery('&lt;div class=&quot;EnsemblGeneSummaryView_summary&quot;&gt;&lt;/div&gt;').appendTo(this._container);
+			jQuery.each(this.opt.inputData.summary, function(a, summaryEntry) {
+					summary.append(&quot;&lt;h2&gt;&quot; + summaryEntry.title.text + &quot;&lt;/h2&gt;&quot;);
+				jQuery.each(summaryEntry.text, function(b, summaryEntryText) {
+					summary.append(&quot;&lt;div&gt;&quot; + summaryEntryText + &quot;&lt;/div&gt;&quot;);
+				});
+				jQuery.each(summaryEntry.link, function(b, summaryEntryLink) {
+					summary.append(&quot;&lt;div&gt;&lt;a href='&quot; + summaryEntryLink.url + &quot;'&gt;&quot; + summaryEntryLink.text + &quot;&lt;/a&gt;&lt;/div&gt;&quot;);
+				});
+			});
+		}
+	},
+
+    /* 
+     * Function: Biojs.EnsemblGeneSummaryView._drawProvenance
+     * Purpose:  Draw provenance
+     * Returns:  -
+     * Inputs:  -
+     */
+	_drawProvenance: function(){
+		var self = this;
+		if (this.opt.inputData.provenance !== undefined){
+			var provenance = jQuery('&lt;div class=&quot;EnsemblGeneSummaryView_provenance&quot;&gt;&lt;/div&gt;').appendTo(this._container);
+			jQuery.each(this.opt.inputData.provenance.text, function(a, provenanceEntryText) {
+				provenance.append(&quot;&lt;div&gt;&quot; + provenanceEntryText + &quot;&lt;/div&gt;&quot;);
+			});		
+			jQuery.each(this.opt.inputData.provenance.link, function(a, provenanceEntryLink) {
+				provenance.append(&quot;&lt;div&gt;&lt;a href ='&quot; + provenanceEntryLink.url + &quot;'&gt;&quot; + provenanceEntryLink.text + &quot;&lt;/a&gt;&lt;/div&gt;&quot;);
+			});		
+		}
+	},</span>
+  
+  /**
+   * Array containing the supported event names
+   * @name Biojs.EnsemblGeneSummaryView-eventTypes
+   */
+  eventTypes : [
+     
+  ]
+  
+});
+</code></pre>
+    </div>
+</section>
+
+</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+<br/>
+<section id="step6">
+    <h3>Step 6 - Test the component</h3>
+	<ul>
+		<li>
+			To test the component modify “biojs/src/test/javascript/TestEnsemblGeneSummaryView.html”.
+		</li>
+		<li>
+		Your web page should look like this (<a href="javascript: toggle('step6page');">show/hide</a>).
+    			<div id="step6page" style="display: none">
+			<pre><code>
+&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD XHTML 1.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd&quot;&gt;
+&lt;html xmlns=&quot;http://www.w3.org/1999/xhtml&quot; lang=&quot;en-US&quot; xml:lang=&quot;en-US&quot;&gt;
+	&lt;head&gt;
+	  &lt;script type=&quot;text/javascript&quot; src=&quot;../../main/javascript/Biojs.js&quot;&gt;&lt;/script&gt;		
+	  &lt;script type=&quot;text/javascript&quot; src=&quot;../../main/javascript/Biojs.EnsemblGeneSummaryView.js&quot;&gt;&lt;/script&gt;
+	  &lt;script language=&quot;JavaScript&quot; type=&quot;text/javascript&quot; src=&quot;../../main/resources/dependencies/jquery/jquery-1.9.1.min.js&quot;&gt;&lt;/script&gt;
+	  
+	  &lt;script type=&quot;text/javascript&quot;&gt;       
+		var geneView;
+		window.onload = function() {		 
+			geneView = new Biojs.EnsemblGeneSummaryView({
+			        &quot;target&quot; : &quot;holder&quot;,
+			        &quot;inputData&quot;: {
+ 						&quot;title&quot;: {
+			 			&quot;text&quot;: &quot;Amyloid beta (A4) precursor protein&quot;,
+			 				&quot;link&quot;: {
+			 					&quot;text&quot;: &quot;View in Ensembl&quot;,
+			 					&quot;url&quot;: &quot;http://www.ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000142192;db=core&quot;
+			 				}
+			 			},
+			 			&quot;image&quot;: {
+			 				&quot;text&quot;: &quot;Gene structure&quot;,
+			 				&quot;url&quot;: &quot;http://www.ensembl.org/Homo_sapiens/Component/Location/Web/MultiBottom?export=png;g=ENSG00000142192;db=core;i_width=750&quot;
+			 			},
+			 			&quot;provenance&quot;: {
+			 				&quot;text&quot;: [
+			 					&quot;The Ensembl project produces genome databases for vertebrates and other eukaryotic species, and makes this information freely available online.&quot;,
+			 					&quot;The current release 71 ( April 2013 ) of the Ensembl provides access to the genomic, comparative, functional and variation data from 61 species.&quot;
+			 				],
+			 				&quot;link&quot;: [
+			 					{
+			 						&quot;text&quot;: &quot;View more information in Ensembl.&quot;,
+			 						&quot;url&quot;: &quot;http://www.ensembl.org&quot;
+			 					}
+			 				]
+			 			},
+			 			&quot;summary&quot;: [
+			 				{
+			 					&quot;title&quot;: {
+			 						&quot;text&quot;: &quot;Variations&quot;
+			 					},
+			 					&quot;text&quot;: [
+			 						&quot;APP has 6265 SNPs.&quot;
+			 					],
+			 					&quot;link&quot;: [
+			 						{
+			 							&quot;text&quot;: &quot;View sequence variations such as polymorphisms, along with genotypes and disease associations in Ensembl.&quot;,
+			 							&quot;url&quot;: &quot;http://www.ensembl.org/Homo_sapiens/Gene/Variation_Gene/Image?g=ENSG00000142192;db=core&quot;
+			 						}
+			 					]
+			 				},
+			 				{
+			 					&quot;title&quot;: {
+			 						&quot;text&quot;: &quot;Orthologues&quot;
+			 					},
+			 					&quot;text&quot;: [
+			 						&quot;APP has 62 orthologues.&quot;
+			 					],
+			 					&quot;link&quot;: [
+			 						{
+			 							&quot;text&quot;: &quot;View homology between species inferred from a gene tree in Ensembl.&quot;,
+			 							&quot;url&quot;: &quot;http://www.ensembl.org/Homo_sapiens/Gene/Compara_Ortholog?g=ENSG00000142192;db=core&quot;
+			 						}
+			 					]
+			 				},
+			 				{
+			 					&quot;title&quot;: {
+			 						&quot;text&quot;: &quot;Gene Information and Sequence&quot;
+			 					},
+			 					&quot;text&quot;: [
+			 						&quot;APP spans 290585 bps of chromosome 21 from 27252861 to 27543446.&quot;,
+			 						&quot;APP has 19 transcripts containing a total of 56 exons on the reverse strand.&quot;,
+			 						&quot;Annotation for this gene includes both automatic annotation from Ensembl and Havana manual curation, see article.&quot;
+			 					],
+			 					&quot;link&quot;: [
+			 						{
+			 							&quot;text&quot;: &quot;View the gene sequence in Ensembl.&quot;,
+			 							&quot;url&quot;: &quot;http://www.ensembl.org/Homo_sapiens/Gene/Sequence?g=ENSG00000142192;db=core&quot;
+			 						},
+			 						{
+			 							&quot;text&quot;: &quot;View the chromosome region for this gene in Ensembl&quot;,
+			 							&quot;url&quot;: &quot;http://www.ensembl.org/Homo_sapiens/Location/View?g=ENSG00000142192;db=core&quot;
+			 						}
+			 					]
+			 				}
+			 			] 
+			 		}
+			});
+		};	    
+		
+		    	   
+	  &lt;/script&gt;	
+	&lt;/head&gt;
+	&lt;body&gt;
+	  &lt;div id=&quot;holder&quot;&gt;&lt;/div&gt;
+	  &lt;div id=&quot;log&quot;&gt;&lt;/div&gt;
+	&lt;/body&gt;
+&lt;/html&gt;
+
+			</code></pre>
+    			</div>
+		</li>
+    <li>
+Try in <a href="http://localhost/biojs/src/test/javascript/TestEnsemblGeneSummaryView.html">http://localhost/biojs/src/test/javascript/TestEnsemblGeneSummaryView.html</a>
+        
+    </li>
+</ul>
+</section>
+
+
+
+<br/>
+<section id="step7">
+    <h3>Step 7 - Add CSS styles</h3>
+
+    <p>
+We should refrain to add unnecessary CCS styles inside the component. It is better the component inherits the styles of the application where it is integrated. In this case we could add a CSS stylesheet to reduce the font size of the provenance section and separate it a little bit from the summary section.
+    </p>
+
+<ul>
+	<li>Create "Biojs.EnsemblGeneSummaryView.css" in "biojs/src/main/resources/css/"</li>
+	<li>
+	Add the following <a href="javascript: toggle('step7style');">CSS style</a>
+    <div id="step7style" style="display: none">
+<pre><code>
+div.EnsemblGeneSummaryView_provenance {
+	font-size: 88%;
+	margin-top:20px;
+}
+</code></pre>
+    </div>
+	</li>
+	<li>
+	Add the following <a href="javascript: toggle('step7dep');">CSS dependency</a> in "Biojs.EnsemblGeneSummaryView.js" (below the jQuery dependency).
+    <div id="step7dep" style="display: none">
+<pre><code>
+ * @requires &lt;a href='../biojs/css/Biojs.EnsemblGeneSummaryView.css'&gt;Biojs.EnsemblGeneSummaryView.css&lt;/a&gt;
+ * @dependency &lt;link href=&quot;../biojs/css/Biojs.EnsemblGeneSummaryView.css&quot; rel=&quot;stylesheet&quot; type=&quot;text/css&quot; /&gt;
+</code></pre>
+    </div>
+	</li>
+	<li>
+	Add the following <a href="javascript: toggle('step7css');">CSS line</a> inside the "TestEnsemblGeneSummaryView.html" header.
+    <div id="step7css" style="display: none">
+<pre><code>
+	  &lt;link href=&quot;../../main/resources/css/Biojs.EnsemblGeneSummaryView.css&quot; rel=&quot;stylesheet&quot; type=&quot;text/css&quot;&gt;
+</code></pre>
+    </div>
+	</li>
+
+</ul>
+<br/>
+    <p>
+        Your JavaScript should look like this (<a href="javascript: toggle('step7js');">show/hide</a>).
+    <div id="step7js" style="display: none">
+<pre><code>
+/** 
+ * Component displaying a ENSEMBL gene view summary
+ * 
+ * @class
+ * @extends Biojs
+ * 
+ * @author &lt;a href=&quot;MyEmail@my.email&quot;&gt;My Name&lt;/a&gt;, &lt;a href=&quot;mailto:MyCollaboratorEmail@mycollaborator.email&quot;&gt;Mycollaborator Name&lt;/a&gt;
+ * @version 1.0.0
+ * @category 0
+ * 
+ * @requires &lt;a href='http://code.jquery.com/jquery-1.9.1.min.js'&gt;jQuery Core 1.9.1&lt;/a&gt;
+ * @dependency &lt;script language=&quot;JavaScript&quot; type=&quot;text/javascript&quot; src=&quot;../biojs/dependencies/jquery/jquery-1.9.1.min.js&quot;&gt;&lt;/script&gt;
+ * <span class="emphasis">
+ * @requires &lt;a href='../biojs/css/Biojs.EnsemblGeneSummaryView.css'&gt;Biojs.EnsemblGeneSummaryView.css&lt;/a&gt;
+ * @dependency &lt;link href=&quot;../biojs/css/Biojs.EnsemblGeneSummaryView.css&quot; rel=&quot;stylesheet&quot; type=&quot;text/css&quot; /&gt;</span>
+ * 
+ * @param {Object} options An object with the options to display the component.
+ *    
+ * @option {string} target 
+ *    Identifier of the DIV tag where the component should be displayed.
+ * 
+ * @option {Object} inputData
+ * 	  Input data
+ *     
+ * @example 
+ * var instance = new Biojs.EnsemblGeneSummaryView({
+ * 		&quot;target&quot;: &quot;YourOwnDivId&quot;,
+ * 		&quot;inputData&quot;: {
+ * 			&quot;title&quot;: {
+ * 				&quot;text&quot;: &quot;Amyloid beta (A4) precursor protein&quot;,
+ * 				&quot;link&quot;: {
+ * 					&quot;text&quot;: &quot;View in Ensembl&quot;,
+ * 					&quot;url&quot;: &quot;http://www.ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000142192;db=core&quot;
+ * 				}
+ * 			},
+ * 			&quot;image&quot;: {
+ * 				&quot;text&quot;: &quot;Gene structure&quot;,
+ * 				&quot;url&quot;: &quot;http://www.ensembl.org/Homo_sapiens/Component/Location/Web/MultiBottom?export=png;g=ENSG00000142192;db=core;i_width=750&quot;
+ * 			},
+ * 			&quot;provenance&quot;: {
+ * 				&quot;text&quot;: [
+ * 					&quot;The Ensembl project produces genome databases for vertebrates and other eukaryotic species, and makes this information freely available online.&quot;,
+ * 					&quot;The current release 71 ( April 2013 ) of the Ensembl provides access to the genomic, comparative, functional and variation data from 61 species.&quot;
+ * 				],
+ * 				&quot;link&quot;: [
+ * 					{
+ * 						&quot;text&quot;: &quot;View more information in Ensembl.&quot;,
+ * 						&quot;url&quot;: &quot;http://www.ensembl.org&quot;
+ * 					}
+ * 				]
+ * 			},
+ * 			&quot;summary&quot;: [
+ * 				{
+ * 					&quot;title&quot;: {
+ * 						&quot;text&quot;: &quot;Variations&quot;
+ * 					},
+ * 					&quot;text&quot;: [
+ * 						&quot;APP has 6265 SNPs.&quot;
+ * 					],
+ * 					&quot;link&quot;: [
+ * 						{
+ * 							&quot;text&quot;: &quot;View sequence variations such as polymorphisms, along with genotypes and disease associations in Ensembl.&quot;,
+ * 							&quot;url&quot;: &quot;http://www.ensembl.org/Homo_sapiens/Gene/Variation_Gene/Image?g=ENSG00000142192;db=core&quot;
+ * 						}
+ * 					]
+ * 				},
+ * 				{
+ * 					&quot;title&quot;: {
+ * 						&quot;text&quot;: &quot;Orthologues&quot;
+ * 					},
+ * 					&quot;text&quot;: [
+ * 						&quot;APP has 62 orthologues.&quot;
+ * 					],
+ * 					&quot;link&quot;: [
+ * 						{
+ * 							&quot;text&quot;: &quot;View homology between species inferred from a gene tree in Ensembl.&quot;,
+ * 							&quot;url&quot;: &quot;http://www.ensembl.org/Homo_sapiens/Gene/Compara_Ortholog?g=ENSG00000142192;db=core&quot;
+ * 						}
+ * 					]
+ * 				},
+ * 				{
+ * 					&quot;title&quot;: {
+ * 						&quot;text&quot;: &quot;Gene Information and Sequence&quot;
+ * 					},
+ * 					&quot;text&quot;: [
+ * 						&quot;APP spans 290585 bps of chromosome 21 from 27252861 to 27543446.&quot;,
+ * 						&quot;APP has 19 transcripts containing a total of 56 exons on the reverse strand.&quot;,
+ * 						&quot;Annotation for this gene includes both automatic annotation from Ensembl and Havana manual curation, see article.&quot;
+ * 					],
+ * 					&quot;link&quot;: [
+ * 						{
+ * 							&quot;text&quot;: &quot;View the gene sequence in Ensembl.&quot;,
+ * 							&quot;url&quot;: &quot;http://www.ensembl.org/Homo_sapiens/Gene/Sequence?g=ENSG00000142192;db=core&quot;
+ * 						},
+ * 						{
+ * 							&quot;text&quot;: &quot;View the chromosome region for this gene in Ensembl&quot;,
+ * 							&quot;url&quot;: &quot;http://www.ensembl.org/Homo_sapiens/Location/View?g=ENSG00000142192;db=core&quot;
+ * 						}
+ * 					]
+ * 				}
+ * 			] 
+ * 		}
+ * });	
+ * 
+ */
+Biojs.EnsemblGeneSummaryView = Biojs.extend (
+/** @lends Biojs.EnsemblGeneSummaryView# */
+{
+  constructor: function (options) {
+	  this.setInputData(this.opt.inputData);
+  },
+
+  /**
+   *  Default values for the options
+   *  @name Biojs.EnsemblGeneSummaryView-opt
+   */
+  opt: {
+     target: &quot;YourOwnDivId&quot;,
+     inputData: {} 
+  },
+  
+	/**
+	 * Set a new input.
+	 * @param {object} inputData Input Data.
+	 * 
+	 * @example 
+	 * instance.setInputData(
+	 * 			        	{
+ 	 *						&quot;title&quot;: {
+	 *			 			&quot;text&quot;: &quot;Amyloid beta (A4) precursor protein&quot;,
+	 *			 				&quot;link&quot;: {
+	 *			 					&quot;text&quot;: &quot;View in Ensembl&quot;,
+	 *			 					&quot;url&quot;: &quot;http://www.ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000142192;db=core&quot;
+	 *			 				}
+	 *			 			},
+	 *			 			&quot;image&quot;: {
+	 *			 				&quot;text&quot;: &quot;Gene structure&quot;,
+	 *			 				&quot;url&quot;: &quot;http://www.ensembl.org/Homo_sapiens/Component/Location/Web/MultiBottom?export=png;g=ENSG00000142192;db=core;i_width=750&quot;
+	 *			 			},
+	 *			 			&quot;provenance&quot;: {
+	 *			 				&quot;text&quot;: [
+	 *			 					&quot;The Ensembl project produces genome databases for vertebrates and other eukaryotic species, and makes this information freely available online.&quot;,
+	 *			 					&quot;The current release 71 ( April 2013 ) of the Ensembl provides access to the genomic, comparative, functional and variation data from 61 species.&quot;
+	 *			 				],
+	 *			 				&quot;link&quot;: [
+	 *			 					{
+	 *			 						&quot;text&quot;: &quot;View more information in Ensembl.&quot;,
+	 *			 						&quot;url&quot;: &quot;http://www.ensembl.org&quot;
+	 *			 					}
+	 *			 				]
+	 *			 			}
+	 *			 		}
+	 * );
+	 * 
+	 */
+	setInputData: function(inputData){
+		this.opt.inputData = inputData;
+		this._container = jQuery(&quot;#&quot;+this.opt.target);
+		this._clearData();	
+		this._drawData();
+	},
+	
+    /* 
+     * Function: Biojs.EnsemblGeneSummaryView._drawTemplate
+     * Purpose:  Clear data inside the main container
+     * Returns:  -
+     * Inputs:  -
+     */
+	_clearData: function(){
+		this._container.html(&quot;&quot;);
+	},
+	
+    /* 
+     * Function: Biojs.EnsemblGeneSummaryView._drawData
+     * Purpose:  Draw different sections of the display
+     * Returns:  -
+     * Inputs:  -
+     */
+	_drawData: function(){
+		this._drawTitle();
+		this._drawImage();
+		this._drawSummary();
+		this._drawProvenance();
+	},
+	
+    /* 
+     * Function: Biojs.EnsemblGeneSummaryView._drawTitle
+     * Purpose:  Draw title
+     * Returns:  -
+     * Inputs:  -
+     */
+	_drawTitle: function(){
+		var title = jQuery('&lt;div class=&quot;EnsemblGeneSummaryView_title&quot;&gt;&lt;/div&gt;').appendTo(this._container);
+		if (this.opt.inputData.title !== undefined){
+			title.append(&quot;&lt;h1&gt;&quot; + this.opt.inputData.title.text + &quot;&lt;/h1&gt;&quot;);
+			title.append(&quot;&lt;div&gt;&lt;a href ='&quot; + this.opt.inputData.title.link.url + &quot;'&gt;&quot; + this.opt.inputData.title.link.text + &quot;&lt;/a&gt;&lt;div&gt;&quot;);	
+		}
+	},
+	
+    /* 
+     * Function: Biojs.EnsemblGeneSummaryView._drawImage
+     * Purpose:  Draw image
+     * Returns:  -
+     * Inputs:  -
+     */
+	_drawImage: function(){
+		var image = jQuery('&lt;div class=&quot;EnsemblGeneSummaryView_image&quot;&gt;&lt;/div&gt;').appendTo(this._container);
+		if (this.opt.inputData.image !== undefined){
+			image.append(&quot;&lt;img alt='&quot; + this.opt.inputData.image.text + &quot;' src ='&quot; + this.opt.inputData.image.url + &quot;'/&gt;&quot;);		
+		}
+	},
+	
+    /* 
+     * Function: Biojs.EnsemblGeneSummaryView._drawSummary
+     * Purpose:  Draw summary
+     * Returns:  -
+     * Inputs:  -
+     */
+	_drawSummary: function(){
+		if (this.opt.inputData.summary !== undefined){
+			var summary = jQuery('&lt;div class=&quot;EnsemblGeneSummaryView_summary&quot;&gt;&lt;/div&gt;').appendTo(this._container);
+			jQuery.each(this.opt.inputData.summary, function(a, summaryEntry) {
+					summary.append(&quot;&lt;h2&gt;&quot; + summaryEntry.title.text + &quot;&lt;/h2&gt;&quot;);
+				jQuery.each(summaryEntry.text, function(b, summaryEntryText) {
+					summary.append(&quot;&lt;div&gt;&quot; + summaryEntryText + &quot;&lt;/div&gt;&quot;);
+				});
+				jQuery.each(summaryEntry.link, function(b, summaryEntryLink) {
+					summary.append(&quot;&lt;div&gt;&lt;a href='&quot; + summaryEntryLink.url + &quot;'&gt;&quot; + summaryEntryLink.text + &quot;&lt;/a&gt;&lt;/div&gt;&quot;);
+				});
+			});
+		}
+	},
+
+    /* 
+     * Function: Biojs.EnsemblGeneSummaryView._drawProvenance
+     * Purpose:  Draw provenance
+     * Returns:  -
+     * Inputs:  -
+     */
+	_drawProvenance: function(){
+		var self = this;
+		if (this.opt.inputData.provenance !== undefined){
+			var provenance = jQuery('&lt;div class=&quot;EnsemblGeneSummaryView_provenance&quot;&gt;&lt;/div&gt;').appendTo(this._container);
+			jQuery.each(this.opt.inputData.provenance.text, function(a, provenanceEntryText) {
+				provenance.append(&quot;&lt;div&gt;&quot; + provenanceEntryText + &quot;&lt;/div&gt;&quot;);
+			});		
+			jQuery.each(this.opt.inputData.provenance.link, function(a, provenanceEntryLink) {
+				provenance.append(&quot;&lt;div&gt;&lt;a href ='&quot; + provenanceEntryLink.url + &quot;'&gt;&quot; + provenanceEntryLink.text + &quot;&lt;/a&gt;&lt;/div&gt;&quot;);
+			});		
+		}
+	},
+  
+  /**
+   * Array containing the supported event names
+   * @name Biojs.EnsemblGeneSummaryView-eventTypes
+   */
+  eventTypes : [
+     
+  ]
+  
+});
+</code></pre>
+    </div>
+    </p>
+
+    <p>
+        Your HTML test page should look like this (<a href="javascript: toggle('step7page');">show/hide</a>).
+    <div id="step7page" style="display: none">
+<pre><code>
+
+&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD XHTML 1.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd&quot;&gt;
+&lt;html xmlns=&quot;http://www.w3.org/1999/xhtml&quot; lang=&quot;en-US&quot; xml:lang=&quot;en-US&quot;&gt;
+	&lt;head&gt;<span class="emphasis">
+	  &lt;link href=&quot;../../main/resources/css/Biojs.EnsemblGeneSummaryView.css&quot; rel=&quot;stylesheet&quot; type=&quot;text/css&quot;&gt;</span>
+	  &lt;script type=&quot;text/javascript&quot; src=&quot;../../main/javascript/Biojs.js&quot;&gt;&lt;/script&gt;		
+	  &lt;script type=&quot;text/javascript&quot; src=&quot;../../main/javascript/Biojs.EnsemblGeneSummaryView.js&quot;&gt;&lt;/script&gt;
+	  &lt;script language=&quot;JavaScript&quot; type=&quot;text/javascript&quot; src=&quot;../../main/resources/dependencies/jquery/jquery-1.9.1.min.js&quot;&gt;&lt;/script&gt;
+	  
+	  &lt;script type=&quot;text/javascript&quot;&gt;       
+		var geneView;
+		window.onload = function() {		 
+			geneView = new Biojs.EnsemblGeneSummaryView({
+			        &quot;target&quot; : &quot;holder&quot;,
+			        &quot;inputData&quot;: {
+ 						&quot;title&quot;: {
+			 			&quot;text&quot;: &quot;Amyloid beta (A4) precursor protein&quot;,
+			 				&quot;link&quot;: {
+			 					&quot;text&quot;: &quot;View in Ensembl&quot;,
+			 					&quot;url&quot;: &quot;http://www.ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000142192;db=core&quot;
+			 				}
+			 			},
+			 			&quot;image&quot;: {
+			 				&quot;text&quot;: &quot;Gene structure&quot;,
+			 				&quot;url&quot;: &quot;http://www.ensembl.org/Homo_sapiens/Component/Location/Web/MultiBottom?export=png;g=ENSG00000142192;db=core;i_width=750&quot;
+			 			},
+			 			&quot;provenance&quot;: {
+			 				&quot;text&quot;: [
+			 					&quot;The Ensembl project produces genome databases for vertebrates and other eukaryotic species, and makes this information freely available online.&quot;,
+			 					&quot;The current release 71 ( April 2013 ) of the Ensembl provides access to the genomic, comparative, functional and variation data from 61 species.&quot;
+			 				],
+			 				&quot;link&quot;: [
+			 					{
+			 						&quot;text&quot;: &quot;View more information in Ensembl.&quot;,
+			 						&quot;url&quot;: &quot;http://www.ensembl.org&quot;
+			 					}
+			 				]
+			 			},
+			 			&quot;summary&quot;: [
+			 				{
+			 					&quot;title&quot;: {
+			 						&quot;text&quot;: &quot;Variations&quot;
+			 					},
+			 					&quot;text&quot;: [
+			 						&quot;APP has 6265 SNPs.&quot;
+			 					],
+			 					&quot;link&quot;: [
+			 						{
+			 							&quot;text&quot;: &quot;View sequence variations such as polymorphisms, along with genotypes and disease associations in Ensembl.&quot;,
+			 							&quot;url&quot;: &quot;http://www.ensembl.org/Homo_sapiens/Gene/Variation_Gene/Image?g=ENSG00000142192;db=core&quot;
+			 						}
+			 					]
+			 				},
+			 				{
+			 					&quot;title&quot;: {
+			 						&quot;text&quot;: &quot;Orthologues&quot;
+			 					},
+			 					&quot;text&quot;: [
+			 						&quot;APP has 62 orthologues.&quot;
+			 					],
+			 					&quot;link&quot;: [
+			 						{
+			 							&quot;text&quot;: &quot;View homology between species inferred from a gene tree in Ensembl.&quot;,
+			 							&quot;url&quot;: &quot;http://www.ensembl.org/Homo_sapiens/Gene/Compara_Ortholog?g=ENSG00000142192;db=core&quot;
+			 						}
+			 					]
+			 				},
+			 				{
+			 					&quot;title&quot;: {
+			 						&quot;text&quot;: &quot;Gene Information and Sequence&quot;
+			 					},
+			 					&quot;text&quot;: [
+			 						&quot;APP spans 290585 bps of chromosome 21 from 27252861 to 27543446.&quot;,
+			 						&quot;APP has 19 transcripts containing a total of 56 exons on the reverse strand.&quot;,
+			 						&quot;Annotation for this gene includes both automatic annotation from Ensembl and Havana manual curation, see article.&quot;
+			 					],
+			 					&quot;link&quot;: [
+			 						{
+			 							&quot;text&quot;: &quot;View the gene sequence in Ensembl.&quot;,
+			 							&quot;url&quot;: &quot;http://www.ensembl.org/Homo_sapiens/Gene/Sequence?g=ENSG00000142192;db=core&quot;
+			 						},
+			 						{
+			 							&quot;text&quot;: &quot;View the chromosome region for this gene in Ensembl&quot;,
+			 							&quot;url&quot;: &quot;http://www.ensembl.org/Homo_sapiens/Location/View?g=ENSG00000142192;db=core&quot;
+			 						}
+			 					]
+			 				}
+			 			] 
+			 		}
+			});
+		};	    
+		
+		    	   
+	  &lt;/script&gt;	
+	&lt;/head&gt;
+	&lt;body&gt;
+	  &lt;div id=&quot;holder&quot;&gt;&lt;/div&gt;
+	  &lt;div id=&quot;log&quot;&gt;&lt;/div&gt;
+	&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+    </div>
+    </p>
+
+
+</section>
+
+
+
+<br/>
+<section id="step8">
+    <h3>Step 8 - Deploy the component locally</h3>
+        <ul>
+            <li><a target="_blank" href="ebiWorkshopBiojsInstall.html">Deploy BioJS in your local server</a></li>
+            <li><a target="_blank" href="http://localhost/biojs/target/registry/Biojs.EnsemblGeneSummaryView.html">Check your component</a></li>
+            <li><a target="_blank" href="http://localhost/biojs/target/jsdoc/symbols/Biojs.EnsemblGeneSummaryView.html">Check the JSDoc API for your component</a></li>
+            <li><a target="_blank" href="http://localhost/biojs/target/biojs/Biojs.EnsemblGeneSummaryView.js">Check your minified javascript file</a></li>
+            <li><a target="_blank" href="http://localhost/biojs/src/main/javascript/Biojs.EnsemblGeneSummaryView.js">Check your non minified javascript file</a></li>
+        </ul>
+        
+
+
+    <div id="stepXpage" style="display: none">
+<pre><code>
+</code></pre>
+    </div>
+</section>
+
+<br/>
+<br/>
+<h5><a href="extendBiojsComponent.html">If you want to continue you could have a look at how to extend this component to take the gene summary data from a Web Service</a></h5>.
+
+
+</div>
+
+
+</body>
+</html>
+

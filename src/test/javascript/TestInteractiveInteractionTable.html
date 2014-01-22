@@ -1,0 +1,51 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US" xml:lang="en-US">
+	<head>
+	  
+	  
+	  <script type="text/javascript" src="../../main/resources/dependencies/jquery/jquery-1.7.2.min.js"></script>
+	  <script type="text/javascript" src="../../main/resources/dependencies/jquery/jquery-ui-1.8.2.custom.min.js"></script>
+	  <script type="text/javascript" src="../../main/resources/dependencies/jquery.qtip.min.js"></script>
+	  <script type="text/javascript" src="../../main/resources/dependencies/jquery.dataTables.js"></script>	  
+	  <script type="text/javascript" src="../../main/javascript/Biojs.js"></script>		
+	  <script type="text/javascript" src="../../main/javascript/Biojs.InteractiveInteractionTable.js"></script>	  
+	  
+	  <link type="text/css" href="../../main/resources/css/smoothness/jquery-ui-1.8.18.custom.css" rel="stylesheet" />
+	  <link type="text/css" href="../../main/resources/css/jquery.qtip.css" rel="stylesheet" />	  
+	  <link type="text/css" href="../../main/resources/css/biojs.InteractiveInteractionTable.css" rel="stylesheet" />	  
+
+	  <style type="text/css" title="currentStyle">
+	    @import "../../main/resources/css/dataTable/demo_page.css";
+	    @import "../../main/resources/css/dataTable/demo_table.css";
+	  </style>
+	  
+	  <script type="text/javascript">
+           
+	    $(function(){
+	    var instance = new Biojs.InteractiveInteractionTable ( {
+	    target : "exampleDiv",
+	    interactionSetObject : {
+	    "aaData" : [["O15146", "Muscle, skeletal receptor tyrosine-protein kinase", "musk", "Receptor tyrosine kinase that is a key mediator of agrin's action and is involved in neuromuscular junction (NMJ) organization. (by similarity)", "9606", "P98160", "Basement membrane-specific heparan sulfate proteoglycan core protein", "HSPG2", "Integral component of basement membranes. Component of the glomerular basement membrane (GBM), responsible for the fixed negative electrostatic membrane charge, and which provides a barrier which is both size- and charge-selective. It serves as an attachment substrate for cells. Plays essential roles in vascularization. Critical for normal heart development and for regulating the vascular response to injury. Also required for avascular cartilage development.", "9606", "matrixdb"],
+	    [
+	    "P98160", "Basement membrane-specific heparan sulfate proteoglycan core protein", "HSPG2", "Integral component of basement membranes. Component of the glomerular basement membrane (GBM), responsible for the fixed negative electrostatic membrane charge, and which provides a barrier which is both size- and charge-selective. It serves as an attachment substrate for cells. Plays essential roles in vascularization. Critical for normal heart development and for regulating the vascular response to injury. Also required for avascular cartilage development.", "9606", "O75400", "Pre-mRNA-processing factor 40 homolog A", "PRPF40A", "Binds to WASL/N-WASP and suppresses its translocation from the nucleus to the cytoplasm, thereby inhibiting its cytoplasmic function (By similarity). May be involved in pre-mRNA splicing.", "9606", "matrixdb"],
+	    [
+	    "O94985", "Calsyntenin-1", "CLSTN1", "Induces KLC1 association with vesicles and functions as a cargo in axonal anterograde transport. Complex formation with APBA2 and APP, stabilizes APP metabolism and enhances APBA2-mediated suppression of beta-APP40 secretion, due to the retardation of intracellular APP maturation. In complex with APBA2 and C99, a C-terminal APP fragment, abolishes C99 interaction with PSEN1 and thus APP C99 cleavage by gamma-secretase, most probably through stabilization of the direct interaction between APBA2 and APP. The intracellular fragment AlcICD suppresses APBB1-dependent transactivation stimulated by APP C-terminal intracellular fragment (AICD), most probably by competing with AICD for APBB1-binding. May modulate calcium-mediated postsynaptic signals. (by similarity)", "9606", "P98160", "Basement membrane-specific heparan sulfate proteoglycan core protein", "HSPG2", "Integral component of basement membranes. Component of the glomerular basement membrane (GBM), responsible for the fixed negative electrostatic membrane charge, and which provides a barrier which is both size- and charge-selective. It serves as an attachment substrate for cells. Plays essential roles in vascularization. Critical for normal heart development and for regulating the vascular response to injury. Also required for avascular cartilage development.", "9606", "matrixdb"],
+	    [
+	    "P98160", "Basement membrane-specific heparan sulfate proteoglycan core protein", "HSPG2", "Integral component of basement membranes. Component of the glomerular basement membrane (GBM), responsible for the fixed negative electrostatic membrane charge, and which provides a barrier which is both size- and charge-selective. It serves as an attachment substrate for cells. Plays essential roles in vascularization. Critical for normal heart development and for regulating the vascular response to injury. Also required for avascular cartilage development.", "9606", "P01127", "Platelet-derived growth factor subunit B", "PDGFB", "Platelet-derived growth factor is a potent mitogen for cells of mesenchymal origin. Binding of this growth factor to its affinity receptor elicits a variety of cellular responses. It is released by platelets upon wounding and plays an important role in stimulating adjacent cells to grow and thereby heals the wound.", "9606", "matrixdb"],
+	    [
+	    "P98160", "Basement membrane-specific heparan sulfate proteoglycan core protein", "HSPG2", "Integral component of basement membranes. Component of the glomerular basement membrane (GBM), responsible for the fixed negative electrostatic membrane charge, and which provides a barrier which is both size- and charge-selective. It serves as an attachment substrate for cells. Plays essential roles in vascularization. Critical for normal heart development and for regulating the vascular response to injury. Also required for avascular cartilage development.", "9606", "P02751", "Fibronectin", "FN1", "Fibronectins bind cell surfaces and various compounds including collagen, fibrin, heparin, DNA, and actin. Fibronectins are involved in cell adhesion, cell motility, opsonization, wound healing, and maintenance of cell shape.", "9606", "matrixdb"],
+	    [
+	    "P02766", "Transthyretin", "TTR", "Thyroid hormone-binding protein. Probably transports thyroxine from the bloodstream to the brain.", "9606", "P98160", "Basement membrane-specific heparan sulfate proteoglycan core protein", "HSPG2", "Integral component of basement membranes. Component of the glomerular basement membrane (GBM), responsible for the fixed negative electrostatic membrane charge, and which provides a barrier which is both size- and charge-selective. It serves as an attachment substrate for cells. Plays essential roles in vascularization. Critical for normal heart development and for regulating the vascular response to injury. Also required for avascular cartilage development.", "9606", "matrixdb"],
+	    [
+	    "P98160", "Basement membrane-specific heparan sulfate proteoglycan core protein", "HSPG2", "Integral component of basement membranes. Component of the glomerular basement membrane (GBM), responsible for the fixed negative electrostatic membrane charge, and which provides a barrier which is both size- and charge-selective. It serves as an attachment substrate for cells. Plays essential roles in vascularization. Critical for normal heart development and for regulating the vascular response to injury. Also required for avascular cartilage development.", "9606", "P04085", "Platelet-derived growth factor subunit A", "PDGFA", "Platelet-derived growth factor is a potent mitogen for cells of mesenchymal origin. Binding of this growth factor to its affinity receptor elicits a variety of cellular responses. It is released by platelets upon wounding and plays an important role in stimulating adjacent cells to grow and thereby heals the wound.", "9606", "matrixdb"],
+	    [
+	    "P98160", "Basement membrane-specific heparan sulfate proteoglycan core protein", "HSPG2", "Integral component of basement membranes. Component of the glomerular basement membrane (GBM), responsible for the fixed negative electrostatic membrane charge, and which provides a barrier which is both size- and charge-selective. It serves as an attachment substrate for cells. Plays essential roles in vascularization. Critical for normal heart development and for regulating the vascular response to injury. Also required for avascular cartilage development.", "9606", "P05067", "Amyloid beta A4 protein", "APP", "Functions as a cell surface receptor and performs physiological functions on the surface of neurons relevant to neurite growth, neuronal adhesion and axonogenesis. Involved in cell mobility and transcription regulation through protein-protein interactions. Can promote transcription activation through binding to APBB1-KAT5 and inhibits Notch signaling through interaction with Numb. Couples to apoptosis-inducing pathways such as those mediated by G(O) and JIP. Inhibits G(o) alpha ATPase activity (By similarity). Acts as a kinesin I membrane receptor, mediating the axonal transport of beta-secretase and presenilin 1. Involved in copper homeostasis/oxidative stress through copper ion reduction. In vitro, copper-metallated APP induces neuronal death directly or is potentiated through Cu(2+)-mediated low-density lipoprotein oxidation. Can regulate neurite outgrowth through binding to components of the extracellular matrix such as heparin and collagen I and IV. The splice isoforms that contain the BPTI domain possess protease inhibitor activity. Induces a AGER-dependent pathway that involves activation of p38 MAPK, resulting in internalization of amyloid-beta peptide and leading to mitochondrial dysfunction in cultured cortical neurons.", "9606", "matrixdb"]]}});
+	    	   
+	    });	    	    	    	   
+	  </script>	
+	</head>
+	<body>
+	  <div id="exampleDiv" />
+	</body>
+</html>

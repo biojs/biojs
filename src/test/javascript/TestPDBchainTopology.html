@@ -1,0 +1,63 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <title>PDBchainTopology - Test</title>
+    <!--JQuery LIb and CSS -->
+    <script src="../../main/resources/dependencies/jquery/jquery-1.7.2.min.js" type="text/javascript"></script>
+
+    <script type="text/javascript">
+        jQuery.noConflict();
+    </script>
+    <!--END JQuery LIb and CSS -->
+
+    <!-- RAPHAËL LIB -->
+    <script src="../../main/resources/dependencies/graphics/raphael-2.1.0.js" type="text/javascript" charset="utf-8"></script>
+
+
+    <!-- BIOJS LIB and CSS -->
+    <script language="JavaScript" type="text/javascript" src="../../main/javascript/Biojs.js"></script>
+    <script language="JavaScript" type="text/javascript" src="../../main/javascript/Biojs.RaphaelCanvas.js"></script>
+    <script language="JavaScript" type="text/javascript" src="../../main/javascript/Biojs.PDBchainTopology.js"></script>
+
+    <script>
+function mytest() {
+	pid  = document.getElementById("pdbid").value;
+	chid = document.getElementById("chainid").value;
+	jQuery('#atable').remove();
+	jQuery("#parentdiv").append( "\
+		<table id='atable'><tr><td>\
+		<div style='border:2px solid black;width:700px; height:700px;' id='topodiv'></div>\
+		</td><td>\
+		<div style='border:2px solid black;width:300px; height:300px;' id='topodiv1'></div>\
+		</td></tr></table>\
+	" );
+	//jQuery("#parentdiv").append( "<div style='border:2px solid black;' id='topodiv'></div>" );
+	jQuery('#topodiv'); jQuery('#topodiv1');
+	var myviewer = new Biojs.PDBchainTopology({divid:"topodiv", pdbid:pid, chainid:chid, size:700});
+	var myviewer1 = new Biojs.PDBchainTopology({divid:"topodiv1", pdbid:pid, chainid:chid, size:300});
+};
+function setupKeyresponse() {
+	jQuery(document.getElementById('chainid')).keypress( function(e) {
+		if(e.keyCode==13) mytest();
+	} );
+	jQuery(document.getElementById('pdbid')).keypress( function(e) {
+		if(e.keyCode==13) mytest();
+	} );
+};
+    </script>
+</head>
+<body onload="setupKeyresponse(); mytest();">
+	!!!UNDER DEVELOPMENT!!!<br>
+	This is a PDBe widget showing secondary structure topology of protein chains in the PDB, with annotations like domains.<br>
+	It depends on a PDBe server for its data.<br>
+	The layout is calculated by a layout package maintained by Roman Laskowski.<hr>
+	<form>
+		<table border=0>
+			<tr><td>PDB Code</td><td><input type=text name="pdbid" id="pdbid" value="1cbs"></input></td></tr>
+			<tr><td>Chain Id</td><td><input type=text name="chainid" id="chainid" value="A"></input></td></tr>
+		</table>
+	</form>
+    <div id="parentdiv"></div>
+</body>
+</html>

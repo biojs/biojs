@@ -1,0 +1,87 @@
+#UDS_component_wrapper{
+	font-family:Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size:10pt;
+}
+
+table.UDS_table {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    outline: 0;
+    font-size: 100%;
+    vertical-align: baseline;
+    background: transparent;
+	border-collapse:collapse;
+	border-spacing:0;
+}
+
+.UDS_table_title {
+	font-size:larger;
+	font-weight:bold;
+}
+
+.UDS_table_wrapper {
+	padding: 5px;
+}
+
+.UDS_keywords_wrapper{
+	font-size:smaller;
+	padding: 0px 5px 5px 5px;
+}
+
+.UDS_accs {
+	padding: 3px 0px 6px 8px;
+}
+
+table.UDS_table tr td
+{
+	vertical-align:top;
+	padding: 4px;
+}
+
+table.UDS_table tr
+{
+	
+}
+
+
+.UDS_notes {
+	text-align:justify;
+	border: solid 1px #CCCCCC;
+}
+
+.UDS_references{
+	border: solid 1px #CCCCCC;
+}
+
+
+
+.UDS_header {
+	background-color:#ffffff;
+	font-weight:bold;
+}
+
+.UDS_omim_title {
+	font-size:smaller;
+	font-weight:bold;
+	text-decoration:underline;
+}
+
+.UDS_pubmed_title {
+	font-size:smaller;
+	font-weight:bold;
+	text-decoration:underline;
+}
+
+.UDS_odd {
+	background-color:#e7e8ec;		
+}
+
+.UDS_even {
+	background-color:#feffff;
+}
+
+#UDS_warnings {
+	font-size:smaller;
+	font-style:italic;
+}

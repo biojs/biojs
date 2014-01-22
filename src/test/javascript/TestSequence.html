@@ -1,0 +1,76 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US" xml:lang="en-US">
+	<head>
+	  
+	  <script type="text/javascript" src="../../main/javascript/Biojs.js"></script>		
+	  <script type="text/javascript" src="../../main/javascript/Biojs.Sequence.js"></script>
+	  	  
+	  <script language="JavaScript" type="text/javascript" src="../../main/resources/dependencies/jquery/jquery-1.4.2.min.js"></script>
+	  <script language="JavaScript" type="text/javascript" src="../../main/resources/dependencies/jquery/jquery-ui-1.8.2.custom.min.js"></script>
+  
+	  
+	  <script type="text/javascript">
+           
+		var mySequence;
+		window.onload = function() {		 
+			var theSequence = '111111111122222222223333333333444444444455555555556666666666111111111122222222223333333333444444444455555555556666666666';
+			mySequence = new Biojs.Sequence({
+			        sequence : theSequence,
+			        target : "holder",
+			        format : 'CODATA',
+					formatOptions : {
+			 			title:false,
+						footer:false
+			  		},
+			        id : 'P918283'
+			});
+			
+			//mySequence.setSelection(1,4);
+			//mySequence.setSelection(2,4);
+
+			mySequence.addAnnotation({
+			   name:"track1",
+			   html:"<br> Example of <b>HTML</b>",
+			   color:"green",
+			   regions: [
+			      {start: 2, end: 2},
+				  {start: 20, end: 30},
+				  {start: 31, end: 43},
+				  {start: 44, end: 44},
+				  {start: 50, end: 90}]
+			});
+			
+			mySequence.addAnnotation({
+			   name:"track2",
+			   html:"<br> Example of <b>HTML</b>",
+			   color:"green",
+			   regions: [
+			      {start: 7, end: 40},
+				  {start: 45, end: 45},
+				  {start: 47, end: 48},
+				  {start: 49, end: 55},
+				  {start: 80, end: 91}]
+			});
+			
+			//mySequence.setSequence("P");
+			
+			
+			//mySequence.addHighlight( { "start": 12, "end": 15, "color": "blue", "background": "red", "id": "aaa" } );
+			//mySequence.addHighlight( { "start": 22, "end": 25, "color": "blue", "background": "green", "id": "bbb" } );
+			//mySequence.addHighlight( { "start": 30, "end": 40, "color": "blue", "background": "red", "id": "aaa" } );
+
+
+
+			
+
+		};	    
+		
+		    	   
+	  </script>	
+	</head>
+	<body bgcolor="#E6E6FA">
+	  <div id="holder" />
+	  <div id="log" />
+	</body>
+</html>

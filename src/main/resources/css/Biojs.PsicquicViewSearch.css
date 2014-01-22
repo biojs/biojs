@@ -1,0 +1,23 @@
+@CHARSET "UTF-8";
+
+div.PsicquicViewSearch {
+	padding: 0px;
+	margin: 40px;
+	font-family: "Heveltica Neue", Arial, "sans serif";
+	font-size: 12px;
+	color: #066;	
+	white-space:nowrap;
+	position:relative;
+	float: left;
+	
+}
+
+#TheTable{
+	font-family: "Heveltica Neue", Arial, "sans serif";
+	font-size: 12px;
+	color: #066;	
+	white-space:nowrap;
+	position:relative;
+	float: left;
+	
+}

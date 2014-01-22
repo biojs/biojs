@@ -1,0 +1,116 @@
+.ruler {
+	height:100%;
+	line-height:1;
+	font-family:Helvetica, Arial, sans-serif;
+	color:#666;
+	font-size: 12px;
+}
+
+.ruler .active_rules, .rules_editor{
+	background-image:url('images/arrow_right_small.png');
+	background-repeat: no-repeat;
+	background-color: transparent;
+	padding: 7px 10px 10px 40px;
+}
+.ruler  header{
+	font-size: 120%;
+	font-weight:bold;
+	letter-spacing: -0.04em;
+}
+.ruler ul{
+	list-style-type: none;
+	padding: 0px;
+	margin: 0px;
+}
+.ruler ul li{
+	background-color: #F3F3F3;
+	padding: 6px; 
+	margin-top:8px;
+	border-radius: 15px;
+	-webkit-border-radius: 15px;
+	-moz-border-radius: 15px;
+	-webkit-box-shadow: rgba(0, 0, 128, 0.246094) 2px 2px 1px;
+}
+.ruler .active_rules ul.sortable li{
+	padding-left: 40px; 
+}
+.ruler .active_rules ul.sortable li:hover{
+	background-color: #F3F8F3;
+	background-image:url('images/draggable.png');
+	background-repeat: no-repeat;
+	background-position: 10px 4px; 
+}
+.rule {
+	width:80%;
+}
+.rights {
+	text-align:right;
+}
+.affected {
+	width:9%;
+	text-align:center;
+	font-size: 70%;
+	border: 1px solid #CCC;
+	padding: 0px 2px 0px 2px;
+	border-radius: .8em;
+	-webkit-border-radius: .8em;
+	-moz-border-radius: .5em;
+	text-align:right;
+}
+table {
+	width:100%
+}
+.rule_item{
+	list-style-type: none;
+}
+.rule_item td {
+	background: transparent;
+	border: 0px;
+}
+.rule_item table{
+	margin: 0px;
+}
+.action {
+	width:9%;
+	text-align:center;
+	font-size: 85%;
+	background-color: #E3E3E3;
+	padding: 2px; 
+	border-radius: 7px;
+	-webkit-border-radius: 7px;
+	-moz-border-radius: 7px;
+	-webkit-box-shadow: rgba(0, 0, 128, 0.246094) 2px 2px 1px;
+}
+.action:active {
+	background-color: #F3F3F3;
+	-webkit-box-shadow: rgba(0, 0, 128, 0.246094) -2px -2px 1px;
+		
+}
+.action:hover {
+	font-weight:bold;
+	cursor: pointer;
+}
+.styled-select {
+	background-color: transparent;
+	font-family:Helvetica, Arial, sans-serif;
+	font-size: 12px;
+	text-decoration: underline;
+	border: 0px ;
+	overflow: hidden;
+	-webkit-appearance: none;
+}
+.styled-select:hover {
+	cursor: pointer;
+}
+.add_rule {
+	text-align:right;
+	margin-top:10px;
+	text-decoration: underline;
+}
+.add_rule a{
+	font-weight:bold;
+}
+.add_rule a:hover {
+	color: #898;
+	cursor: pointer;
+}

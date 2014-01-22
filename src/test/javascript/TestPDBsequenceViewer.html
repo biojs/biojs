@@ -1,0 +1,236 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <title>PDBsequenceViewer - Test</title>
+    <!--JQuery LIb and CSS -->
+    <script src="../../main/resources/dependencies/jquery/jquery-1.7.2.min.js" type="text/javascript"></script>
+    <script src="../../main/resources/dependencies/jquery/q.js" type="text/javascript"></script>
+    <script src="../../main/resources/dependencies/jquery/swanand.jquery.tooltip.js" type="text/javascript"></script>
+    <link rel="stylesheet" href="../../main/resources/dependencies/jquery/jquery.tooltip.css"></link>
+    <script type="text/javascript">
+        jQuery.noConflict();
+    </script>
+
+
+
+	<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.js"></script> -->
+	<script src="../../main/resources/dependencies/jquery/jQRangeSlider-5.1/lib/jquery-ui-1.8.16.custom.min.js"></script>
+	<script src="../../main/resources/dependencies/jquery/jQRangeSlider-5.1/jQAllRangeSliders-withRuler-min.js"></script>
+
+	<link rel="stylesheet" id="themeCSS" href="../../main/resources/dependencies/jquery/jQRangeSlider-5.1/demo/../css/classic.css"> 
+	<link rel="stylesheet" href="../../main/resources/dependencies/jquery/jQRangeSlider-5.1/demo/lib/jquery-ui/css/smoothness/jquery-ui-1.8.10.custom.css">  
+
+
+    <!--END JQuery LIb and CSS -->
+
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.9.0/build/slider/assets/skins/sam/slider.css" />
+<script type="text/javascript" src="http://yui.yahooapis.com/2.9.0/build/yahoo-dom-event/yahoo-dom-event.js"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/2.9.0/build/animation/animation-min.js"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/2.9.0/build/dragdrop/dragdrop-min.js"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/2.9.0/build/slider/slider.js"></script>
+
+    <!-- raphael LIB -->
+    <script src="../../main/resources/dependencies/graphics/raphael-2.1.0.js" type="text/javascript" charset="utf-8"></script>
+
+    <!-- BIOJS LIB and CSS -->
+    <script language="JavaScript" type="text/javascript" src="../../main/javascript/Biojs.js"></script>
+    <script language="JavaScript" type="text/javascript" src="../../main/javascript/Biojs.PDBsequenceViewer.js"></script>
+    <script language="JavaScript" type="text/javascript" src="../../main/javascript/Biojs.PDBdatabroker.js"></script>
+    <script language="JavaScript" type="text/javascript" src="../../main/javascript/Biojs.PDBsequenceLayout.js"></script>
+
+    <script>
+		function seqdemo() {
+
+			var someseq = '', abcd = "ACDEFGHIKLMNPQRSTVWY";
+			for(var i=0; i < 600; i++) someseq += abcd[Math.floor(Math.random()*abcd.length)];
+			var thetracks3 = [
+				{height:25, painters:[
+					{type:'Biojs.ZoombarPainter', seqlen:600, numIndicesInRow:600,
+						pixelwidth:1000, initleft:0, initright:600, thumbwidth:20
+					}
+				]},
+				{height:10, painters:[
+					{type:'Biojs.DomainPainter', seqlen:600, numIndicesInRow:600,
+						domains:[
+							{ranges:[[0,599]], ypos:{midpercent:80}, attribs:{fill:'none',stroke:'none'},   // uniprot seq
+								tooltip:{common:'yes','text':'Sequence'}, sequence:someseq }
+						]
+					}
+				]},
+				{height:40, painters:[
+					{type:'Biojs.DomainPainter', seqlen:600, numIndicesInRow:600,
+						domains:[
+							{ranges:[[0,599]], ypos:{midpercent:20}, attribs:{fill:'#33AA33',stroke:'#33AA33'},   // uniprot seq
+								tooltip:{common:'yes','text':'Uniprot P34243'} },
+							{ranges:[[110,190]], ypos:{midpercent:50}, attribs:{fill:'#EE3333',stroke:'none'},  // pfam domain
+								tooltip:{common:'yes',text:'Pfam domain PF12345'}, glowOnHover:{fill:'silver'} },
+							{ranges:[[310,480]], ypos:{midpercent:50}, attribs:{fill:'#DE2255',stroke:'none'},  // pfam domain
+								tooltip:{common:'yes',text:'Pfam domain PF45678'}, glowOnHover:{fill:'gold'} }
+						]
+					}
+				]},
+				{height:40, painters:[
+					{type:'Biojs.DomainPainter', seqlen:600, numIndicesInRow:600,
+						domains:[
+							{ranges:[[10,130],[140,214],[260,545]], ypos:{midpercent:20}, attribs:{fill:'#2222CC',stroke:'#2222CC'},   // 'domain'(!) of observed residues in a PDB chain
+								tooltip:{common:'yes','text':'Observed fraction is about 85% for PDB id 1xyz chain P.'},
+								connectors:[
+									{from:15, to:25,ypos:{fromtop:10},attribs:{stroke:'red','stroke-width':2}, glowOnHover:{stroke:'gold'},  tooltip:'salt bridge 15-25'},
+									{from:50,to:120,ypos:{fromtop:7},attribs:{stroke:'green','stroke-width':2}, glowOnHover:{stroke:'gold'}, tooltip:'disulphide bridge 50-120'},
+									{from:56,to:124,ypos:{fromtop:5},attribs:{stroke:'blue','stroke-width':2}, glowOnHover:{stroke:'gold'}, tooltip:'disulphide bridge 50-120'}
+								],
+								baloons:[
+									{at:30, ypos:{fromtop:20}, size:5, attribs:{stroke:'red',fill:'red'}, glowOnHover:{stroke:'gold',fill:'gold'}, tooltip:'an important residue at 30'},
+									{at:42, ypos:{fromtop:20}, size:5, attribs:{stroke:'red',fill:'red'}, glowOnHover:{stroke:'gold',fill:'gold'}, tooltip:'an important residue at 42'}
+								]
+							},
+							{ranges:[[20,30],[44,104]], ypos:{midpercent:40}, attribs:{fill:'#22AAAA',stroke:'none'},  // some cath/scop domain
+								tooltip:{common:'yes',text:'CATH domain 3.2.30.40'}, glowOnHover:{fill:'blue'}, displayname:"anotherDomain" },
+							{ranges:[[165,190]], ypos:{midpercent:60}, attribs:{fill:'#55ABBB',stroke:'none'},  // another cath/scop domain
+								tooltip:{common:'yes',text:'CATH domain 1.1.10.10'}, glowOnHover:{fill:'blue'}, displayname:'my-domain-name' }
+						]
+					}
+				]},
+				{height:40, painters:[
+					{type:'Biojs.DomainPainter', seqlen:600, numIndicesInRow:600,
+						domains:[
+							{ranges:[[5,32],[35,134],[155,192]], ypos:{midpercent:20}, attribs:{fill:'#2222CC',stroke:'#2222CC'},   // 'domain'(!) of observed residues in a PDB chain
+								tooltip:{common:'yes','text':'Observed fraction is about 80% for PDB id 1pqr chain X.'} },
+							{ranges:[[20,25],[44,104]], ypos:{midpercent:60}, attribs:{fill:'#22AAAA',stroke:'none'},  // some cath/scop domain
+								tooltip:{common:'yes',text:'CATH domain 3.2.30.40'}, glowOnHover:{fill:'green'} }
+						]
+					}
+				]}
+			];
+			new Biojs.PDBsequenceViewer({divid:"seqdiv3", numrows:1, leftwidth:50, width:1000, rightwidth:50, tracks:thetracks3});
+
+
+
+			var someseq = '', abcd = "ACDEFGHIKLMNPQRSTVWY";
+			for(var i=0; i < 200; i++) someseq += abcd[Math.floor(Math.random()*abcd.length)];
+			var thetracks2 = [
+				{height:25, painters:[
+					{type:'Biojs.ZoombarPainter', seqlen:200, numIndicesInRow:200,
+						pixelwidth:600, initleft:0, initright:200, thumbwidth:20
+					}
+				]},
+				{height:20, painters:[
+					{type:'Biojs.DomainPainter', seqlen:200, numIndicesInRow:200,
+						domains:[
+							{ranges:[[0,199]], ypos:{midpercent:80}, attribs:{fill:'none',stroke:'none'},   // uniprot seq
+								tooltip:{common:'yes','text':'Sequence'}, sequence:someseq }
+						]
+					}
+				]},
+				{height:20, painters:[
+					{type:'Biojs.DomainPainter', seqlen:200, numIndicesInRow:200,
+						domains:[
+							{ranges:[[0,199]], ypos:{midpercent:20}, attribs:{fill:'#33AA33',stroke:'#33AA33'},   // uniprot seq
+								tooltip:{common:'yes','text':'Uniprot P34243'} },
+							{ranges:[[10,90]], ypos:{midpercent:50}, attribs:{fill:'#EE3333',stroke:'none'},  // pfam domain
+								tooltip:{common:'yes',text:'Pfam domain PF12345'}, glowOnHover:{fill:'silver'} },
+							{ranges:[[110,180]], ypos:{midpercent:50}, attribs:{fill:'#DE2255',stroke:'none'},  // pfam domain
+								tooltip:{common:'yes',text:'Pfam domain PF45678'}, glowOnHover:{fill:'gold'} }
+						]
+					}
+				]},
+				{height:20, painters:[
+					{type:'Biojs.DomainPainter', seqlen:200, numIndicesInRow:200,
+						domains:[
+							{ranges:[[10,30],[40,144],[160,195]], ypos:{midpercent:20}, attribs:{fill:'#2222CC',stroke:'#2222CC'},   // 'domain'(!) of observed residues in a PDB chain
+								tooltip:{common:'yes','text':'Observed fraction is about 85% for PDB id 1xyz chain P.'},
+								connectors:[
+									{from:15, to:25,ypos:{fromtop:10},attribs:{stroke:'red','stroke-width':2}, glowOnHover:{stroke:'gold'},  tooltip:'salt bridge 15-25'},
+									{from:50,to:120,ypos:{fromtop:7},attribs:{stroke:'green','stroke-width':2}, glowOnHover:{stroke:'gold'}, tooltip:'disulphide bridge 50-120'},
+									{from:56,to:124,ypos:{fromtop:5},attribs:{stroke:'blue','stroke-width':2}, glowOnHover:{stroke:'gold'}, tooltip:'disulphide bridge 50-120'}
+								],
+								baloons:[
+									{at:30, ypos:{fromtop:20}, size:5, attribs:{stroke:'red',fill:'red'}, glowOnHover:{stroke:'gold',fill:'gold'}, tooltip:'an important residue at 30'},
+									{at:42, ypos:{fromtop:20}, size:5, attribs:{stroke:'red',fill:'red'}, glowOnHover:{stroke:'gold',fill:'gold'}, tooltip:'an important residue at 42'}
+								]
+							},
+							{ranges:[[20,25],[44,104]], ypos:{midpercent:60}, attribs:{fill:'#22AAAA',stroke:'none'},  // some cath/scop domain
+								tooltip:{common:'yes',text:'CATH domain 3.2.30.40'}, glowOnHover:{fill:'blue'}, displayname:"anotherDomain" },
+							{ranges:[[165,190]], ypos:{midpercent:60}, attribs:{fill:'#55ABBB',stroke:'none'},  // another cath/scop domain
+								tooltip:{common:'yes',text:'CATH domain 1.1.10.10'}, glowOnHover:{fill:'blue'}, displayname:'my-domain-name' }
+						]
+					}
+				]},
+				{height:20, painters:[
+					{type:'Biojs.DomainPainter', seqlen:200, numIndicesInRow:200,
+						domains:[
+							{ranges:[[5,32],[35,134],[155,192]], ypos:{midpercent:20}, attribs:{fill:'#2222CC',stroke:'#2222CC'},   // 'domain'(!) of observed residues in a PDB chain
+								tooltip:{common:'yes','text':'Observed fraction is about 80% for PDB id 1pqr chain X.'} },
+							{ranges:[[20,25],[44,104]], ypos:{midpercent:60}, attribs:{fill:'#22AAAA',stroke:'none'},  // some cath/scop domain
+								tooltip:{common:'yes',text:'CATH domain 3.2.30.40'}, glowOnHover:{fill:'green'} }
+						]
+					}
+				]}
+			];
+			new Biojs.PDBsequenceViewer({divid:"seqdiv2", numrows:1, leftwidth:50, width:600, rightwidth:50, tracks:thetracks2});
+
+			var thetracks = [
+				{height:20, painters:[
+					{type:'Biojs.ObservedSequencePainter', seqlen:100, numIndicesInRow:100, unobserved:[[0,5],[50,70],[95,99]], multimodelled:[[33,33],[44,48]],
+						midribAttrib:{fill:'lightgrey',stroke:null}, obsbarAttrib:{fill:'grey',stroke:null},
+						tooltip:"hello", clickURL:"http://www.ebi.ac.uk",
+					}
+				]}
+			];
+			new Biojs.PDBsequenceViewer({divid:"seqdiv", numrows:1, leftwidth:50, width:150, rightwidth:50, tracks:thetracks});
+
+			var thetracks1 = [
+				{height:20, painters:[
+					{type:'Biojs.ObservedSequencePainter', seqlen:200, numIndicesInRow:200, unobserved:[[50,70],[95,99]], multimodelled:[[33,33],[44,48]],
+						midribAttrib:{fill:'lightgreen',stroke:null}, obsbarAttrib:{fill:'green',stroke:null},
+						tooltip:"hello again", clickURL:"http://www.google.com"
+					}
+				]}
+			];
+			new Biojs.PDBsequenceViewer({divid:"seqdiv1", numrows:1, leftwidth:50, width:100, rightwidth:50, tracks:thetracks1});
+
+			new Biojs.PDBsequenceLayout({pdbid:'1cbs', apiURL:'http://puck.ebi.ac.uk:10000', divid:'seqdiv4', width:800});
+			jQuery('#pdbid').keypress( function(e) {
+				newpid = document.getElementById("pdbid").value;
+				//if(newpid.length==4) {
+				if(e.keyCode==13) {
+					document.getElementById("seqdiv4").innerHTML = "";
+					console.log(document.getElementById("pdbid").value);
+					new Biojs.PDBsequenceLayout({pdbid:document.getElementById("pdbid").value, apiURL:'http://puck.ebi.ac.uk:10000', divid:'seqdiv4', width:800});
+				}
+			} );
+
+		}
+    </script>
+</head>
+<body onload="seqdemo();">
+	!!!!UNDER DEVELOPMENT!!!!<hr>
+	This is a PDBe widget showing various sequence decorations.<hr>
+    example 1<br>
+	<div id="seqdiv"></div>
+	<hr>
+	<hr>
+	<hr>
+    example 2<br>
+    <div id="seqdiv1"></div>
+	<hr>
+	<hr>
+	<hr>
+    example 3<br>
+    <div style='height:100px;' id="seqdiv2"></div>
+	<hr>
+	<hr>
+	<hr>
+    example 4<br>
+    <div style='height:200px;' id="seqdiv3"></div>
+	<hr>
+	<hr>
+	<hr>
+    example 5<br>
+    Here we get real data from PDBe API. This uses PDBdatabroker and PDBsequenceLayout components in addition to PDBsequenceViewer.<br>
+		<input type=text name="pdbid" id="pdbid" value="1cbs"></input>
+	<br>
+    <div id="seqdiv4"></div>
+</body>
+</html>

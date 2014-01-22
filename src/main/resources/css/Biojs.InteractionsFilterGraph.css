@@ -1,0 +1,38 @@
+			.miFilterTitle{
+				background-color: #F0F0F0;
+				padding: 2px;
+				font-size: 100%;
+				font-weight: bold; 
+			}
+			.miFilterOptions{
+				padding: 6px;
+				font-size: 92%;
+				
+			}
+			.miDisplay{
+				margin-top:2px;
+				/*float:left;*/
+			}
+			#miInformation{
+				font-size: 92%;
+			}
+			.inInformation{
+				padding-right:15px;	
+			}
+			.miDisplay, .miFilter{
+				border: 1px solid #D8D8D8;	
+				background-color:#FAFAFA;
+			}
+			.miFilter, .miDisplay{
+				margin-bottom:5px;	
+			}
+            .miFilter{
+                margin-right:-2px;
+            }
+			.miRadioBtnName{
+				padding-right:10px;
+			}
+			.miGreyText{
+				color:#C0C0C0;
+			}
+

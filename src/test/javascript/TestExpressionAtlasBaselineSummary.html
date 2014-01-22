@@ -1,0 +1,63 @@
+<!--
+  ~ Copyright 2008-2013 Microarray Informatics Team, EMBL-European Bioinformatics Institute
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  ~
+  ~
+  ~ For further details of the Gene Expression Atlas project, including source code,
+  ~ downloads and documentation, please see:
+  ~
+  ~ http://gxa.github.com/gxa
+  -->
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="eng"
+      class=" js flexbox canvas canvastext no-touch rgba hsla multiplebgs backgroundsize borderimage
+              borderradius boxshadow textshadow opacity cssanimations csscolumns cssgradients cssreflections
+              csstransforms csstransforms3d csstransitions fontface generatedcontent applicationcache">
+
+<head>
+
+    <title>Biojs.ExpressionAtlasBaselineSummary test</title>
+
+
+    <script language="JavaScript" type="text/javascript"
+            src="../../main/resources/dependencies/jquery/jquery-1.9.1.min.js"></script>
+    <script language="JavaScript" type="text/javascript" src="../../main/javascript/Biojs.js"></script>
+    <script language="JavaScript" type="text/javascript"
+            src="../../main/javascript/Biojs.ExpressionAtlasBaselineSummary.js"></script>
+
+    <script>
+        (function ($) { //self invoking wrapper function that prevents $ namespace conflicts
+	    var instance;
+            $(document).ready(function () {
+
+                instance = new Biojs.ExpressionAtlasBaselineSummary({
+			geneQuery:"ENSG00000187003+ENSG00000185264",
+			propertyType:"bioentity_identifier",
+			geneSetMatch:false,
+			target:"YourOwnDivId",
+			rootContext:"../../main/resources/dependencies/proxy/proxy.php?url=http://www.ebi.ac.uk/gxa",
+			proxyUrl:"../../main/resources/dependencies/proxy/proxy.php"
+                });
+
+		setTimeout(function(){instance.setQuery("Q61171","",false)},3000);
+		setTimeout(function(){instance.setQuery("P37173+Q9UER7+P10600+P35243+Q93074+P16234","",false)},6000);
+            });
+
+        })(jQuery);
+    </script>
+</head>
+<body>
+<div id="YourOwnDivId"></div>
+</body>
+</html>

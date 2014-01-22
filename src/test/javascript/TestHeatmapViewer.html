@@ -1,0 +1,69 @@
+<html xmlns="http://www.w3.org/1999/xhtml" lang="eng">
+
+<head>
+
+    <title>Biojs.HeatmapViewer test</title>
+
+
+    <script language="JavaScript" type="text/javascript"
+            src="../../main/resources/dependencies/jquery/jquery-1.9.1.min.js"></script>
+    <script language="JavaScript" type="text/javascript"
+            src="../../main/resources/dependencies/d3.v3.min.js"></script>
+    <script language="JavaScript" type="text/javascript" src="../../main/javascript/Biojs.js"></script>
+    <script language="JavaScript" type="text/javascript"
+            src="../../main/javascript/Biojs.HeatmapViewer.js"></script>
+
+    <script>
+        (function ($) { //self invoking wrapper function that prevents $ namespace conflicts
+	    var instance;
+            $(document).ready(function () {
+
+                instance = new Biojs.HeatmapViewer({
+                         	jsonData:
+                             		[{
+                         		    "col": 0,
+                         		    "row": 0,
+                         		    "label": "M",
+                         		    "score": 27,
+                         		    "row_label": "A"
+                         		}, {
+                         		    "col": 0,
+                         		    "row": 1,
+                         		    "label": "M",
+                         		    "score": 5,
+                         		    "row_label": "C"
+                         		}, {
+                         		    "col": 1,
+                         		    "row": 0,
+                         		    "label": "M",
+                         		    "score": 43,
+                         		    "row_label": "D"
+                         		}, {
+                         		    "col": 1,
+                         		    "row": 1,
+                         		    "label": "M",
+                         		    "score": 58,
+                         		    "row_label": "E"
+                         		}],
+                         	user_defined_config: {
+                                colorLow: 'blue',
+                                colorMed: 'white',
+                                colorHigh: 'red'
+                         	},
+                         	target: 'test'
+               });
+
+           });
+
+        })(jQuery);
+
+
+
+
+
+    </script>
+</head>
+<body>
+<div id="test"></div>
+</body>
+</html>

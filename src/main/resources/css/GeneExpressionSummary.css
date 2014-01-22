@@ -1,0 +1,68 @@
+@CHARSET "UTF-8";
+
+div.GeneExpressionSummary {
+  margin:0px;
+  padding:0px;
+}
+
+div.GeneExpressionSummary_title {
+	font-size:120%;
+	font-weight: bold;
+	margin-bottom:15px;
+}
+
+.GeneExpressionSummary_table{
+	margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+div.GeneExpressionSummary table tr td {
+	vertical-align:top;
+}
+
+div.GeneExpressionSummary table {
+	padding-left:20px;
+}
+
+div.GeneExpressionSummary_image {
+  border: thin silver solid;
+}
+
+div.GeneExpressionSummary_image p {
+  text-align: justify;
+  font-style: italic;
+  font-size:85%;
+  text-indent: 0;
+  margin:10px;
+}
+
+.GeneExpressionSummary_subtitle {
+	text-transform: uppercase;
+	font-size:85%;
+	font-weight:bold;
+}
+.GeneExpressionSummary_feature{
+	margin-top:5px;
+	margin-bottom:15px;
+}
+
+/*
+div.GeneExpressionSummary_summary a {
+    background-image:url(Rocky32px/link.png);
+    display:block;
+    height:8px;
+    width:8px;
+}*/
+
+div.GeneExpressionSummary_summary {
+
+}
+
+div.GeneExpressionSummary_footer {
+  text-align: justify;
+  font-style: italic;
+  font-size: 85%;
+  text-indent: 0;
+  
+}

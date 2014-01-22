@@ -1,0 +1,23 @@
+.node {
+	stroke: #fff;
+	stroke-width: 1.5px;
+}
+
+.cursor {
+  fill: none;
+  stroke: brown;
+  pointer-events: none;
+}
+line.link {
+	stroke: #999;
+	stroke-opacity: .6;
+}
+
+div.graph {
+	border: 1px solid #000;
+	background-color: #E5E5EF;
+}
+
+.figure {
+	fill: #46D;
+}

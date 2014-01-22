@@ -1,0 +1,101 @@
+@CHARSET "UTF-8";
+
+div.ChEBICompound {
+	padding: 0px;
+	margin: 0px;
+	overflow: hidden;
+	background-color: white;
+}
+
+div.ChEBICompound_image {
+	position: relative;
+	float: right;
+	width: 65%;
+	height: 100%;
+}
+
+div.ChEBICompound .noImage {
+	background-image: url('images/noImage.png') no-repeat;
+	margin: auto;
+	width: 48px;
+	height: 64px
+}
+
+
+div.ChEBICompound_tab {
+	width:  35%;
+	height:  100%;
+	position: relative;
+	float: left;
+	background-color: #EEF5F5;
+	background-image: url('images/panel1.png');
+	background-repeat: repeat-y;
+	background-position-x: right;
+	color: #066;
+}
+
+div.ChEBICompound_image img {
+	margin-top: auto;
+	margin-right: auto;
+	margin-bottom: auto;
+	margin-left: auto;
+	display: table-cell;
+}
+
+div.ChEBICompound_tab div.content {
+	font-family: "Heveltica Neue", Arial, "sans serif";
+	font-size: 12px;
+	color: #066;	
+	word-wrap:break-word;
+	position:relative;
+	float: left;
+}
+
+div.ChEBICompound_tab div.content h2 {
+	font-weight: 600;
+	margin: 0;
+	margin: 10px 7px 0 0px;
+	font-size: 100%;
+}
+
+div.ChEBICompound_tab div.content p {
+  	text-align: left;
+  	font-style: italic;
+  	text-indent: 0;
+  	line-height: 1.2;
+  	padding: 0 7px 0 7px;
+}
+
+div.ChEBICompound_tab div.content div.star {
+	background-image: url('Rocky32px/star_yellow.png');
+	background-size: 16px 16px;
+	background-repeat: repeat-x;
+	width: 16px;
+	height: 16px;
+	margin: 0 7px 0 7px;
+}
+
+/* Button to hide/show the left panel */
+div.ChEBICompound_tab div.toggle {
+	width: 24px;
+	height: 24px;
+	position:relative;
+	float: right;
+	background-image: url('Rocky32px/iconset.png');
+}
+
+div.ChEBICompound_tab div:hover.toggle { 
+	background-image: url('Rocky32px/iconset_hover.png'); 
+}
+
+div.ChEBICompound_tab div.collapse { 
+	background-position: 0 0; 
+}
+
+div.ChEBICompound_tab div.expand { 
+	background-position: 0 -24px; 
+}
+
+
+
+

@@ -1,0 +1,69 @@
+@CHARSET "UTF-8";
+
+div.Tooltip div.body {
+	background-color: white;
+	
+	border: 1px solid #AAA;
+	padding: 2px 10px;
+	word-wrap:break-word;
+	
+	min-width: 36px;
+	min-height: 36px;
+
+	overflow: auto;
+	
+	display: table-cell;
+	vertical-align: middle;
+	text-align: center;
+}
+
+/* Fancy border */
+div.Tooltip div.body {
+	-moz-border-radius: 0 7px 0 7px;
+	-khtml-border-radius: 0 7px 0 7px;
+	-webkit-border-radius: 0 7px 0 7px;
+	border-radius: 7px 0 7px 0;
+	box-shadow: 3px 3px 4px #f3f3f3;
+	-moz-box-shadow: 3px 3px 4px #f3f3f3;
+	-khtml-box-shadow: 3px 3px 4px #f3f3f3;
+	-webkit-box-shadow: 3px 3px 4px #f3f3f3;
+}
+
+
+
+/* ARROW images */
+div.Tooltip div.arrow {
+	background: url(images/arrows.png) no-repeat;
+}
+
+div.Tooltip div.left.arrow {
+	background-position: 0 -1px;
+	height: 12px; 
+	width: 7px;
+}
+
+div.Tooltip div.right.arrow {
+	background-position: -12px -1px;
+	height: 12px; 
+	width: 7px;
+}
+
+div.Tooltip div.top.arrow {
+	background-position: -37px -1px;
+	height: 7px;
+	width: 12px;
+}
+
+div.Tooltip div.bottom.arrow {
+	background-position: -21px -1px;
+	height: 7px;
+	width: 12px;
+}
+
+
+
+
+
+
+
+

@@ -1,0 +1,41 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+		<title>Selector - Test</title>
+		<!--JQuery LIb and CSS -->
+		<script src="../../main/resources/dependencies/jquery/jquery-1.7.2.min.js" type="text/javascript"></script>
+		<!-- UI Jquery -->
+		<script src="../../main/resources/dependencies/jquery/jquery-ui-1.8.2.custom.min.js" type="text/javascript"></script>
+		<link rel="stylesheet" href="../../main/resources/dependencies/jquery/jquery-ui-1.8.2.css" />
+		<!-- BIOJS LIB and CSS -->
+		<script language="JavaScript" type="text/javascript" src="../../main/javascript/Biojs.js"></script>
+		<!-- AreaSelector and CSS -->
+		<script language="JavaScript" type="text/javascript" src="../../main/resources/dependencies/jquery.watcher.js"></script>
+		<script language="JavaScript" type="text/javascript" src="../../main/javascript/Biojs.AreaSelector.js"></script>
+	    <link rel="stylesheet" href="../../main/resources/css/biojs.selector.css" />
+		    
+		<script language="JavaScript" type="text/javascript">
+			window.onload = function() {
+				instance1 = new Biojs.AreaSelector({
+				     target: "holder1",
+					     area: [50,50,100,100]
+				});
+				instance2 = new Biojs.AreaSelector({
+				     target: "holder2",
+				     area: [50,50,100,100]
+				});
+				$('#holder1').draggable();
+			};
+		</script>
+	</head>
+	<body>
+	<input type="button" onclick="instance1.setCoveredArea([20,20,100,50]);" value="move1"/>
+	<input type="button" onclick="instance2.setCoveredArea([420,10,130,250]);" value="move2"/>
+	<input type="button" onclick="var area =instance1.getCoveredArea(); $('#text').html('x1: '+area[0]+ ' y1: '+area[1]+'x2: '+area[2]+ ' y2: '+area[3]);" value="get1"/>
+	<input type="button" onclick="var area =instance2.getCoveredArea(); $('#text').html('x1: '+area[0]+ ' y1: '+area[1]+'x2: '+area[2]+ ' y2: '+area[3]);" value="get2"/>
+	<spam id='text'></spam>
+	<div id="holder1" style="width:500px; height:300px; border: 1px solid #000; left:100px;"></div>
+	<div id="holder2" style="width:500px; height:300px; border: 1px solid #000; left:10px; "></div>
+	</body>
+</html>

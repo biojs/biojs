@@ -1,0 +1,71 @@
+div.ProteinPortafolio {
+	width: 900px;
+	height: 350px;
+}
+
+div.ProteinPortafolio .crop {
+    width: 100%;
+    display:table-cell;
+    position:relative;
+    vertical-align: middle;
+}
+
+div.ProteinPortafolio .alpha {
+    float: left;
+    width: 50%;
+}
+
+div.ProteinPortafolio .beta {
+    float: right;
+    width: 50%;
+}
+
+div.ProteinPortafolio .content {
+    overflow: auto;
+    height: auto;
+}
+
+div.ProteinPortafolio .header {
+    height: auto;
+}
+
+div.ProteinPortafolio .toolbar {
+    
+}
+
+div.ProteinPortafolio ul.features {
+	list-style: none;
+	padding-left: 15px;
+}
+
+div.ProteinPortafolio ul.features li span.label {
+	background: gray;
+	color: white;
+	position: relative;
+	padding: 0.16em;
+	border-top-left-radius: 4px;
+	border-bottom-left-radius: 4px;
+	margin: 7px 7px 0 0;
+	text-decoration: none;
+	left: -10px;
+	font-family: Helvetica, Arial, sans-serif;
+}
+
+div.ProteinPortafolio ul.features li span.label:after {
+	display: inline-block;
+	border: 0.74em solid;
+	height: 0;
+	width: 0;
+	position: absolute;
+	right: -1.4em;
+	top: 0;
+	content: "";
+	display: inline-block;
+	border-color: transparent transparent transparent gray
+}
+
+
+div.ProteinPortafolio pre {
+    padding: 0px;
+}
+

@@ -1,0 +1,85 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+		<title>Test Interactions Graph</title>
+		<!-- CSS -->
+	    <link rel="stylesheet" href="../../main/resources/css/Biojs.InteractionsFilterGraph.css" />
+		
+		<!--JQuery LIb and CSS -->
+		<script src="../../main/resources/dependencies/jquery/jquery-1.7.2.min.js" type="text/javascript"></script>
+		
+		<!--Cytoscape-->
+		<script src="../../main/resources/dependencies/cytoscape/jquery.cytoscapeweb.all.js" type="text/javascript"></script>
+		<script src="../../main/resources/dependencies/cytoscape/arbor.js" type="text/javascript"></script>
+		<script src="../../main/resources/dependencies/cytoscape/jquery.cytoscapeweb.layout.arbor.js" type="text/javascript"></script>
+		
+		<!-- BIOJS LIB and CSS -->
+		<script language="JavaScript" type="text/javascript" src="../../main/javascript/Biojs.js"></script>
+		<!--<script language="JavaScript" type="text/javascript" src="../../main/javascript/Biojs.Cytoscape.js"></script>-->
+		<script language="JavaScript" type="text/javascript" src="../../main/javascript/Biojs.InteractionsFilterGraph.js"></script>
+		    
+		<script language="JavaScript" type="text/javascript">
+		var example;
+			window.onload = function() {
+				
+				example = new Biojs.InteractionsFilterGraph({
+				     target: "holder",
+				     instanceName: "example",
+				     graphHeight: "500px",
+                     graphWidth: "100%",
+				     interactions: {
+					 "EBI-5237770_001": ["stat6_human","tbk1_human"],
+					 "EBI-5237770_002": ["stat6_human","mavs_human"],
+					 "EBI-5237770_003": ["stat6_human","tm173_human"],
+					 "EBI-5237739_001": ["stat6_human","tm173_human"],
+					 "EBI-5237802_001": ["stat6_human","tm173_human"],
+					 "EBI-5237802_002": ["stat6_human","tbk1_human"],
+					 "EBI-5237802_003": ["stat6_human","mavs_human"]
+					},
+				 	filters:{
+				 		timeSeries: {
+							title: "Time after Sendai viral infection (hours)",
+							presentation: "radio",
+							active: true,
+							dataType: "edges",
+							data: {
+							 "2":["EBI-5237770_001","EBI-5237770_002","EBI-5237770_003"],
+							 "6":["EBI-5237739_001"],
+							 "12":["EBI-5237802_001","EBI-5237802_002","EBI-5237802_003"]
+							}
+						},
+						interactionTypes: {
+							title: "Interaction types",
+							presentation: "radio",
+							active: false,
+							dataType: "edges",
+							data: {
+							 "association":["i3","i4"],
+							 "physical association":["i2","i5","i6","i7"],
+							 "colocalization":["i1","i2"]
+							}
+						},
+						publications: {
+							title: "Publications",
+							presentation: "checkbox",
+							active: false,
+							dataType: "edges",
+							data: {
+							 "pumned01":["i1","i2","i3","i4","i5","i6","i7"],
+							 "pumned02":["i1","i2","i3","i4","i5","i6"],
+							 "pumned03":["i1","i2","i3","i6"],
+							 "pumned04":["i1","i3"],
+							 "pumned05":["i3"]
+							}
+						}
+					}
+				});
+				 		
+			};
+		</script>
+	</head>
+	<body>
+		<div id="holder"></div>
+	</body>
+</html>
