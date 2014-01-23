@@ -64,12 +64,11 @@
  * // 'http://www.rcsb.org/pdb/files/"+pdb+".pdb.gz' containing the structure of the protein.
  * //The file id downloaded form the server as a zipped file and then it's unzipped on the client
  *        var instance = new Biojs.Protein3DCanvas({
- *				target: idTarget,
- *				jsmolFolder: '/bioJs/dependencies/jsmol-14.0.2/jsmol',
- *				height: 440,
+ *			target: "YourOwnDivId",
+ *			jsmolFolder: '/bioJs/dependencies/jsmol-14.0.2/jsmol',
+ *			height: 440,
  *		    	width: 440,
  *		    	style: Biojs.Protein3D.STYLE_CARTOON,
- *		    	loadingStatusImage:"/images/ajax-loader.gif",
  *		    	use:"HTML5 JAVA"
  *		    });	
  *			instance.onPdbLoaded(
@@ -148,13 +147,11 @@ Biojs.Protein3DCanvas = Biojs.Protein3D.extend(
     *
     * @example 
     *  var instance = new Biojs.Protein3DCanvas({
-	*			target: idTarget,
-	*			jmolFolder: '/bioJs/dependencies/jsmol-14.0.2/jsmol',
-	*			height: 440,
+	*		target: "YourOwnDivId",
+	*		jsmolFolder: '/bioJs/dependencies/jsmol-14.0.2/jsmol',
+	*		height: 440,
 	*	    	width: 440,
 	*	    	style: Biojs.Protein3D.STYLE_CARTOON,
-	*	    	loadingStatusImage:"/images/ajax-loader.gif",
-	*	    	//default (try first of all Canvas and if not available downgrade to applet)
 	*	    	use:"HTML5 JAVA"
 	*	    });	
 	*	  
