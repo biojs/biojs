@@ -33,6 +33,17 @@ Biojs.EventHandler = function(eventType) {
 		}
 	};
 	/**
+     * Removes an action listener for the event.
+     * @param {function} actionPerformed The action listener to be removed.
+     */
+	this.removeListener = function ( actionPerformed ) {
+		if ( (typeof actionPerformed) == "function" ) {
+			var pos = this.listeners.indexOf(actionPerformed);
+			if (pos!=-1)
+				this.listeners.splice(pos,1);
+		}
+	};
+	/**
      * Executes all listener actions registered in the listeners field.
      * @param {Object} eventObject The event' object to be passed as argument to the listeners.
      */
@@ -414,6 +425,30 @@ Biojs.prototype =
 			for(var key in this._eventHandlers) {
 				if ( eventType == this._eventHandlers[key].eventType ) {
 					this._eventHandlers[key].addListener( actionPerformed );
+					return;
+				}
+			} 
+		}
+	},
+
+	/**
+	 * Unregister a function under an event type in order to stop its execution it whenever the event is triggered.
+	 * @param {string} eventType The event to be listened.
+	 * @param {function} actionPerformed The action to be unregister. 
+	 * 
+	 * 
+	 * @example 
+	 * mySequence.removeListener('onSelectionChanged', listener);
+	 * 
+	 * // HTML div tag with the id='div0001' must exist in the HTML document 
+	 * 
+	 */
+	removeListener: function(eventType, actionPerformed) {
+		if (this._eventHandlers) {
+			// register the listener in this._eventHandlers for the eventType  
+			for(var key in this._eventHandlers) {
+				if ( eventType == this._eventHandlers[key].eventType ) {
+					this._eventHandlers[key].removeListener( actionPerformed );
 					return;
 				}
 			} 
