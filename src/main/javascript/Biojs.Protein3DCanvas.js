@@ -36,7 +36,10 @@
  * @option {string} [use="HTML5 JAVA"] 
  *      This string determines the various options to be tried (HTML5, Java Applet and surrogates) and the order in which to try them.
  *      The default setting is HTML5 CANVAS and then Java if Canvas is not available.
- *    
+ *
+ *   @option {string} [urlProxy="{BIOJS_HOME}/dependencies/jsmol-14.0.2/jsmol/proxy/jsmol.jsp"] 
+ *    Path of the proxy to use for transformation of the gzip file in base64 files for MSIE and CHROME.
+ * 
  * @option {string} [loadingStatusImage="{BIOJS_HOME}/css/images/ajax-loader-1.gif"] 
  *    Relative path of the image to be displayed on loading status.
  *    
@@ -64,13 +67,14 @@
  * // 'http://www.rcsb.org/pdb/files/"+pdb+".pdb.gz' containing the structure of the protein.
  * //The file id downloaded form the server as a zipped file and then it's unzipped on the client
  *        var instance = new Biojs.Protein3DCanvas({
- *			target: "YourOwnDivId",
- *			jsmolFolder: '/bioJs/dependencies/jsmol-14.0.2/jsmol',
- *			height: 440,
+ *				target: "YourOwnDivId",
+ *				jsmolFolder: '/bioJs/dependencies/jsmol-14.0.2/jsmol',
+ *				height: 440,
  *		    	width: 440,
  *		    	style: Biojs.Protein3D.STYLE_CARTOON,
- *		    	use:"HTML5 JAVA"
- *		    });	
+ *		    	use:"HTML5 JAVA",
+ *				urlProxy:"/bioJs/dependencies/jsmol-14.0.2/jsmol/proxy/jsmol.jsp"
+ *		     });	
  *			instance.onPdbLoaded(
  *			   function( objEvent ) {
  *				    alert('PDB LOADED');
@@ -96,6 +100,10 @@ Biojs.Protein3DCanvas = Biojs.Protein3D.extend(
 			
 		}else{
 			Jmol.Info["use"] = this.opt.use;
+		}
+		
+		if ( this.opt.proxyUrl != undefined ) {
+			Jmol.Info["serverURL"] = this.opt.proxyUrl;	
 		}
 		
 		Jmol.Info["jarPath"] = this.opt.jsmolFolder+"/java",
@@ -150,10 +158,11 @@ Biojs.Protein3DCanvas = Biojs.Protein3D.extend(
 	*		target: "YourOwnDivId",
 	*		jsmolFolder: '/bioJs/dependencies/jsmol-14.0.2/jsmol',
 	*		height: 440,
-	*	    	width: 440,
-	*	    	style: Biojs.Protein3D.STYLE_CARTOON,
-	*	    	use:"HTML5 JAVA"
-	*	    });	
+	*	    width: 440,
+	*	    style: Biojs.Protein3D.STYLE_CARTOON,
+	*	    use:"HTML5 JAVA",
+			urlProxy:"/bioJs/dependencies/jsmol-14.0.2/jsmol/proxy/jsmol.jsp"
+	* });	
 	*	  
 	*	instance.onPdbLoaded(
 	*	   function( objEvent ) {
