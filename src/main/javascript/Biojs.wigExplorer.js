@@ -6,7 +6,7 @@
  *
  * @author <a href="http://www.tgac.ac.uk/bioinformatics/sequencing-informatics/core-bioinformatics/anil-thanki/">Anil Thanki</a>
  * @version 1.0.0
- * @category 1
+ * @category 2
  *
  *
  * @requires <a href='http://d3js.org/'>D3</a>
@@ -19,8 +19,18 @@
  * @requires <a href='http://code.jquery.com/jquery-1.6.4.js'>jQuery Core 1.6.4</a>
  * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jquery/jquery-1.6.4.js"></script>
  *
+ * @requires jQuery UI CSS 1.8.2
+ * @dependency <link rel="stylesheet" href="../biojs/dependencies/jquery/jquery-ui-1.8.2.css" />
+ *
+ * @requires <a href='http://jquery.bassistance.de/tooltip/jquery.tooltip.js'>jQuery.tooltip</a>
+ * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jquery/jquery.tooltip.js"></script>
+ *
+ * @requires <a href='http://jquery.bassistance.de/tooltip/jquery.tooltip.css'>jQuery.tooltip CSS</a>
+ * @dependency <link rel="stylesheet" href="../biojs/dependencies/jquery/jquery.tooltip.css"/>
+ *
  * @requires <a href=''>biojs.wigExplorer.css</a>
  * @dependency <link rel="stylesheet" href="../biojs/css/biojs.wigExplorer.css" />
+ *
  *
  * @requires <a href='http://jqueryui.com/download/jquery-ui-1.8.20.custom.zip'>jQuery UI CSS 1.8.2</a>
  * @dependency <link rel="stylesheet" href="../biojs/dependencies/jquery/jquery-ui-1.8.2.css" />
@@ -58,8 +68,8 @@
  * @example
  * var instance = new Biojs.wigExplorer({
  *      target: "YourOwnDivId",
- *      selectionBackgroundColor: '#99FF00',
- *      dataSet: "../biojs/data/wigExplorerDataSet3.tsv",
+ *      selectionBackgroundColor: 'steelblue',
+ *      dataSet: "../biojs/data/wigExplorerDataSet.tsv"
  * });
  *
  */
@@ -101,7 +111,7 @@ Biojs.wigExplorer = Biojs.extend(
             // Apply options values
             this._container.css({
                 'font-family': self.opt.fontFamily, // this is one example of the use of self instead of this
-                'background-color': self.opt.backgroundColor,
+                'background-color': self.opt.selectionBackgroundColor,
                 'color': self.opt.fontColor,
                 'font-size': '36px',
                 'text-align': 'center',
@@ -120,8 +130,7 @@ Biojs.wigExplorer = Biojs.extend(
                 'user-select': 'none'
             });
 
-            this.color = self.opt.color;
-
+            this.color = self.opt.selectionBackgroundColor;
             this.paintFeatures(self.opt.dataSet);
 
         },
@@ -135,13 +144,13 @@ Biojs.wigExplorer = Biojs.extend(
             dataSet: "",
             fontFamily: '"Andale mono", courier, monospace',
             fontColor: "white",
-            backgroundColor: "#7BBFE9",
+            backgroundColor: "",
             selectionFontColor: "black",
             selectionBackgroundColor: "yellow",
             width: "100%",
             height: "130",
-            radius: 10,
-            color: "blue"
+            radius: 10
+
         },
 
         /**
@@ -212,7 +221,7 @@ Biojs.wigExplorer = Biojs.extend(
                 this._setDataSource(dataSet);
                 this._init();
             } else {
-                //todo: output error: no dataSet
+                alert('Dataset not defined ');
             }
 
         },
@@ -222,7 +231,7 @@ Biojs.wigExplorer = Biojs.extend(
          */
         _init: function () {
             Biojs.wigExplorer.myself = this;
-            //First create the slider, button, and holder
+
             var painter_div = jQuery("#" + this.opt.target);
             painter_div.text('');
             painter_div.append(this._withSliderOnly(100));
@@ -248,8 +257,6 @@ Biojs.wigExplorer = Biojs.extend(
                 this.height = $("#wigFeaturePainter-holder").height(),
                 this.r = self.opt.radius;
 
-            //todo: when setting a new file I had problems with "self.opt.width" which was not defined as string, so indexOf was not working.
-            //had similar problem before so I used contains and it should works
             self.opt.width = self.opt.width.toString();
             if (self.opt.width.indexOf("%") >= 1)
                 self.opt.width = self.opt.width.toString();
@@ -272,22 +279,34 @@ Biojs.wigExplorer = Biojs.extend(
 
 
             d3.tsv(self.opt.dataSet, function (data, error) {
-                self.track = data;
-                var length = data.length - 1;
-                var start = parseInt(data[0].start);//config.requestedStart;
-                var stop = parseInt(data[length].start);//config.requestedStop;
+                    if (data) {
+                        self.track = data;
+                        var length = data.length - 1;
+                        if (length > 0) {
 
-                self.slider_start = start;
-                self.slider_stop = stop;
-                self.data_last_start = stop;
-                self.data_first_start = start;
+                            var start = parseInt(data[0].start);//config.requestedStart;
+                            var stop = parseInt(data[length].start);//config.requestedStop;
 
-                self.max = Math.max.apply(Math, data.map(function (o) {
-                    return o.value;
-                }));
+                            self.slider_start = start;
+                            self.slider_stop = stop;
+                            self.data_last_start = stop;
+                            self.data_first_start = start;
 
-                self._paintSlider();
-                self._updateDraw();
+                            self.max = Math.max.apply(Math, data.map(function (o) {
+                                return o.value;
+                            }));
+
+                            self._paintSlider();
+                            self._updateDraw();
+                        }
+                        else {
+                            alert('File empty ' + data);
+                        }
+                    }
+                    else {
+                        alert('File not found ' + data);
+
+                    }
             });
 
         },
@@ -349,6 +368,7 @@ Biojs.wigExplorer = Biojs.extend(
          *
          */
         paintWig: function (start, end) {
+            var color = this.opt.selectionBackgroundColor
             var left = "50px";
             var top = "0px";
             var filtered_track = [];
@@ -480,10 +500,8 @@ Biojs.wigExplorer = Biojs.extend(
                 //select 10 positions to be displayed on x axis
                 var filter_track_legend = [];
                 for (i = 0; i <= length;) {
-                    console.log(i + ":" + length + ":" + filtered_track[i].start)
                     filter_track_legend.push(filtered_track[i]);
                     i += Math.floor(length / 10);
-                    console.log(i + ":" + length)
                 }
 
                 //draw selected 10 positions as legend
@@ -551,7 +569,7 @@ Biojs.wigExplorer = Biojs.extend(
                         return "1px";
                     })
                     .attr("fill", function () {
-                        return "blue";
+                        return color;
                     })
                     .attr("d", d3line2(pathinfo));
 
