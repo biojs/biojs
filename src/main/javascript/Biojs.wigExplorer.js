@@ -197,7 +197,9 @@ Biojs.wigExplorer = Biojs.extend(
                 this.slider_stop = this.data_last_start;
             }
 
-            this.paintWig(this.slider_start, this.slider_stop);
+            if ((parseFloat(this.slider_start) < parseFloat(this.slider_stop))) {
+                this.paintWig(this.slider_start, this.slider_stop);
+            }
         },
 
         /**
@@ -278,37 +280,43 @@ Biojs.wigExplorer = Biojs.extend(
             }();
 
 
-            d3.tsv(self.opt.dataSet, function (data, error) {
-                    if (data) {
-                        self.track = data;
-                        var length = data.length - 1;
-                        if (length > 0) {
+            jQuery.ajax({
+                type: "GET",
+                url: self.opt.dataSet,
+                dataType: "text",
+                success: function (data) {
+                    var wig = [];
+                    var max = 0
+                    if (data.indexOf("variableStep") >= 0) {
+                        var data_split = data.split("\n")
+                        var data_len = data_split.length;
 
-                            var start = parseInt(data[0].start);//config.requestedStart;
-                            var stop = parseInt(data[length].start);//config.requestedStop;
-
-                            self.slider_start = start;
-                            self.slider_stop = stop;
-                            self.data_last_start = stop;
-                            self.data_first_start = start;
-
-                            self.max = Math.max.apply(Math, data.map(function (o) {
-                                return o.value;
-                            }));
-
-                            self._paintSlider();
-                            self._updateDraw();
+                        for (var i = 1; i < data_len; i++) {
+                            var temp_data = data_split[i].split(/\s+/);
+                            wig.push([temp_data[0], temp_data[1]]);
+                            if (parseInt(temp_data[1]) > parseInt(max)) {
+                                max = temp_data[1];
+                            }
                         }
-                        else {
-                            alert('File empty ' + data);
-                        }
-                    }
-                    else {
-                        alert('File not found ' + data);
+                        self.max = max;
+
+                        self.track = wig;
+
+                        var start = parseInt(wig[0][0]);//config.requestedStart;
+                        var stop = parseInt(wig[wig.length - 1][0]);
+
+
+                        self.slider_start = start;
+                        self.slider_stop = stop;
+                        self.data_last_start = stop;
+                        self.data_first_start = start;
+
+                        self._paintSlider();
+                        self._updateDraw();
 
                     }
+                }
             });
-
         },
 
         /**
@@ -347,7 +355,7 @@ Biojs.wigExplorer = Biojs.extend(
             var self = this;
 
             var length = this.track.length - 1;
-            var difference = parseInt(this.track[length].start) - parseInt(this.track[0].start);
+            var difference = parseInt(this.track[length][0]) - parseInt(this.track[0][0]);
 
             var diff = parseInt(difference / 20);
             this.zoomSlider = jQuery('<div id="wigFeaturePainter-slider-bar" style="width:300px"></div>').appendTo(slider_div);
@@ -368,6 +376,7 @@ Biojs.wigExplorer = Biojs.extend(
          *
          */
         paintWig: function (start, end) {
+
             var color = this.opt.selectionBackgroundColor
             var left = "50px";
             var top = "0px";
@@ -380,14 +389,14 @@ Biojs.wigExplorer = Biojs.extend(
             if (start && end) {
                 filtered_track = this.track;
                 filtered_track = jQuery.grep(filtered_track, function (element) {
-                    return element.start >= start && element.start <= end; // retain appropriate elements
+                    return element[0] >= start && element[0] <= end; // retain appropriate elements
                 });
             }
             else {
                 filtered_track = this.track;
                 var length = this.track.length - 1;
-                end = parseInt(this.track[length].start);
-                start = parseInt(this.track[0].start);
+                end = parseInt(this.track[length][0]);
+                start = parseInt(this.track[0][0]);
             }
             var space = parseInt(width) / (end - start);
 
@@ -413,30 +422,30 @@ Biojs.wigExplorer = Biojs.extend(
                     })
                     .interpolate("linear");
 
-                var end_val = parseInt(filtered_track[length].start) + parseInt(filtered_track[1].start - filtered_track[0].start);
-                var start_val = parseInt(filtered_track[0].start) - (parseInt(filtered_track[1].start - filtered_track[0].start));
+                var end_val = parseInt(filtered_track[length][0]) + parseInt(filtered_track[1][0] - filtered_track[0][0]);
+                var start_val = parseInt(filtered_track[0][0]) - (parseInt(filtered_track[1][0] - filtered_track[0][0]));
 
                 if (start_val < 0) {
                     start_val = 0;
                 }
 
                 // add a 0 to start position
-                filtered_track.splice(0, 0, {start: start_val, value: '0'});
+                filtered_track.splice(0, 0, [start_val, 0]);
 
                 // add a 0 to end position
-                filtered_track.splice(filtered_track.length, 0, {start: end_val, value: '0'});
+                filtered_track.splice(filtered_track.length, 0, [end_val, 0]);
 
                 var pathinfo = [];
 
                 var last_start = 0;
                 // check for average difference between each positions
-                var diff = parseInt(filtered_track[1].start - filtered_track[0].start);
-                if (diff > parseInt(filtered_track[2].start - filtered_track[1].start) || diff > parseInt(filtered_track[3].start - filtered_track[2].start)) {
-                    if (diff > parseInt(filtered_track[2].start - filtered_track[1].start)) {
-                        diff = parseInt(filtered_track[2].start - filtered_track[1].start)
+                var diff = parseInt(filtered_track[1][0] - filtered_track[0][0]);
+                if (diff > parseInt(filtered_track[2][0] - filtered_track[1][0]) || diff > parseInt(filtered_track[3][0] - filtered_track[2][0])) {
+                    if (diff > parseInt(filtered_track[2][0] - filtered_track[1][0])) {
+                        diff = parseInt(filtered_track[2][0] - filtered_track[1][0])
                     }
                     else {
-                        diff = parseInt(filtered_track[3].start - filtered_track[2].start)
+                        diff = parseInt(filtered_track[3][0] - filtered_track[2][0])
                     }
                 }
                 else {
@@ -446,17 +455,17 @@ Biojs.wigExplorer = Biojs.extend(
                 for (var i = 0; i < filtered_track.length - 1;) {
                     var tempx;
                     if (start > 0) {
-                        tempx = (filtered_track[i].start - start) * space;
+                        tempx = (filtered_track[i][0] - start) * space;
                     }
                     else {
-                        tempx = (filtered_track[i].start) * space;
+                        tempx = (filtered_track[i][0]) * space;
                     }
-                    var tempy = height - (filtered_track[i].value * height / max);
+                    var tempy = height - (filtered_track[i][1] * height / max);
                     pathinfo.push({ x: tempx, y: tempy});
 
                     i++;
 
-                    if (last_start < filtered_track[i].start - diff) {
+                    if (last_start < filtered_track[i][0] - diff) {
 
                         if (start > 0) {
                             tempx = ((parseInt(last_start) + parseInt(diff)) - start) * space;
@@ -470,10 +479,10 @@ Biojs.wigExplorer = Biojs.extend(
                         pathinfo.push({ x: tempx, y: tempy});
 
                         if (start > 0) {
-                            tempx = ((parseInt(filtered_track[i].start) - parseInt(diff)) - start) * space;
+                            tempx = ((parseInt(filtered_track[i][0]) - parseInt(diff)) - start) * space;
                         }
                         else {
-                            tempx = ((parseInt(filtered_track[i].start) - parseInt(diff))) * space;
+                            tempx = ((parseInt(filtered_track[i][0]) - parseInt(diff))) * space;
                         }
                         var tempy = height;
 
@@ -481,18 +490,19 @@ Biojs.wigExplorer = Biojs.extend(
 
                     }
 
-                    last_start = filtered_track[i].start;
+                    last_start = filtered_track[i][0];
 
                 }
 
                 if (start > 0) {
-                    tempx = (filtered_track[filtered_track.length - 1].start - start) * space;
+                    tempx = (filtered_track[filtered_track.length - 1][0] - start) * space;
                 }
                 else {
-                    tempx = (filtered_track[filtered_track.length - 1].start) * space;
+                    tempx = (filtered_track[filtered_track.length - 1][0]) * space;
                 }
 
-                var tempy = height - (filtered_track[filtered_track.length - 1].value * height / max);
+                var tempy = height - (filtered_track[filtered_track.length - 1][1] * height / max);
+
                 pathinfo.push({ x: tempx, y: tempy});
                 var path = svg.selectAll("path")
                     .data([1]);
@@ -513,19 +523,19 @@ Biojs.wigExplorer = Biojs.extend(
                     .attr('y', 155)
                     .attr("transform", function (d, i) {
                         if (start > 0) {
-                            return "translate(" + (((d.start - start) * space) + 150) + "," + 100 + ")rotate(90)";
+                            return "translate(" + (((d[0] - start) * space) + 150) + "," + 100 + ")rotate(90)";
                         }
                         else {
-                            return  "translate(" + (((d.start) * space) + 150) + "," + 100 + ")rotate(90)";
+                            return  "translate(" + (((d[0]) * space) + 150) + "," + 100 + ")rotate(90)";
                         }
                     })
                     .text(function (d) {
-                        if (d.start > 1000000) {
-                            return parseInt(d.start / 1000000) + "M";
-                        } else if (d.start > 1000) {
-                            return parseInt(d.start / 1000) + "K";
+                        if (d[0] > 1000000) {
+                            return parseFloat(d[0] / 1000000).toFixed(1) + "M";
+                        } else if (d[0] > 1000) {
+                            return parseFloat(d[0] / 1000).toFixed(1) + "K";
                         } else {
-                            return d.start;
+                            return d[0];
                         }
                     });
 
@@ -537,19 +547,19 @@ Biojs.wigExplorer = Biojs.extend(
                     .attr("class", "line")
                     .attr("x1", function (d) {
                         if (start > 0) {
-                            return parseInt((d.start - start) * space);
+                            return parseInt((d[0] - start) * space);
                         }
                         else {
-                            return  parseInt((d.start ) * space);
+                            return  parseInt((d[0] ) * space);
                         }
                     })
                     .attr("y1", 130)
-                    .attr("x2", function (d) {
+                    .attr("x2",function (d) {
                         if (start > 0) {
-                            return parseInt((d.start - start) * space);
+                            return parseInt((d[0] - start) * space);
                         }
                         else {
-                            return  parseInt((d.start ) * space);
+                            return  parseInt((d[0] ) * space);
                         }
                     }).attr("y2", 140)
                     .attr('stroke', function () {
@@ -602,8 +612,6 @@ Biojs.wigExplorer = Biojs.extend(
             // Add the click event to each character in the content
             this._container.find('span')
                 .click(function (e) {
-                    // A letter was clicked!
-                    // Let's discover which one was it
                     // TIP: e.target contains the clicked DOM node
                     var selected = jQuery(e.target).text();
 
