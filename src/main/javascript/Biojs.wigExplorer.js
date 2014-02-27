@@ -69,7 +69,7 @@
  * var instance = new Biojs.wigExplorer({
  *      target: "YourOwnDivId",
  *      selectionBackgroundColor: 'steelblue',
- *      dataSet: "../biojs/data/wigExplorerDataSet.tsv"
+ *      dataSet: "../biojs/data/wigExplorerDataSet2.tsv"
  * });
  *
  */
@@ -89,6 +89,7 @@ Biojs.wigExplorer = Biojs.extend(
         data_last_start: 1,
         data_first_start: 1,
         max: 0,
+        span: null,
         data: [],
         main_data: [],
 
@@ -288,14 +289,26 @@ Biojs.wigExplorer = Biojs.extend(
                     var wig = [];
                     var max = 0
                     if (data.indexOf("variableStep") >= 0) {
+
                         var data_split = data.split("\n")
                         var data_len = data_split.length;
 
+                        var span;
+                        if (data_split[0].indexOf("span") >= 0) {
+                            span = data_split[0].split(/\s+/)[2].split("=")[1]
+                        }
+
+                        self.span = span;
+
                         for (var i = 1; i < data_len; i++) {
-                            var temp_data = data_split[i].split(/\s+/);
-                            wig.push([temp_data[0], temp_data[1]]);
-                            if (parseInt(temp_data[1]) > parseInt(max)) {
-                                max = temp_data[1];
+                            if (data_split[i].indexOf("#") >= 0) {
+                                continue;
+                            } else {
+                                var temp_data = data_split[i].split(/\s+/);
+                                wig.push([temp_data[0], temp_data[1]]);
+                                if (parseInt(temp_data[1]) > parseInt(max)) {
+                                    max = temp_data[1];
+                                }
                             }
                         }
                         self.max = max;
@@ -321,10 +334,15 @@ Biojs.wigExplorer = Biojs.extend(
                         var line = data_split[0].split(/\s+/);
                         var start = line[2].split("=")[1];
                         var step = line[3].split("=")[1];
+                        if (data_split[0].indexOf("span") >= 0) {
+                            span = line[4].split("=")[1]
+                        }
+
+                        self.span = span;
 
                         for (var i = 1; i < data_len; i++) {
                             var temp_data = data_split[i];
-                            var temp_start = parseInt(start) + parseInt(step* (i-1))
+                            var temp_start = parseInt(start) + parseInt(step * (i - 1))
                             wig.push([temp_start, temp_data]);
                             if (parseInt(temp_data) > parseInt(max)) {
                                 max = temp_data;
@@ -345,11 +363,11 @@ Biojs.wigExplorer = Biojs.extend(
                         self._updateDraw();
 
                     }
-                    else{
+                    else {
                         alert("Unknown format detected")
                     }
                 },
-                error: function(a){
+                error: function (a) {
                     alert("Data not found")
                 }
             });
@@ -388,7 +406,6 @@ Biojs.wigExplorer = Biojs.extend(
             slider_div.text('');
             slider_div.append('<label for="wigFeaturePainter-slider-values"></label>');
             slider_div.append('<div type="text" id="wigFeaturePainter-slider-values" style="margin-bottom:5px" />');
-            var self = this;
 
             var length = this.track.length - 1;
             var difference = parseInt(this.track[length][0]) - parseInt(this.track[0][0]);
@@ -412,6 +429,7 @@ Biojs.wigExplorer = Biojs.extend(
          *
          */
         paintWig: function (start, end) {
+            var self = this;
 
             var color = this.opt.selectionBackgroundColor
             var left = "50px";
@@ -571,7 +589,7 @@ Biojs.wigExplorer = Biojs.extend(
                         } else if (d[0] > 1000) {
                             return parseFloat(d[0] / 1000).toFixed(2) + "K";
                         } else {
-                            return d[0];
+                            return parseInt(d[0]) + " - "+ (parseInt(d[0])+parseInt(self.span));
                         }
                     });
 
