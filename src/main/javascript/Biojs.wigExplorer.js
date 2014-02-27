@@ -315,6 +315,42 @@ Biojs.wigExplorer = Biojs.extend(
                         self._updateDraw();
 
                     }
+                    else if (data.indexOf("fixedStep") >= 0) {
+                        var data_split = data.split("\n")
+                        var data_len = data_split.length;
+                        var line = data_split[0].split(/\s+/);
+                        var start = line[2].split("=")[1];
+                        var step = line[3].split("=")[1];
+
+                        for (var i = 1; i < data_len; i++) {
+                            var temp_data = data_split[i];
+                            var temp_start = parseInt(start) + parseInt(step* (i-1))
+                            wig.push([temp_start, temp_data]);
+                            if (parseInt(temp_data) > parseInt(max)) {
+                                max = temp_data;
+                            }
+                        }
+                        self.max = max;
+                        self.track = wig;
+
+                        var start = parseInt(wig[0][0]);//config.requestedStart;
+                        var stop = parseInt(wig[wig.length - 1][0]);
+
+                        self.slider_start = start;
+                        self.slider_stop = stop;
+                        self.data_last_start = stop;
+                        self.data_first_start = start;
+
+                        self._paintSlider();
+                        self._updateDraw();
+
+                    }
+                    else{
+                        alert("Unknown format detected")
+                    }
+                },
+                error: function(a){
+                    alert("Data not found")
                 }
             });
         },
@@ -407,7 +443,7 @@ Biojs.wigExplorer = Biojs.extend(
 
                 var svg = d3.select("#wigFeaturePainter-holder").append("svg")
                     .attr("width", this.width + 20)
-                    .attr("height", this.height + 50)
+                    .attr("height", $("#wigFeaturePainter-holder").height())
                     .append("g")
                     .attr("transform", "translate(" + left + "," + top + ")");
 
@@ -531,9 +567,9 @@ Biojs.wigExplorer = Biojs.extend(
                     })
                     .text(function (d) {
                         if (d[0] > 1000000) {
-                            return parseFloat(d[0] / 1000000).toFixed(1) + "M";
+                            return parseFloat(d[0] / 1000000).toFixed(2) + "M";
                         } else if (d[0] > 1000) {
-                            return parseFloat(d[0] / 1000).toFixed(1) + "K";
+                            return parseFloat(d[0] / 1000).toFixed(2) + "K";
                         } else {
                             return d[0];
                         }
