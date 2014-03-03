@@ -41,36 +41,35 @@
  * @option {string} target
  *    Identifier of the DIV tag where the component should be displayed.
  *
- * @option {string} [fontFamily='"Andale mono", courier, monospace']
- *    Font list to be applied to the component content.
- *
- * @option {string} [fontColor="white"]
- *    HTML color code for the font.
- *
- * @option {string} [backgroundColor="#7BBFE9"]
- *     Background color for the entire div content.
- *
- * @option {Object} [selectionFontColor="white"]
- *     This color will be used to change the font color of selected text.
- *
- * @option {Object} [selectionBackgroundColor="yellow"]
- *     This color will be used to change the background of selected text.
- *
- * @option {string} dataSet
- *    File in TSV format including input data. Example of TSV file ... <br/>
- *  <pre>start    value
- *  10    34
- *  20    41
- *  30    46
- *  40    49
- *  ...</pre>
  *
  * @example
  * var instance = new Biojs.wigExplorer({
  *      target: "YourOwnDivId",
  *      selectionBackgroundColor: 'steelblue',
- *      dataSet: "../biojs/data/wigExplorerDataSet2.tsv"
+ *      dataSet: "../biojs/data/wigExplorerDataSet5.txt"
  * });
+ *
+ * @option {string} dataSet
+ *    File in text format including input data. Examples of text file ... <br/>
+ *  <pre>variableStep chrom=chr2 span=5
+ * 10    34
+ * 20    41
+ * 30    46
+ * 40    49
+ * 50    52
+ *
+ *  ...
+ *
+ * or
+ *
+ * fixedStep chrom=chr2 start=10 step=10 span=5
+ * 34
+ * 41
+ * 46
+ * 49
+ * 52
+ *
+ *  ...</pre>
  *
  */
 
@@ -90,6 +89,7 @@ Biojs.wigExplorer = Biojs.extend(
         data_first_start: 1,
         max: 0,
         span: null,
+        chrom: [],
         data: [],
         main_data: [],
 
@@ -150,8 +150,8 @@ Biojs.wigExplorer = Biojs.extend(
             selectionBackgroundColor: "yellow",
             width: "100%",
             height: "130",
-            radius: 10
-
+            radius: 10,
+            reference: null
         },
 
         /**
@@ -211,13 +211,27 @@ Biojs.wigExplorer = Biojs.extend(
          * @example
          * instance.paintFeatures("../biojs/data/wigExplorerDataSet2.tsv");
          *
-         * @param {string} dataSet Location of the file with the input data in TSV format.
-         *  <pre>start    value
-         *  10    34
-         *  20    41
-         *  30    46
-         *  40    49
+         * @param {string} dataSet Location of the file with the input data in text format.
+         *   <pre>variableStep chrom=chr2 span=5
+         * 10    34
+         * 20    41
+         * 30    46
+         * 40    49
+         * 50    52
+         *
+         *  ...
+         *
+         * or
+         *
+         * fixedStep chrom=chr2 start=10 step=10 span=5
+         * 34
+         * 41
+         * 46
+         * 49
+         * 52
+         *
          *  ...</pre>
+         *
          */
         paintFeatures: function (dataSet) {
             if (dataSet != undefined) {
@@ -280,7 +294,6 @@ Biojs.wigExplorer = Biojs.extend(
                 return d3.scale.ordinal().range(self.colors);
             }();
 
-
             jQuery.ajax({
                 type: "GET",
                 url: self.opt.dataSet,
@@ -288,90 +301,62 @@ Biojs.wigExplorer = Biojs.extend(
                 success: function (data) {
                     var wig = [];
                     var max = 0
-                    if (data.indexOf("variableStep") >= 0) {
-
-                        var data_split = data.split("\n")
-                        var data_len = data_split.length;
-
-                        var span;
-                        if (data_split[0].indexOf("span") >= 0) {
-                            span = data_split[0].split(/\s+/)[2].split("=")[1]
-                        }
-
-                        self.span = span;
-
-                        for (var i = 1; i < data_len; i++) {
-                            if (data_split[i].indexOf("#") >= 0) {
-                                continue;
-                            } else {
-                                var temp_data = data_split[i].split(/\s+/);
-                                wig.push([temp_data[0], temp_data[1]]);
-                                if (parseInt(temp_data[1]) > parseInt(max)) {
-                                    max = temp_data[1];
+                    var data_split = data.split("\n")
+                    var data_len = data_split.length;
+                    if (data.indexOf("variableStep") >= 0 || data.indexOf("fixedStep") >= 0) {
+                        for (var i = 0; i < data_len; i++) {
+                            if (data_split[i].indexOf("chrom") >= 0) {
+                                var chr = data_split[i].split(/\s+/)[1].split("=")[1];
+                                if (self.chrom.indexOf(chr) < 0) {
+                                    self.chrom.push(chr);
                                 }
                             }
                         }
-                        self.max = max;
-
-                        self.track = wig;
-
-                        var start = parseInt(wig[0][0]);//config.requestedStart;
-                        var stop = parseInt(wig[wig.length - 1][0]);
-
-
-                        self.slider_start = start;
-                        self.slider_stop = stop;
-                        self.data_last_start = stop;
-                        self.data_first_start = start;
-
-                        self._paintSlider();
-                        self._updateDraw();
-
-                    }
-                    else if (data.indexOf("fixedStep") >= 0) {
-                        var data_split = data.split("\n")
-                        var data_len = data_split.length;
-                        var line = data_split[0].split(/\s+/);
-                        var start = line[2].split("=")[1];
-                        var step = line[3].split("=")[1];
-                        if (data_split[0].indexOf("span") >= 0) {
-                            span = line[4].split("=")[1]
-                        }
-
-                        self.span = span;
-
-                        for (var i = 1; i < data_len; i++) {
-                            var temp_data = data_split[i];
-                            var temp_start = parseInt(start) + parseInt(step * (i - 1))
-                            wig.push([temp_start, temp_data]);
-                            if (parseInt(temp_data) > parseInt(max)) {
-                                max = temp_data;
-                            }
-                        }
-                        self.max = max;
-                        self.track = wig;
-
-                        var start = parseInt(wig[0][0]);//config.requestedStart;
-                        var stop = parseInt(wig[wig.length - 1][0]);
-
-                        self.slider_start = start;
-                        self.slider_stop = stop;
-                        self.data_last_start = stop;
-                        self.data_first_start = start;
-
-                        self._paintSlider();
-                        self._updateDraw();
-
-                    }
-                    else {
+                        self._buildReferenceSelector();
+                    } else {
                         alert("Unknown format detected")
                     }
+
                 },
-                error: function (a) {
-                    alert("Data not found")
+                error: function (qXHR, textStatus, errorThrown) {
+                    alert(textStatus);
                 }
             });
         },
+
+
+
+        /**
+         * Private: Function to create reference dropdown.
+         * @ignore
+         */
+        _buildReferenceSelector: function () {
+
+            var self = this;
+
+            this._headerDiv = jQuery('#selectorMenu');
+            this._headerDiv.css({
+                'font-family': '"Heveltica Neue", Arial, "sans serif"',
+                'font-size': '14px'
+            }).append('Reference: ');
+
+            var selector_html = "<select id='ref_selector'>";
+
+            for (var i = 0; i < this.chrom.length; i++) {
+                selector_html += "<option value='" + this.chrom[i] + "'>" + this.chrom[i] + "</option>"
+            }
+            selector_html += "/<select>";
+
+            this._formatSelector = jQuery(selector_html).appendTo(self._headerDiv);
+
+            this._formatSelector.change(function (e) {
+                self.opt.reference = jQuery(this).val();
+                self._file_parser(self.opt.reference)
+            });
+
+            self._file_parser(this._formatSelector.val())
+        },
+
 
         /**
          * Private: Function to create slider only.
@@ -384,6 +369,8 @@ Biojs.wigExplorer = Biojs.extend(
                     '<tr>' +
                     '<td width="75%">' +
                     '<div  id="wigFeaturePainter-slider" style="margin-left: 10px;"></div>' +
+                    '</td>' +
+                    '<td><div id=selectorMenu> </div>' +
                     '</td>' +
                     '</tr>' +
                     '</table>' +
@@ -420,6 +407,145 @@ Biojs.wigExplorer = Biojs.extend(
                 '<div class="ui-button ui-widget ui-corner-all ui-button-text-only"  onclick=Biojs.wigExplorer.myself._updateDraw(' + (1 * diff) + ',' + (1 * diff) + ');><span title="Right" class="ui-button ui-icon ui-icon-arrowthick-1-e"></span></div>')
         },
 
+
+        /**
+         * Select reference from Wig file from the given parameter and then Draws wig chart default position
+         *
+         * @example
+         * instance._file_parser(<chr_name>)
+         *
+         */
+        _file_parser: function (ref_chr) {
+
+            var self = this;
+            var flag = false;
+            jQuery.ajax({
+                type: "GET",
+                url: self.opt.dataSet,
+                dataType: "text",
+                success: function (data) {
+                    var wig = [];
+                    var max = 0
+                    var data_split = data.split("\n")
+                    var data_len = data_split.length;
+                    var span = null;
+
+                    if (data.indexOf("variableStep") >= 0) {
+
+                        var data_split = data.split("\n")
+                        var data_len = data_split.length;
+
+
+
+
+                        for (var i = 0; i < data_len; i++) {
+                            if (data_split[i].indexOf("chrom") >= 0) {
+                                var chr = data_split[i].split(/\s+/)[1].split("=")[1];
+                                flag = false;
+                                if (chr == ref_chr) {
+                                    if (data_split[i].indexOf("span") >= 0) {
+                                        span = data_split[i].split(/\s+/)[2].split("=")[1]
+                                    }
+                                    flag = true;
+                                }
+                            }
+                            else if (data_split[i].indexOf("#") >= 0) {
+                                continue;
+                            } else if (flag) {
+                                var temp_data = data_split[i].split(/\s+/);
+                                wig.push([temp_data[0], temp_data[1], span]);
+                                if (parseInt(temp_data[1]) > parseInt(max)) {
+                                    max = temp_data[1];
+                                }
+                            }
+                        }
+                        self.max = max;
+
+                        self.track = wig;
+                        if (wig.length > 0) {
+                            var start = parseInt(wig[0][0]);//config.requestedStart;
+                            var stop = parseInt(wig[wig.length - 1][0]);
+
+
+                            self.slider_start = start;
+                            self.slider_stop = stop;
+                            self.data_last_start = stop;
+                            self.data_first_start = start;
+
+                            self._paintSlider();
+                            self._updateDraw();
+                        }
+                        else {
+                            alert("No data for selected reference")
+                        }
+
+
+                    }
+                    else if (data.indexOf("fixedStep") >= 0) {
+                        var data_split = data.split("\n")
+                        var data_len = data_split.length;
+                        var start = null;
+                        var step = null;
+
+                        for (var i = 1; i < data_len; i++) {
+                            if (data_split[i].indexOf("chrom") >= 0) {
+                                var line = data_split[i].split(/\s+/);
+
+                                var chr = data_split[i].split(/\s+/)[1].split("=")[1];
+                                flag = false;
+
+                                if (chr == ref_chr) {
+                                    start = line[2].split("=")[1];
+                                    step = line[3].split("=")[1];
+                                    if (data_split[i].indexOf("span") >= 0) {
+                                        span = line[4].split("=")[1]
+                                    }
+
+                                    flag = true;
+                                }
+                            }
+                            else if (data_split[i].indexOf("#") >= 0) {
+                                continue;
+                            } else if (flag) {
+                                var temp_data = data_split[i];
+                                var temp_start = parseInt(start) + parseInt(step * (i - 1))
+                                wig.push([temp_start, temp_data, span]);
+                                if (parseInt(temp_data) > parseInt(max)) {
+                                    max = temp_data;
+                                }
+                            }
+                        }
+                        self.max = max;
+                        self.track = wig;
+
+                        if (wig.length > 0) {
+                            var start = parseInt(wig[0][0]);//config.requestedStart;
+                            var stop = parseInt(wig[wig.length - 1][0]);
+
+
+                            self.slider_start = start;
+                            self.slider_stop = stop;
+                            self.data_last_start = stop;
+                            self.data_first_start = start;
+
+                            self._paintSlider();
+                            self._updateDraw();
+                        } else if (start == undefined || step ==  undefined) {
+                            alert("Unknown format detected")
+                        }
+                        else {
+                            alert("No data for selected reference")
+                        }
+                    }
+                    else {
+                        alert("Unknown format detected")
+                    }
+                },
+                error: function (qXHR, textStatus, errorThrown) {
+                    alert(textStatus);
+                }
+            });
+        },
 
         /**
          * Draws area chart from wig file using D3.js based on the specified positions
@@ -563,9 +689,15 @@ Biojs.wigExplorer = Biojs.extend(
 
                 //select 10 positions to be displayed on x axis
                 var filter_track_legend = [];
-                for (i = 0; i <= length;) {
-                    filter_track_legend.push(filtered_track[i]);
-                    i += Math.floor(length / 10);
+                var legend_start = filtered_track[0][0]
+                var diff =  (filtered_track[filtered_track.length-1][0] - filtered_track[0][0])/10;
+
+                for (i = 0; i < 10; i++) {
+                    if(filtered_track[i][2]){
+                        filter_track_legend.push([[parseInt(legend_start)+parseInt(i*diff)],[filtered_track[i][2]]]);
+                    }else{
+                        filter_track_legend.push([[parseInt(legend_start)+parseInt(i*diff)]]);
+                    }
                 }
 
                 //draw selected 10 positions as legend
@@ -589,7 +721,11 @@ Biojs.wigExplorer = Biojs.extend(
                         } else if (d[0] > 1000) {
                             return parseFloat(d[0] / 1000).toFixed(2) + "K";
                         } else {
-                            return parseInt(d[0]) + " - "+ (parseInt(d[0])+parseInt(self.span));
+                            if (d[1]) {
+                                return parseInt(d[0]) + " - " + (parseInt(d[0]) + parseInt(d[1]));
+                            } else {
+                                return parseInt(d[0]);
+                            }
                         }
                     });
 
