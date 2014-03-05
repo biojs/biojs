@@ -16,14 +16,11 @@
  * @requires <a href='http://blog.jquery.com'>jQuery 1.7.2</a>
  * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jquery/jquery-1.7.2.min.js"></script>
  * 
- * @requires <a href='https://github.com/downloads/cytoscape/cytoscapeweb/jquery.cytoscapeweb-2.0-prerelease-snapshot-2012.05.14-12.35.01.zip'>Cytoscape web 2</a>
- * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/cytoscape/jquery.cytoscapeweb.all.js"></script>
+ * @requires <a href='http://cytoscape.github.io/cytoscape.js'>Cytoscape.js (latest version strongly suggested)</a>
+ * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/cytoscape/cytoscape.min.js"></script>
  *      
- * @requires <a href='https://github.com/downloads/cytoscape/cytoscapeweb/jquery.cytoscapeweb-2.0-prerelease-snapshot-2012.05.14-12.35.01.zip'>Arbor JS</a>
+ * @requires <a href='http://cytoscape.github.io/cytoscape.js'>Arbor JS (included with Cytoscape.js)</a>
  * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/cytoscape/arbor.js"></script>
- * 
- * @requires <a href='https://github.com/downloads/cytoscape/cytoscapeweb/jquery.cytoscapeweb-2.0-prerelease-snapshot-2012.05.14-12.35.01.zip'> Arbor Layout </a>
- * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/cytoscape/jquery.cytoscapeweb.layout.arbor.js"></script>
  * 
  * @param {Object} options An object with the options for this component.
  *    
@@ -192,11 +189,22 @@ Biojs.InteractionsFilterGraph = Biojs.extend(
 		var nodes = [];
 		var edges = [];
 		var elements = new Object();
+		var nodeExists = {}; // id => true
+		var addNode = function(id){
+			if( !nodeExists[id] ){
+				nodes.push({ data: { id: id, weight: self.opt.nodeWeight }, classes: "allnodes" });
+
+				nodeExists[id] = true;
+			}
+		};
+
 		for(interactionId in self.opt.interactions){
 			var interactors = self.opt.interactions[interactionId];
+
 			edges.push({ data: { id: interactionId, source: interactors[0], target: interactors[1]},classes: "alledges"});
-			nodes.push({ data: { id: interactors[0], weight: self.opt.nodeWeight }, classes: "allnodes" });
-			nodes.push({ data: { id: interactors[1], weight: self.opt.nodeWeight }, classes: "allnodes" });	
+
+			addNode( interactors[0] );
+			addNode( interactors[1] );
 		}	
 		elements = {"nodes": nodes, "edges": edges};
 		return elements;
@@ -212,22 +220,8 @@ Biojs.InteractionsFilterGraph = Biojs.extend(
 	_startCytoscape: function(){	
 		
 		var elements = this._getCytoscapeElements();				
-		var nodeSizeMapper = {
-		    continuousMapper: {
-		        attr: {
-		            name: "weight",
-		            min: 0,
-		            max: 100
-		        },
-		        mapped: {
-		            min: 15,
-		            max: 30
-		        }
-		    }
-		};
-		
-	
-		jQuery("#"+this._cytoscapeTarget).cytoscapeweb({
+
+		jQuery("#"+this._cytoscapeTarget).cytoscape({
 		
 		    // define the elements in the graph
 		    elements: elements,
@@ -238,48 +232,55 @@ Biojs.InteractionsFilterGraph = Biojs.extend(
 		    },
 		
 		    // define the visual style (like css) of the graph
-		    style: {
-		        selectors: {
-		            "node":{
+		    style: [
+		    	{
+		    		selector: "node",
+		    		css: {
 		                shape: "ellipse",
-		                fillColor: "#888",
-		                height: nodeSizeMapper,
-		                width: nodeSizeMapper,
-		                labelText: {
-		                    passthroughMapper: "id"
-		                }
-		            },
-		            ".unselect": {
-		                fillColor: "#888",
-		                lineColor: "#ccc"
-		            },
-		            "edge": {
-		                lineColor: "#ccc",
-		                targetArrowColor: "#ccc",
-		                width: {
-		                    continuousMapper: {
-		                        attr: {
-		                            name: "weight"
-		                        },
-		                        mapped: {
-		                            min: 2,
-		                            max: 5
-		                        }
-		                    }
-		                }
-		            },
-		            "node:selected": {
-		                fillColor: "#CC0000"
-		            },
-		            "edge:selected":{
-		                lineColor: "#FF9999"
+		                backgroundColor: "#888",
+		                height: "mapData(weight, 0, 100, 15, 30)",
+		                width: "mapData(weight, 0, 100, 15, 30)",
+		                content: "data(id)"
 		            }
-		        }
-		    },
+		    	},
+
+		    	{
+		    		selector: ".unselect",
+		    		css: {
+		    			backgroundColor: "#888",
+		    			borderColor: "#ccc"
+		    		}
+
+		    	},
+
+		    	{
+		    		selector: "edge",
+		    		css: {
+		    			lineColor: "#ccc",
+		    			targetArrowColor: "#ccc",
+		    			width: "mapData(weight, 0, 100, 2, 5)"
+		    		}
+		    	},
+
+		    	{
+		    		selector: "node:selected",
+		    		css: {
+		    			backgroundColor: "#cc0000"
+		    		}
+		    	},
+
+		    	{
+		    		selector: "edge:selected",
+		    		css: {
+		    			lineColor: "#ff9999"
+		    		}
+		    	}
+
+		    ],
 		
 		    // define the callback for when cytoscape web is ready
-		    ready: function( cy ){
-		        window.cy = cy;
+		    ready: function(){
+		        window.cy = this;
 		    }
 		});
 		
