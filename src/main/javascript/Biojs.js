@@ -32,6 +32,17 @@ Biojs.EventHandler = function(eventType) {
 			this.listeners.push(actionPerformed);
 		}
 	};
+    /**
+     * Removes an action listener for the event.
+     * @param {function} actionPerformed The action listener to be removed.
+     */
+	this.removeListener = function ( actionPerformed ) {
+		if ( (typeof actionPerformed) == "function" ) {
+			var pos = Biojs.Utils.indexOf(this.listeners,actionPerformed);
+			if (pos!=-1)
+				this.listeners.splice(pos,1);
+		}
+	};
 	/**
      * Executes all listener actions registered in the listeners field.
      * @param {Object} eventObject The event' object to be passed as argument to the listeners.
@@ -107,6 +118,42 @@ Biojs.Utils = {
 		    return true;
 		}
 	},
+    
+    /**
+     * Searches the array for the specified item, and returns its position.
+     * The search will start at the specified position, or at the beginning if no start position is specified,
+     * and end the search at the end of the array.
+     * 
+     * Returns -1 if the item is not found.
+     * If the item is present more than once, the indexOf method returns the position of the first occurence.
+     *
+     * indexOf is not supported in IE < v9
+     *
+     * @param {array} The array containing the element to look for.
+     * @param {object} Required. The item to search for.
+     * @param {int} Optional. Where to start the search.
+     */
+    indexOf : function(elem, arr, i){
+        var len;
+
+		if ( arr ) {
+			if ( indexOf ) {
+				return indexOf.call( arr, elem, i );
+			}
+
+			len = arr.length;
+			i = i ? i < 0 ? Math.max( 0, len + i ) : i : 0;
+
+			for ( ; i < len; i++ ) {
+				// Skip accessing in sparse arrays
+				if ( i in arr && arr[ i ] === elem ) {
+					return i;
+				}
+			}
+		}
+
+		return -1;
+    },
 	
 	/**
      * Cross-browser console for debugging. 
@@ -420,6 +467,30 @@ Biojs.prototype =
 		}
 	},
 	
+    /**
+	 * Unregister a function under an event type in order to stop its execution it whenever the event is triggered.
+	 * @param {string} eventType The event to be listened.
+	 * @param {function} actionPerformed The action to be unregister. 
+	 * 
+	 * 
+	 * @example 
+	 * mySequence.removeListener('onSelectionChanged', listener);
+	 * 
+	 * // HTML div tag with the id='div0001' must exist in the HTML document 
+	 * 
+	 */
+	removeListener: function(eventType, actionPerformed) {
+		if (this._eventHandlers) {
+			// register the listener in this._eventHandlers for the eventType  
+			for(var key in this._eventHandlers) {
+				if ( eventType == this._eventHandlers[key].eventType ) {
+					this._eventHandlers[key].removeListener( actionPerformed );
+					return;
+				}
+			} 
+		}
+	},
+    
 	/**
 	 * Sets an event handler and an alias method for each string in the array eventTypes.
 	 * This method is executed automatically before constructing an instance, using the eventTypes array 
