@@ -364,7 +364,7 @@ var _jmol = {
   radioGroupCount: 0,
   initialized: false,
   initChecked: false,
-  archivePath: null, // JmolApplet0.jar OR JmolAppletSigned0.jar
+  archivePath: null // JmolApplet0.jar OR JmolAppletSigned0.jar
 }
 
 
