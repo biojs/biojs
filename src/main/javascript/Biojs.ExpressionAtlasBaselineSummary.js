@@ -117,7 +117,7 @@ Biojs.ExpressionAtlasBaselineSummary = Biojs.extend(
 		var httpRequest = {
 		url:url,
 		data:{rootContext:this.opt.rootContext},
-		methid:"GET",
+		method:"GET",
 		/** @ignore No need to document this object */
 		beforeSend:function () {
 		    self._containerDiv.html("<img src='http://www.ebi.ac.uk/gxa/resources/images/loading.gif' />");
