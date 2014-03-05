@@ -501,10 +501,22 @@ Biojs.Sequence = Biojs.extend(
 	_applyHighlight: function ( highlight ) {		
 		var seq = this._contentDiv.find('.sequence');
 		for ( var i = highlight.start - 1; i < highlight.end; i++ ){
+			zindex = jQuery(seq[i]).css("z-index");
+			if (zindex=="auto"){
+				 z = 1;
+				 o = 1;
+			 }
+			 else{
+				 z = 0;
+				 o = 0.5;
+			 }
 			jQuery(seq[i])
 				.css({ 
 					"color": highlight.color,
-					"background-color": highlight.background})
+					"background-color": highlight.background,
+					"z-index": z,
+					"opacity": o
+					})
 				.addClass("highlighted");
 		}
 	},
@@ -565,11 +577,12 @@ Biojs.Sequence = Biojs.extend(
 		if ( !( start > sel.end || end < sel.start ) ) {
 			a = ( start < sel.start ) ? sel.start : start;
 			b = ( end > sel.end ) ? sel.end : end;
+			
 			this._applyHighlight({
 				"start": a, 
 				"end": b, 
 				"color": this.opt.selectionFontColor, 
-				"background": this.opt.selectionColor
+				"background": this.opt.selectionColor,
 			});
 		}
 	},
