@@ -1,0 +1,36 @@
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US" xml:lang="en-US">
+	<head>
+      
+       <script type="text/javascript" src="../../main/javascript/Biojs.js"></script>
+      <script type="text/javascript" src="../../main/javascript/Biojs.Protein3D.js"></script>
+      <script type="text/javascript" src="../../main/javascript/Biojs.Protein3DCanvas.js"></script>
+      <script type="text/javascript" src="../../main/resources/dependencies/jsmol-14.0.2/jsmol/JSmol.min.js"></script>
+       <!--<script type="text/javascript" src="../../main/resources/dependencies/jquery/jquery-1.8.2.min.js"></script>
+       <script type="text/javascript" src="../../main/resources/dependencies/jsmol-14.0.2/jsmol/JSmol.min.nojq.js"></script>-->
+      <script type="text/javascript" src="../../main/resources/dependencies/jsmol-14.0.2/jsmol/js/Jmol2.js"></script>
+      <link href="../../main/resources/css/biojs.Protein3D.css" rel="stylesheet" type="text/css"/>
+ 	  
+	  <script type="text/javascript">       
+		
+		window.onload = function() {		 
+			 var instance = new Biojs.Protein3DCanvas({
+				 				target: "YourOwnDivId",
+				 				jsmolFolder: '../../main/resources/dependencies/jsmol-14.0.2/jsmol',
+				 				height: 600,
+				 		    width: 600,
+				     	  style: Biojs.Protein3D.STYLE_CARTOON,
+				 	    	use:"HTML5 JAVA",
+				 				urlProxy:"../../main/resources/dependencies/jsmol-14.0.2/jsmol/proxy/jsmol.jsp",
+				 				viewControls:true
+				 		     });	
+			 
+				 			instance.setPdb('2al6');
+		};	    
+		
+		    	   
+	   </script>	
+	</head>
+	<body>
+	  <div id="YourOwnDivId"></div>
+	</body>
+</html>
