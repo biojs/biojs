@@ -28,7 +28,7 @@
  * @requires <a href='http://jquery.bassistance.de/tooltip/jquery.tooltip.css'>jQuery.tooltip CSS</a>
  * @dependency <link rel="stylesheet" href="../biojs/dependencies/jquery/jquery.tooltip.css"/>
  *
- * @requires <a href=''>biojs.wigExplorer.css</a>
+ * @requires <a href='../biojs/css/biojs.wigExplorer.css'>biojs.wigExplorer.css</a>
  * @dependency <link rel="stylesheet" href="../biojs/css/biojs.wigExplorer.css" />
  *
  *
@@ -70,6 +70,9 @@
  * 52
  *
  *  ...</pre>
+ *
+ *  @option {string} [selectionBackgroundColor]
+ *    Name of the colour to be set as background for area chart
  *
  */
 
@@ -209,7 +212,7 @@ Biojs.wigExplorer = Biojs.extend(
          * paints the features and legend.
          *
          * @example
-         * instance.paintFeatures("../biojs/data/wigExplorerDataSet2.tsv");
+         * instance.paintFeatures("path-to-wig.txt");
          *
          * @param {string} dataSet Location of the file with the input data in text format.
          *   <pre>variableStep chrom=chr2 span=5
@@ -325,7 +328,6 @@ Biojs.wigExplorer = Biojs.extend(
         },
 
 
-
         /**
          * Private: Function to create reference dropdown.
          * @ignore
@@ -351,10 +353,10 @@ Biojs.wigExplorer = Biojs.extend(
 
             this._formatSelector.change(function (e) {
                 self.opt.reference = jQuery(this).val();
-                self._file_parser(self.opt.reference)
+                self.setReference(self.opt.reference)
             });
 
-            self._file_parser(this._formatSelector.val())
+            self.setReference(this._formatSelector.val())
         },
 
 
@@ -409,13 +411,13 @@ Biojs.wigExplorer = Biojs.extend(
 
 
         /**
-         * Select reference from Wig file from the given parameter and then Draws wig chart default position
+         * Select reference from Wig file from the given parameter and then parse Data for reference
          *
          * @example
-         * instance._file_parser(<chr_name>)
+         * instance.setReference("ref_name")
          *
          */
-        _file_parser: function (ref_chr) {
+        setReference: function (ref_chr) {
 
             var self = this;
             var flag = false;
@@ -429,13 +431,11 @@ Biojs.wigExplorer = Biojs.extend(
                     var data_split = data.split("\n")
                     var data_len = data_split.length;
                     var span = null;
-
+                    var ref  = false;
                     if (data.indexOf("variableStep") >= 0) {
 
                         var data_split = data.split("\n")
                         var data_len = data_split.length;
-
-
 
 
                         for (var i = 0; i < data_len; i++) {
@@ -447,6 +447,7 @@ Biojs.wigExplorer = Biojs.extend(
                                         span = data_split[i].split(/\s+/)[2].split("=")[1]
                                     }
                                     flag = true;
+                                    ref = true;
                                 }
                             }
                             else if (data_split[i].indexOf("#") >= 0) {
@@ -462,7 +463,9 @@ Biojs.wigExplorer = Biojs.extend(
                         self.max = max;
 
                         self.track = wig;
-                        if (wig.length > 0) {
+                        if(ref == false){
+                            alert("Selected reference not found")
+                        } else if (wig.length > 0) {
                             var start = parseInt(wig[0][0]);//config.requestedStart;
                             var stop = parseInt(wig[wig.length - 1][0]);
 
@@ -486,8 +489,9 @@ Biojs.wigExplorer = Biojs.extend(
                         var data_len = data_split.length;
                         var start = null;
                         var step = null;
+                        var ref =  false;
 
-                        for (var i = 1; i < data_len; i++) {
+                        for (var i = 0; i < data_len; i++) {
                             if (data_split[i].indexOf("chrom") >= 0) {
                                 var line = data_split[i].split(/\s+/);
 
@@ -502,23 +506,27 @@ Biojs.wigExplorer = Biojs.extend(
                                     }
 
                                     flag = true;
+                                    ref = true;
                                 }
                             }
                             else if (data_split[i].indexOf("#") >= 0) {
                                 continue;
                             } else if (flag) {
                                 var temp_data = data_split[i];
-                                var temp_start = parseInt(start) + parseInt(step * (i - 1))
-                                wig.push([temp_start, temp_data, span]);
+                                start = parseInt(start) + parseInt(step)
+                                wig.push([start, temp_data, span]);
                                 if (parseInt(temp_data) > parseInt(max)) {
                                     max = temp_data;
                                 }
                             }
                         }
+
                         self.max = max;
                         self.track = wig;
 
-                        if (wig.length > 0) {
+                        if(ref == false){
+                            alert("Selected reference not found")
+                        } else if (wig.length > 0) {
                             var start = parseInt(wig[0][0]);//config.requestedStart;
                             var stop = parseInt(wig[wig.length - 1][0]);
 
@@ -530,7 +538,7 @@ Biojs.wigExplorer = Biojs.extend(
 
                             self._paintSlider();
                             self._updateDraw();
-                        } else if (start == undefined || step ==  undefined) {
+                        } else if (start == null || step == null) {
                             alert("Unknown format detected")
                         }
                         else {
@@ -556,223 +564,242 @@ Biojs.wigExplorer = Biojs.extend(
          */
         paintWig: function (start, end) {
             var self = this;
+            if (this.track.length > 0) {
+                var color = this.opt.selectionBackgroundColor
+                var left = "50px";
+                var top = "0px";
+                var filtered_track = [];
+                var height = this.height;
+                var width = this.width;
+                var max = this.max;
 
-            var color = this.opt.selectionBackgroundColor
-            var left = "50px";
-            var top = "0px";
-            var filtered_track = [];
-            var height = this.height;
-            var width = this.width;
-            var max = this.max;
 
-            // filter data if start and end positions are defined
-            if (start && end) {
-                filtered_track = this.track;
-                filtered_track = jQuery.grep(filtered_track, function (element) {
-                    return element[0] >= start && element[0] <= end; // retain appropriate elements
-                });
-            }
-            else {
-                filtered_track = this.track;
-                var length = this.track.length - 1;
-                end = parseInt(this.track[length][0]);
-                start = parseInt(this.track[0][0]);
-            }
-            var space = parseInt(width) / (end - start);
-
-            var length = filtered_track.length - 1;
-            if (length > 0) {
-
-                this._clear();
-
-                var svg = d3.select("#wigFeaturePainter-holder").append("svg")
-                    .attr("width", this.width + 20)
-                    .attr("height", $("#wigFeaturePainter-holder").height())
-                    .append("g")
-                    .attr("transform", "translate(" + left + "," + top + ")");
-
-                this._container = jQuery("#wigFeaturePainter-holder");
-
-                var d3line2 = d3.svg.line()
-                    .x(function (d) {
-                        return d.x;
-                    })
-                    .y(function (d) {
-                        return d.y;
-                    })
-                    .interpolate("linear");
-
-                var end_val = parseInt(filtered_track[length][0]) + parseInt(filtered_track[1][0] - filtered_track[0][0]);
-                var start_val = parseInt(filtered_track[0][0]) - (parseInt(filtered_track[1][0] - filtered_track[0][0]));
-
-                if (start_val < 0) {
-                    start_val = 0;
-                }
-
-                // add a 0 to start position
-                filtered_track.splice(0, 0, [start_val, 0]);
-
-                // add a 0 to end position
-                filtered_track.splice(filtered_track.length, 0, [end_val, 0]);
-
-                var pathinfo = [];
-
-                var last_start = 0;
-                // check for average difference between each positions
-                var diff = parseInt(filtered_track[1][0] - filtered_track[0][0]);
-                if (diff > parseInt(filtered_track[2][0] - filtered_track[1][0]) || diff > parseInt(filtered_track[3][0] - filtered_track[2][0])) {
-                    if (diff > parseInt(filtered_track[2][0] - filtered_track[1][0])) {
-                        diff = parseInt(filtered_track[2][0] - filtered_track[1][0])
+                // filter data if start and end positions are defined
+                if (start && end) {
+                    console.log("before "+start+":"+end)
+                    if(start < self.slider_start){
+                       start = self.slider_start;
                     }
-                    else {
-                        diff = parseInt(filtered_track[3][0] - filtered_track[2][0])
+                    if(end > self.slider_stop){
+                        end = self.slider_stop
                     }
+
+                    console.log("after "+start+":"+end)
+
+                    filtered_track = this.track;
+                    filtered_track = jQuery.grep(filtered_track, function (element) {
+                        return element[0] >= start && element[0] <= end; // retain appropriate elements
+                    });
                 }
                 else {
+                    filtered_track = this.track;
+                    var length = this.track.length - 1;
+                    end = parseInt(this.track[length][0]);
+                    start = parseInt(this.track[0][0]);
                 }
+                var space = parseInt(width) / (end - start);
 
-                // loop through each element and calculate x and y axis for chart
-                for (var i = 0; i < filtered_track.length - 1;) {
-                    var tempx;
-                    if (start > 0) {
-                        tempx = (filtered_track[i][0] - start) * space;
+                var length = filtered_track.length - 1;
+                if (length > 0) {
+
+                    this._clear();
+
+                    var svg = d3.select("#wigFeaturePainter-holder").append("svg")
+                        .attr("width", this.width + 20)
+                        .attr("height", $("#wigFeaturePainter-holder").height())
+                        .append("g")
+                        .attr("transform", "translate(" + left + "," + top + ")");
+
+                    this._container = jQuery("#wigFeaturePainter-holder");
+
+                    var d3line2 = d3.svg.line()
+                        .x(function (d) {
+                            return d.x;
+                        })
+                        .y(function (d) {
+                            return d.y;
+                        })
+                        .interpolate("linear");
+
+                    var end_val = parseInt(filtered_track[length][0]) + parseInt(filtered_track[1][0] - filtered_track[0][0]);
+                    var start_val = parseInt(filtered_track[0][0]) - (parseInt(filtered_track[1][0] - filtered_track[0][0]));
+
+                    if (start_val < 0) {
+                        start_val = 0;
+                    }
+
+                    // add a 0 to start position
+                    filtered_track.splice(0, 0, [start_val, 0]);
+
+                    // add a 0 to end position
+                    filtered_track.splice(filtered_track.length, 0, [end_val, 0]);
+
+                    var pathinfo = [];
+
+                    var last_start = 0;
+                    // check for average difference between each positions
+                    var diff = parseInt(filtered_track[1][0] - filtered_track[0][0]);
+                    if (diff > parseInt(filtered_track[2][0] - filtered_track[1][0]) || diff > parseInt(filtered_track[3][0] - filtered_track[2][0])) {
+                        if (diff > parseInt(filtered_track[2][0] - filtered_track[1][0])) {
+                            diff = parseInt(filtered_track[2][0] - filtered_track[1][0])
+                        }
+                        else {
+                            diff = parseInt(filtered_track[3][0] - filtered_track[2][0])
+                        }
                     }
                     else {
-                        tempx = (filtered_track[i][0]) * space;
                     }
-                    var tempy = height - (filtered_track[i][1] * height / max);
-                    pathinfo.push({ x: tempx, y: tempy});
 
-                    i++;
-
-                    if (last_start < filtered_track[i][0] - diff) {
-
+                    // loop through each element and calculate x and y axis for chart
+                    for (var i = 0; i < filtered_track.length - 1;) {
+                        var tempx;
                         if (start > 0) {
-                            tempx = ((parseInt(last_start) + parseInt(diff)) - start) * space;
+                            tempx = (filtered_track[i][0] - start) * space;
                         }
                         else {
-                            tempx = ((parseInt(last_start) + parseInt(diff))) * space;
+                            tempx = (filtered_track[i][0]) * space;
                         }
-
-                        var tempy = height;
-
+                        var tempy = height - (filtered_track[i][1] * height / max);
                         pathinfo.push({ x: tempx, y: tempy});
 
-                        if (start > 0) {
-                            tempx = ((parseInt(filtered_track[i][0]) - parseInt(diff)) - start) * space;
-                        }
-                        else {
-                            tempx = ((parseInt(filtered_track[i][0]) - parseInt(diff))) * space;
-                        }
-                        var tempy = height;
+                        i++;
 
-                        pathinfo.push({ x: tempx, y: tempy});
+                        if (last_start < filtered_track[i][0] - diff) {
 
-                    }
-
-                    last_start = filtered_track[i][0];
-
-                }
-
-                if (start > 0) {
-                    tempx = (filtered_track[filtered_track.length - 1][0] - start) * space;
-                }
-                else {
-                    tempx = (filtered_track[filtered_track.length - 1][0]) * space;
-                }
-
-                var tempy = height - (filtered_track[filtered_track.length - 1][1] * height / max);
-
-                pathinfo.push({ x: tempx, y: tempy});
-                var path = svg.selectAll("path")
-                    .data([1]);
-
-                //select 10 positions to be displayed on x axis
-                var filter_track_legend = [];
-                var legend_start = filtered_track[0][0]
-                var diff =  (filtered_track[filtered_track.length-1][0] - filtered_track[0][0])/10;
-
-                for (i = 0; i < 10; i++) {
-                    if(filtered_track[i][2]){
-                        filter_track_legend.push([[parseInt(legend_start)+parseInt(i*diff)],[filtered_track[i][2]]]);
-                    }else{
-                        filter_track_legend.push([[parseInt(legend_start)+parseInt(i*diff)]]);
-                    }
-                }
-
-                //draw selected 10 positions as legend
-                var legendtext = svg.selectAll('text.day')
-                    .data(filter_track_legend);
-
-                legendtext.enter().append('svg:text')
-                    .attr('x', 40)
-                    .attr('y', 155)
-                    .attr("transform", function (d, i) {
-                        if (start > 0) {
-                            return "translate(" + (((d[0] - start) * space) + 150) + "," + 100 + ")rotate(90)";
-                        }
-                        else {
-                            return  "translate(" + (((d[0]) * space) + 150) + "," + 100 + ")rotate(90)";
-                        }
-                    })
-                    .text(function (d) {
-                        if (d[0] > 1000000) {
-                            return parseFloat(d[0] / 1000000).toFixed(2) + "M";
-                        } else if (d[0] > 1000) {
-                            return parseFloat(d[0] / 1000).toFixed(2) + "K";
-                        } else {
-                            if (d[1]) {
-                                return parseInt(d[0]) + " - " + (parseInt(d[0]) + parseInt(d[1]));
-                            } else {
-                                return parseInt(d[0]);
+                            if (start > 0) {
+                                tempx = ((parseInt(last_start) + parseInt(diff)) - start) * space;
                             }
-                        }
-                    });
+                            else {
+                                tempx = ((parseInt(last_start) + parseInt(diff))) * space;
+                            }
 
-                // lines at bottom of diagram to show the positions
-                var line = svg.selectAll("line.bottom")
-                    .data(filter_track_legend);
+                            var tempy = height;
 
-                line.enter().insert("svg:line")
-                    .attr("class", "line")
-                    .attr("x1", function (d) {
-                        if (start > 0) {
-                            return parseInt((d[0] - start) * space);
-                        }
-                        else {
-                            return  parseInt((d[0] ) * space);
-                        }
-                    })
-                    .attr("y1", 130)
-                    .attr("x2",function (d) {
-                        if (start > 0) {
-                            return parseInt((d[0] - start) * space);
-                        }
-                        else {
-                            return  parseInt((d[0] ) * space);
-                        }
-                    }).attr("y2", 140)
-                    .attr('stroke', function () {
-                        return "black";
-                    });
+                            pathinfo.push({ x: tempx, y: tempy});
 
-                //draw path from calculated chart axis
-                path.enter().append("svg:path")
-                    .attr("width", 200)
-                    .attr("height", 200)
-                    .attr("class", "path")
+                            if (start > 0) {
+                                tempx = ((parseInt(filtered_track[i][0]) - parseInt(diff)) - start) * space;
+                            }
+                            else {
+                                tempx = ((parseInt(filtered_track[i][0]) - parseInt(diff))) * space;
+                            }
+                            var tempy = height;
 
-                    .attr('stroke', function () {
-                        return "steelblue";
-                    })
-                    .attr('stroke-width', function () {
-                        return "1px";
-                    })
-                    .attr("fill", function () {
-                        return color;
-                    })
-                    .attr("d", d3line2(pathinfo));
+                            pathinfo.push({ x: tempx, y: tempy});
 
+                        }
+
+                        last_start = filtered_track[i][0];
+
+                    }
+
+                    if (start > 0) {
+                        tempx = (filtered_track[filtered_track.length - 1][0] - start) * space;
+                    }
+                    else {
+                        tempx = (filtered_track[filtered_track.length - 1][0]) * space;
+                    }
+
+                    var tempy = height - (filtered_track[filtered_track.length - 1][1] * height / max);
+
+                    pathinfo.push({ x: tempx, y: tempy});
+                    var path = svg.selectAll("path")
+                        .data([1]);
+
+                    //select 10 positions to be displayed on x axis
+                    var filter_track_legend = [];
+                    var legend_start = filtered_track[0][0]
+                    var diff = (filtered_track[filtered_track.length - 1][0] - filtered_track[0][0]) / 10;
+
+                    for (i = 0; i < 10; i++) {
+                        if (filtered_track[i][2]) {
+                            filter_track_legend.push([
+                                [parseInt(legend_start) + parseInt(i * diff)],
+                                [filtered_track[i][2]]
+                            ]);
+                        } else {
+                            filter_track_legend.push([
+                                [parseInt(legend_start) + parseInt(i * diff)]
+                            ]);
+                        }
+                    }
+
+                    //draw selected 10 positions as legend
+                    var legendtext = svg.selectAll('text.day')
+                        .data(filter_track_legend);
+
+                    legendtext.enter().append('svg:text')
+                        .attr('x', 40)
+                        .attr('y', 155)
+                        .attr("transform", function (d, i) {
+                            if (start > 0) {
+                                return "translate(" + (((d[0] - start) * space) + 150) + "," + 100 + ")rotate(90)";
+                            }
+                            else {
+                                return  "translate(" + (((d[0]) * space) + 150) + "," + 100 + ")rotate(90)";
+                            }
+                        })
+                        .text(function (d) {
+                            if (d[0] > 1000000) {
+                                return parseFloat(d[0] / 1000000).toFixed(2) + "M";
+                            } else if (d[0] > 1000) {
+                                return parseFloat(d[0] / 1000).toFixed(2) + "K";
+                            } else {
+                                if (d[1]) {
+                                    return parseInt(d[0]) + " - " + (parseInt(d[0]) + parseInt(d[1]));
+                                } else {
+                                    return parseInt(d[0]);
+                                }
+                            }
+                        });
+
+                    // lines at bottom of diagram to show the positions
+                    var line = svg.selectAll("line.bottom")
+                        .data(filter_track_legend);
+
+                    line.enter().insert("svg:line")
+                        .attr("class", "line")
+                        .attr("x1", function (d) {
+                            if (start > 0) {
+                                return parseInt((d[0] - start) * space);
+                            }
+                            else {
+                                return  parseInt((d[0] ) * space);
+                            }
+                        })
+                        .attr("y1", 130)
+                        .attr("x2",function (d) {
+                            if (start > 0) {
+                                return parseInt((d[0] - start) * space);
+                            }
+                            else {
+                                return  parseInt((d[0] ) * space);
+                            }
+                        }).attr("y2", 140)
+                        .attr('stroke', function () {
+                            return "black";
+                        });
+
+                    //draw path from calculated chart axis
+                    path.enter().append("svg:path")
+                        .attr("width", 200)
+                        .attr("height", 200)
+                        .attr("class", "path")
+
+                        .attr('stroke', function () {
+                            return "steelblue";
+                        })
+                        .attr('stroke-width', function () {
+                            return "1px";
+                        })
+                        .attr("fill", function () {
+                            return color;
+                        })
+                        .attr("d", d3line2(pathinfo));
+
+                }
+            } else {
+                alert("Reference not set: use instance.setReference")
             }
 
 
