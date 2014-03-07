@@ -5,7 +5,7 @@
  * @class
  * @extends Biojs.Protein3D
  *
- * @author <a href="mailto:ftalo@ebi.ac.uk">Francesco Talo'</a>
+ * @author <a href="mailto:ftalo@ebi.ac.uk">Francesco Talo</a>
  * @version 1.0.0
  * @category 3
  * 
