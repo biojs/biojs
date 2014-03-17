@@ -177,14 +177,18 @@ Biojs.wigExplorer = Biojs.extend(
          * instance._updateDraw();
          *
          */
-        _updateDraw: function (newStart, newStop) {
-
+        _updateDraw: function (newStart, newStop, target) {
+            var self = this;
             //recalculate start and stop
             if (newStart && newStop) {
                 this.slider_start += newStart;
                 this.slider_stop += newStop;
             }
 
+            if (target) {
+            } else {
+                target = self.opt.target;
+            }
             if (this.slider_start < this.data_first_start) {
                 if (newStart == newStop) {
                     this.slider_stop += this.data_first_start - this.slider_start;
@@ -200,9 +204,9 @@ Biojs.wigExplorer = Biojs.extend(
                 }
                 this.slider_stop = this.data_last_start;
             }
-
+            //recalculate start and stop
             if ((parseFloat(this.slider_start) < parseFloat(this.slider_stop))) {
-                this.paintWig(this.slider_start, this.slider_stop);
+                this.paintWig(this.slider_start, this.slider_stop, target);
             }
         },
 
@@ -251,14 +255,13 @@ Biojs.wigExplorer = Biojs.extend(
          */
         _init: function () {
             Biojs.wigExplorer.myself = this;
-
+            var self = this;
             var painter_div = jQuery("#" + this.opt.target);
             painter_div.text('');
             painter_div.append(this._withSliderOnly(100));
 
-            painter_div.append('<div id="wigFeaturePainter-holder"></div>');
-
-            var holder = document.getElementById("wigFeaturePainter-holder");
+            painter_div.append('<div id=' + this.opt.target + '_wigFeaturePainter-holder></div>');
+            var holder = document.getElementById(this.opt.target + '_wigFeaturePainter-holder');
             if (!holder) {
                 this.$errorMsg = jQuery('<div id="wigFeaturePainter-errorInit"></div>')
                     .html('There was an unexpected failure, the image cannot be displayed.')
@@ -269,15 +272,17 @@ Biojs.wigExplorer = Biojs.extend(
                     });
                 throw "Error";
             }
+
+
             holder.innerHTML = "";
             holder.style.height = "250px";
             holder.style.width = "700px";
-            var self = this;
-            this.width = $("#wigFeaturePainter-holder").width(),
-                this.height = $("#wigFeaturePainter-holder").height(),
+            this.width = $('#' + self.opt.target + '_wigFeaturePainter-holder').width(),
+                this.height = $('#' + self.opt.target + '_wigFeaturePainter-holder').height(),
                 this.r = self.opt.radius;
 
             self.opt.width = self.opt.width.toString();
+
             if (self.opt.width.indexOf("%") >= 1)
                 self.opt.width = self.opt.width.toString();
             else
@@ -307,6 +312,7 @@ Biojs.wigExplorer = Biojs.extend(
                     var data_split = data.split("\n")
                     var data_len = data_split.length;
                     if (data.indexOf("variableStep") >= 0 || data.indexOf("fixedStep") >= 0) {
+                        self.chrom = []
                         for (var i = 0; i < data_len; i++) {
                             if (data_split[i].indexOf("chrom") >= 0) {
                                 var chr = data_split[i].split(/\s+/)[1].split("=")[1];
@@ -333,16 +339,15 @@ Biojs.wigExplorer = Biojs.extend(
          * @ignore
          */
         _buildReferenceSelector: function () {
-
             var self = this;
 
-            this._headerDiv = jQuery('#selectorMenu');
+            this._headerDiv = jQuery('#' + self.opt.target + '_selectorMenu');
             this._headerDiv.css({
                 'font-family': '"Heveltica Neue", Arial, "sans serif"',
                 'font-size': '14px'
             }).append('Reference: ');
 
-            var selector_html = "<select id='ref_selector'>";
+            var selector_html = "<select id=" + self.opt.target + "ref_selector>";
 
             for (var i = 0; i < this.chrom.length; i++) {
                 selector_html += "<option value='" + this.chrom[i] + "'>" + this.chrom[i] + "</option>"
@@ -353,7 +358,7 @@ Biojs.wigExplorer = Biojs.extend(
 
             this._formatSelector.change(function (e) {
                 self.opt.reference = jQuery(this).val();
-                self.setReference(self.opt.reference)
+                self.setReference(self.opt.reference, self.opt.target)
             });
 
             self.setReference(this._formatSelector.val())
@@ -366,13 +371,14 @@ Biojs.wigExplorer = Biojs.extend(
          * @ignore
          */
         _withSliderOnly: function (sizeX) {
+            var self = this;
             var text =
                 '<table width="' + sizeX + 'px">' +
                     '<tr>' +
                     '<td width="75%">' +
-                    '<div  id="wigFeaturePainter-slider" style="margin-left: 10px;"></div>' +
+                    '<div  id="' + self.opt.target + '_wigFeaturePainter-slider" style="margin-left: 10px;"></div>' +
                     '</td>' +
-                    '<td><div id=selectorMenu> </div>' +
+                    '<td><div id="' + self.opt.target + '_selectorMenu"> </div>' +
                     '</td>' +
                     '</tr>' +
                     '</table>' +
@@ -387,11 +393,12 @@ Biojs.wigExplorer = Biojs.extend(
          */
         _paintSlider: function () {//holder size, left and right margins of the holder, and number of amino acids
             var sequenceLength = 100;//config.sequenceLength;
-            if (!document.getElementById("wigFeaturePainter-slider")) {
+            var self = this;
+            if (!document.getElementById(self.opt.target + "_wigFeaturePainter-slider")) {
                 return;
             }
 
-            var slider_div = jQuery("#wigFeaturePainter-slider");
+            var slider_div = jQuery("#" + self.opt.target + "_wigFeaturePainter-slider");
             slider_div.text('');
             slider_div.append('<label for="wigFeaturePainter-slider-values"></label>');
             slider_div.append('<div type="text" id="wigFeaturePainter-slider-values" style="margin-bottom:5px" />');
@@ -403,10 +410,25 @@ Biojs.wigExplorer = Biojs.extend(
             this.zoomSlider = jQuery('<div id="wigFeaturePainter-slider-bar" style="width:300px"></div>').appendTo(slider_div);
 
 
-            slider_div.html('<div class="ui-button ui-widget ui-corner-all ui-button-text-only" onclick=Biojs.wigExplorer.myself._updateDraw(' + (1 * diff) + ',' + (-1 * diff) + ');><span title="Zoom In" class="ui-button ui-icon ui-icon-zoomin"></span></div>' +
-                '<div class="ui-button ui-widget ui-corner-all ui-button-text-only"  onclick=Biojs.wigExplorer.myself._updateDraw(' + (-1 * diff) + ',' + (1 * diff) + '); ><span title="Zoom Out" class="ui-button ui-icon ui-icon-zoomout"></span></div>' +
-                '<div class="ui-button ui-widget ui-corner-all ui-button-text-only"  onclick=Biojs.wigExplorer.myself._updateDraw(' + (-1 * diff) + ',' + (-1 * diff) + ');><span title="Left" class="ui-button ui-icon ui-icon-arrowthick-1-w"></span></div>' +
-                '<div class="ui-button ui-widget ui-corner-all ui-button-text-only"  onclick=Biojs.wigExplorer.myself._updateDraw(' + (1 * diff) + ',' + (1 * diff) + ');><span title="Right" class="ui-button ui-icon ui-icon-arrowthick-1-e"></span></div>')
+            var updater_html = '<div id = ' + self.opt.dataSet + ' class="ui-button ui-widget ui-corner-all ui-button-text-only zoomin" ><span title="Zoom In" class="ui-button ui-icon ui-icon-zoomin"></span></div>' +
+                '<div id = ' + self.opt.dataSet + ' class="ui-button ui-widget ui-corner-all ui-button-text-only zoomout"  ><span title="Zoom Out" class="ui-button ui-icon ui-icon-zoomout"></span></div>' +
+                '<div id = ' + self.opt.dataSet + ' class="ui-button ui-widget ui-corner-all ui-button-text-only left"  ><span title="Left" class="ui-button ui-icon ui-icon-arrowthick-1-w"></span></div>' +
+                '<div id = ' + self.opt.dataSet + ' class="ui-button ui-widget ui-corner-all ui-button-text-only right"  ><span title="Right" class="ui-button ui-icon ui-icon-arrowthick-1-e"></span></div>';
+
+            jQuery(slider_div).html("")
+            this._updateSelector = jQuery(updater_html).appendTo(slider_div);
+
+            this._updateSelector.click(function (e) {
+                if (jQuery(this).hasClass("left")) {
+                    self._updateDraw(-1 * diff, -1 * diff, self.opt.target);
+                } else if (jQuery(this).hasClass("right")) {
+                    self._updateDraw(diff, diff, self.opt.target);
+                } else if (jQuery(this).hasClass("zoomin")) {
+                    self._updateDraw(diff, -1 * diff, self.opt.target);
+                } else if (jQuery(this).hasClass("zoomout")) {
+                    self._updateDraw(-1 * diff, diff, self.opt.target);
+                }
+            });
         },
 
 
@@ -418,7 +440,6 @@ Biojs.wigExplorer = Biojs.extend(
          *
          */
         setReference: function (ref_chr) {
-
             var self = this;
             var flag = false;
             jQuery.ajax({
@@ -431,7 +452,7 @@ Biojs.wigExplorer = Biojs.extend(
                     var data_split = data.split("\n")
                     var data_len = data_split.length;
                     var span = null;
-                    var ref  = false;
+                    var ref = false;
                     if (data.indexOf("variableStep") >= 0) {
 
                         var data_split = data.split("\n")
@@ -463,7 +484,7 @@ Biojs.wigExplorer = Biojs.extend(
                         self.max = max;
 
                         self.track = wig;
-                        if(ref == false){
+                        if (ref == false) {
                             alert("Selected reference not found")
                         } else if (wig.length > 0) {
                             var start = parseInt(wig[0][0]);//config.requestedStart;
@@ -475,8 +496,6 @@ Biojs.wigExplorer = Biojs.extend(
                             self.data_last_start = stop;
                             self.data_first_start = start;
 
-                            self._paintSlider();
-                            self._updateDraw();
                         }
                         else {
                             alert("No data for selected reference")
@@ -489,7 +508,7 @@ Biojs.wigExplorer = Biojs.extend(
                         var data_len = data_split.length;
                         var start = null;
                         var step = null;
-                        var ref =  false;
+                        var ref = false;
 
                         for (var i = 0; i < data_len; i++) {
                             if (data_split[i].indexOf("chrom") >= 0) {
@@ -524,7 +543,7 @@ Biojs.wigExplorer = Biojs.extend(
                         self.max = max;
                         self.track = wig;
 
-                        if(ref == false){
+                        if (ref == false) {
                             alert("Selected reference not found")
                         } else if (wig.length > 0) {
                             var start = parseInt(wig[0][0]);//config.requestedStart;
@@ -536,8 +555,6 @@ Biojs.wigExplorer = Biojs.extend(
                             self.data_last_start = stop;
                             self.data_first_start = start;
 
-                            self._paintSlider();
-                            self._updateDraw();
                         } else if (start == null || step == null) {
                             alert("Unknown format detected")
                         }
@@ -552,17 +569,20 @@ Biojs.wigExplorer = Biojs.extend(
                 error: function (qXHR, textStatus, errorThrown) {
                     alert(textStatus);
                 }
-            });
+            }).done(function () {
+                    self._paintSlider();
+                    self._updateDraw();
+                });
         },
 
         /**
          * Draws area chart from wig file using D3.js based on the specified positions
          *
          * @example
-         * instance.paintWig(1000,100000)
+         * instance.paintWig(1000,100000,"target-div")
          *
          */
-        paintWig: function (start, end) {
+        paintWig: function (start, end, target) {
             var self = this;
             if (this.track.length > 0) {
                 var color = this.opt.selectionBackgroundColor
@@ -576,15 +596,13 @@ Biojs.wigExplorer = Biojs.extend(
 
                 // filter data if start and end positions are defined
                 if (start && end) {
-                    console.log("before "+start+":"+end)
-                    if(start < self.slider_start){
-                       start = self.slider_start;
+                    if (start < self.slider_start) {
+                        start = self.slider_start;
                     }
-                    if(end > self.slider_stop){
+                    if (end > self.slider_stop) {
                         end = self.slider_stop
                     }
 
-                    console.log("after "+start+":"+end)
 
                     filtered_track = this.track;
                     filtered_track = jQuery.grep(filtered_track, function (element) {
@@ -602,15 +620,14 @@ Biojs.wigExplorer = Biojs.extend(
                 var length = filtered_track.length - 1;
                 if (length > 0) {
 
-                    this._clear();
-
-                    var svg = d3.select("#wigFeaturePainter-holder").append("svg")
+                    this._clear(target);
+                    var svg = d3.select('#' + target + '_wigFeaturePainter-holder').append("svg")
                         .attr("width", this.width + 20)
-                        .attr("height", $("#wigFeaturePainter-holder").height())
+                        .attr("height", $('#' + target + '_wigFeaturePainter-holder').height())
                         .append("g")
                         .attr("transform", "translate(" + left + "," + top + ")");
 
-                    this._container = jQuery("#wigFeaturePainter-holder");
+                    this._container = jQuery('#' + target + '_wigFeaturePainter-holder');
 
                     var d3line2 = d3.svg.line()
                         .x(function (d) {
@@ -753,7 +770,8 @@ Biojs.wigExplorer = Biojs.extend(
                             }
                         });
 
-                    // lines at bottom of diagram to show the positions
+
+// lines at bottom of diagram to show the positions
                     var line = svg.selectAll("line.bottom")
                         .data(filter_track_legend);
 
@@ -809,8 +827,8 @@ Biojs.wigExplorer = Biojs.extend(
          * Private: Clears all divs content.
          * @ignore
          */
-        _clear: function () {
-            jQuery("#wigFeaturePainter-holder").html("");
+        _clear: function (target) {
+            jQuery('#' + target + '_wigFeaturePainter-holder').html("");
         },
 
         /**
