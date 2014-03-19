@@ -1,2 +1,2 @@
 language: java
-mvn compile
+script: mvn compile
