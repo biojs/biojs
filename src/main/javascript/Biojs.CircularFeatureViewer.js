@@ -55,16 +55,10 @@
  *          { "id": 2, "start": 76, "stop": 238, "type": "voluptate" }, 
  *          { "id": 3, "start": 355, "stop": 12, "type": "sit" }, 
  *          { "id": 4, "start": 125, "stop": 206, "type": "et" }, 
- *          { "id": 5, "start": 253, "stop": 136, "type": "proident" }, 
- *          { "id": 6, "start": 208, "stop": 162, "type": "proident" }, 
- *          { "id": 7, "start": 366, "stop": 253, "type": "proident" }, 
- *          { "id": 8, "start": 246, "stop": 253, "type": "velit" }, 
- *          { "id": 9, "start": 31, "stop": 83, "type": "tempor" }, 
- *          { "id": 10, "start": 272, "stop": 179, "type": "eu" }, 
- *          { "id": 11, "start": 107, "stop": 293, "type": "reprehenderit" }, 
- *          { "id": 12, "start": 247, "stop": 397, "type": "laborum" }, 
- *          { "id": 13, "start": 351, "stop": 190, "type": "dolore" }
- *      ]
+ *          { "id": 5, "start": 253, "stop": 136, "type": "proident" }
+ *      ],
+ *      width:715,
+ *      height:505
  * });
  */
 Biojs.CircularFeatureViewer = Biojs.extend (
@@ -97,7 +91,7 @@ Biojs.CircularFeatureViewer = Biojs.extend (
 		 * @eventData {string} type The name of the event.
 		 * @eventData {Object} target annotation.
 		 * @example 
-		 * instance.onAnnotationMouseover(
+		 * myCircularFeatureViewer.onAnnotationMouseover(
 		 *    function( objEvent ) {
 		 *       alert("Annotation: " + objEvent.start + ", " + objEvent.stop );
 		 *    }
@@ -113,7 +107,7 @@ Biojs.CircularFeatureViewer = Biojs.extend (
 		 * @eventData {string} type The name of the event.
 		 * @eventData {Object} target annotation.
 		 * @example 
-		 * instance.onAnnotationMouseout(
+		 * myCircularFeatureViewer.onAnnotationMouseout(
 		 *    function( objEvent ) {
 		 *       alert("Annotation: " + objEvent.start + ", " + objEvent.stop );
 		 *    }
@@ -129,7 +123,7 @@ Biojs.CircularFeatureViewer = Biojs.extend (
 		 * @eventData {string} type The name of the event.
 		 * @eventData {Object} target annotation.
 		 * @example 
-		 * instance.onAnnotationClick(
+		 * myCircularFeatureViewer.onAnnotationClick(
 		 *    function( objEvent ) {
 		 *       alert("Annotation: " + objEvent.start + ", " + objEvent.stop );
 		 *    }
@@ -145,7 +139,7 @@ Biojs.CircularFeatureViewer = Biojs.extend (
 		 * @eventData {string} type The name of the event.
 		 * @eventData {Object} target annotation.
 		 * @example 
-		 * instance.onAnnotationAdded(
+		 * myCircularFeatureViewer.onAnnotationAdded(
 		 *    function( objEvent ) {
 		 *       alert("Annotation: " + objEvent.start + ", " + objEvent.stop );
 		 *    }
@@ -161,7 +155,7 @@ Biojs.CircularFeatureViewer = Biojs.extend (
 		 * @eventData {string} type The name of the event.
 		 * @eventData {Object} target annotation.
 		 * @example 
-		 * instance.onAnnotationRemoved(
+		 * myCircularFeatureViewer.onAnnotationRemoved(
 		 *    function( objEvent ) {
 		 *       alert("Annotation: " + objEvent.start + ", " + objEvent.stop );
 		 *    }
