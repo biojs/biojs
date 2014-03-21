@@ -171,6 +171,8 @@ Biojs.CircularFeatureViewer = Biojs.extend (
     _arc : null, // Object to create semi circles from data
     _seqToRad : null, // Translates a sequence position to radians
     _seqToDeg : null, // Translates a sequence position to degrees
+    _lineFunction : null, // Object to create lines
+    _radius : null, // circle radius
     
     /**
 	 * Rotates all annotations so the desired sequence position is at 12 o'çlock.
@@ -293,15 +295,15 @@ Biojs.CircularFeatureViewer = Biojs.extend (
     _initVariables : function(){
         var self = this;
         
-        var radius = Math.min(self.opt.width, self.opt.height) / 2;
+        self._radius = Math.min(self.opt.width, self.opt.height) / 2;
         var seq = self.opt.sequence;
         
         self._seqToRad = d3.scale.linear().domain([1,seq.length]).range([0,2*Math.PI]);
         self._seqToDeg = d3.scale.linear().domain([1,seq.length]).range([0,360]);
         
         self._arc = d3.svg.arc()
-            .outerRadius(function(d){ return (radius/2) + 12*(d.track) + 10})
-            .innerRadius(function(d){ return (radius/2) + 12*(d.track)})
+            .outerRadius(function(d){ return (self._radius/2) + 12*(d.track) + 10})
+            .innerRadius(function(d){ return (self._radius/2) + 12*(d.track)})
             .startAngle(function(d){
                 return self._seqToRad(d.start);
             })
@@ -332,6 +334,20 @@ Biojs.CircularFeatureViewer = Biojs.extend (
                         .attr('font-family', '"Lucida Console", Monaco, monospace')
                         .attr("transform", "translate(" + self.opt.width / 2 + "," + self.opt.height / 2 + ")")
                         .text(self._getSequenceChunk(1,10));
+        
+        //This is the accessor function we talked about above
+        self._lineFunction = d3.svg.line()
+                            .x(function(d) { return d.x; })
+                            .y(function(d) { return d.y; })
+                            .interpolate("linear");
+        
+        var lineData = [ { "x": self._radius,   "y": self._radius},  { "x": self._radius,  "y": (self._radius/2 + 12*self._tracks.length)}];
+        
+        self._svg.append("path").attr('class','line')
+                    .attr("d", self._lineFunction(lineData))
+                    .attr("stroke", "blue")
+                    .attr("stroke-width", 2)
+                    .attr("fill", "none");
         
     },
     /* 
@@ -375,6 +391,11 @@ Biojs.CircularFeatureViewer = Biojs.extend (
                 .delay(function(d,i) { return i * 50; })
                 .duration(2000)
                 .style('opacity', 0).remove();
+        
+        var lineData = [ { "x": self._radius,   "y": self._radius},  { "x": self._radius,  "y": self._radius/2 - 12*self._tracks.length}];
+        
+        self._svg.selectAll('.line')
+                    .attr("d", self._lineFunction(lineData));
         
     },
     /* 
