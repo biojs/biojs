@@ -1,5 +1,5 @@
 /**
- * This component uses a DASProtein web service that builds the JSON data object used by FatureViewer component.
+ * This component uses a DASProtein web service that builds the JSON data object used by FeatureViewer component.
  * 
  * @class
  * @extends Biojs.FeatureViewer
