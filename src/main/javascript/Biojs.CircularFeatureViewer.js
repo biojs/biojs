@@ -319,6 +319,23 @@ Biojs.CircularFeatureViewer = Biojs.extend (
                         .attr("width", self.opt.width)
                         .attr("height", self.opt.height);
         
+        d3.select("#"+self.opt.target).attr('tabindex',0)
+            .on("keydown", function(d) { 
+                
+                if(d3.event.keyCode === 37){//left arrow
+                    self._rotate = true;
+                    self._rotatefn(1);
+                }else if(d3.event.keyCode === 39){//right arrow
+                    self._rotate = true;
+                    self._rotatefn(-1);
+                }
+            })
+            .on("keyup", function(d) { 
+                if(d3.event.keyCode === 37 || d3.event.keyCode === 39){//left arrow
+                    self._rotate = false;
+                }
+            });
+        
         self._svg.append("g").attr('class','main')
                     .attr("transform", "translate(" + self.opt.width / 2 + "," + self.opt.height / 2 + ") rotate(0)");
                     /*.call(d3.behavior.zoom().on("zoom", function(){
@@ -383,6 +400,8 @@ Biojs.CircularFeatureViewer = Biojs.extend (
                         self._rotate = false;
                     });
         
+        
+        
     },
     /* 
      * Function: Biojs.CircularFeatureViewer._rotatefn
@@ -402,7 +421,7 @@ Biojs.CircularFeatureViewer = Biojs.extend (
             }
             
             angle = angle + direction*oneAmino*speed;
-            element.attr("transform", "translate(" + self.opt.width / 2 + "," + self.opt.height / 2 + ") rotate(" + angle + ")");
+            element.attr("transform", "translate(" + self.opt.width / 2 + "," + self.opt.height / 2 + ") rotate(" + angle%360 + ")");
             
             var pos = (angle >= 0) ? Math.round(angle%360) : 360 + Math.round(angle%360);
             pos = Math.round(self._seqToDeg.invert(pos));
