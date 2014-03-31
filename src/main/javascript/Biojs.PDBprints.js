@@ -78,10 +78,8 @@ Biojs.PDBprints = Biojs.extend (
 			pdbids += self.opt.targets[rapha]['pdbids'][pi]+",";
 		}
 		pdbids = pdbids.replace(/,$/,"");
-
 		jQuery.ajax({
-			url: 'http://www.ebi.ac.uk/pdbe-apps/widgets/pdbprints',
-			data: {'varname':'printsdata', 'pdbid':pdbids},
+			url: 'http://www.ebi.ac.uk/pdbe-apps/widgets/pdbprints?pdbid='+pdbids+"&varname=printsdata",
 			dataType: 'script',
 			crossDomain: 'true',
 			type: 'GET',
