@@ -42,7 +42,7 @@
  * @option {int} stop
  * 	  Position at wich the annotation terminates.
  *
- * @option {string} type
+ * @option {string[] || string} type
  * 	  Annotation type, annotation color is decided uppon the annotation type
  *
  * @example
@@ -50,9 +50,9 @@
  *      target: 'YourOwnDivId',
  *		sequence:'MTAVFRVGLVRLVSRATQSPNLLQAQTNALPAAFQQRCSISGKTMRGGPRVPKAAPYPYKTKKYSVFNAIFDKTSKRFDENSKVICVEGPIAAGKSKFAKELAEELDMEYYPAVDLDLIYINSYGYDMRKLDPQLPPSCRSYDVRNFCLDPSHDLAAQFQIRMYMLRYSQYIDALQHVLSTGQGVVLERSPYSDFVFMEAMFRQGYLSRGARSVYNELRQNTIGELLKPHLVIYLDLPVDAVKKQIKARNVDYEVQSKVFSDAYLSDLEQLYKQQYLKDISTHAELLIYDWTAGGETEVVVEDIERIDFNQFEADIHNKKMLDWRFPLEAEWCEARIKYCHEKPDLMNYFNVPRFDVPELVRSADDGKVWRDVWFNAPGMKYRPGYNADMGDEGLLTKTKIGINQGI',
  *      features:[
- *          { "id": 0, "start": 19, "stop": 305, "type": "voluptate" },
- *          { "id": 1, "start": 143, "stop": 283, "type": "non"},
- *          { "id": 2, "start": 76, "stop": 238, "type": "voluptate" }, 
+ *          { "id": 0, "start": 19, "stop": 305, "type": "voluptate", "color":"green" },
+ *          { "id": 1, "start": 143, "stop": 283, "type": "non", "color":"red"},
+ *          { "id": 2, "start": 76, "stop": 238, "type": "voluptate", "color":"blue" }, 
  *          { "id": 3, "start": 355, "stop": 12, "type": "sit" }, 
  *          { "id": 4, "start": 125, "stop": 206, "type": "et" }, 
  *          { "id": 5, "start": 253, "stop": 136, "type": "proident" }
@@ -173,6 +173,8 @@ Biojs.CircularFeatureViewer = Biojs.extend (
     _seqToDeg : null, // Translates a sequence position to degrees
     _lineFunction : null, // Object to create lines
     _radius : null, // circle radius
+    _rotate : false,
+    _numInParenthesis : /\((-?\d+(\.\d{1,100})?)\)/,
     
     /**
 	 * Rotates all annotations so the desired sequence position is at 12 o'çlock.
@@ -270,7 +272,7 @@ Biojs.CircularFeatureViewer = Biojs.extend (
         }
         
         if(pos + size > seq.length){
-            str = str + seq.slice(pos) + seq.slice(0, (pos + size - length));
+            str = str + seq.slice(pos) + seq.slice(0, (pos + size - seq.length));
         }else{
             str = str + seq.slice(pos, pos + size);
         }
@@ -297,6 +299,7 @@ Biojs.CircularFeatureViewer = Biojs.extend (
         
         self._radius = Math.min(self.opt.width, self.opt.height) / 2;
         var seq = self.opt.sequence;
+        seq = seq.toUpperCase();
         
         self._seqToRad = d3.scale.linear().domain([1,seq.length]).range([0,2*Math.PI]);
         self._seqToDeg = d3.scale.linear().domain([1,seq.length]).range([0,360]);
@@ -317,7 +320,7 @@ Biojs.CircularFeatureViewer = Biojs.extend (
                         .attr("height", self.opt.height);
         
         self._svg.append("g").attr('class','main')
-                    .attr("transform", "translate(" + self.opt.width / 2 + "," + self.opt.height / 2 + ")");
+                    .attr("transform", "translate(" + self.opt.width / 2 + "," + self.opt.height / 2 + ") rotate(0)");
                     /*.call(d3.behavior.zoom().on("zoom", function(){
                         self._svg.selectAll('.main').attr("transform",
                             "translate(" + d3.event.translate + ")"+
@@ -349,6 +352,65 @@ Biojs.CircularFeatureViewer = Biojs.extend (
                     .attr("stroke-width", 2)
                     .attr("fill", "none");
         
+        //Arrows
+        var leftArrowData = [{x:self._radius/2, y:0 },{x:self._radius/2-10, y:10 },{x:self._radius/2-10, y:-10 }];
+        self._svg.append("path").attr('class','arrow').attr('class','left')
+                    .attr("d", self._lineFunction(leftArrowData))
+                    .attr("transform", "translate(" + self.opt.width / 2 + "," + self.opt.height / 2 + ")")
+                    .attr("stroke", "#666666")
+                    .attr("stroke-width", 2)
+                    .attr("fill", "#666666")
+                    .on("mouseover", function () {
+                        self._rotate = true;
+                        self._rotatefn(1);
+                    })
+                    .on("mouseout", function () {
+                        self._rotate = false;
+                    });
+        
+        var leftArrowData = [{x:-self._radius/2, y:0 },{x:-self._radius/2+10, y:10 },{x:-self._radius/2+10, y:-10 }];
+        self._svg.append("path").attr('class','arrow').attr('class','right')
+                    .attr("d", self._lineFunction(leftArrowData))
+                    .attr("transform", "translate(" + self.opt.width / 2 + "," + self.opt.height / 2 + ")")
+                    .attr("stroke", "#666666")
+                    .attr("stroke-width", 2)
+                    .attr("fill", "#666666")
+                    .on("mouseover", function () {
+                        self._rotate = true;
+                        self._rotatefn(-1);
+                    })
+                    .on("mouseout", function () {
+                        self._rotate = false;
+                    });
+        
+    },
+    /* 
+     * Function: Biojs.CircularFeatureViewer._rotatefn
+     * Purpose:  rotates annotations
+     * Returns:  -
+     * Inputs: direction -> {int} direction of the rotation 1 -> clockwise, -1 -> counterclockwise.
+     */
+    _rotatefn : function(direction){
+        
+        var speed = 1, self = this, element = self._svg.selectAll(".main"),
+            oneAmino = self._seqToDeg(2),
+            angle = +element.attr('transform').match(self._numInParenthesis)[1];
+        
+        d3.timer(function() {
+            if(!self._rotate){
+                return true;
+            }
+            
+            angle = angle + direction*oneAmino*speed;
+            element.attr("transform", "translate(" + self.opt.width / 2 + "," + self.opt.height / 2 + ") rotate(" + angle + ")");
+            
+            var pos = (angle >= 0) ? Math.round(angle%360) : 360 + Math.round(angle%360);
+            pos = Math.round(self._seqToDeg.invert(pos));
+            
+            self._svg.selectAll('.txt').transition()
+      .ease('cubic-out')
+      .duration('200').text(self._getSequenceChunk(pos,10));
+        });
     },
     /* 
      * Function: Biojs.CircularFeatureViewer._updateView
@@ -369,7 +431,7 @@ Biojs.CircularFeatureViewer = Biojs.extend (
                     .style("opacity", 0)
                     .style("stroke-width",1)
                     .style("stroke","black")
-                    .style("fill", function(d) { return self._colorScale(d.type) })
+                    .style("fill", function(d) { return d.color || self._colorScale(d.type) })
                     .on("mouseover", function(d) {
                         self.raiseEvent('onAnnotationMouseover', d);
                     })
@@ -392,10 +454,11 @@ Biojs.CircularFeatureViewer = Biojs.extend (
                 .duration(2000)
                 .style('opacity', 0).remove();
         
-        var lineData = [ { "x": self._radius,   "y": self._radius},  { "x": self._radius,  "y": self._radius/2 - 12*self._tracks.length}];
+        var lineData = [ { "x": 0,   "y": 0},  { "x": 0,  "y": - self._radius/2 - 12*self._tracks.length}];
         
         self._svg.selectAll('.line')
-                    .attr("d", self._lineFunction(lineData));
+                    .attr("d", self._lineFunction(lineData))
+                    .attr("transform", "translate(" + self.opt.width / 2 + "," + self.opt.height / 2 + ")");
         
     },
     /* 

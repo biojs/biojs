@@ -20,7 +20,25 @@
             
             window.onload = function() {
 				instance = new Biojs.CircularGenomeFeatureViewer({
-                    features:[]
+                    features:[
+                        {
+                            "id": 0,
+                            "start": 16400,
+                            "stop": 16500,
+                            "type": "D-loop",
+                            "color":"green"
+                        },
+                        {
+                            "id": 1,
+                            "start": 500,
+                            "stop": 700,
+                            "type": "D-loop",
+                            "color":"red"
+                        }
+                    ]
+                });
+                instance.onAnnotationClick(function(ann){
+                    console.log(ann);
                 });
                 /*setTimeout(function(){instance.goTo(66);},3000);
                 setTimeout(function(){instance.goTo(200);},5000);
