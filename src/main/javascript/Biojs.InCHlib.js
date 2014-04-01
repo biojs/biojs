@@ -8,8 +8,8 @@
 * @version 0.1.0
 * @category 1
 * 
-* @requires <a href='http://code.jquery.com/jquery-1.9.1.min.js'>jQuery Core 1.9.1</a>
-* @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jquery/jquery-1.9.1.min.js"></script>
+* @requires <a href='http://code.jquery.com/jquery-2.0.3.min.js'>jQuery Core 2.0.3</a>
+* @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jquery/jquery-2.0.3.min.js"></script>
 * 
 * @requires <a href='http://kineticjs.com/'>KineticJS</a>
 * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/kineticjs/kinetic-v5.0.0.min.js"></script>
