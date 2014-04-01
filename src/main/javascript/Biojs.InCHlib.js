@@ -1,11 +1,11 @@
 /**
-* This component draws an interactive cluster heatmap visualization of hierarchically clustered data using KineticJS library.
+* This component draws an interactive cluster heatmap visualization of hierarchically clustered data using KineticJS library. <a href="http://openscreen.cz/software/inchlib">link</a>
 * 
 * @class
 * @extends Biojs
 * 
 * @author <a href="mailto:ctibor.skuta@img.cas.cz">Ctibor Škuta</a>
-* @version 0.1.0
+* @version 1.0.0
 * @category 1
 * 
 * @requires <a href='http://code.jquery.com/jquery-2.0.3.min.js'>jQuery Core 2.0.3</a>
@@ -28,16 +28,16 @@
 * @option {boolean} [dendrogram=true]
 *   turn on/off the row dendrogram
 
-* @option {string} [font="Trebuchet MS"]
+* @option {string} [font="Trebuchet&nbsp;MS"]
 *   font family
 
-* @option {string} [heatmap_colors=Greens]
+* @option {string} [heatmap_colors="Greens"]
 *   the heatmap color scale
 
 * @option {number} [heatmap_part_width=0.7]
 *   define the heatmap part width from the width of the whole graph
 
-* @option {string} [highlight_colors=Reds]
+* @option {string} [highlight_colors="Reds"]
 *   color scale for highlighted rows
 
 * @option {obejct} [highlighted_rows=[]]
@@ -61,7 +61,7 @@
 * @option {boolean} [metadata=false]
 *   turn on/off the metadata
 
-* @option {string} [metadata_colors=Oranges]
+* @option {string} [metadata_colors="Oranges"]
 *   the metadata color scale
 
 * @option {number} [min_row_height=false]
@@ -85,63 +85,61 @@
 * @option {boolean} [draw_row_ids=false]
 *   draws the row IDs next to the heatmap when there is enough space to visualize them
 
-* @option {boolean} [header_as_heatmap_row = false]
+* @option {boolean} [header_as_heatmap_row=false]
 *   use the heatmap header to draw one special heatmap row at the top (useful as column metadata active/inactive)
 
-* @option {boolean} [header_row_colors = "YlOrB"]
+* @option {string} [header_row_colors="YlOrB"]
 *   color scale when using header as a heatmap row
 
-* @option {function} [row_onclick = function(object_ids, evt){
-            return;
-        }]
+* @option {function} [row_onclick=function(object_ids,&nbsp;evt){return;}]
 *   callback function for click on the heatmap row event
 
-* @option {function} [row_onmouseover = function(object_ids, evt){
+* @option {function} [row_onmouseover=function(object_ids, evt){
             return;
         }]
 *   callback function for mouse over the heatmap row event
 
-* @option {function} [row_onmouseout = function(evt){
+* @option {function} [row_onmouseout=function(evt){
             return;
         }]
 *   callback function for mouse out of the heatmap row event
 
-* @option {function} [dendrogram_node_onclick = function(object_ids, node_id, evt){
+* @option {function} [dendrogram_node_onclick=function(object_ids, node_id, evt){
             return;
         }]
 *   callback function for click on the dendrogram node event
 
-* @option {function} [dendrogram_node_highlight = function(object_ids, node_id, evt){
+* @option {function} [dendrogram_node_highlight=function(object_ids, node_id, evt){
             return;
         }]
 *   callback function for highlight of the dendrogram node event
 
-* @option {function} [dendrogram_node_unhighlight = function(node_id){
+* @option {function} [dendrogram_node_unhighlight=function(node_id){
             return;
         }]
 *   callback function for unhighlight of the dendrogram node event
 
-* @option {function} [heatmap_onmouseout = function(evt){
+* @option {function} [heatmap_onmouseout=function(evt){
             return;
         }]
 *   callback function for mouse out of the heatmap area event
 
-* @option {function} [on_zoom = function(node_id){
+* @option {function} [on_zoom=function(node_id){
             return;
         }]
 *   callback function for click on the zoom icon event
 
-* @option {function} [on_unzoom = function(node_id){
+* @option {function} [on_unzoom=function(node_id){
             return;
         }]
 *   callback function for click on the unzoom icon event
 
-* @option {function} [on_refresh = function(){
+* @option {function} [on_refresh=function(){
             return;
         }]
 *   callback function for click on the refresh icon event
 
-* @option {function} [empty_space_onclick = function(evt){
+* @option {function} [empty_space_onclick=function(evt){
             return;
         }]
 *   callback function for click on the empty (inactive) space in the visualization (e.g., around heatmap)
@@ -1523,7 +1521,7 @@ Biojs.InCHlib = Biojs.extend(
       * @param {object} [row_ids] The array of heatmap row (object) IDs.
       *
       * @example 
-      * instance.highlight_rows(["3", "7", "39", "33"]);
+      * instance.highlight_rows(["CHEMBL7781", "CHEMBL273658", "CHEMBL415309", "CHEMBL267231", "CHEMBL8007", "CHEMBL7987", "CHEMBL7988", "CHEMBL266282", "CHEMBL7655", "CHEMBL7817", "CHEMBL8637", "CHEMBL8639", "CHEMBL8055", "CHEMBL7843", "CHEMBL266488", "CHEMBL8329"]);
       */
 
      highlight_rows: function(row_ids, action){
@@ -1594,7 +1592,7 @@ Biojs.InCHlib = Biojs.extend(
       * @param {string} node_id The ID of particular node in dendrogram.
       *
       * @example 
-      * instance.highlight_cluster("node_1");
+      * instance.highlight_cluster("YourOwnDivId#node@715");
       */
 
     highlight_cluster: function(path_id){
