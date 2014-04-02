@@ -1,5 +1,7 @@
 /**
-* This component draws an interactive cluster heatmap visualization of hierarchically clustered data using KineticJS library. <a href="http://openscreen.cz/software/inchlib">link</a>
+* InCHlib is an interactive JavaScript library which facilitates visualization and exploration by means of the cluster heatmap. InCHlib is a versatile tool, its use is not limited to display only chemical or biological data. 
+* Source code, tutorial, documentation, and example data are freely available from InCHlib native website <a href="http://openscreen.cz/software/inchlib" target=blank>http://openscreen.cz/software/inchlib</a>. 
+* On the native website you can also find a python script called <a href="http://openscreen.cz/software/inchlib/inchlib_clust" target=blank>inchlib_clust</a> which performs data clustering and prepares <a href="http://openscreen.cz/software/inchlib/input_format" target=blank>input data for InCHlib</a>.
 * 
 * @class
 * @extends Biojs
@@ -90,67 +92,14 @@
 
 * @option {string} [header_row_colors="YlOrB"]
 *   color scale when using header as a heatmap row
-
-* @option {function} [row_onclick=function(object_ids,&nbsp;evt){return;}]
-*   callback function for click on the heatmap row event
-
-* @option {function} [row_onmouseover=function(object_ids, evt){
-            return;
-        }]
-*   callback function for mouse over the heatmap row event
-
-* @option {function} [row_onmouseout=function(evt){
-            return;
-        }]
-*   callback function for mouse out of the heatmap row event
-
-* @option {function} [dendrogram_node_onclick=function(object_ids, node_id, evt){
-            return;
-        }]
-*   callback function for click on the dendrogram node event
-
-* @option {function} [dendrogram_node_highlight=function(object_ids, node_id, evt){
-            return;
-        }]
-*   callback function for highlight of the dendrogram node event
-
-* @option {function} [dendrogram_node_unhighlight=function(node_id){
-            return;
-        }]
-*   callback function for unhighlight of the dendrogram node event
-
-* @option {function} [heatmap_onmouseout=function(evt){
-            return;
-        }]
-*   callback function for mouse out of the heatmap area event
-
-* @option {function} [on_zoom=function(node_id){
-            return;
-        }]
-*   callback function for click on the zoom icon event
-
-* @option {function} [on_unzoom=function(node_id){
-            return;
-        }]
-*   callback function for click on the unzoom icon event
-
-* @option {function} [on_refresh=function(){
-            return;
-        }]
-*   callback function for click on the refresh icon event
-
-* @option {function} [empty_space_onclick=function(evt){
-            return;
-        }]
-*   callback function for click on the empty (inactive) space in the visualization (e.g., around heatmap)
-
 * 
 * @example
 *       window.instance = new Biojs.InCHlib({
 *                target : "YourOwnDivId",
 *                metadata: true, 
 *                max_height: 800,
-*                metadata_colors: "RdLrBu",
+*                width: 700,
+*                metadata_colors: "RdLrBu"
 *            });
 *       instance.read_data_from_file("../biojs/data/chembl_gr.json");
 *       instance.draw();
@@ -318,38 +267,40 @@ Biojs.InCHlib = Biojs.extend(
         "draw_row_ids": false,
         "header_as_heatmap_row": false,
         "header_row_colors": "YlOrB",
+    },
 
-        "row_onclick": function(object_ids, evt){
+    events: {
+        row_onclick: function(object_ids, evt){
             return;
         },
-        "row_onmouseover": function(object_ids, evt){
+        row_onmouseover: function(object_ids, evt){
             return;
         },
-        "row_onmouseout": function(evt){
+        row_onmouseout: function(evt){
             return;
         },
-        "dendrogram_node_onclick": function(object_ids, node_id, evt){
+        dendrogram_node_onclick: function(object_ids, node_id, evt){
             return;
         },
-        "dendrogram_node_highlight": function(object_ids, node_id, evt){
+        dendrogram_node_highlight: function(object_ids, node_id, evt){
             return;
         },
-        "dendrogram_node_unhighlight": function(node_id){
+        dendrogram_node_unhighlight: function(node_id){
             return;
         },
-        "heatmap_onmouseout": function(evt){
+        heatmap_onmouseout: function(evt){
             return;
         },
-        "on_zoom": function(node_id){
+        on_zoom: function(node_id){
             return;
         },
-        "on_unzoom": function(node_id){
+        on_unzoom: function(node_id){
             return;
         },
-        "on_refresh": function(){
+        on_refresh: function(){
             return;
         },
-        "empty_space_onclick": function(evt){
+        empty_space_onclick: function(evt){
             return;
         }
     },
@@ -392,15 +343,183 @@ Biojs.InCHlib = Biojs.extend(
     * @name Biojs.InCHlib-eventTypes
     */
 
-    eventTypes: [],
+    eventTypes: [
+    /**
+      * @name Biojs.InCHlib#row_onclick
+      * @event
+      * @param {function} function() callback function for click on the heatmap row event
+      * @eventData {array} array array of object IDs represented by row
+      * @eventData {object} event event object
+
+      * @example 
+      * instance.events.row_onclick = (
+      *    function(object_ids, evt) {
+      *       alert(object_ids);
+      *    }
+      * ); 
+      * 
+      */
+        "row_onclick",
+    /**
+      * @name Biojs.InCHlib#row_onmouseover
+      * @event
+      * @param {function} function() callback function for mouse cursor over the heatmap row event
+      * @eventData {array} array array of object IDs represented by row
+      * @eventData {object} event event object
+
+      * @example 
+      * instance.events.row_onmouseover = (
+      *    function(object_ids, evt) {
+      *       alert(object_ids);
+      *    }
+      * ); 
+      * 
+      */
+        "row_onmouseover",
+    /**
+      * @name Biojs.InCHlib#row_onmouseout
+      * @event
+      * @param {function} function() callback function for mouse cursor out of the heatmap row event
+      * @eventData {object} event event object
+
+      * @example 
+      * instance.events.row_onmouseout = (
+      *    function(evt) {
+      *       alert("now");
+      *    }
+      * ); 
+      * 
+      */
+        "row_onmouseout",
+    /**
+      * @name Biojs.InCHlib#dendrogram_node_onclick
+      * @event
+      * @param {function} function() callback function for mouse cursor out of the heatmap row event
+      * @eventData {array} array array of object IDs represented by the node
+      * @eventData {string} node_id Id of the dendrogram node
+      * @eventData {object} event event object
+
+      * @example 
+      * instance.events.dendrogram_node_onclick = (
+      *    function(object_ids, node_id, evt) {
+      *    alert(node_id + ": " + object_ids.length+" rows");
+      *    }
+      * ); 
+      * 
+      */
+        "dendrogram_node_onclick",
+        /**
+      * @name Biojs.InCHlib#dendrogram_node_highlight
+      * @event
+      * @param {function} function() callback function for the dendrogram node highlight event
+      * @eventData {array} array array of object IDs represented by row
+      * @eventData {string} node_id Id of the dendrogram node
+      * @eventData {object} event event object
+
+      * @example 
+      * instance.events.dendrogram_node_highlight = (
+      *    function(object_ids, node_id, evt) {
+      *       alert(node_id + ": " + object_ids.length+" rows");
+      *    }
+      * ); 
+      * 
+      */
+        "dendrogram_node_highlight",
+      /**
+      * @name Biojs.InCHlib#dendrogram_node_unhighlight
+      * @event
+      * @param {function} function() callback function for the dendrogram node unhighlight event
+      * @eventData {string} node_id Id of the dendrogram node
+
+      * @example 
+      * instance.events.dendrogram_node_unhighlight = (
+      *    function(node_id) {
+      *       alert(node_id);
+      *    }
+      * ); 
+      * 
+      */
+        "dendrogram_node_unhighlight",
+      /**
+      * @name Biojs.InCHlib#heatmap_onmouseout
+      * @event
+      * @param {function} function() callback function for mouse cursor out of hte heatmap area
+      * @eventData {object} event event object
+
+      * @example 
+      * instance.events.heatmap_onmouseout = (
+      *    function(evt) {
+      *       alert("now");
+      *    }
+      * ); 
+      * 
+      */
+        "heatmap_onmouseout",
+      /**
+      * @name Biojs.InCHlib#on_zoom
+      * @event
+      * @param {function} function() callback function for zoom icon click event
+      * @eventData {string} node_id Id of the dendrogram node
+
+      * @example 
+      * instance.events.on_zoom = (
+      *    function(node_id) {
+      *       alert(node_id);
+      *    }
+      * ); 
+      * 
+      */
+        "on_zoom",
+      /**
+      * @name Biojs.InCHlib#on_unzoom
+      * @event
+      * @param {function} function() callback function for unzoom icon click event
+      * @eventData {string} node_id Id of the dendrogram node
+
+      * @example 
+      * instance.events.on_unzoom = (
+      *    function(node_id) {
+      *       alert(node_id);
+      *    }
+      * ); 
+      * 
+      */
+        "on_unzoom",
+      /**
+      * @name Biojs.InCHlib#on_refresh
+      * @event
+      * @param {function} function() callback function for refresh icon click event
+      * @eventData {object} event event object
+      * @example 
+      * instance.events.on_refresh = (
+      *    function() {
+      *       alert("now");
+      *    }
+      * ); 
+      * 
+      */
+        "on_refresh",
+      /**
+      * @name Biojs.InCHlib#empty_space_onclick
+      * @event
+      * @param {function} function() callback function for click on empty(inactive) space in the visualization (e.g., around the heatmap)
+      * @eventData {object} event event object
+
+      * @example 
+      * instance.events.empty_space_onclick = (
+      *    function(evt) {
+      *       alert("now");
+      *    }
+      * ); 
+      * 
+      */
+        "empty_space_onclick",
+    ],
 
     /**
       * Read data from JSON variable.
       * 
       * @param {object} [variable] Clustering in proper JSON format.
-      *
-      * @example 
-      * instance.read_data(json_data);
       */
     read_data: function(json){
         this.data = json;
@@ -413,8 +532,6 @@ Biojs.InCHlib = Biojs.extend(
       * 
       * @param {string} [filename] Path to the JSON data file.
       *
-      * @example 
-      * instance.read_data_from_file("path/to/json/file");
       */
     read_data_from_file: function(json){
         var self = this;
@@ -637,9 +754,6 @@ Biojs.InCHlib = Biojs.extend(
 
     /**
       * Draw already read data (from file/JSON variable).
-      *
-      * @example 
-      * instance.draw();
       */
 
     draw: function(){
@@ -850,7 +964,7 @@ Biojs.InCHlib = Biojs.extend(
 
         this.stage_layer.on("click", function(evt){
             self.unhighlight_cluster();
-            self.opt.empty_space_onclick(evt);
+            self.events.empty_space_onclick(evt);
         });
     },
 
@@ -1043,7 +1157,7 @@ Biojs.InCHlib = Biojs.extend(
         this.heatmap_layer.on("mouseleave", function(evt){
             self.heatmap_overlay.destroyChildren();
             self.heatmap_overlay.draw();
-            self.opt.heatmap_onmouseout(evt);
+            self.events.heatmap_onmouseout(evt);
         });
 
     },
@@ -1188,7 +1302,7 @@ Biojs.InCHlib = Biojs.extend(
                 for(i = 0; i < items.length; i++){
                     item_ids.push(items[i]);
                 }
-                self.opt.row_onclick(item_ids, evt);
+                self.events.row_onclick(item_ids, evt);
             }
         });
     },
@@ -1445,7 +1559,7 @@ Biojs.InCHlib = Biojs.extend(
             });
 
             refresh_overlay.on("click", function(){
-                self._refresh_icon_click(this);
+                self._refresh_icon_click();
             });
 
             refresh_overlay.on("mouseover", function(){
@@ -1592,10 +1706,14 @@ Biojs.InCHlib = Biojs.extend(
       * @param {string} node_id The ID of particular node in dendrogram.
       *
       * @example 
-      * instance.highlight_cluster("YourOwnDivId#node@715");
+      * instance.highlight_cluster("node@715");
       */
 
-    highlight_cluster: function(path_id){
+    highlight_cluster: function(node_id){
+        return this._highlight_cluster(this._prefix(node_id));
+    },
+
+    _highlight_cluster: function(path_id){
 
         var object_ids = [];
     
@@ -1610,7 +1728,7 @@ Biojs.InCHlib = Biojs.extend(
         this._highlight_path(path_id);
         this.dendrogram_overlay_layer.draw();
         object_ids = this._draw_cluster_layer(path_id);
-        this.opt.dendrogram_node_highlight(object_ids, path_id);
+        this.events.dendrogram_node_highlight(object_ids, this._unprefix(path_id));
 
         return object_ids;
     },
@@ -1628,7 +1746,7 @@ Biojs.InCHlib = Biojs.extend(
             this.cluster_layer.draw();
             this.dendrogram_overlay_layer.removeChildren();
             this.dendrogram_overlay_layer.draw();
-            this.opt.dendrogram_node_unhighlight(this.last_highlighted_cluster);
+            this.events.dendrogram_node_unhighlight(this._unprefix(this.last_highlighted_cluster));
             this.last_highlighted_cluster = null;
         }
         return [];
@@ -1745,7 +1863,7 @@ Biojs.InCHlib = Biojs.extend(
 
         this.cluster_layer.on("click", function(evt){
             self.unhighlight_cluster();
-            self.opt.empty_space_onclick(evt);
+            self.events.empty_space_onclick(evt);
         });
 
         return object_ids;
@@ -1768,7 +1886,7 @@ Biojs.InCHlib = Biojs.extend(
             this._draw_heatmap_header();
             this.highlight_rows(this.opt.highlighted_rows);
 
-            this.opt.on_zoom(node_id);
+            this.events.on_zoom(this._unprefix(node_id));
         }
         else{
             return false;
@@ -1932,7 +2050,7 @@ Biojs.InCHlib = Biojs.extend(
         var position = $("#" + this.opt.target).offset();
         var position_top = position.top + 10;
         var position_left = position.left + 50;
-        var symbol = "✖";
+        var symbol = "&#10006";
         var self = this;
 
         if(filter_list.length > 0){
@@ -1946,7 +2064,7 @@ Biojs.InCHlib = Biojs.extend(
             
             for(var attr in self.header){
                 if(self.features[attr] == 1){
-                    symbol = "✔";
+                    symbol = "&#10004";
                 }
                 if(attr < this.dimensions){
                     var text = self.header[attr];
@@ -2086,7 +2204,7 @@ Biojs.InCHlib = Biojs.extend(
                 self._draw_heatmap_header();
 
                 if(highlighted_cluster != null){
-                    self.highlight_cluster(highlighted_cluster);
+                    self._highlight_cluster(highlighted_cluster);
                 }
             });
         }
@@ -2105,7 +2223,7 @@ Biojs.InCHlib = Biojs.extend(
         this._draw_heatmap();
         this._draw_heatmap_header();
         this.highlight_rows(this.opt.highlighted_rows);
-        this.opt.on_refresh();
+        this.events.on_refresh();
     },
 
     _unzoom_icon_click: function(){
@@ -2120,8 +2238,8 @@ Biojs.InCHlib = Biojs.extend(
         else{
             this._refresh_icon_click();
         }
-        this.highlight_cluster(current_node_id);
-        this.opt.on_unzoom();
+        this._highlight_cluster(current_node_id);
+        this.events.on_unzoom(this._unprefix(current_node_id));
     },
 
     _icon_mouseover: function(icon, icon_overlay, layer){
@@ -2155,14 +2273,14 @@ Biojs.InCHlib = Biojs.extend(
         layer.fire("mouseout", evt);
         
         if(path_id != this.last_highlighted_cluster){
-            object_ids = this.highlight_cluster(path_id);
+            object_ids = this._highlight_cluster(path_id);
         }
         else{
             this.unhighlight_cluster();
         }
 
         layer.draw();
-        this.opt.dendrogram_node_onclick(object_ids, path_id, evt);
+        this.events.dendrogram_node_onclick(object_ids, this._unprefix(path_id), evt);
     },
 
     _dendrogram_layers_mouseout: function(evt){
@@ -2339,13 +2457,13 @@ Biojs.InCHlib = Biojs.extend(
             this.row_borders.add(this.objects_ref.row_border.clone({points:[x, y, x+visible*this.pixels_for_dimension, y]}));
             this.heatmap_overlay.add(this.row_borders);
             this.heatmap_overlay.draw();
-            this.opt.row_onmouseover(this.data.nodes[row_id].objects, evt);
+            this.events.row_onmouseover(this.data.nodes[row_id].objects, evt);
         }
     },
 
     _row_mouseleave: function(evt){
         this.row_borders.destroy();
-        this.opt.row_onmouseout(evt);
+        this.events.row_onmouseout(evt);
     },
 
     _draw_col_label: function(evt){
@@ -2375,5 +2493,13 @@ Biojs.InCHlib = Biojs.extend(
         this.heatmap_overlay.moveToTop();
         this.heatmap_overlay.draw();
         return;
+    },
+
+    _unprefix: function(prefixed){
+        return prefixed.split(this.opt.target+"#")[1];
+    },
+
+    _prefix: function(nonprefixed){
+        return this.opt.target + "#" + nonprefixed;
     }
 });
