@@ -2,7 +2,7 @@
 * InCHlib is an interactive JavaScript library which facilitates visualization and exploration by means of the cluster heatmap. InCHlib is a versatile tool, its use is not limited to display only chemical or biological data. 
 * Source code, tutorial, documentation, and example data are freely available from InCHlib native website <a href="http://openscreen.cz/software/inchlib" target=blank>http://openscreen.cz/software/inchlib</a>. 
 * On the native website you can also find a python script called <a href="http://openscreen.cz/software/inchlib/inchlib_clust" target=blank>inchlib_clust</a> which performs data clustering and prepares <a href="http://openscreen.cz/software/inchlib/input_format" target=blank>input data for InCHlib</a>.
-* 
+*
 * @class
 * @extends Biojs
 * 
