@@ -11,9 +11,15 @@
  * 
  * @param {Object} options An object with the options for MmcifViewer component.
  *    
+ * @requires <a href='http://code.jquery.com/jquery-1.4.2.min.js'>jQuery Core 1.4.2</a>
+ * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jquery/jquery-1.4.2.min.js"></script>
+ *
+ * @requires <a href='http://datatables.net'>jQuery data tables 1.9.4</a>
+ * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jquery/dataTables/DataTables-1.9.4/media/js/jquery.dataTables.js"></script>
+ * @dependency <link rel="stylesheet" href="../biojs/dependencies/jquery/dataTables/DataTables-1.9.4/media/css/demo_table.css"></link>
  *    
  * @example 
- * var myview = new Biojs.MmcifViewer({
+ * var instance = new Biojs.MmcifViewer({
  *     divid:"YourOwnDivId",     pdbid:"1cbs"
  * });	
  * 
@@ -104,39 +110,6 @@ Biojs.MmcifViewer = Biojs.extend (
    * @name Biojs.MmcifViewer-eventTypes
    */
   eventTypes : [
-	/**
-	 * @name Biojs.MmcifViewer#onClick
-	 * @event
-	 * @param {function} actionPerformed A function which receives an {@link Biojs.Event} object as argument.
-	 * @eventData {Object} source The component which did triggered the event.
-	 * @eventData {string} type The name of the event.
-	 * @eventData {int} selected Selected character.
-	 * @example 
-	 * instance.onClick(
-	 *    function( objEvent ) {
-	 *       alert("The character " + objEvent.selected + " was clicked.");
-	 *    }
-	 * ); 
-	 * 
-	 * */
-	 "onClick",
-	 
-	/**
-	 * @name Biojs.MmcifViewer#onHelloSelected
-	 * @event
-	 * @param {function} actionPerformed A function which receives an {@link Biojs.Event} object as argument.
-	 * @eventData {Object} source The component which did triggered the event.
-	 * @eventData {string} type The name of the event.
-	 * @eventData {int} textSelected Selected text, will be 'Hello' obviously.
-	 * @example 
-	 * instance.onHelloSelected(
-	 *    function( objEvent ) {
-	 *       alert("The word " + objEvent.textSelected + " was selected.");
-	 *    }
-	 * ); 
-	 * 
-	 * */
-     "onHelloSelected"      
   ] 
 });
 
