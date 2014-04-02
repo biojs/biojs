@@ -5,11 +5,15 @@
     <title>Mmcif Viewer - Test</title>
     <!--JQuery LIb and CSS -->
     <script src="../../main/resources/dependencies/jquery/jquery-1.4.2.min.js" type="text/javascript"></script>
-    <script src="../../main/resources/dependencies/jquery.dataTables.js" type="text/javascript"></script>
     <script type="text/javascript">
         jQuery.noConflict();
     </script>
-    <link rel="stylesheet" href="../../main/resources/dependencies/jquery/datatables.css"/>
+
+
+    <link rel="stylesheet" href="../../main/resources/dependencies/jquery/dataTables/DataTables-1.9.4/media/css/demo_table.css"/>
+    <link rel="stylesheet" href="../../main/resources/dependencies/jquery/dataTables/DataTables-1.9.4/media/css/demo_page.css"/>
+    <script src="../../main/resources/dependencies/jquery/dataTables/DataTables-1.9.4/media/js/jquery.dataTables.js" type="text/javascript"></script>
+
     <!--END JQuery LIb and CSS -->
 
     <!-- BIOJS LIB and CSS -->
@@ -23,9 +27,9 @@
     </script>
 </head>
 <body onload="mytest();">
-	!!!UNDER DEVELOPMENT!!!<br>
-	This is a PDBe widget for tabular view of mmcif files.<br>
-	The mmcif parser used in backend is by Glen.<hr>
+	This is a in-development PDBe widget for a tabular view of mmcif files.<br>
+	The mmcif parser used in backend is developed by Glen van Ginkel at PDBe.<hr>
+	The tables shown below are for PDB entry 1cbs.<hr>
     <div id="parentdiv"></div>
 </body>
 </html>

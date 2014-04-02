@@ -31,13 +31,15 @@ Biojs.MmcifViewer = Biojs.extend (
   
 	constructor: function (options) {
 		var self = this;
+		self.mmcif_url = 'http://puck.ebi.ac.uk:4000/mmcif';
+		self.mmcif_url = 'http://wwwdev.ebi.ac.uk/pdbe/widgets/topology'; // temporary entry to mmcif parsing backend
 		// make the top table with all categories listed
 		jQuery("#"+options.divid).html( '<table cellpadding="0" cellspacing="0" border="0" class="display" id="catlistTable"></table><br><br><hr><br><br> <table cellpadding="0" cellspacing="0" border="0" class="display" id="categoryTable"></table><br>' );
 		self.pdbid = options.pdbid;
 		self.catable = null;
 		jQuery.ajax({
-			url: 'http://puck.ebi.ac.uk:4000/mmcif/'+self.pdbid+'/categories',
-			data: {'varname':'catlist'},
+			url: self.mmcif_url,
+			data: {'varname':'catlist', 'pdbid':self.pdbid, 'mmcif_data':"yes", "categories":1},
 			dataType: 'script',
 			crossDomain: 'true',
 			type: 'GET',
@@ -65,8 +67,8 @@ Biojs.MmcifViewer = Biojs.extend (
 		var self = this;
 		console.log( 'Start showing category '+catname );
 		jQuery.ajax({
-			url: 'http://puck.ebi.ac.uk:4000/mmcif/'+self.pdbid+'/'+catname,
-			data: {'varname':'catinfo'},
+			url: self.mmcif_url,
+			data: {'varname':'catinfo', "pdbid":self.pdbid, "category":catname, 'mmcif_data':"yes", "categoryData":1},
 			dataType: 'script',
 			crossDomain: 'true',
 			type: 'GET',
