@@ -1,19 +1,52 @@
 /**
-* InCHlib is an interactive JavaScript library which facilitates visualization and exploration by means of the cluster heatmap. InCHlib is a versatile tool, its use is not limited to display only chemical or biological data. 
-* Source code, tutorial, documentation, and example data are freely available from InCHlib native website <a href="http://openscreen.cz/software/inchlib" target=blank>http://openscreen.cz/software/inchlib</a>. 
-* On the native website you can also find a python script called <a href="http://openscreen.cz/software/inchlib/inchlib_clust" target=blank>inchlib_clust</a> which performs data clustering and prepares <a href="http://openscreen.cz/software/inchlib/input_format" target=blank>input data for InCHlib</a>.
+* InCHlib is an interactive JavaScript library which facilitates data
+* visualization and exploration by means of a cluster heatmap. InCHlib
+* is a versatile tool, and its use is not limited only to chemical or
+* biological data. Source code, tutorial, documentation, and example
+* data are freely available from InCHlib website <a
+* href="http://openscreen.cz/software/inchlib"
+* target=blank>http://openscreen.cz/software/inchlib</a>. At the
+* website, you can also find a Python script <a
+* href="http://openscreen.cz/software/inchlib/inchlib_clust"
+* target=blank>inchlib_clust</a> which performs data clustering and
+* prepares <a href="http://openscreen.cz/software/inchlib/input_format"
+* target=blank>input data for InCHlib</a>.
 *
 * @class
 * @extends Biojs
 * 
 * @author <a href="mailto:ctibor.skuta@img.cas.cz">Ctibor Škuta</a>
+* @author <a href="mailto:petr.bartunek@img.cas.cz">Petr Bartůněk</a>
+* @author <a href="mailto:svozild@vscht.cz">Daniel Svozil</a>
 * @version 1.0.0
 * @category 1
+* @license InCHlib - Interactive Cluster Heatmap Library http://openscreen.cz/software/inchlib Copyright 2014, Ctibor Škuta, Petr Bartůněk, Daniel Svozil Licensed under the MIT license.
 * 
+* Permission is hereby granted, free of charge, to any person
+* obtaining a copy of this software and associated documentation
+* files (the "Software"), to deal in the Software without
+* restriction, including without limitation the rights to use,
+* copy, modify, merge, publish, distribute, sublicense, and/or sell
+* copies of the Software, and to permit persons to whom the
+* Software is furnished to do so, subject to the following
+* conditions:
+* 
+* The above copyright notice and this permission notice shall be
+* included in all copies or substantial portions of the Software.
+* 
+* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+* EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+* OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+* NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+* HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+* WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+* FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+* OTHER DEALINGS IN THE SOFTWARE.
+*
 * @requires <a href='http://code.jquery.com/jquery-2.0.3.min.js'>jQuery Core 2.0.3</a>
 * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jquery/jquery-2.0.3.min.js"></script>
 * 
-* @requires <a href='http://kineticjs.com/'>KineticJS</a>
+* @requires <a href='http://kineticjs.com/'>KineticJS 5.0.0</a>
 * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/kineticjs/kinetic-v5.0.0.min.js"></script>
 *
 * @param {Object} options An object with the options for the InCHlib component.
@@ -240,7 +273,7 @@ Biojs.InCHlib = Biojs.extend(
 
     /**
     * Default values for the options
-    * @name Biojs.InCHlib-opt
+    * @name Biojs.InCHlib#opt
     */
     opt: {
         "target" : "YourOwnDivId",
@@ -269,6 +302,10 @@ Biojs.InCHlib = Biojs.extend(
         "header_row_colors": "YlOrB",
     },
 
+    /**
+    * Default function definitions for the InCHlib events
+    * @name Biojs.InCHlib#events
+    */
     events: {
         row_onclick: function(object_ids, evt){
             return;
@@ -305,6 +342,10 @@ Biojs.InCHlib = Biojs.extend(
         }
     },
 
+    /**
+    * Default color scales
+    * @name Biojs.InCHlib#colors
+    */
     colors: {
         "YlGn": {"start": {"r":255, "g": 255, "b": 204}, "end": {"r": 35, "g": 132, "b": 67}},
         "GnBu": {"start": {"r":240, "g": 249, "b": 232}, "end": {"r": 43, "g": 140, "b": 190}},
@@ -1547,7 +1588,8 @@ Biojs.InCHlib = Biojs.extend(
             this.navigation_layer.add(back_overlay);
 
             back_overlay.on("click", function(){
-                self._unzoom_icon_click(this);
+                self.events.on_unzoom(self._unprefix(self.zoomed_clusters[self.zoomed_clusters.length-1]));
+                self._unzoom_icon_click();
             });
 
             back_overlay.on("mouseover", function(){
@@ -1560,6 +1602,7 @@ Biojs.InCHlib = Biojs.extend(
 
             refresh_overlay.on("click", function(){
                 self._refresh_icon_click();
+                self.events.on_refresh();
             });
 
             refresh_overlay.on("mouseover", function(){
@@ -1638,16 +1681,17 @@ Biojs.InCHlib = Biojs.extend(
       * instance.highlight_rows(["CHEMBL7781", "CHEMBL273658", "CHEMBL415309", "CHEMBL267231", "CHEMBL8007", "CHEMBL7987", "CHEMBL7988", "CHEMBL266282", "CHEMBL7655", "CHEMBL7817", "CHEMBL8637", "CHEMBL8639", "CHEMBL8055", "CHEMBL7843", "CHEMBL266488", "CHEMBL8329"]);
       */
 
-     highlight_rows: function(row_ids, action){
+     highlight_rows: function(row_ids){
         var i, row, row_id;
 
-        if(action == "append"){
-            this.opt.highlighted_rows.push.apply(this.opt.highlighted_rows, row_ids);
-        }
-        else{
-            this.opt.highlighted_rows = row_ids;
-            this.highlighted_rows_layer.destroyChildren();
-        }
+        // if(action == "append"){
+        //     this.opt.highlighted_rows.push.apply(this.opt.highlighted_rows, row_ids);
+        // }
+        // else{
+        // }
+
+        this.opt.highlighted_rows = row_ids;
+        this.highlighted_rows_layer.destroyChildren();
 
         var original_colors = this.opt.heatmap_colors;
         var original_metadata_colors = this.opt.metadata_colors;
@@ -2112,11 +2156,11 @@ Biojs.InCHlib = Biojs.extend(
                 "opacity":"0.7",
             });
 
-            draw_element_overlay();
+            _draw_element_overlay();
             filter_features_element.toTo
             filter_features_element.fadeIn("slow");
 
-            function draw_element_overlay(){
+            function _draw_element_overlay(){
                 var target_element = $("#" + self.opt.target);
                 var overlay = $("<div id='dendrogram_overlay'></div>");
 
@@ -2223,7 +2267,6 @@ Biojs.InCHlib = Biojs.extend(
         this._draw_heatmap();
         this._draw_heatmap_header();
         this.highlight_rows(this.opt.highlighted_rows);
-        this.events.on_refresh();
     },
 
     _unzoom_icon_click: function(){
@@ -2239,7 +2282,6 @@ Biojs.InCHlib = Biojs.extend(
             this._refresh_icon_click();
         }
         this._highlight_cluster(current_node_id);
-        this.events.on_unzoom(this._unprefix(current_node_id));
     },
 
     _icon_mouseover: function(icon, icon_overlay, layer){
