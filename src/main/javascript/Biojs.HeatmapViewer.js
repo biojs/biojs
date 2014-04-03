@@ -66,13 +66,13 @@
  *
  * @option {Onject} [user_defined_config={colorLow: 'blue', colorMed: 'white', colorHigh: 'red'}]
  *     Configuration options for the component
- *     
+ *
  * @option {Onject} [show_zoom_panel=true]
  *      Display the zoom panel. default: true
- *      
+ *
  * @option {Onject} [showScale=true]
  *      Display the scale object. default: true
- *      
+ *
  * @example
  * var painter = new Biojs.HeatmapViewer({
  *						jsonData:
@@ -104,7 +104,10 @@
  *						user_defined_config: {
  *							colorLow: 'blue',
  *							colorMed: 'white',
- *							colorHigh: 'red'
+ *							colorHigh: 'red',
+ *							scoreLow: 10,
+ *							scoreMid: 15,
+ *							scoreHigh: 20
  *						},
  *						target: 'YourOwnDivId'
  *				});
@@ -138,7 +141,7 @@ Biojs.HeatmapViewer = Biojs.extend(
 		colorMed: 'white',
 		colorHigh: 'red',
 		scoreLow: -100,
-		scoreMed: 0,
+		scoreMid: 0,
 		scoreHigh: 100,
 		offset: 0,
 		x_axis: [],
@@ -200,7 +203,7 @@ Biojs.HeatmapViewer = Biojs.extend(
        <eventData>) for triggering an event from this component. Where,
        <eventName> is a string (defined in eventTypes) and <eventData> is
        an object which should be passed to the registered listeners.
-       
+
        Define your event names following the syntax:
          “<eventName1>”,
          “<eventName2>”,
@@ -287,7 +290,7 @@ Biojs.HeatmapViewer = Biojs.extend(
 			g.append("text")
 				.attr("y", -5)
 				.attr("x", -15)
-				.text(-100)
+				.text(scoreLow)
 				.attr("transform", "translate(0, 0 )");
 
 			var midPt = data_array.length / 2;
@@ -295,14 +298,13 @@ Biojs.HeatmapViewer = Biojs.extend(
 				.attr("class", "caption")
 				.attr("y", -5)
 				.attr("x", midPt - 2)
-				.text(0);
+				.text(scoreMid);
 			var maxPt = data_array.length;
-
 			g.append("text")
 				.attr("class", "caption")
 				.attr("y", -5)
 				.attr("x", maxPt - 2)
-				.text(100);
+				.text(scoreHigh);
 		}
 		return my;
 	}(jQuery)),
@@ -357,7 +359,7 @@ Biojs.HeatmapViewer = Biojs.extend(
 		getData = function(argument) {
 			return jsonData;
 		}
-	
+
 		var draw_axis = function() {
 			var d, i;
 			var font_size = Math.min((config.dimensions.cell_width - 10), max_font_size);
@@ -387,7 +389,7 @@ Biojs.HeatmapViewer = Biojs.extend(
 				return -5;
 			});
 
-			// TODO rework positioning 
+			// TODO rework positioning
 			svg.selectAll("y_axis").data(config.y_axis).enter().append("text").style("font-size", font_size).text(function(d) {
 				return d;
 			}).attr("x", function(d) {
@@ -420,7 +422,7 @@ Biojs.HeatmapViewer = Biojs.extend(
 
 
 			var colorScale = d3.scale.linear()
-				.domain([config.scoreLow, config.scoreMed, config.scoreHigh])
+				.domain([config.scoreLow, config.scoreMid, config.scoreHigh])
 				.range([config.colorLow, config.colorMed, config.colorHigh]);
 
 
@@ -454,7 +456,7 @@ Biojs.HeatmapViewer = Biojs.extend(
 	}(jQuery)),
 	/**
 	 * Private: renders a sliding frame on top of main matrix to show zoomed in area
-	 * @param  {Object} _config viewer's configuration 
+	 * @param  {Object} _config viewer's configuration
 	 * @ignore
 	 */
 	_show_sliding_window: function(_config) {
@@ -530,7 +532,7 @@ Biojs.HeatmapViewer = Biojs.extend(
 				colorMid: this.viewer_config.colorMed,
 				colorHigh: this.viewer_config.colorHigh,
 				scoreLow: this.viewer_config.scoreLow,
-				scoreMid: this.viewer_config.scoreMed,
+				scoreMid: this.viewer_config.scoreMid,
 				scoreHigh: this.viewer_config.scoreHigh,
 				target: this._SCALE_DIV
 
@@ -563,10 +565,11 @@ Biojs.HeatmapViewer = Biojs.extend(
 		var tmpCfg = this.viewer_config;
 
 		// read in user defined _config
-		if (this.opt.user_defined_config != 'undefined') {
+		if (this.opt.user_defined_config != undefined) {
 			var _tmpUserCfg = this.opt.user_defined_config;
-			['colorLow', 'colorHigh', 'colorMed'].forEach(function(entry) {
-				if (tmpCfg[entry])
+			['colorLow', 'colorHigh', 'colorMed', 'scoreLow', 'scoreMid', 'scoreHigh'].forEach(function(entry) {
+                //Override the keys that exist in User Config Object
+				if (entry in _tmpUserCfg)
 					tmpCfg[entry] = _tmpUserCfg[entry];
 			});
 		}
@@ -583,7 +586,7 @@ Biojs.HeatmapViewer = Biojs.extend(
 	_drawZoomDiv: function(d) {
 		var start = 0;
 
-		if (typeof d !== 'undefined')
+		if (typeof d !== undefined)
 			start = Math.floor(d.x / this.viewer_config.main_heatmap.orig_cell_width);
 		var end = start + this.viewer_config.slider.increments;
 		this.viewer_config.offset = start;
@@ -616,7 +619,7 @@ Biojs.HeatmapViewer = Biojs.extend(
 		var $hmDiv = jQuery("#" + this.target);
 		dimensions.canvas_width = $hmDiv.width();
 		if (this._origData) {
-			if (typeof this.opt.jsonData != 'undefined') {
+			if (typeof this.opt.jsonData != undefined) {
 				jsonData = this._origData.slice(rangeObj.start * 20, rangeObj.end * 20);
 				tmpStart = rangeObj.start;
 			}
