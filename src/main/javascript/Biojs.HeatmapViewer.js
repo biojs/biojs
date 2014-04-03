@@ -104,7 +104,10 @@
  *						user_defined_config: {
  *							colorLow: 'blue',
  *							colorMed: 'white',
- *							colorHigh: 'red'
+ *							colorHigh: 'red',
+ *							scoreLow: 10,
+ *							scoreMid: 15,
+ *							scoreHigh: 20
  *						},
  *						target: 'YourOwnDivId'
  *				});
@@ -138,7 +141,7 @@ Biojs.HeatmapViewer = Biojs.extend(
 		colorMed: 'white',
 		colorHigh: 'red',
 		scoreLow: -100,
-		scoreMed: 0,
+		scoreMid: 0,
 		scoreHigh: 100,
 		offset: 0,
 		x_axis: [],
@@ -297,7 +300,6 @@ Biojs.HeatmapViewer = Biojs.extend(
 				.attr("x", midPt - 2)
 				.text(scoreMid);
 			var maxPt = data_array.length;
-
 			g.append("text")
 				.attr("class", "caption")
 				.attr("y", -5)
@@ -420,7 +422,7 @@ Biojs.HeatmapViewer = Biojs.extend(
 
 
 			var colorScale = d3.scale.linear()
-				.domain([config.scoreLow, config.scoreMed, config.scoreHigh])
+				.domain([config.scoreLow, config.scoreMid, config.scoreHigh])
 				.range([config.colorLow, config.colorMed, config.colorHigh]);
 
 
@@ -530,7 +532,7 @@ Biojs.HeatmapViewer = Biojs.extend(
 				colorMid: this.viewer_config.colorMed,
 				colorHigh: this.viewer_config.colorHigh,
 				scoreLow: this.viewer_config.scoreLow,
-				scoreMid: this.viewer_config.scoreMed,
+				scoreMid: this.viewer_config.scoreMid,
 				scoreHigh: this.viewer_config.scoreHigh,
 				target: this._SCALE_DIV
 
@@ -563,10 +565,11 @@ Biojs.HeatmapViewer = Biojs.extend(
 		var tmpCfg = this.viewer_config;
 
 		// read in user defined _config
-		if (this.opt.user_defined_config != 'undefined') {
+		if (this.opt.user_defined_config != undefined) {
 			var _tmpUserCfg = this.opt.user_defined_config;
-			['colorLow', 'colorHigh', 'colorMed'].forEach(function(entry) {
-				if (tmpCfg[entry])
+			['colorLow', 'colorHigh', 'colorMed', 'scoreLow', 'scoreMid', 'scoreHigh'].forEach(function(entry) {
+                //Override the keys that exist in User Config Object
+				if (entry in _tmpUserCfg)
 					tmpCfg[entry] = _tmpUserCfg[entry];
 			});
 		}
@@ -583,7 +586,7 @@ Biojs.HeatmapViewer = Biojs.extend(
 	_drawZoomDiv: function(d) {
 		var start = 0;
 
-		if (typeof d !== 'undefined')
+		if (typeof d !== undefined)
 			start = Math.floor(d.x / this.viewer_config.main_heatmap.orig_cell_width);
 		var end = start + this.viewer_config.slider.increments;
 		this.viewer_config.offset = start;
@@ -616,7 +619,7 @@ Biojs.HeatmapViewer = Biojs.extend(
 		var $hmDiv = jQuery("#" + this.target);
 		dimensions.canvas_width = $hmDiv.width();
 		if (this._origData) {
-			if (typeof this.opt.jsonData != 'undefined') {
+			if (typeof this.opt.jsonData != undefined) {
 				jsonData = this._origData.slice(rangeObj.start * 20, rangeObj.end * 20);
 				tmpStart = rangeObj.start;
 			}
