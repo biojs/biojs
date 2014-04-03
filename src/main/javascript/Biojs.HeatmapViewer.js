@@ -66,13 +66,13 @@
  *
  * @option {Onject} [user_defined_config={colorLow: 'blue', colorMed: 'white', colorHigh: 'red'}]
  *     Configuration options for the component
- *     
+ *
  * @option {Onject} [show_zoom_panel=true]
  *      Display the zoom panel. default: true
- *      
+ *
  * @option {Onject} [showScale=true]
  *      Display the scale object. default: true
- *      
+ *
  * @example
  * var painter = new Biojs.HeatmapViewer({
  *						jsonData:
@@ -200,7 +200,7 @@ Biojs.HeatmapViewer = Biojs.extend(
        <eventData>) for triggering an event from this component. Where,
        <eventName> is a string (defined in eventTypes) and <eventData> is
        an object which should be passed to the registered listeners.
-       
+
        Define your event names following the syntax:
          “<eventName1>”,
          “<eventName2>”,
@@ -287,7 +287,7 @@ Biojs.HeatmapViewer = Biojs.extend(
 			g.append("text")
 				.attr("y", -5)
 				.attr("x", -15)
-				.text(-100)
+				.text(scoreLow)
 				.attr("transform", "translate(0, 0 )");
 
 			var midPt = data_array.length / 2;
@@ -295,14 +295,14 @@ Biojs.HeatmapViewer = Biojs.extend(
 				.attr("class", "caption")
 				.attr("y", -5)
 				.attr("x", midPt - 2)
-				.text(0);
+				.text(scoreMid);
 			var maxPt = data_array.length;
 
 			g.append("text")
 				.attr("class", "caption")
 				.attr("y", -5)
 				.attr("x", maxPt - 2)
-				.text(100);
+				.text(scoreHigh);
 		}
 		return my;
 	}(jQuery)),
@@ -357,7 +357,7 @@ Biojs.HeatmapViewer = Biojs.extend(
 		getData = function(argument) {
 			return jsonData;
 		}
-	
+
 		var draw_axis = function() {
 			var d, i;
 			var font_size = Math.min((config.dimensions.cell_width - 10), max_font_size);
@@ -387,7 +387,7 @@ Biojs.HeatmapViewer = Biojs.extend(
 				return -5;
 			});
 
-			// TODO rework positioning 
+			// TODO rework positioning
 			svg.selectAll("y_axis").data(config.y_axis).enter().append("text").style("font-size", font_size).text(function(d) {
 				return d;
 			}).attr("x", function(d) {
@@ -454,7 +454,7 @@ Biojs.HeatmapViewer = Biojs.extend(
 	}(jQuery)),
 	/**
 	 * Private: renders a sliding frame on top of main matrix to show zoomed in area
-	 * @param  {Object} _config viewer's configuration 
+	 * @param  {Object} _config viewer's configuration
 	 * @ignore
 	 */
 	_show_sliding_window: function(_config) {
