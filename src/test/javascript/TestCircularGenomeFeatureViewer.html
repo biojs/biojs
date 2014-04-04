@@ -1,0 +1,53 @@
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+		<title>Test Circular Genome Feature Viewer</title>
+		
+		<!-- Underscore -->
+         <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore-min.js"  language="JavaScript" type="text/javascript"></script>
+        <!-- D3 -->
+        <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.4.1/d3.min.js" language="JavaScript" type="text/javascript"></script>
+        
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    
+		<!-- BIOJS LIB and CSS -->
+		<script language="JavaScript" type="text/javascript" src="../../main/javascript/Biojs.js"></script>
+		<script language="JavaScript" type="text/javascript" src="../../main/javascript/Biojs.CircularFeatureViewer.js"></script>
+        <script language="JavaScript" type="text/javascript" src="../../main/javascript/Biojs.CircularGenomeFeatureViewer.js"></script>
+        
+        
+		<script language="JavaScript" type="text/javascript">
+            
+            window.onload = function() {
+				instance = new Biojs.CircularGenomeFeatureViewer({
+                    features:[
+                        {
+                            "id": 0,
+                            "start": 16400,
+                            "stop": 16500,
+                            "type": "D-loop",
+                            "color":"green"
+                        },
+                        {
+                            "id": 1,
+                            "start": 500,
+                            "stop": 700,
+                            "type": "D-loop",
+                            "color":"red"
+                        }
+                    ]
+                });
+                instance.onAnnotationClick(function(ann){
+                    console.log(ann);
+                });
+                /*setTimeout(function(){instance.goTo(66);},3000);
+                setTimeout(function(){instance.goTo(200);},5000);
+                setTimeout(function(){instance.goTo(1);},7000);
+                setTimeout(function(){instance.removeAnnotation(0);},2000);*/
+			};
+		</script>
+	</head>
+	<body>
+		<div id="YourOwnDivId"></div>
+	</body>
+</html>

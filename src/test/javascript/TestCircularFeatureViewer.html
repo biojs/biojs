@@ -1,0 +1,131 @@
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+		<title>Test Circular Feature Viewer</title>
+		
+		<!-- Underscore -->
+         <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore-min.js"  language="JavaScript" type="text/javascript"></script>
+        <!-- D3 -->
+        <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.4.1/d3.min.js" language="JavaScript" type="text/javascript"></script>
+    
+		<!-- BIOJS LIB and CSS -->
+		<script language="JavaScript" type="text/javascript" src="../../main/javascript/Biojs.js"></script>
+		<script language="JavaScript" type="text/javascript" src="../../main/javascript/Biojs.CircularFeatureViewer.js"></script>
+        
+        
+		<script language="JavaScript" type="text/javascript">
+            
+            window.onload = function() {
+				instance = new Biojs.CircularFeatureViewer({
+                    sequence:'MTAVFRVGLVRLVSRATQSPNLLQAQTNALPAAFQQRCSISGKTMRGGPRVPKAAPYPYKTKKYSVFNAIFDKTSKRFDENSKVICVEGPIAAGKSKFAKELAEELDMEYYPAVDLDLIYINSYGYDMRKLDPQLPPSCRSYDVRNFCLDPSHDLAAQFQIRMYMLRYSQYIDALQHVLSTGQGVVLERSPYSDFVFMEAMFRQGYLSRGARSVYNELRQNTIGELLKPHLVIYLDLPVDAVKKQIKARNVDYEVQSKVFSDAYLSDLEQLYKQQYLKDISTHAELLIYDWTAGGETEVVVEDIERIDFNQFEADIHNKKMLDWRFPLEAEWCEARIKYCHEKPDLMNYFNVPRFDVPELVRSADDGKVWRDVWFNAPGMKYRPGYNADMGDEGLLTKTKIGINQGI',
+                    features:[
+    {
+        "id": 0,
+        "start": 19,
+        "stop": 305,
+        "type": "voluptate",
+        "color":"green"
+    },
+    {
+        "id": 1,
+        "start": 143,
+        "stop": 283,
+        "type": "non"
+    },
+    {
+        "id": 2,
+        "start": 76,
+        "stop": 238,
+        "type": "voluptate"
+    },
+    {
+        "id": 3,
+        "start": 355,
+        "stop": 12,
+        "type": "sit"
+    },
+    {
+        "id": 4,
+        "start": 125,
+        "stop": 206,
+        "type": "et"
+    },
+    {
+        "id": 5,
+        "start": 253,
+        "stop": 136,
+        "type": "proident"
+    },
+    {
+        "id": 6,
+        "start": 208,
+        "stop": 162,
+        "type": "proident"
+    },
+    {
+        "id": 7,
+        "start": 366,
+        "stop": 253,
+        "type": "proident"
+    },
+    {
+        "id": 8,
+        "start": 246,
+        "stop": 253,
+        "type": "velit"
+    },
+    {
+        "id": 9,
+        "start": 31,
+        "stop": 83,
+        "type": "tempor"
+    },
+    {
+        "id": 10,
+        "start": 272,
+        "stop": 179,
+        "type": "eu"
+    },
+    {
+        "id": 11,
+        "start": 107,
+        "stop": 293,
+        "type": "reprehenderit"
+    },
+    {
+        "id": 12,
+        "start": 247,
+        "stop": 397,
+        "type": "laborum"
+    },
+    {
+        "id": 13,
+        "start": 351,
+        "stop": 190,
+        "type": "dolore"
+    },
+    {
+        "id": 14,
+        "start": 160,
+        "stop": 214,
+        "type": "consequat"
+    },
+    {
+        "id": 15,
+        "start": 202,
+        "stop": 207,
+        "type": "et"
+    }
+]
+                });
+                //setTimeout(function(){instance.goTo(66);},3000);
+                //setTimeout(function(){instance.goTo(200);},5000);
+                //setTimeout(function(){instance.goTo(1);},7000);
+                //setTimeout(function(){instance.removeAnnotation(0);},2000);
+			};
+		</script>
+	</head>
+	<body>
+		<div id="YourOwnDivId"></div>
+	</body>
+</html>
