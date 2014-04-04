@@ -82,7 +82,7 @@ Biojs.CircularGenomeFeatureViewer = Biojs.CircularFeatureViewer.extend (
 
     /**
 	 * Default values for the options
-	 * @name Biojs.CircularFeatureViewer-opt
+	 * @name Biojs.CircularGenomeFeatureViewer-opt
 	 */
     opt: {
         target: 'YourOwnDivId',
@@ -94,12 +94,132 @@ Biojs.CircularGenomeFeatureViewer = Biojs.CircularFeatureViewer.extend (
         mergeAnnotations: true
     },
     
-    eventTypes: [],
+    eventTypes: [
+        /**
+		 * @name Biojs.CircularGenomeFeatureViewer#onAnnotationMouseover
+		 * @event
+		 * @param {function} actionPerformed An function which receives an {@link Biojs.Event} object as argument.
+		 * @eventData {Object} source The component which did triggered the event.
+		 * @eventData {string} type The name of the event.
+		 * @eventData {Object} target annotation.
+		 * @example 
+		 * myCircularGenomeFeatureViewer.onAnnotationMouseover(
+		 *    function( objEvent ) {
+		 *       alert("Annotation: " + objEvent.start + ", " + objEvent.stop );
+		 *    }
+		 * );
+		 * 
+		 * */
+        'onAnnotationMouseover',
+        /**
+		 * @name Biojs.CircularGenomeFeatureViewer#onAnnotationMouseout
+		 * @event
+		 * @param {function} actionPerformed An function which receives an {@link Biojs.Event} object as argument.
+		 * @eventData {Object} source The component which did triggered the event.
+		 * @eventData {string} type The name of the event.
+		 * @eventData {Object} target annotation.
+		 * @example 
+		 * myCircularGenomeFeatureViewer.onAnnotationMouseout(
+		 *    function( objEvent ) {
+		 *       alert("Annotation: " + objEvent.start + ", " + objEvent.stop );
+		 *    }
+		 * );
+		 * 
+		 * */
+        'onAnnotationMouseout',
+        /**
+		 * @name Biojs.CircularGenomeFeatureViewer#onAnnotationClick
+		 * @event
+		 * @param {function} actionPerformed An function which receives an {@link Biojs.Event} object as argument.
+		 * @eventData {Object} source The component which did triggered the event.
+		 * @eventData {string} type The name of the event.
+		 * @eventData {Object} target annotation.
+		 * @example 
+		 * myCircularGenomeFeatureViewer.onAnnotationClick(
+		 *    function( objEvent ) {
+		 *       alert("Annotation: " + objEvent.start + ", " + objEvent.stop );
+		 *    }
+		 * );
+		 * 
+		 * */
+        'onAnnotationClick',
+        /**
+		 * @name Biojs.CircularGenomeFeatureViewer#onAnnotationAdded
+		 * @event
+		 * @param {function} actionPerformed An function which receives an {@link Biojs.Event} object as argument.
+		 * @eventData {Object} source The component which did triggered the event.
+		 * @eventData {string} type The name of the event.
+		 * @eventData {Object} target annotation.
+		 * @example 
+		 * myCircularGenomeFeatureViewer.onAnnotationAdded(
+		 *    function( objEvent ) {
+		 *       alert("Annotation: " + objEvent.start + ", " + objEvent.stop );
+		 *    }
+		 * );
+		 * 
+		 * */
+        'onAnnotationAdded',
+        /**
+		 * @name Biojs.CircularGenomeFeatureViewer#onAnnotationRemoved
+		 * @event
+		 * @param {function} actionPerformed An function which receives an {@link Biojs.Event} object as argument.
+		 * @eventData {Object} source The component which did triggered the event.
+		 * @eventData {string} type The name of the event.
+		 * @eventData {Object} target annotation.
+		 * @example 
+		 * myCircularGenomeFeatureViewer.onAnnotationRemoved(
+		 *    function( objEvent ) {
+		 *       alert("Annotation: " + objEvent.start + ", " + objEvent.stop );
+		 *    }
+		 * );
+		 * 
+		 * */
+        'onAnnotationRemoved'
+    ],
+    
     // internal members
     _efetch: 'http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi',//NCBI efetch URL
     _database : 'nucleotide',//NCBI database to query
     _format : 'xml',//query result format
     _rettype: 'gb',//query rettype
+    
+    /**
+	 * Rotates all annotations so the desired sequence position is at 12 o'çlock.
+	 * @param {int} pos The sequence position.
+	 * 
+	 * @example 
+	 * myCircularGenomeFeatureViewer.goTo(1000);
+     *
+     * @example 
+	 * myCircularGenomeFeatureViewer.goTo(1);
+	 * 
+	 */
+    goTo : function(pos){
+        this.base(pos);
+    },
+    /**
+	 * Adds a new annotation.
+	 * @param {Object} annotation The annotation.
+	 * 
+	 * @example 
+	 * myCircularGenomeFeatureViewer.addAnnotation({ "id": 14, "start": 351, "stop": 1200, "type": "dolore" });
+	 * 
+	 */
+    addAnnotation : function(annotation){
+        this.base(annotation);
+    },
+    
+    /**
+	 * Removes an annotation from the visualization.
+	 * @param {int} id The annotation id.
+	 * 
+	 * @example 
+	 * myCircularGenomeFeatureViewer.removeAnnotation(1);
+	 * 
+	 */
+    removeAnnotation : function(id){
+        this.base(id);
+    },
     
     /* 
      * Function: Biojs.CircularGenomeFeatureViewer._getNCBIAnnotations
