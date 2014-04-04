@@ -1,16 +1,16 @@
 /**
-* InCHlib is an interactive JavaScript library which facilitates data
-* visualization and exploration by means of a cluster heatmap. InCHlib
-* is a versatile tool, and its use is not limited only to chemical or
-* biological data. Source code, tutorial, documentation, and example
-* data are freely available from InCHlib website <a
+* InCHlib is an interactive JavaScript library which facilitates data 
+* visualization and exploration by means of a cluster heatmap. InCHlib 
+* is a versatile tool, and its use is not limited only to chemical or 
+* biological data. Source code, tutorial, documentation and example 
+* data are freely available from InCHlib website <a 
 * href="http://openscreen.cz/software/inchlib"
-* target=blank>http://openscreen.cz/software/inchlib</a>. At the
-* website, you can also find a Python script <a
-* href="http://openscreen.cz/software/inchlib/inchlib_clust"
-* target=blank>inchlib_clust</a> which performs data clustering and
-* prepares <a href="http://openscreen.cz/software/inchlib/input_format"
-* target=blank>input data for InCHlib</a>.
+* target=blank>http://openscreen.cz/software/inchlib</a>. At the 
+* website, you can also find a Python script <a 
+* href="http://openscreen.cz/software/inchlib/inchlib_clust" 
+* target=blank>inchlib_clust</a> which performs data clustering and 
+* prepares <a href="http://openscreen.cz/software/inchlib/input_format" 
+* target=blank>input data for InCHlib</a>. 
 *
 * @class
 * @extends Biojs
@@ -161,6 +161,10 @@ Biojs.InCHlib = Biojs.extend(
         this.leaves_y_coordinates = {};
         this.rows = {};
 
+        /**
+        * Default kineticjs objects references
+        * @name Biojs.InCHlib#objects_ref
+        */
         this.objects_ref = {
             "tooltip_label": new Kinetic.Label({
                                 opacity: 1,
