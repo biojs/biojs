@@ -399,9 +399,6 @@ Biojs.CircularFeatureViewer = Biojs.extend (
                     .on("mouseout", function () {
                         self._rotate = false;
                     });
-        
-        
-        
     },
     /* 
      * Function: Biojs.CircularFeatureViewer._rotatefn
