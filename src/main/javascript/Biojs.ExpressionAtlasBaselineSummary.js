@@ -14,7 +14,7 @@
  *
  * @param {Object} options An object with the options for ExpressionAtlasBaselineSummary component.
  *
- * @option {string} [featuresUrl='http://www-test.ebi.ac.uk/gxa/widgets/heatmap/protein']
+ * @option {string} [featuresUrl='http://www.ebi.ac.uk/gxa/widgets/heatmap/protein']
  *    The query URL pointing to the ExpressionAtlas for retrieving gene page results
  *    displayed as part of this widget. It is usually composed to include the identifier
  *    of the gene you are interested in, see example.
@@ -31,7 +31,7 @@
  * @option {string} target
  *    Identifier of the DIV tag where the component should be displayed.
  *
- * @option {string} [rootContext='../biojs/dependencies/proxy/proxy.php?url%3dhttp://www-test.ebi.ac.uk/gxa']
+ * @option {string} [rootContext='../biojs/dependencies/proxy/proxy.php?url%3dhttp://www.ebi.ac.uk/gxa']
  *    Specifies the root context path to be used by the widget content,
  *    i.e. this is the location of the content proxy pointing to ExpressionAtlas
  *
@@ -117,10 +117,10 @@ Biojs.ExpressionAtlasBaselineSummary = Biojs.extend(
 		var httpRequest = {
 		url:url,
 		data:{rootContext:this.opt.rootContext},
-		methid:"GET",
+		method:"GET",
 		/** @ignore No need to document this object */
 		beforeSend:function () {
-		    self._containerDiv.html("<img src='http://www-test.ebi.ac.uk/gxa/resources/images/loading.gif' />");
+		    self._containerDiv.html("<img src='http://www.ebi.ac.uk/gxa/resources/images/loading.gif' />");
 		},
 		/** @ignore No need to document this object */
 		success:function (htmlResponse) {
@@ -177,7 +177,7 @@ Biojs.ExpressionAtlasBaselineSummary = Biojs.extend(
 	     For multiple identifiers of the same species please use:
 	     geneQuery=ENSG00000187003+ENSG00000185264&propertyType=bioentity_identifier
 	     */
-	    featuresUrl:'http://www-test.ebi.ac.uk/gxa/widgets/heatmap/protein',
+	    featuresUrl:'http://www.ebi.ac.uk/gxa/widgets/heatmap/protein',
             geneQuery:"",
 	    propertyType:"",
 	    geneSetMatch:"",
@@ -191,7 +191,7 @@ Biojs.ExpressionAtlasBaselineSummary = Biojs.extend(
              be used by the widget content, i.e. this is pointing to the
              content proxy where required.
              */
-            rootContext:'../biojs/dependencies/proxy/proxy.php?url=http://www-test.ebi.ac.uk/gxa',
+            rootContext:'../biojs/dependencies/proxy/proxy.php?url=http://www.ebi.ac.uk/gxa',
             /* Proxy URL
              To bypass the same origin policy this component needs a proxy, which
              can be set here.

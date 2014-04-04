@@ -22,7 +22,7 @@
  * @option {string} identifier 
  * 	  ENSEMBL gene identifier or UniProt Acc needed as input to fetch the Gene expression summary data
  *  
- * @option {string} [featuresUrl='http://www.ebi.ac.uk/gxa/das/s4/features']
+ * @option {string} [featuresUrl='http://www-test.ebi.ac.uk/gxa/das/s4/features']
  * 	  Url of the REST service which provides the summary data.
  * 
  * @option {string} [legend=true]
@@ -56,7 +56,7 @@ Biojs.GeneExpressionSummary = Biojs.extend(
 	opt: {
 		target: "YourOwnDivId",
 		identifier: undefined,
-		featuresUrl: 'http://www.ebi.ac.uk/gxa/das/s4/features',
+		featuresUrl: 'http://www-test.ebi.ac.uk/gxa/das/s4/features',
 		legend: true,
 		proxyUrl: '../biojs/dependencies/proxy/proxy.php'
 	},

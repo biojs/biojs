@@ -501,10 +501,22 @@ Biojs.Sequence = Biojs.extend(
 	_applyHighlight: function ( highlight ) {		
 		var seq = this._contentDiv.find('.sequence');
 		for ( var i = highlight.start - 1; i < highlight.end; i++ ){
+			zindex = jQuery(seq[i]).css("z-index");
+			if (zindex=="auto"){
+				 z = 1;
+				 o = 1;
+			 }
+			 else{
+				 z = 0;
+				 o = 0.5;
+			 }
 			jQuery(seq[i])
 				.css({ 
 					"color": highlight.color,
-					"background-color": highlight.background})
+					"background-color": highlight.background,
+					"z-index": z,
+					"opacity": o
+					})
 				.addClass("highlighted");
 		}
 	},
@@ -565,11 +577,12 @@ Biojs.Sequence = Biojs.extend(
 		if ( !( start > sel.end || end < sel.start ) ) {
 			a = ( start < sel.start ) ? sel.start : start;
 			b = ( end > sel.end ) ? sel.end : end;
+			
 			this._applyHighlight({
 				"start": a, 
 				"end": b, 
 				"color": this.opt.selectionFontColor, 
-				"background": this.opt.selectionColor
+				"background": this.opt.selectionColor,
 			});
 		}
 	},
@@ -925,7 +938,7 @@ Biojs.Sequence = Biojs.extend(
 		for ( var i = 0; i < a.length; i += settings.numCols ){
 			row = '';
 			for ( var key in annotations ){
-				annotations[key].id = key;
+				annotations[key].id = this.getId() + "_" + key;
 				annot = this._getHTMLRowAnnot(i+1, annotations[key], settings);				
 				if (annot.length > 0) {
 					row += '<br/>';
@@ -942,9 +955,9 @@ Biojs.Sequence = Biojs.extend(
 			}
 			
 			if ( settings.numRight ) {
-				jQuery(row).insertAfter('div#'+self.opt.target+' div pre span#numRight'+ (i + numCols) );
+				jQuery(row).insertAfter('div#'+self.opt.target+' div pre span#numRight_' + this.getId() + '_' + (i + numCols) );
 			} else {
-				jQuery(row).insertAfter('div#'+self.opt.target+' div pre span#'+ (i + numCols) );
+				jQuery(row).insertAfter('div#'+self.opt.target+' div pre span#'+ this.getId() + '_' + (i + numCols) );
 			}
 		}
 		
@@ -978,7 +991,7 @@ Biojs.Sequence = Biojs.extend(
      * Inputs:   id -> {int} index of the internal annotation array
      */
     _getAnnotationString: function ( id ) {
-		var annotation = this._annotations[id];
+		var annotation = this._annotations[id.substr(id.indexOf("_") + 1)];
 		return annotation.name + "<br/>" + ((annotation.html)? annotation.html : '');
     },
     
@@ -1144,10 +1157,10 @@ Biojs.Sequence = Biojs.extend(
 		for (var i=1; i <= a.length; i++) {
 
 			if( i % opt.numCols == 0) {	
-				str += '<span class="sequence" id="'+i+'">' + a[i-1] + '</span>';
+				str += '<span class="sequence" id="' + this.getId() + '_' + i + '">' + a[i-1] + '</span>';
 				
 				if (opt.numRight) {
-					str += '<span style="'+spaceStyle+'" id="numRight'+i+'">';
+					str += '<span style="'+spaceStyle+'" id="numRight_' + this.getId() + '_' + i + '">';
 					str += '  ';
 					str += this._formatIndex(i, opt.numRightSize, opt.numRightPad);	
 					str += '</span>';
@@ -1157,7 +1170,7 @@ Biojs.Sequence = Biojs.extend(
 				
 				var aaRemaining = a.length - i;
 				if (opt.numLeft && aaRemaining > 0) {
-					str += '<span id="numLeft'+i+'">';
+					str += '<span id="numLeft_' + this.getId() + '_' + i + '">';
 					str += this._formatIndex(i+1, opt.numLeftSize, opt.numLeftPad);
 					str += '  ';
 					str += '</span>';
@@ -1166,7 +1179,7 @@ Biojs.Sequence = Biojs.extend(
 				j = 1;
 				
 			} else {
-				str += '<span class="sequence" style="'+spaceStyle+'" id="'+i+'">' + a[i-1];
+                str += '<span class="sequence" style="'+spaceStyle+'" id="' + this.getId() + '_' + i + '">' + a[i-1];
 				str += ( j % opt.numColsForSpace == 0)? ' ' : '';
 				str += (opt.spaceBetweenChars)? ' ' : '';
 				str += '</span>';
@@ -1222,7 +1235,8 @@ Biojs.Sequence = Biojs.extend(
 			
 			// Register the starting position
 			jQuery(this).mousedown(function() {
-				currentPos = parseInt(jQuery(this).attr('id'));
+				var id = jQuery(this).attr('id');
+				currentPos = parseInt(id.substr(id.indexOf("_") + 1));
 				clickPos = currentPos;
 				self._setSelection(clickPos,currentPos);
 				isMouseDown = true;
@@ -1239,8 +1253,8 @@ Biojs.Sequence = Biojs.extend(
 			}).mouseover(function() {
 				// Update selection
 				// Show tooltip containing the position
-				
-				currentPos = parseInt(jQuery(this).attr('id'));
+				var id = jQuery(this).attr('id');
+				currentPos = parseInt(id.substr(id.indexOf("_") + 1));
 				
 				if(isMouseDown) {
 					if( currentPos > clickPos ) {

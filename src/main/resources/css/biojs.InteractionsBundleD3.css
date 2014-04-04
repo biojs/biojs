@@ -1,0 +1,54 @@
+.graphCircle  {
+	border: 1px solid #000;
+	background-color: #E5E5EF;
+}
+
+.graphCircle path.arc {
+  fill: #fff;
+}
+
+.graphCircle .node {
+  font-size: 10px;
+}
+
+.graphCircle .node:hover {
+  fill: #1f77b4;
+}
+
+.graphCircle .link {
+  fill: none;
+  stroke: #1f77b4;
+  stroke-opacity: .4;
+  pointer-events: none;
+}
+
+.graphCircle .link.source, .graphCircle .link.target {
+  stroke-opacity: 1;
+  stroke-width: 2px;
+}
+
+.graphCircle .node.target {
+  fill: #d62728 !important;
+}
+
+.graphCircle .link.source {
+  stroke: #d62728;
+}
+
+.graphCircle .node.source {
+  fill: #2ca02c;
+}
+
+.graphCircle .link.target {
+  stroke: #2ca02c;
+}
+.graphCircle .figure {
+	fill: #46D;
+}
+.graphCircle .legend {
+  stroke: transparent;
+  pointer-events: none;
+}
+.graphCircle .mainLegend{
+	font-size: 70%;
+}

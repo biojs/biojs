@@ -1,5 +1,5 @@
 /** 
- * This is the description of the PDBprints component. This component renders a set of icons to give a quick summary of salient features of a PDB entry.
+ * This component renders a set of icons to give a quick summary of salient features of a PDB entry.
  * See more info on PDBprints at http://pdbe.org/prints
  * 
  * @class
@@ -9,7 +9,7 @@
  * @version 1.0.0
  * @category 0
  *
- * @requires <a href='http://code.jquery.com/jquery-1.6.4.js'>Raphael 2.1.0</a>
+ * @requires <a href='http://raphaeljs.com'>Raphael 2.1.0</a>
  * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/graphics/raphael-2.1.0.js"></script>
  * 
  * @requires <a href='http://code.jquery.com/jquery-1.6.4.js'>jQuery Core 1.6.4</a>
@@ -78,10 +78,8 @@ Biojs.PDBprints = Biojs.extend (
 			pdbids += self.opt.targets[rapha]['pdbids'][pi]+",";
 		}
 		pdbids = pdbids.replace(/,$/,"");
-
 		jQuery.ajax({
-			url: 'http://www.ebi.ac.uk/pdbe-apps/widgets/pdbprints',
-			data: {'varname':'printsdata', 'pdbid':pdbids},
+			url: 'http://www.ebi.ac.uk/pdbe-apps/widgets/pdbprints?pdbid='+pdbids+"&varname=printsdata",
 			dataType: 'script',
 			crossDomain: 'true',
 			type: 'GET',
@@ -150,38 +148,5 @@ Biojs.PDBprints = Biojs.extend (
    * @name Biojs.PDBprints-eventTypes
    */
   eventTypes : [
-	/**
-	 * @name Biojs.PDBprints#onClick
-	 * @event
-	 * @param {function} actionPerformed A function which receives an {@link Biojs.Event} object as argument.
-	 * @eventData {Object} source The component which did triggered the event.
-	 * @eventData {string} type The name of the event.
-	 * @eventData {int} selected Selected character.
-	 * @example 
-	 * instance.onClick(
-	 *    function( objEvent ) {
-	 *       alert("The character " + objEvent.selected + " was clicked.");
-	 *    }
-	 * ); 
-	 * 
-	 * */
-	 "onClick",
-	 
-	/**
-	 * @name Biojs.PDBprints#onHelloSelected
-	 * @event
-	 * @param {function} actionPerformed A function which receives an {@link Biojs.Event} object as argument.
-	 * @eventData {Object} source The component which did triggered the event.
-	 * @eventData {string} type The name of the event.
-	 * @eventData {int} textSelected Selected text, will be 'Hello' obviously.
-	 * @example 
-	 * instance.onHelloSelected(
-	 *    function( objEvent ) {
-	 *       alert("The word " + objEvent.textSelected + " was selected.");
-	 *    }
-	 * ); 
-	 * 
-	 * */
-     "onHelloSelected"      
   ] 
 });

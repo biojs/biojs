@@ -12,8 +12,8 @@
  * @requires <a href='http://blog.jquery.com'>jQuery 1.7.2</a>
  * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jquery/jquery-1.7.2.min.js"></script>
  * 
- * @requires <a href='http://cytoscape.github.com/cytoscape.js/download/cytoscape.js-2.0.2.zip'>Cytoscape.js v2.0.2</a>
- * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/cytoscape/2.0.2/cytoscape.min.js"></script>
+ * @requires <a href='http://cytoscape.github.io/cytoscape.js'>Cytoscape.js (latest version strongly suggested)</a>
+ * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/cytoscape/cytoscape.min.js"></script>
  * 
  * @param {Object} options An object with the options for this component.
  *    

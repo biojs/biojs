@@ -1,0 +1,217 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US" xml:lang="en-US">
+	<head>
+		<!-- Javascript files -->
+
+		<script type="text/javascript" src="../../main/javascript/Biojs.js"></script>
+		<script type="text/javascript" src="../../main/javascript/Biojs.Tree.js"></script>
+		<script type="text/javascript" src="../../main/resources/dependencies/jquery/jquery-1.9.1.min.js"></script>
+		
+
+
+		<!-- context menu -->
+		<!-- <script language="JavaScript" type="text/javascript" src="http://medialize.github.io/jQuery-contextMenu/src/jquery.contextMenu.js"></script>  -->
+		<link href="http://medialize.github.io/jQuery-contextMenu/src/jquery.contextMenu.css" rel="stylesheet" type="text/css" /> 
+
+		
+		<!-- <script language="JavaScript" type="text/javascript" src="../../main/resources/dependencies/d3/d3.v3.min.js"></script> -->
+		<script language="JavaScript" type="text/javascript" src="../../main/resources/dependencies/extern/tree_functions.js"></script>
+
+
+
+		<!--<script language="JavaScript" type="text/javascript" src="../../main/resources/dependencies/jquery/jquery-1.7.2.min.js"></script> -->
+		<script type="text/javascript" src="../../main/resources/dependencies/extern/jquery.tipsy.js"></script> 	
+		<!-- <script language="JavaScript" type="text/javascript" src="../../main/resources/dependencies/jquery/jquery-1.7.2.min.js"></script> -->
+	   <!-- <script type="text/javascript" src="../../main/resources/dependencies/joyride-master/jquery.cookie.js"></script> -->
+	    <!-- <script type="text/javascript" src="../../main/resources/dependencies/joyride-master/modernizr.mq.js"></script> -->
+	    <!-- <script type="text/javascript" src="../../main/resources/dependencies/joyride-master/jquery.joyride-2.1.js"></script> -->
+	    <!-- <link rel="stylesheet" href="../../main/resources/dependencies/joyride-master/joyride-2.1.css"> -->
+		<script type="text/javascript" src="../../main/resources/dependencies/extern/newick2.js"></script>
+		<script type="text/javascript" src="../../main/resources/dependencies/extern/treefam_functionality.js"></script>
+		 <!-- <script src="../../main/resources/dependencies/extern/treefam_autocomplete.js" type="text/javascript"></script>  -->
+		
+		<link href="../../main/resources/css/Biojs.Tree.css" rel="stylesheet" type="text/css" />
+		<link href="../../main/resources/css/tipsy.css" rel="stylesheet" type="text/css" /> 
+
+
+
+		
+
+		<!-- Include Select box-->
+		<!--<script type="text/javascript" src="http://ivaynberg.github.io/select2/select2-3.4.4/select2.js?ts=2013-10-26T07%3A58%3A09-07%3A00"></script>
+		<link href="http://ivaynberg.github.io/select2/select2-3.4.4/select2.css?ts=2013-10-26T07%3A58%3A09-07%3A00" rel="stylesheet" type="text/css" /> -->
+		<!-- HTML KICKSTART --> 
+			<!--<script src="http://www.99lime.com/site/templates/js/kickstart.js"></script> 
+			<link rel="stylesheet" href="http://www.99lime.com/site/templates/css/kickstart.css" media="all" />
+		<!-- for use in gist-->
+		
+		
+		
+		
+
+				<!--<script type="text/javascript" src="http://www.treefam.org/static/javascripts/biojs/Biojs.js"></script>
+		<script type="text/javascript" src="http://www.treefam.org/static/javascripts/biojs/Biojs.Tree.js"></script> -->
+		<script language="JavaScript" type="text/javascript" src="http://www.treefam.org/static/javascripts//d3/d3.v3.min.js"></script>
+		<script language="JavaScript" type="text/javascript" src="../../main/resources/dependencies/extern/fisheye.js"></script>
+		<script language="JavaScript" type="text/javascript" src="https://snort-rule-manager.googlecode.com/svn-history/r2/protected/extensions/bootstrap/lib/bootstrap/js/bootstrap-affix.js"></script>
+		
+		
+					<!-- external  files
+		<script language="JavaScript" type="text/javascript" src="http://www.treefam.org/static/javascripts//d3/d3.v3.min.js"></script>
+		<script language="JavaScript" type="text/javascript" src="http://www.treefam.org/static/javascripts/biojs/tree_functions.js"></script>
+		<script language="JavaScript" type="text/javascript" src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
+		<script type="text/javascript" src="http://www.treefam.org/static/javascripts/jquery/jquery.tipsy.js"></script>
+			-->
+		<!--<script language="JavaScript" type="text/javascript" src="http://www.treefam.org/static/javascripts/jquery/jquery-ui-1.8.2.custom.min.js"></script> -->
+		<!--<link href="http://www.treefam.org/static/css/Biojs.Tree.css" rel="stylesheet" type="text/css" />
+		<link href="http://www.treefam.org/static/css/tipsy.css" rel="stylesheet" type="text/css" /> -->
+
+		<!-- Bootstrap -->
+			<script src="http://getbootstrap.com/dist/js/bootstrap.js"></script> <!-- KICKSTART -->
+			<link rel="stylesheet" href="http://getbootstrap.com/dist/css/bootstrap.css" media="all" /> <!-- KICKSTART -->
+		
+
+	</head>
+	<body>
+		<!-- <div class="tv_contentcontainer" id="tv_contentcontainer">
+			<div class="tv_breadcrumbs"> -->
+				
+	 		<!-- <div data-spy="affix-top" id="widget_menu" class="row"> -->
+	 		<div data-spy="affix-top" id="widget_menu" >
+				  <div class="col-md-12">				
+		<!-- insert bootstrap menu -->
+					<nav style="margin-bottom:10px" class="navbar navbar-default" role="navigation">
+  <!-- Brand and toggle get grouped for better mobile display -->
+  						<div class="navbar-header">
+    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+      <span class="sr-only">Toggle navigation</span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </button>
+	<a class="navbar-brand "href="http://www.treefam.org"><img src="http://www.treefam.org/static/images/treefam_logo.png" alt="TreeFam" height="25"  /></a>
+  </div>
+
+  <!-- Collect the nav links, forms, and other content for toggling -->
+  <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+    <ul class="nav navbar-nav">
+      <li class="dropdown">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Tree types <b class="caret"></b></a>
+        <ul class="dropdown-menu">
+          <li><a id="show_model_tree_id" href="#">Model organisms</a></li>
+          <li><a id="show_wormbase_tree_id" href="#">Wormbase</a></li>
+          <li><a id="show_full_tree_id" href="#">Full tree</a></li>
+        </ul>
+      </li>
+	   <li class="dropdown">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Branch length<b class="caret"></b></a>
+        <ul class="dropdown-menu">
+          <li><a id="real_branch_length" href="#">real branch length</a></li>
+          <li><a id="ultra_branch_length"href="#">ultra_branch_length</a></li>
+        </ul>
+      </li>
+	<li>
+		<select id="e2" style="width:200px;">
+                     <option value="TF312966">Select TreeFam family</option>
+                     <option value="TF106403">PRDM6 (small)</option>
+                     <option value="TF101166">CBX (small)</option>
+                     <option value="TF106361">INSL3 (small)</option>
+                     <option value="TF101006">Cyclin F (medium)</option>
+                     
+                     
+                         <option value="TF101001">TF101001</option>
+                         <option value="TF101002">TF101002</option>
+                         <option value="TF101003">TF101003</option>
+                         <option value="TF101004">TF101004</option>
+                         <option value="TF101005">TF101005</option>
+                         <option value="TF101006">TF101006</option>
+                         <option value="TF312966">ELMO1</option>
+                         <option value="TF324593">SHANK1</option>
+                         <option value="TF105041">BRCA2</option>
+                     </select>
+      </li>
+      <li ><a href="#">Leaf labels</a></li>
+      <li class="dropdown">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Perspectives <b class="caret"></b></a>
+        <ul class="dropdown-menu">
+          <li><a href="#">TreeFam</a></li>
+          <li><a href="#">Ensembl</a></li>
+          <li><a href="#">UniProt</a></li>
+          <li class="divider"></li>
+          <li><a href="#">Separated link</a></li>
+          <li class="divider"></li>
+          <li><a href="#">One more separated link</a></li>
+        </ul>
+      </li>
+    </ul>
+    <form class="navbar-form navbar-left" role="search">
+      <div class="form-group">
+        <input type="text" class="form-control" placeholder="Search TreeFam">
+      </div>
+      <button type="submit" class="btn btn-default">Submit</button>
+    </form>
+    <ul class="nav navbar-nav navbar-right">
+      <li><button id="tour_button" type="button" class="btn btn-default btn-success btn-xs">
+				  <span  class="glyphicon glyphicon-star"></span> Tree widget Tour
+				</button>
+</li>
+      <li class="dropdown">
+      </li>
+    </ul>
+  </div>
+</nav>	
+<div class="panel-group" id="accordion">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+         Legend 
+        </a>
+      </h4>
+    </div>
+    <div id="collapseOne" class="panel-collapse collapse in">
+      <div class="panel-body">
+       <table>
+			<tr><td>Nodes</td><td>Alignment</td></tr>
+			<tr><td><img src="http://www.ebi.ac.uk/~fs/d3treeviewer/data/images/species_files/.png" alt="TreeFam" height="15" />  gene node</td><td><img src="http://www.ebi.ac.uk/~fs/d3treeviewer/data/images/species_files/alignment_gap.png" alt="TreeFam" height="15" />  gap</td></tr>
+			<tr><td><img src="http://www.ebi.ac.uk/~fs/d3treeviewer/data/images/species_files/tree_speciation.png" alt="TreeFam" height="15" />  speciation node</td><td><img src="http://www.ebi.ac.uk/~fs/d3treeviewer/data/images/species_files/alignment_conserved.png" alt="TreeFam" height="15" />  aligned seq</td></tr>
+			<tr><td><img src="http://www.ebi.ac.uk/~fs/d3treeviewer/data/images/species_files/tree_duplication.png" alt="TreeFam" height="15" />  duplication node</td></tr>
+			<tr><td><img src="http://www.ebi.ac.uk/~fs/d3treeviewer/data/images/species_files/tree_gene_loss.png" alt="TreeFam" height="15" />  lost taxon</td></tr>
+			</table>	
+			</div>			
+
+ 
+      </div>
+    </div>
+  </div>
+</div>
+	<div id="my_custom_menu" style="display:none">
+		<ul class="context-menu-list context-menu-root" style="width: 122px; ">
+			<li class="context-menu-item icon icon-edit"><span>Name: </span></li>
+			<li class="context-menu-item icon icon-cut"><span>Information: </span></li>
+			<li class="context-menu-item context-menu-separator not-selectable"></li>
+			<li class="context-menu-item icon icon-copy"><span>Copy</span></li>
+			<li class="context-menu-item icon icon-paste"><span>Paste</span></li>
+			<li class="context-menu-item icon icon-delete"><span>Delete</span></li>
+			<li class="context-menu-item context-menu-separator not-selectable"></li>
+			<li class="context-menu-item icon icon-quit"><span>Quit</span></li>
+		</ul>	
+	</div>
+	<div id="YourOwnDivId" class="col-md-12">
+			</div>
+							
+				</div> 
+			<!-- biojs case, only the tree itself --> 
+				<!--<div id="YourOwnDivId" class="row">
+				</div> -->	
+
+
+				<div class="clearfloat"></div>
+	
+			</div> 
+		</div>
+		
+		
+	</body>
+</html>
