@@ -45,6 +45,15 @@ Please feel free to send us feature requests and/or ideas of what it should be c
 
 Join the BioJS mailing list if you would like to send us an email to participate or provide feedback about the project.
 
+# Build status
+
+
+| Type        | Status        | 
+| ----------|:-------------:| 
+| auto      | [![Build Status](https://travis-ci.org/biojs/biojs.svg?branch=master)](https://travis-ci.org/biojs/biojs) | 
+| nightly   | [![Build Status](https://bio-js.ci.cloudbees.com/job/biojs%20github%20stable/badge/icon)](https://bio-js.ci.cloudbees.com/job/biojs%20github%20stable/) | 
+
+
 # Code license
 [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0) 
 
