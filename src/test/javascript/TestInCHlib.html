@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script type="text/javascript" src="../../main/resources/dependencies/jquery/jquery-2.0.3.min.js"></script>
+        <script type="text/javascript" src="../../main/resources/dependencies/kineticjs/kinetic-v5.0.0.min.js"></script>
+        <script type="text/javascript" src="../../main/javascript/Biojs.js"></script>
+        <script type="text/javascript" src="../../main/javascript/Biojs.InCHlib.js"></script>
+        <script type="text/javascript">
+            (function ($) {
+                var instance;
+                $(document).ready(function () {
+                    instance = new Biojs.InCHlib({
+                        target : "inchlib",
+                        metadata: true, 
+                        max_height: 800,
+                        width: 700,
+                        metadata_colors: "RdLrBu"
+                        });
+                    instance.read_data_from_file("../../main/resources/data/chembl_gr.json");
+                    instance.draw();
+                    });
+                })(jQuery);
+        </script>
+    </head>
+
+    <body>
+        <div id="inchlib"></div>
+    </body>
+</html>
+
