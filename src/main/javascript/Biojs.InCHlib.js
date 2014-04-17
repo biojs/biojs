@@ -19,7 +19,7 @@
 * @author <a href="mailto:petr.bartunek@img.cas.cz">Petr Bartůněk</a>
 * @author <a href="mailto:svozild@vscht.cz">Daniel Svozil</a>
 * @version 1.0.0
-* @category 1
+* @category 3
 * @license InCHlib - Interactive Cluster Heatmap Library http://openscreen.cz/software/inchlib Copyright 2014, Ctibor Škuta, Petr Bartůněk, Daniel Svozil Licensed under the MIT license.
 * 
 * Permission is hereby granted, free of charge, to any person
