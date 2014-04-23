@@ -332,7 +332,13 @@ function inheritedMembers(components, remain ) {
 				
 				// copy both dependencies and options from the parent to this 
 				parent.requires.map( function($) { node.requires.push($) } );  
-				parent.comment.getTag('dependency').map( function($) { node.comment.tags.push($) } );
+				
+				parent.comment.getTag('dependency').map( function($) { 
+							if (isParentDependencyExcluded(node.comment.tags, $) == false){
+								node.comment.tags.push($) 
+							}
+				} );
+				
 				parent.comment.getTag('option').map( function($) { node.comment.tags.push($) } );
 				
 				// create a dependency to the parent
@@ -350,6 +356,17 @@ function inheritedMembers(components, remain ) {
 			}
 		}
 	}	
+}
+
+function isParentDependencyExcluded(tagsList, tag){
+    var excluded = false;
+	for (i=0;i<tagsList.length;i++) {
+        	if (tagsList[i].title=='removeParentDependency' && tagsList[i].desc==tag.desc){
+			excluded = true;
+		}
+	} 
+	
+	return excluded;
 }
 
 
