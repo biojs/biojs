@@ -83,7 +83,7 @@
  *		    	width: 440,
  *		    	style: Biojs.Protein3D.STYLE_CARTOON,
  *		    	use:"HTML5 JAVA",
- *				urlProxy:"/bioJs/dependencies/jsmol-14.0.2/jsmol/proxy/jsmol.jsp",
+ *				urlProxy:"/bioJs/dependencies/jsmol-14.0.2/jsmol/proxy/jsmol.php",
  *              viewControls: true
  *		     });	
  *			instance.onPdbLoaded(
@@ -166,7 +166,7 @@ Biojs.Protein3DCanvas = Biojs.Protein3D.extend(
 	*	    width: 440,
 	*	    style: Biojs.Protein3D.STYLE_CARTOON,
 	*	    use:"HTML5 JAVA",
-			urlProxy:"/bioJs/dependencies/jsmol-14.0.2/jsmol/proxy/jsmol.jsp",
+			urlProxy:"/bioJs/dependencies/jsmol-14.0.2/jsmol/proxy/jsmol.php",
 			viewControls: true
 	* });	
 	*	  
