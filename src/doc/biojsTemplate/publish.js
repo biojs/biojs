@@ -330,8 +330,12 @@ function inheritedMembers(components, remain ) {
 					}
 				}
 				
-				// copy both dependencies and options from the parent to this 
-				parent.requires.map( function($) { node.requires.push($) } );  
+				// copy both dependencies and options from the parent to this if not explicitely excluded
+				parent.requires.map( function($) { 
+							if (isParentRequiresExcluded(node.comment.tags, $) == false){
+								node.requires.push($) 
+							}
+				} );  
 				
 				parent.comment.getTag('dependency').map( function($) { 
 							if (isParentDependencyExcluded(node.comment.tags, $) == false){
@@ -374,10 +378,21 @@ function isParentDependencyExcluded(tagsList, tag){
 }
 
 
+function isParentRequiresExcluded(tagsList, tag){
+    var excluded = false;
+	for (i=0;i<tagsList.length;i++) {
+        if (tagsList[i].title=='removeParentRequires' && tagsList[i].desc==tag){
+			excluded = true;
+		}
+	} 
+	
+	return excluded;
+}
+
 function isParentOptionExcluded(tagsList, tag){
     var excluded = false;
 	for (i=0;i<tagsList.length;i++) {
-        if (tagsList[i].title=='removeParentOption' && tagsList[i].desc==tag.desc){
+        if (tagsList[i].title=='removeParentOption' && tagsList[i].desc==tag.name){
 			excluded = true;
 		}
 	} 
