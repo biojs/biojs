@@ -10,16 +10,18 @@
  * @category 3
  * 
  * @removeParentDependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jmol-12.0.48/Jmol.js"></script>
+ * @removeParentRequires <a href='http://jmol.sourceforge.net/download/'>jMol 12.0.48</a>
  * @removeParentDependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jquery/jquery-1.6.4.js"></script>
- * @removeParentOption jmolFolder
+ * @removeParentRequires <a href='http://blog.jquery.com/2011/09/12/jquery-1-6-4-released/'>jQuery Core 1.6.4</a>
+ * @removeParentOption {string} [jmolFolder="{BIOJS_HOME}/dependencies/jmol-12.0.48"]
  * 
- * @requires <a href='http://blog.jquery.com/2012/09/20/jquery-1-8-2-released/'>jQuery Core 1.8.2 (not necessaty if you import the JSmol.min.js)</a>
+ * @requires <a href='http://blog.jquery.com/2012/09/20/jquery-1-8-2-released/'>jQuery Core 1.8.2 (not necessary if you import the JSmol.min.js)</a>
  * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jquery/jquery-1.8.2.js"></script>
  * 
  * @requires <a href='http://sourceforge.net/projects/jsmol/'>jsMol 14.0.2 (use this if you import separately jQuery, otherwise import the file JSmol.min.js)</a>
  * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jsmol-14.0.2/jsmol/JSmol.min.nojq.js"></script>
  *
- * @requires <a href='http://sourceforge.net/projects/jsmol/'>jsMol 14.0.2</a>
+ * @requires <a href='http://sourceforge.net/projects/jsmol/'>jsMol 14.0.2 (bridge beetwen JSMol and JMol commands)</a>
  * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jsmol-14.0.2/jsmol/js/Jmol2.js"></script>
  *
  * @param {Object} options An object with the options for Biojs.Protein3DCanvas component.
