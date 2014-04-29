@@ -12,6 +12,7 @@
  *  
  * @removeParentDependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jmol-12.0.48/Jmol.js"></script>
  * @removeParentDependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jquery/jquery-1.6.4.js"></script>
+ * @removeParentOption jmolFolder
  * 
  * @requires <a href='http://blog.jquery.com/2012/09/20/jquery-1-8-2-released/'>jQuery Core 1.8.2 (not necessaty if you import the JSmol.min.js)</a>
  * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jquery/jquery-1.8.2.js"></script>
@@ -26,46 +27,16 @@
  * 
  * @param {Object} options An object with the options for Biojs.Protein3DCanvas component.
  *    
- * @option {string} target 
- *    Identifier of the DIV tag where the component should be displayed.
- *    
- * @option {int} [width=597] 
- *    Width in pixels.
- *    
- * @option {int} [height=400] 
- *    Height in pixels.
- *    
  * @option {string} [jsmolFolder="{BIOJS_HOME}/dependencies/jmol-12.0.48"] 
  *    Relative path of the jSMol library.
-
+ *
  * @option {string} [use="HTML5 JAVA"] 
  *      This string determines the various options to be tried (HTML5, Java Applet and surrogates) and the order in which to try them.
  *      The default setting is HTML5 CANVAS and then Java if Canvas is not available.
  *
- *   @option {string} [urlProxy="{BIOJS_HOME}/dependencies/jsmol-14.0.2/jsmol/proxy/jsmol.jsp"] 
+ * @option {string} [urlProxy="{BIOJS_HOME}/dependencies/jsmol-14.0.2/jsmol/proxy/jsmol.jsp"] 
  *    Path of the proxy to use for transformation of the gzip file in base64 files for MSIE and CHROME.
  * 
- * @option {string} [loadingStatusImage="{BIOJS_HOME}/css/images/ajax-loader-1.gif"] 
- *    Relative path of the image to be displayed on loading status.
- *    
- * @option {string} [unpolarColor="salmon"] 
- * 	  This value is used by displayUnpolar() method for coloring hydrophobic residues.
- * 
- * @option {string} [negativeColor="red"] 
- * 	  This value is used by displayNegative() method for coloring acidic(-) residues.
- * 
- * @option {string} [positiveColor="blue"] 
- * 	  This value is used by displayNegative() method for coloring basic(+) residues.
- * 
- * @option {string} [polarColor="yellow"] 
- * 	  This value is used by displayNegative() method for coloring hydrophylic residues.
- * 
- * @option {string} [backgroundColor="white"] 
- * 	  Background color of the jMol applet
- * 
- * @option {bool} [enableControls=true] 
- * 	  Enable for showing the control panel. If value is 'false', it disables both methods showControls and hideControls. 
- 
  @option {bool} [viewControls=true] 
  * 	  Show/Hide controls panel after the loading of the PDB structure. 
  * 
