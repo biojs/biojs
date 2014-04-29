@@ -37,7 +37,7 @@
  * @option {string} [urlProxy="{BIOJS_HOME}/dependencies/jsmol-14.0.2/jsmol/proxy/jsmol.jsp"] 
  *    Path of the proxy to use for transformation of the gzip file in base64 files for MSIE and CHROME.
  * 
- @option {bool} [viewControls=true] 
+ * @option {bool} [viewControls=true] 
  * 	  Show/Hide controls panel after the loading of the PDB structure. 
  * 
  * 
@@ -47,12 +47,12 @@
  * //The file id downloaded form the server as a zipped file and then it's unzipped on the client
  *        var instance = new Biojs.Protein3DCanvas({
  *				target: "YourOwnDivId",
- *				jsmolFolder: '/bioJs/dependencies/jsmol-14.0.2/jsmol',
+ *				jsmolFolder: '../biojs/dependencies/jsmol-14.0.2/jsmol',
  *				height: 440,
  *		    	width: 440,
  *		    	style: Biojs.Protein3D.STYLE_CARTOON,
  *		    	use:"HTML5 JAVA",
- *				urlProxy:"/bioJs/dependencies/jsmol-14.0.2/jsmol/proxy/jsmol.php",
+ *				urlProxy:"../biojs/dependencies/jsmol-14.0.2/jsmol/proxy/jsmol.php",
  *              viewControls: true
  *		     });	
  *			instance.onPdbLoaded(
@@ -130,12 +130,12 @@ Biojs.Protein3DCanvas = Biojs.Protein3D.extend(
     * @example 
     *  var instance = new Biojs.Protein3DCanvas({
 	*		target: "YourOwnDivId",
-	*		jsmolFolder: '/bioJs/dependencies/jsmol-14.0.2/jsmol',
+	*		jsmolFolder: '../biojs/dependencies/jsmol-14.0.2/jsmol',
 	*		height: 440,
 	*	    width: 440,
 	*	    style: Biojs.Protein3D.STYLE_CARTOON,
 	*	    use:"HTML5 JAVA",
-			urlProxy:"/bioJs/dependencies/jsmol-14.0.2/jsmol/proxy/jsmol.php",
+			urlProxy:"../biojs/dependencies/jsmol-14.0.2/jsmol/proxy/jsmol.php",
 			viewControls: true
 	* });	
 	*	  
