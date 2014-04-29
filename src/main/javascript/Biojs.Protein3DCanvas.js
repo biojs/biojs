@@ -23,8 +23,6 @@
  * @requires <a href='http://sourceforge.net/projects/jsmol/'>jsMol 14.0.2</a>
  * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jsmol-14.0.2/jsmol/js/Jmol2.js"></script>
  *
- * @requires <a href='../biojs/css/Protein3D.css'>Protein3D CSS</a>
- * @dependency <link href="../biojs/css/biojs.Protein3D.css" rel="stylesheet" type="text/css" />
  * 
  * @param {Object} options An object with the options for Biojs.Protein3DCanvas component.
  *    
