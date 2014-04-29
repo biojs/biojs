@@ -33,7 +33,7 @@
  *      This string determines the various options to be tried (HTML5, Java Applet and surrogates) and the order in which to try them.
  *      The default setting is HTML5 CANVAS and then Java if Canvas is not available.
  *
- * @option {string} [urlProxy="{BIOJS_HOME}/dependencies/jsmol-14.0.2/jsmol/proxy/jsmol.jsp"] 
+ * @option {string} [proxyUrl="{BIOJS_HOME}/dependencies/jsmol-14.0.2/jsmol/proxy/jsmol.jsp"] 
  *    Path of the proxy to use for transformation of the gzip file in base64 files for MSIE and CHROME.
  * 
  * @option {bool} [viewControls=true] 
@@ -51,7 +51,7 @@
  *		    	width: 440,
  *		    	style: Biojs.Protein3D.STYLE_CARTOON,
  *		    	use:"HTML5 JAVA",
- *			urlProxy:"../biojs/dependencies/jsmol-14.0.2/jsmol/proxy/jsmol.php",
+ *			proxyUrl:"../biojs/dependencies/jsmol-14.0.2/jsmol/proxy/jsmol.php",
  *              	viewControls: true
  *		     });	
  *			instance.onPdbLoaded(
@@ -134,7 +134,7 @@ Biojs.Protein3DCanvas = Biojs.Protein3D.extend(
 	*	   width: 440,
 	*	   style: Biojs.Protein3D.STYLE_CARTOON,
 	*	   use:"HTML5 JAVA",
-		   urlProxy:"../biojs/dependencies/jsmol-14.0.2/jsmol/proxy/jsmol.php",
+		   proxyUrl:"../biojs/dependencies/jsmol-14.0.2/jsmol/proxy/jsmol.php",
 		   viewControls: true
 	* });	
 	*	  
