@@ -9,7 +9,6 @@
  * @version 1.0.0
  * @category 3
  * 
- *  
  * @removeParentDependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jmol-12.0.48/Jmol.js"></script>
  * @removeParentDependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jquery/jquery-1.6.4.js"></script>
  * @removeParentOption jmolFolder
@@ -17,14 +16,12 @@
  * @requires <a href='http://blog.jquery.com/2012/09/20/jquery-1-8-2-released/'>jQuery Core 1.8.2 (not necessaty if you import the JSmol.min.js)</a>
  * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jquery/jquery-1.8.2.js"></script>
  * 
- * 
  * @requires <a href='http://sourceforge.net/projects/jsmol/'>jsMol 14.0.2 (use this if you import separately jQuery, otherwise import the file JSmol.min.js)</a>
  * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jsmol-14.0.2/jsmol/JSmol.min.nojq.js"></script>
  *
  * @requires <a href='http://sourceforge.net/projects/jsmol/'>jsMol 14.0.2</a>
  * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jsmol-14.0.2/jsmol/js/Jmol2.js"></script>
  *
- * 
  * @param {Object} options An object with the options for Biojs.Protein3DCanvas component.
  *    
  * @option {string} [jsmolFolder="{BIOJS_HOME}/dependencies/jmol-12.0.48"] 
@@ -46,18 +43,18 @@
  * // 'http://www.rcsb.org/pdb/files/"+pdb+".pdb.gz' containing the structure of the protein.
  * //The file id downloaded form the server as a zipped file and then it's unzipped on the client
  *        var instance = new Biojs.Protein3DCanvas({
- *				target: "YourOwnDivId",
- *				jsmolFolder: '../biojs/dependencies/jsmol-14.0.2/jsmol',
- *				height: 440,
+ *			target: "YourOwnDivId",
+ *			jsmolFolder: '../biojs/dependencies/jsmol-14.0.2/jsmol',
+ *			height: 440,
  *		    	width: 440,
  *		    	style: Biojs.Protein3D.STYLE_CARTOON,
  *		    	use:"HTML5 JAVA",
- *				urlProxy:"../biojs/dependencies/jsmol-14.0.2/jsmol/proxy/jsmol.php",
- *              viewControls: true
+ *			urlProxy:"../biojs/dependencies/jsmol-14.0.2/jsmol/proxy/jsmol.php",
+ *              	viewControls: true
  *		     });	
  *			instance.onPdbLoaded(
  *			   function( objEvent ) {
- *				    alert('PDB LOADED');
+ *				    jQuery("#onPdbLoaded").text('PDB loaded')
  *			   }
  *			);
  *			//trigger to download the zip file containing the pdb structure from the server and unzip  the file on the client
@@ -129,19 +126,19 @@ Biojs.Protein3DCanvas = Biojs.Protein3D.extend(
     *
     * @example 
     *  var instance = new Biojs.Protein3DCanvas({
-	*		target: "YourOwnDivId",
-	*		jsmolFolder: '../biojs/dependencies/jsmol-14.0.2/jsmol',
-	*		height: 440,
-	*	    width: 440,
-	*	    style: Biojs.Protein3D.STYLE_CARTOON,
-	*	    use:"HTML5 JAVA",
-			urlProxy:"../biojs/dependencies/jsmol-14.0.2/jsmol/proxy/jsmol.php",
-			viewControls: true
+	*	   target: "YourOwnDivId",
+	*	   jsmolFolder: '../biojs/dependencies/jsmol-14.0.2/jsmol',
+	*	   height: 440,
+	*	   width: 440,
+	*	   style: Biojs.Protein3D.STYLE_CARTOON,
+	*	   use:"HTML5 JAVA",
+		   urlProxy:"../biojs/dependencies/jsmol-14.0.2/jsmol/proxy/jsmol.php",
+		   viewControls: true
 	* });	
 	*	  
 	*	instance.onPdbLoaded(
 	*	   function( objEvent ) {
-	*		   alert('PDB LOADED');
+	*		  $("#onPdbLoaded").text("PDB loaded");
 	*	   }
 	*	);
 	*	
