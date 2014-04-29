@@ -339,7 +339,11 @@ function inheritedMembers(components, remain ) {
 							}
 				} );
 				
-				parent.comment.getTag('option').map( function($) { node.comment.tags.push($) } );
+				 parent.comment.getTag('option').map( function($) { 
+							if (isParentOptionExcluded(node.comment.tags, $) == false){
+								node.comment.tags.push($) 
+							}
+				} );
 				
 				// create a dependency to the parent
 				var tag = new JSDOC.DocTag();
@@ -370,4 +374,14 @@ function isParentDependencyExcluded(tagsList, tag){
 }
 
 
+function isParentOptionExcluded(tagsList, tag){
+    var excluded = false;
+	for (i=0;i<tagsList.length;i++) {
+        if (tagsList[i].title=='removeParentOption' && tagsList[i].desc==tag.desc){
+			excluded = true;
+		}
+	} 
+	
+	return excluded;
+}
 
