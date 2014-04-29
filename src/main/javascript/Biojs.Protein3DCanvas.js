@@ -21,7 +21,7 @@
  * @requires <a href='http://sourceforge.net/projects/jsmol/'>jsMol 14.0.2 (use this if you import separately jQuery, otherwise import the file JSmol.min.js)</a>
  * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jsmol-14.0.2/jsmol/JSmol.min.nojq.js"></script>
  *
- * @requires <a href='http://sourceforge.net/projects/jsmol/'>jsMol 14.0.2 (bridge beetwen JSMol and JMol commands)</a>
+ * @requires <a href='http://sourceforge.net/projects/jsmol/'>jsMol 14.0.2 (bridge between JSMol and JMol commands)</a>
  * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jsmol-14.0.2/jsmol/js/Jmol2.js"></script>
  *
  * @param {Object} options An object with the options for Biojs.Protein3DCanvas component.
