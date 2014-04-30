@@ -200,8 +200,7 @@ Biojs.Protein3DCanvas = Biojs.Protein3D.extend(
      *    frame       -> {string} A text string with the last frame number after loading the current model, 
      *                        in file.model syntax.
      */
-	
-	_loadStructCallback: function ( appletId, url, file, title, message, code, formerFrame, frame ) {
+	 _loadStructCallback: function ( appletId, url, file, title, message, code, formerFrame, frame ) {
 		
 Biojs.console.log("executing _loadStructCallback for " + appletId);
 		
