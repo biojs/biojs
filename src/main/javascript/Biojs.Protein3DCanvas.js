@@ -8,66 +8,35 @@
  * @author <a href="mailto:ftalo@ebi.ac.uk">Francesco Talo</a>
  * @version 1.0.0
  * @category 3
- *  
+ *
  * @removeParentDependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jmol-12.0.48/Jmol.js"></script>
+ * @removeParentRequires <a href='http://jmol.sourceforge.net/download/'>jMol 12.0.48</a>
  * @removeParentDependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jquery/jquery-1.6.4.js"></script>
+ * @removeParentRequires <a href='http://blog.jquery.com/2011/09/12/jquery-1-6-4-released/'>jQuery Core 1.6.4</a>
+ * @removeParentOption {string} [jmolFolder="{BIOJS_HOME}/dependencies/jmol-12.0.48"]
  * 
- * @requires <a href='http://blog.jquery.com/2012/09/20/jquery-1-8-2-released/'>jQuery Core 1.8.2 (not necessaty if you import the JSmol.min.js)</a>
+ * @requires <a href='http://blog.jquery.com/2012/09/20/jquery-1-8-2-released/'>jQuery Core 1.8.2 (not necessary if you import the JSmol.min.js)</a>
  * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jquery/jquery-1.8.2.js"></script>
- * 
  * 
  * @requires <a href='http://sourceforge.net/projects/jsmol/'>jsMol 14.0.2 (use this if you import separately jQuery, otherwise import the file JSmol.min.js)</a>
  * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jsmol-14.0.2/jsmol/JSmol.min.nojq.js"></script>
  *
- * @requires <a href='http://sourceforge.net/projects/jsmol/'>jsMol 14.0.2</a>
+ * @requires <a href='http://sourceforge.net/projects/jsmol/'>jsMol 14.0.2 (bridge between JSMol and JMol commands)</a>
  * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jsmol-14.0.2/jsmol/js/Jmol2.js"></script>
  *
- * @requires <a href='../biojs/css/Protein3D.css'>Protein3D CSS</a>
- * @dependency <link href="../biojs/css/biojs.Protein3D.css" rel="stylesheet" type="text/css" />
- * 
  * @param {Object} options An object with the options for Biojs.Protein3DCanvas component.
- *    
- * @option {string} target 
- *    Identifier of the DIV tag where the component should be displayed.
- *    
- * @option {int} [width=597] 
- *    Width in pixels.
- *    
- * @option {int} [height=400] 
- *    Height in pixels.
  *    
  * @option {string} [jsmolFolder="{BIOJS_HOME}/dependencies/jmol-12.0.48"] 
  *    Relative path of the jSMol library.
-
+ *
  * @option {string} [use="HTML5 JAVA"] 
  *      This string determines the various options to be tried (HTML5, Java Applet and surrogates) and the order in which to try them.
  *      The default setting is HTML5 CANVAS and then Java if Canvas is not available.
  *
- *   @option {string} [urlProxy="{BIOJS_HOME}/dependencies/jsmol-14.0.2/jsmol/proxy/jsmol.jsp"] 
+ * @option {string} [proxyUrl="{BIOJS_HOME}/dependencies/jsmol-14.0.2/jsmol/proxy/jsmol.jsp"] 
  *    Path of the proxy to use for transformation of the gzip file in base64 files for MSIE and CHROME.
  * 
- * @option {string} [loadingStatusImage="{BIOJS_HOME}/css/images/ajax-loader-1.gif"] 
- *    Relative path of the image to be displayed on loading status.
- *    
- * @option {string} [unpolarColor="salmon"] 
- * 	  This value is used by displayUnpolar() method for coloring hydrophobic residues.
- * 
- * @option {string} [negativeColor="red"] 
- * 	  This value is used by displayNegative() method for coloring acidic(-) residues.
- * 
- * @option {string} [positiveColor="blue"] 
- * 	  This value is used by displayNegative() method for coloring basic(+) residues.
- * 
- * @option {string} [polarColor="yellow"] 
- * 	  This value is used by displayNegative() method for coloring hydrophylic residues.
- * 
- * @option {string} [backgroundColor="white"] 
- * 	  Background color of the jMol applet
- * 
- * @option {bool} [enableControls=true] 
- * 	  Enable for showing the control panel. If value is 'false', it disables both methods showControls and hideControls. 
- 
- @option {bool} [viewControls=true] 
+ * @option {bool} [viewControls=true] 
  * 	  Show/Hide controls panel after the loading of the PDB structure. 
  * 
  * 
@@ -76,18 +45,18 @@
  * // 'http://www.rcsb.org/pdb/files/"+pdb+".pdb.gz' containing the structure of the protein.
  * //The file id downloaded form the server as a zipped file and then it's unzipped on the client
  *        var instance = new Biojs.Protein3DCanvas({
- *				target: "YourOwnDivId",
- *				jsmolFolder: '/bioJs/dependencies/jsmol-14.0.2/jsmol',
- *				height: 440,
+ *			target: "YourOwnDivId",
+ *			jsmolFolder: '../biojs/dependencies/jsmol-14.0.2/jsmol',
+ *			height: 440,
  *		    	width: 440,
  *		    	style: Biojs.Protein3D.STYLE_CARTOON,
  *		    	use:"HTML5 JAVA",
- *				urlProxy:"/bioJs/dependencies/jsmol-14.0.2/jsmol/proxy/jsmol.php",
- *              viewControls: true
+ *			proxyUrl:"../biojs/dependencies/jsmol-14.0.2/jsmol/proxy/jsmol.php",
+ *              	viewControls: true
  *		     });	
  *			instance.onPdbLoaded(
  *			   function( objEvent ) {
- *				    alert('PDB LOADED');
+ *				    jQuery("#onPdbLoaded").text('PDB loaded')
  *			   }
  *			);
  *			//trigger to download the zip file containing the pdb structure from the server and unzip  the file on the client
@@ -159,19 +128,19 @@ Biojs.Protein3DCanvas = Biojs.Protein3D.extend(
     *
     * @example 
     *  var instance = new Biojs.Protein3DCanvas({
-	*		target: "YourOwnDivId",
-	*		jsmolFolder: '/bioJs/dependencies/jsmol-14.0.2/jsmol',
-	*		height: 440,
-	*	    width: 440,
-	*	    style: Biojs.Protein3D.STYLE_CARTOON,
-	*	    use:"HTML5 JAVA",
-			urlProxy:"/bioJs/dependencies/jsmol-14.0.2/jsmol/proxy/jsmol.php",
-			viewControls: true
+	*	   target: "YourOwnDivId",
+	*	   jsmolFolder: '../biojs/dependencies/jsmol-14.0.2/jsmol',
+	*	   height: 440,
+	*	   width: 440,
+	*	   style: Biojs.Protein3D.STYLE_CARTOON,
+	*	   use:"HTML5 JAVA",
+		   proxyUrl:"../biojs/dependencies/jsmol-14.0.2/jsmol/proxy/jsmol.php",
+		   viewControls: true
 	* });	
 	*	  
 	*	instance.onPdbLoaded(
 	*	   function( objEvent ) {
-	*		   alert('PDB LOADED');
+	*		  $("#onPdbLoaded").text("PDB loaded");
 	*	   }
 	*	);
 	*	
