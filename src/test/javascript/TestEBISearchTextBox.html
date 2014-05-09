@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US" xml:lang="en-US">
+
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <script language="JavaScript" type="text/javascript" src="../../main/resources/dependencies/jquery/jquery-1.8.2.min.js"></script>
+    <script language="JavaScript" type="text/javascript" src="../../main/resources/dependencies/jquery/jquery-ui-1.8.2.custom.min.js"></script>
+    <script type="text/javascript" src="../../main/javascript/Biojs.js"></script>
+    <script type="text/javascript" src="../../main/javascript/Biojs.EBISearchTextBox.js"></script>
+    
+    <link rel="stylesheet" type="text/css" href="../../main/resources/dependencies/jquery/jquery-ui-1.8.2.css"></link>
+    <link rel="stylesheet" href="../../main/resources/css/Biojs.EBISearchTextBox.css" type="text/css" />
+
+    <script type="text/javascript">
+	    var instance;
+	    window.onload = function() {
+	        instance1 = new Biojs.EBISearchTextBox({
+	        	targetType: "inputtext",
+	            target: "ebi-searchbox-input"
+	        });
+            instance2 = new Biojs.EBISearchTextBox({
+                targetType: "div",
+                target: "ebi-searchbox-div"
+            });
+	    };
+    </script>
+
+    <style>
+        .right {
+            position: relative;
+            float: right;
+            margin-top: 10pt;
+            margin-right: 0pt;
+            width: 30%;
+        }
+        
+        .bordered {
+            border: 1pt solid gray;
+        }
+    </style>
+
+</head>
+
+<body>
+    <h2>EBISearch TextBox widget</h2>
+
+    <div>
+        <input type="text" id="ebi-searchbox-input"/> 
+    </div>
+
+    <div id="ebi-searchbox-div" class="bordered right">
+    </div>
+
+    </body>
+</html>

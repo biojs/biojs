@@ -1,0 +1,27 @@
+<form id="local-search" name="local-search" action="$(baseURL)/search.ebi" method="get">
+    <fieldset>
+        <div class="left">
+            <label>
+                <input type="text" id="local-searchbox" class="ebi-autocomplete-input" name="query" />
+                <input type="hidden" name="db" value="allebi"/>
+                <input type="hidden" name="requestFrom" value="searchBox"/>
+            </label>
+        </div>
+        <div class="right">
+            <input type="submit" name="submitSearch" value="Search" class="submit" />
+        </div>
+    </fieldset>
+</form>
+
+            <!--
+            <span class="examples">Examples: 
+                <a href="/ebisearch/search.ebi?db=allebi&amp;requestFrom=ebi_index&amp;query=VAV_HUMAN">VAV_HUMAN</a>, 
+                <a href="/ebisearch/search.ebi?db=allebi&amp;query=tpi1&amp;requestFrom=ebi_index">tpi1</a>, 
+                <a href="/ebisearch/search.ebi?db=allebi&amp;query=Sulston&amp;requestFrom=ebi_index">Sulston</a> ...
+            </span>
+            -->
+
+            <!--
+            <span class="adv"><a href="/ebisearch/advancedsearch.ebi" id="adv-search" title="Advanced">Advanced</a></span>
+            -->
+            
