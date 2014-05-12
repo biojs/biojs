@@ -8,15 +8,6 @@
  *
  * @author <a href="mailto:webprod@ebi.ac.uk">Web Production Team</a>, <a href="mailto:nbuso@ebi.ac.uk">Nicola Buso</a> 
  * @version 0.0.4
- * 	<ul>
- * 		<li>0.0.4:
- * 		  	<ul>
- * 				<li>added some validation tests at instantiation time</li>
- * 				<li>added jquery 1.8.x and > 1.8.x code differentiation</li>
- * 				<li>support jQuery '$' symbol hidden</li>
- * 		  	</ul>
- * 		</li>
- * 	</ul>
  * @category 1
  *
  * @requires <a href='http://code.jquery.com/jquery-1.10.2.js'>jQuery Core 1.10.2</a>
@@ -41,7 +32,7 @@
  * @dependency <link rel="stylesheet" href="../biojs/css/Biojs.EBISearchTextBox.css" type="text/css">
  *
  * @requires <a href='../biojs/data/BioJS.EBISearchTextBox.tmpl.html'>BioJS.EBISearchTextBox.tmpl.html</a>
- * @dependency <link rel="stylesheet" href="../biojs/data/BioJS.EBISearchTextBox.tmpl.html" type="text/css">
+ * @dependency <link rel="template" href="../biojs/data/BioJS.EBISearchTextBox.tmpl.html" type="text/html">
  * 
  * 
  *
@@ -70,6 +61,19 @@
  *          target: "YourOwnDivId",
  *  });
  *
+ *
+ */
+
+ /*
+ * 	<ul>
+ * 		<li><p>0.0.4:</p>
+ * 		  	<ul>
+ * 				<li>added some validation tests at instantiation time</li>
+ * 				<li>added jquery 1.8.x and > 1.8.x code differentiation</li>
+ * 				<li>support jQuery $ symbol hidden</li>
+ * 		  	</ul>
+ * 		</li>
+ * 	</ul>
  */
 
 Biojs.EBISearchTextBox = (function($){
