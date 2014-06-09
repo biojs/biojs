@@ -22,10 +22,11 @@
   * 
   * @example
   * var instance = new Biojs.OPSCompoundInfo({
-  *    appID: '123456',
-  *    appKey: '654321',
-  *    appURL: 'http:/ / beta.openphacts.org / 1.3 ',
-  *    URI: 'http: //ops.rsc.org/OPS403534'
+  *    appID: '949a7c9c',
+  *    appKey: '734a274b418b0dbe57fc40f86e85e20e',
+  *    appURL: 'https://beta.openphacts.org/1.3',
+  *    URI: 'http://ops.rsc.org/OPS403534',
+  *    target: 'YourOwnDivId'
   * }); 
   */
  Biojs.OPSCompoundInfo = Biojs.extend(
@@ -43,7 +44,7 @@
              searcher.fetchCompound(this.opt.URI, null, callback);
          },
         opt: {
-            target: 'component',
+            target: 'YourOwnDivId',
             appID: undefined,
             appKey: undefined,
             appURL: undefined,
