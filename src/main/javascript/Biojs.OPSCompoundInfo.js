@@ -1,17 +1,25 @@
  /**
+  * Displays the information available in the Open PHACTS Linked Data cache about a compound
+  *
   * @class
   * @extends Biojs
   * @author <a href = "mailto:ianwdunlop@gmail.com">Ian Dunlop</a>
   * @version 1.0.0
-  * @category 2
+  * @license MIT http://opensource.org/licenses/MIT
+  *
+  * @requires <a href='http://code.jquery.com/jquery-1.9.1.js'>jQuery Core 1.9.1</a>
+  * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jquery/jquery-1.9.1.min.js"></script>
   * 
+  * @requires <a href='https://github.com/openphacts/ops.js'>OPS.js</a>
+  * @dependency <script src="../biojs/dependencies/openphacts/ops.js" type="text/javascript"></script>
+  *
   * @param {Object} options An object with the options for the component.
- 
+  *
   * @option {string} appID
-  *    application ID used to access the Open PHACTS API.
+  *    Application ID used to access the Open PHACTS API.
   * 
   * @option {string} appKey
-  *    application Key used to access the Open PHACTS API. 
+  *    Application Key used to access the Open PHACTS API. 
   *     
   * @option {string} appURL 
   *    Location of the Open PHACTS API. 
