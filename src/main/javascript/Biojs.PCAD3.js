@@ -1,5 +1,5 @@
 /** 
- * Table to show binary molecular interactions.  
+ * D3 for basic PCA plot
  * 
  * @class
  * @extends Biojs 
@@ -19,75 +19,79 @@
  * @requires <a href='http://d3js.org/queue.v1.min.js'>D3 queue </a>
  * @dependency <script language="JavaScript" src='http://d3js.org/queue.v1.min.js' type="text/javascript"></script>
  * 
+ * @param {Object} options An object with the options for PCA component 
+
+ * @option {string} target 
+ *   Identifier of the DIV tag where the component should be displayed. 
+ *    
  * 
  * 
  * 
- * 
- * @param {int} [height = 800]
+ * @option {int} [height=800]
  *    Full height of svg 
  *    
- * @param {int} [width =1024]
+ * @option {int} [width=1024]
  *    Full width of svg 
  *    
- * @param {string} [shape = "circle"]
+ * @option {string} [shape="circle"]
  *    To be passed into d3.svg.symbol eg. circle, square
  *    
- * @param {string} [unique_id = "sample_id"]
+ * @option {string} [unique_id="sample_id"]
  *    Unique id column of the data file.
  *    
  *    
- * @param {string} [x_column = "component1"]
+ * @option {string} [x_column="component1"]
  *    column of the data file that will be used as the x axis. 
  *    
- * @param {string} [y_column  = "component2"]
+ * @option {string} [y_column="component2"]
  *    column of the data file that will be used as the y axis. 
  *    
- * @param {string} [x_axis_title =  "Component 1" ]
+ * @option {string} [x_axis_title="Component 1" ]
  *    title of the x axis. 
  *    
  *    
- * @param {string} [y_axis_title = "Component 2" ]
+ * @option {string} [y_axis_title="Component 2" ]
  *    title of the y axis. 
  *    
- * @param {string} [title_class= "title" ]
+ * @option {string} [title_class="title" ]
  *    class to add to the title. 
  *    
- * @param {string} [tooltip_class= "tooltip" ]
+ * @option {string} [tooltip_class="tooltip" ]
  *    class to add to the tooltip. 
  *    
- * @param {string} [point_class = "dot"]
+ * @option {string} [point_class="dot"]
  *    class to add to the points. 
  *    
- * @param {string} [legend_class = "legend"]
+ * @option {string} [legend_class="legend"]
  *    class to add to the legend. 
  *    
- * @param {function} [tooltip_name = "see function below" ]
+ * @option {function} [tooltip_name="function" ]
  *    function to use for the tooltip. defaults to:
  *           function (d,this_object){
  *              name = d[this_object.unique_id] +':' + d[this_object.x_column] + ' ' + d[this_object.y_column];
  *              return name;
  *            }, 
  *    
- * @param {object} [margin= {top: 80, right: 20, bottom: 30, left: 40} ]
+ * @option {object} [margin= {top: 80, right: 20, bottom: 30, left: 40} ]
  *    margin around the svg graph. 
  *    
- * @param {array} [domain = []]
+ * @option {array} [domain=[]]
  *    specific types of values to be used for colours. eg. ['Apple','Orange','Pear','Grape']
  *    
- * @param {array} [domain_colours = [] ];
+ * @option {array} [domain_colours=[] ];
  *    colours that match the domain array eg. ['blue','green','orange','red'] where blue is Apple
  *    
  *    
  * @example 
- *     data columns are state,type,component1,component2 tab separated
- *     d3.tsv('/usarrests.tsv',function (error,data){
+ *     //data columns are state,type,component1,component2 tab separated
+ *     d3.tsv('../test/data/usarrests.tsv',function (error,data){
  * 
  *         data.forEach(function(d){
  *             d.component1 = +d.component1;
  *             d.component2 = +d.component2;
  *         });
  * 
- *         target = "#other";
+ *         target = "#YourOwnDivId";
  *         var options = {
  *             target: target,
  *             title: "US Arrests",
@@ -106,13 +110,18 @@
  *                 return name;
  *             },
  * 
- * 
  *             data: data
  *         }
- *         var new_instance = new Biojs.PCAd3(options);
+ *         var new_instance = new Biojs.PCAD3(options);
+ *         new_instance.pointClick(
+ *             function( objEvent ) {
+ *                 alert('You just clicked ' + objEvent.data_object.state);
+ *             }
+ *         );
+ * 
  *     }); 
  *   
- *     
+ * @css-example
  * #CSS for tool tip with default class tooltip
  * div.tooltip{
  *     @include default_large_text;
@@ -140,8 +149,8 @@
 // http://stackoverflow.com/questions/18492617/button-to-download-inpage-svg-code-as-an-svg-file
 
 
-Biojs.PCAd3 = Biojs.extend ({
-/** @lends Biojs.PCAd3# */
+Biojs.PCAD3 = Biojs.extend ({
+/** @lends Biojs.PCAD3# */
     constructor: function (options) {
      /* Your constructor code here
 
@@ -180,12 +189,7 @@ Biojs.PCAd3 = Biojs.extend ({
      all of values might be replaced by the constructor using the values
      provided in instantiation time.
 
-     Define your own options here following the next syntax:
-        <option1>: <defaultValue1>,
-        <option2>: <defaultValue2>,
-        :
-        .
-        <optionN>: <defaultValueN> */
+     */
         height: 800,
         width: 1024,
         shape: "circle",
@@ -215,44 +219,20 @@ Biojs.PCAd3 = Biojs.extend ({
         <eventName> is a string (defined in eventTypes) and <eventData> is
         an object which should be passed to the registered listeners.
         
-        Define your event names following the syntax:
-          “<eventName1>”,
-          “<eventName2>”,
-             :
-             .
-          “<eventNameN>”
       */
 
 
         /**
-         * @name Biojs.PCAd3#interactionClick
+         * @name Biojs.PCAD3#pointClick
          * @event
          * @param {function} actionPerformed A function which receives an {@link Biojs.Event} object as argument.
          * @eventData {Object} source The component which triggered the event.
-         * @eventData {Object} interaction the information of the interaction that has been clicked.
-         * @example 
-         * instance.interactionClick(
-         *    function( objEvent ) {
-         *       alert("Click on the interaction " + objEvent.interaction.sample_id);
-         *    }
-         * ); 
-         * 
+         * @eventData {Object} the information of the point that has been clicked.
          * */
-        "interactionClick"
+        "pointClick"
   ],
 
-  /* Your own attributes  
-
-     _<attrName1>: <defaultValueAttr1>,
-     _<attrName2>: <defaultValueAttr2>,
-        :
-        .
-     _<attrNameN>: <defaultValueAttrN>,
-
-     Example:
-     _PI: 3.1415, */
-
-    _init: function() {
+   _init: function() {
 
 
         this.target = this.opt.target;
@@ -426,7 +406,7 @@ Biojs.PCAd3 = Biojs.extend ({
           .attr("transform", function(d) { return "translate(" + self.x(d[x_column]) + "," + self.y(d[y_column]) + ")"; })
           .on("mouseover", function(d){tooltip.text(self.tooltip_name(d,self)); return  tooltip.style("visibility", "visible");})
           .on("mousemove", function(d){tooltip.text(self.tooltip_name(d,self)); return  tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");})
-          .on("click", function(d){self.raiseEvent('interactionClick', {interaction:d });})
+          .on("click", function(d){self.raiseEvent('pointClick', { data_object:d });})
           .on("mouseout", function(d){return tooltip.style("visibility", "hidden");})
 
 
