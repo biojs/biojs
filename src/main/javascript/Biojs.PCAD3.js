@@ -84,7 +84,7 @@
  *    
  * @example 
  *     //data columns are state,type,component1,component2 tab separated
- *     d3.tsv('../test/data/usarrests.tsv',function (error,data){
+ *     d3.tsv('../biojs/data/usarrests.tsv',function (error,data){
  * 
  *         data.forEach(function(d){
  *             d.component1 = +d.component1;
@@ -168,9 +168,9 @@ Biojs.PCAD3 = Biojs.extend ({
 
         this._init();
 
-        this.setup_graph();
-        this.set_points();
-        this.setup_legend();
+        this._setup_graph();
+        this._set_points();
+        this._setup_legend();
 
 
 
@@ -227,8 +227,9 @@ Biojs.PCAD3 = Biojs.extend ({
          * @event
          * @param {function} actionPerformed A function which receives an {@link Biojs.Event} object as argument.
          * @eventData {Object} source The component which triggered the event.
-         * @eventData {Object} the information of the point that has been clicked.
-         * */
+         * @eventData {Object} data_object  information of the point that has been clicked.
+         * @example 
+         */
         "pointClick"
   ],
 
@@ -273,29 +274,10 @@ Biojs.PCAD3 = Biojs.extend ({
         this.legend_class = this.opt.legend_class; 
 
     },
-  /* Your own ‘PUBLIC’ methods  
-  
-     <methodName1>: function (<argsMethod1>) {<codeOfMethod1>},
-     <methodName2>: function (<argsMethod2>) {<codeOfMethod2>},
-        :
-        .
-     <methodNameN>: function (<argsMethodN>) {<codeOfMethodN>}
- 
-     Example:
-     square: function(number) { return number*number } 
-
-     Your own ‘PROTECTED’ methods
-
-    Javascript doesn’t provides visibility mechanism for class members. 
-    Use character ‘_’ to identify the private members of your component. 
-    For example: ‘_initialize’. 
-
-    NOTE: use this.base(arguments) to invoke parent’s method if apply.
-
-*/
+  /* Your own ‘PUBLIC’ methods  */
 
 
-    setup_graph: function (){
+    _setup_graph: function (){
 
         var x = d3.scale.linear()
             .range([0, this.page_options.width]);
@@ -362,7 +344,7 @@ Biojs.PCAD3 = Biojs.extend ({
 
     },
 
-    setup_legend: function (){
+    _setup_legend: function (){
       var legend = this.svg.selectAll("."+this.legend_class)
           .data(this.page_options.color.domain())
         .enter().append("g")
@@ -385,7 +367,7 @@ Biojs.PCAD3 = Biojs.extend ({
         this.legend = legend;
     },
 
-    set_points: function (){
+    _set_points: function (){
 
         var self = this;
         // https://github.com/mbostock/d3/wiki/SVG-Shapes
@@ -410,18 +392,15 @@ Biojs.PCAD3 = Biojs.extend ({
           .on("mouseout", function(d){return tooltip.style("visibility", "hidden");})
 
 
-        if (jQuery.inArray('size', self.columns) != -1 && jQuery.inArray('self.shape', self.columns) != -1){
+        if (jQuery.inArray('size', self.columns) != -1 && jQuery.inArray('shape', self.columns) != -1){ 
             self.svg.selectAll("."+self.point_class)
-              .attr("d", d3.svg.symbol().type(function (d) { return d.self.shape;}).size(function(d){ return d.size; }));
+              .attr("d", d3.svg.symbol().type(function (d) { return d.shape;}).size(function(d){ return d.size; }));
         }else if (jQuery.inArray('size', self.columns)!=-1 ){
             self.svg.selectAll("."+self.point_class)
-              .attr("d", d3.svg.symbol().type(function (d) { return self.shape;}).size(function(d){ return d.size; }));
-        } else if (jQuery.inArray('self.shape', self.columns) !=-1  ){
+              .attr("d", d3.svg.symbol().type(function (d) { return self.page_options.shape;}).size(function(d){ return d.size; }));
+       } else {
             self.svg.selectAll("."+self.point_class)
-              .attr("d", d3.svg.symbol().type(function (d) { return d.self.shape;}));
-        } else {
-            self.svg.selectAll("."+self.point_class)
-              .attr("d", d3.svg.symbol().type(function (d) { return self.shape;}));
+              .attr("d", d3.svg.symbol().type(function (d) { return self.page_options.shape;}));
 
         }
 
