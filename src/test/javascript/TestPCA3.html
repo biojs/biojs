@@ -1,0 +1,89 @@
+<html>
+<head>
+    <title>Biojs.PCAD3 test</title>
+
+    <script language="JavaScript" type="text/javascript" src="../biojs/Biojs.js"></script>
+    <script language="JavaScript" type="text/javascript" src="../biojs/Biojs.PCAD3.js"></script>
+
+    <script type="text/javascript" src="http://d3js.org/d3.v3.min.js"></script>
+    <script type="text/javascript" src="http://d3js.org/queue.v1.min.js"></script>
+
+
+
+    <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/d3/d3.v3.min.js"></script>
+    <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/d3/queue.v1.min.js"></script>
+    <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jquery/jquery-1.8.2.min.js"></script>
+    <script language="JavaScript" type="text/javascript">
+        window.onload = function() {
+
+        d3.tsv('/usarrests.tsv',function (error,data){
+
+            data.forEach(function(d){
+                d.component1 = +d.component1;
+                d.component2 = +d.component2;
+            });
+
+            target = "#other";
+            var options = {
+                target: target,
+                title: "US Arrests",
+                domain : ['Republican','Democrat'],
+                domain_colours:['blue','green'],
+               // domain : [],
+                //domain_colours:[],
+                unique_id: "state",
+                margin:{top: 80, right: 20, bottom: 30, left: 40},
+                height: 600,
+                width:960,
+                //x_axis_title: "rowland",
+                //y_axis_title: "tom",
+                shape:'square',
+                point_class: 'states',
+                tooltip_name: function (d,this_object){
+                    name = d[this_object.unique_id] + '| |' + d[this_object.x_column] + ' ' + d[this_object.y_column];
+                    return name;
+                },
+                data: data
+            }
+            var new_instance = new Biojs.PCAd3(options);
+
+            new_instance.interactionClick(
+                function( objEvent ) {
+                    alert('You just clicked ' + objEvent.interaction.state);
+                }
+            );
+
+        });
+
+
+        };
+    </script>
+
+
+    <style>
+
+    body {
+      font: 10px sans-serif;
+    }
+
+    .axis path,
+    .axis line {
+      fill: none;
+      stroke: #000;
+      shape-rendering: crispEdges;
+    }
+
+    .dot {
+      stroke: #000;
+    }
+
+    </style>
+
+
+    </head>
+    <body>
+        <div id="other" ></div>
+    </body>
+</html>
+
+
