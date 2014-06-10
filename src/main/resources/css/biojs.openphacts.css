@@ -19,6 +19,9 @@
 .huge-font {
     font-size: 30px;
 }
+.bold-font {
+    font-weight: bold;
+}
 /* CSS effects */
 .medium-border-radius {
     border-radius: 15px;
@@ -207,8 +210,6 @@ sub {
 
 .summary-box {
 	border: 1px solid #556;
-	height: 90px;
-	width: 142px;
 	background: #f8f8ff;
 	border-color: #eee9e9;
 	text-align:center;
