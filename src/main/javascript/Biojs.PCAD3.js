@@ -46,17 +46,17 @@
  * @option {string} [y_column="component2"]
  *    column of the data file that will be used as the y axis. 
  *    
- * @option {string} [x_axis_title="Component 1" ]
+ * @option {string} [x_axis_title="Component 1"]
  *    title of the x axis. 
  *    
  *    
- * @option {string} [y_axis_title="Component 2" ]
+ * @option {string} [y_axis_title="Component 2"]
  *    title of the y axis. 
  *    
- * @option {string} [title_class="title" ]
+ * @option {string} [title_class="title"]
  *    class to add to the title. 
  *    
- * @option {string} [tooltip_class="tooltip" ]
+ * @option {string} [tooltip_class="tooltip"]
  *    class to add to the tooltip. 
  *    
  * @option {string} [point_class="dot"]
@@ -65,20 +65,21 @@
  * @option {string} [legend_class="legend"]
  *    class to add to the legend. 
  *    
- * @option {function} [tooltip_name="function" ]
+ * @option {function} [tooltip_name="function"]
  *    function to use for the tooltip. defaults to:
+ *    <pre>
  *           function (d,this_object){
  *              name = d[this_object.unique_id] +':' + d[this_object.x_column] + ' ' + d[this_object.y_column];
  *              return name;
  *            }, 
- *    
- * @option {object} [margin= {top: 80, right: 20, bottom: 30, left: 40} ]
+ *    </pre> 
+ * @option {object} [margin="{top:80,right:20,bottom:30,left:40}"]
  *    margin around the svg graph. 
  *    
- * @option {array} [domain=[]]
+ * @option {array} [domain="array"]
  *    specific types of values to be used for colours. eg. ['Apple','Orange','Pear','Grape']
  *    
- * @option {array} [domain_colours=[] ];
+ * @option {array} [domain_colours="array"];
  *    colours that match the domain array eg. ['blue','green','orange','red'] where blue is Apple
  *    
  *    
