@@ -79,7 +79,7 @@
  * @option {array} [domain="array"]
  *    specific types of values to be used for colours. eg. ['Apple','Orange','Pear','Grape']
  *    
- * @option {array} [domain_colours="array"];
+ * @option {array} [domain_colours="array"]
  *    colours that match the domain array eg. ['blue','green','orange','red'] where blue is Apple
  *    
  *    
