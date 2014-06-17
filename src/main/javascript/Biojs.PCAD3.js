@@ -73,6 +73,7 @@
  *              return name;
  *            }, 
  *    </pre> 
+ *
  * @option {object} [margin="{top:80,right:20,bottom:30,left:40}"]
  *    margin around the svg graph. 
  *    
