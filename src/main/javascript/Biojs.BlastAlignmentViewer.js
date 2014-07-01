@@ -20,23 +20,6 @@
  *    Identifier of the DIV tag where the component should be displayed.
  *
  * @option {Object} [data]
- * 	  A JSON object containing the alignment data
- *				data: {
- *					id:'P1234',
- *					alignment:[{
- *						identity: 120,
- *						query_start:14,
- *						match_start:43,
- *						query_end:84,
- *						match_end:113,
- *						query_length:100,
- *						match_length:150,
- *						overLapLength:70,
- *						query_gaps:[{start:83,end:87},{start:93,end:94}],
- *						match_gaps:[{start:76,end:87}]
- *					}]
- *				}
- *
  *
  * @example
  *			var instance = new Biojs.BlastAlignmentViewer({
@@ -69,7 +52,7 @@ Biojs.BlastAlignmentViewer = Biojs.extend({
 
         var scale = d3.scale.linear()
             .domain([1, translated_data.totalaa])
-            .range([0, 600]);
+            .range([0, this.opt._width]);
 
         // draw parent SVG element
         var svg = d3.select('#' + this.opt.target)
@@ -82,29 +65,10 @@ Biojs.BlastAlignmentViewer = Biojs.extend({
             .append("g");
 
         // make query rectangle
-        var query = svg.append("rect").attr(self.queryAttr(scale, translated_data));
-        query.on('mouseover', function(d) {
-            var subj_tooltip = d3.select("#blast-alignment-tooltip");
-            subj_tooltip.text("Query: " + d.query_start + "-" + d.query_length);
-            subj_tooltip.style("top", (event.pageY + 5) + "px").style("left", (event.pageX + 10) + "px");
-            return subj_tooltip.style("visibility", "visible");
-        })
-            .on('mouseout', function(d) {
-                var subj_tooltip = d3.select("#blast-alignment-tooltip");
-                return subj_tooltip.style("visibility", "hidden");
-            });
+        var query = svg.append("rect").attr(self._queryAttr(scale, translated_data));
+
         // make sub rectangle
-        var subject = svg.append("rect").attr(self.subAttr(scale, translated_data))
-            .on("mouseover", function(d) {
-                var subj_tooltip = d3.select("#blast-alignment-tooltip");
-                subj_tooltip.text("Subject:" + d.match_start + "-" + d.match_length);
-                subj_tooltip.style("top", (event.pageY + 5) + "px").style("left", (event.pageX + 10) + "px");
-                return subj_tooltip.style("visibility", "visible");
-            })
-            .on("mouseout", function() {
-                var subj_tooltip = d3.select("#blast-alignment-tooltip");
-                return subj_tooltip.style("visibility", "hidden");
-            });
+        var subject = svg.append("rect").attr(self._subAttr(scale, translated_data));
 
         //add gaps
         svg.append("g")
@@ -161,32 +125,32 @@ Biojs.BlastAlignmentViewer = Biojs.extend({
             })
             .attr("y2", this.opt._bar_height * 3)
             .attr("stroke", function(d) {
-                return self.colorScale(100 - d.identity);
+                return self._colorScale(100 - d.identity);
             });
         // make match box
-        var match = svg.append("rect").attr(self.matchAttr(scale, translated_data));
+        var match = svg.append("rect").attr(self._matchAttr(scale, translated_data));
         //		
         // left mask
         if (translated_data.prefixaa > 1) {
             var config = {};
-            config = $.extend(this.mask(), config);
+            config = $.extend(this._mask(), config);
             config.x = function(d) {
                 return 0;
             };
             config.width = function(d) {
-                return scale(translated_data.prefixaa);
+                return scale(translated_data.overLapStartaa);
             };
             svg.append("rect").attr(config);
         }
         //		// right mask
         if (translated_data.suffixaa > 0) {
             var config = {};
-            config = $.extend(this.mask(), config);
+            config = $.extend(this._mask(), config);
             config.x = function(d) {
                 return scale(translated_data.prefixaa + translated_data.overLapLength);
             };
             config.width = function(d) {
-                return scale(translated_data.suffixaa);
+                return self.opt._width - scale(translated_data.prefixaa + translated_data.overLapLength);
             };
             svg.append("rect").attr(config);
         }
@@ -212,14 +176,14 @@ Biojs.BlastAlignmentViewer = Biojs.extend({
      * @name Biojs.BlastAlignmentViewer-eventTypes
      */
     eventTypes: [
-
+        // TODO add mouseover information
     ],
 
-    colorScale: d3.scale.linear()
+    _colorScale: d3.scale.linear()
         .domain([1, 50, 100])
         .range(['#FF0000', '#00FF00', '#0000FF']),
 
-    queryAttr: function(scale, translated_data) {
+    _queryAttr: function(scale, translated_data) {
         return {
             "x": function(d) {
                 return scale(translated_data.qStartaa);
@@ -233,7 +197,7 @@ Biojs.BlastAlignmentViewer = Biojs.extend({
         };
     },
 
-    subAttr: function(scale, translated_data) {
+    _subAttr: function(scale, translated_data) {
         var self = this;
         var y1 = 2 * this.opt._padding + this.opt._bar_height;
         var y2 = 2 * this.opt._padding + this.opt._bar_height + this.opt._bar_height;
@@ -246,7 +210,7 @@ Biojs.BlastAlignmentViewer = Biojs.extend({
                 return scale(translated_data.mLengthaa);
             },
             "fill": function(d) {
-                return self.colorScale(100 - d.identity);
+                return self._colorScale(100 - d.identity);
             },
             "height": this.opt._bar_height,
             "class": "subject",
@@ -254,7 +218,7 @@ Biojs.BlastAlignmentViewer = Biojs.extend({
     },
 
 
-    matchAttr: function(scale, translated_data) {
+    _matchAttr: function(scale, translated_data) {
         var height = this.opt._height - this.opt._padding;
         return {
             "x": function(d) {
@@ -272,7 +236,7 @@ Biojs.BlastAlignmentViewer = Biojs.extend({
         };
     },
 
-    mask: function() {
+    _mask: function() {
         return {
             "y": this.opt._padding - 1,
             "height": this.opt._height,
@@ -282,7 +246,7 @@ Biojs.BlastAlignmentViewer = Biojs.extend({
         };
     },
 
-    getTotalGapSize: function(gaps) {
+    _getTotalGapSize: function(gaps) {
         var counter = 0;
         for (var i = 0; i < gaps.length; i++) {
             counter += (gaps[i].end - gaps[i].start);
@@ -335,8 +299,6 @@ Biojs.BlastAlignmentViewer = Biojs.extend({
             translated_data.qGapOffSet = prefixDiff;
         }
         translated_data.overLapLength = d.overLapLength;
-        //console.log(d);
-        //console.log(translated_data);
         return translated_data;
     }
 });
