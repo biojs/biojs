@@ -99,13 +99,11 @@ Handlebars.registerHelper('vocabPart', function (part) {
     }
 });
 Handlebars.registerHelper('cs_image_src', function (csURL, options) {
-    //TODO I'm sure the context can be changed to the actual compound somehow in the view, I'm just not sure how at the moment
     if (options && csURL) {
-        return new Handlebars.SafeString('<img width="128" height="128" src="http://ops.rsc.org/' + csURL.split("/").pop() + '/image">');
+        return new Handlebars.SafeString('<img width="128" height="128" src="'+ csURL + '/image">');
     }
 });
 Handlebars.registerHelper('target_image_src', function (target, options) {
-    //TODO I'm sure the context can be changed to the actual compound somehow in the view, I'm just not sure how at the moment
     if (options && target && target.length >= 1) {
         return new Handlebars.SafeString('<img width="128" height="128" src="http://www.rcsb.org/pdb/images/' + target[0].split('/').pop() + '_asr_r_250.jpg"&amp;w=128&amp;h=128/>');
     } else {
