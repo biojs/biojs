@@ -36,6 +36,10 @@
   * @option {string} URI
   *    URI for the target image you want to display.
   *
+  * @option {string} [template]
+  *    You can define the look and feel of the display by providing a handlebars HTML template. The variables you can use are defined in the
+  *    OPS.js CompoundSearch class
+  *
   * @option {string} [assayOrganism]
   *    Only return results which have this Assay Organism eg 'Homo sapiens'
   *
@@ -172,18 +176,41 @@
 
                  }
              }
+             var pharmaTemplate = null;
+             if (self.opt.template) {
+                 pharmaTemplate = self.opt.template;
+             } else {
+                 pharmaTemplate = '<table class="mytable"><thead id="tablehead" class="headingstyle"><tr><th class="lead lead-target">Target</th><th></th><th class="lead lead-assay">Assay</th><th></th><th></th><th></th><th></th><th></th><th></th></tr>';
+                 pharmaTemplate += '<tr><th align="left">Name</th>';
+                 pharmaTemplate += '<th width="10%">Organism</th>';
+                 pharmaTemplate += '<th width="10%">Organism</th>';
+                 pharmaTemplate += '<th align="left" width="300px">Description</th>';
+                 pharmaTemplate += '<th>Type</th>';
+                 pharmaTemplate += '<th>Relation</th>';
+                 pharmaTemplate += '<th>Value</th>';
+                 pharmaTemplate += '<th>Units</th>';
+                 pharmaTemplate += '<th>PubMed Article</th>';
+                 pharmaTemplate += '<th>pChembl</th></tr></thead><tbody>';
+                 pharmaTemplate += '<tbody>{{#each pharmaRecord in pharmacology}}<tr class="record-deco"><td style="vertical-align:middle;" height="70">';
+                 pharmaTemplate += '{{#each target in pharmaRecord.targets}}<p>{{target.title}}</p>{{/each}}</td>';
+                 pharmaTemplate += '<td class="cell-basictext">{{#each pharmaRecord.targetOrganisms}} {{this.organism}} {{/each}}</td>';
+                 pharmaTemplate += '<td class="cell-basictext">{{pharmaRecord.assayOrganism}}</td>';
+                 pharmaTemplate += '<td class="cell-longtext">{{pharmaRecord.assayDescription}}</td>';
+                 pharmaTemplate += '<td class="lead cell-basictext">{{pharmaRecord.activityActivityType}}</td>';
+                 pharmaTemplate += '<td class="lead cell-basictext">{{pharmaRecord.activityRelation}}</td>'
+                 pharmaTemplate += '<td class="lead cell-basictext">{{pharmaRecord.activityValue}}</td>';
+                 pharmaTemplate += '<td class="lead cell-basictext">{{pharmaRecord.activityStandardUnits}}</td>';
+                 pharmaTemplate += '<td class="cell-basictext">{{linkablePubmedId pharmaRecord.activityPubmedId}}</td>';
+                 pharmaTemplate += '<td class="cell-basictext">{{pharmaRecord.pChembl}}</td></tr>}{{/each}}';
+                 pharmaTemplate += '</tbody></table>';
+             }
              var searcher = new Openphacts.CompoundSearch(self.opt.appURL, self.opt.appID, self.opt.appKey);
              var pharmaCallback = function(success, status, response) {
                  if (success && response) {
                      var pharmaResults = searcher.parseCompoundPharmacologyResponse(response);
-                     //$.each(pharmaResults, function(index, pharma) {
-                     //write each pharma result in to a table
-                     //});
-                     var template = '<div>Some results</div>';
-                     var hbsTemplate = Handlebars.compile(template);
+                     var hbsTemplate = Handlebars.compile(pharmaTemplate);
                      var html = hbsTemplate(pharmaResults);
                      jQuery('#' + self.opt.target).replaceWith(html);
-
                  } else {
                      //throw an error
                  }
@@ -205,6 +232,7 @@
              appKey: undefined,
              appURL: undefined,
              URI: undefined,
+	     template: undefined,
              assayOrganism: undefined,
              targetOrganism: undefined,
              activity: undefined,
