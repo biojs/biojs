@@ -281,23 +281,29 @@
          /**
           * Fetch more pharmacology results and replace the current ones in the table
           * @param {Number} page The required page
+          * @param {string} [template] Handlebars HTML template to populate with results
+          * @param {string} [replaceID] The id of the current HTML element to replace. The element which replaces it will be given the same id
           */
-         fetchPage: function(page) {
+         fetchPage: function(page, template, replaceID) {
              //fetch pharma for page and replace current results.
              var self = this;
              var searcher = new Openphacts.CompoundSearch(self.opt.appURL, self.opt.appID, self.opt.appKey);
-             var pharmaTemplate = '<tbody id="pharmacology-table-body">{{#each pharmacology}}<tr class="record-deco"><td style="vertical-align:middle;" height="70">';
-             pharmaTemplate += '{{#each this.targets}}<p>{{this.title}}</p>{{/each}}</td>';
-             pharmaTemplate += '<td class="cell-basictext">{{#each this.targetOrganisms}} {{this.organism}} {{/each}}</td>';
-             pharmaTemplate += '<td class="cell-basictext">{{this.assayOrganism}}</td>';
-             pharmaTemplate += '<td class="cell-longtext">{{this.assayDescription}}</td>';
-             pharmaTemplate += '<td class="lead cell-basictext">{{this.activityActivityType}}</td>';
-             pharmaTemplate += '<td class="lead cell-basictext">{{this.activityRelation}}</td>'
-             pharmaTemplate += '<td class="lead cell-basictext">{{this.activityValue}}</td>';
-             pharmaTemplate += '<td class="lead cell-basictext">{{this.activityStandardUnits}}</td>';
-             pharmaTemplate += '<td class="cell-basictext">{{linkablePubmedId this.activityPubmedId}}</td>';
-             pharmaTemplate += '<td class="cell-basictext">{{this.pChembl}}</td></tr>{{/each}}</tbody>';
-
+             var pharmaTemplate;
+             if (template) {
+                 pharmaTemplate = template;
+             } else {
+                 pharmaTemplate = '<tbody id="pharmacology-table-body">{{#each pharmacology}}<tr class="record-deco"><td style="vertical-align:middle;" height="70">';
+                 pharmaTemplate += '{{#each this.targets}}<p>{{this.title}}</p>{{/each}}</td>';
+                 pharmaTemplate += '<td class="cell-basictext">{{#each this.targetOrganisms}} {{this.organism}} {{/each}}</td>';
+                 pharmaTemplate += '<td class="cell-basictext">{{this.assayOrganism}}</td>';
+                 pharmaTemplate += '<td class="cell-longtext">{{this.assayDescription}}</td>';
+                 pharmaTemplate += '<td class="lead cell-basictext">{{this.activityActivityType}}</td>';
+                 pharmaTemplate += '<td class="lead cell-basictext">{{this.activityRelation}}</td>'
+                 pharmaTemplate += '<td class="lead cell-basictext">{{this.activityValue}}</td>';
+                 pharmaTemplate += '<td class="lead cell-basictext">{{this.activityStandardUnits}}</td>';
+                 pharmaTemplate += '<td class="cell-basictext">{{linkablePubmedId this.activityPubmedId}}</td>';
+                 pharmaTemplate += '<td class="cell-basictext">{{this.pChembl}}</td></tr>{{/each}}</tbody>';
+             }
              var pharmaCallback = function(success, status, response) {
                  if (success && response) {
                      var pharmaResults = searcher.parseCompoundPharmacologyResponse(response);
@@ -305,7 +311,7 @@
                      var html = hbsTemplate({
                          'pharmacology': pharmaResults
                      });
-                     jQuery('#pharmacology-table-body').replaceWith(html);
+                     jQuery(replaceID != null ? '#' + replaceID : '#pharmacology-table-body').replaceWith(html);
                      self.page = page;
                  } else {
                      //throw an error
