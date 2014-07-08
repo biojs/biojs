@@ -92,29 +92,29 @@
  Biojs.OPSCompoundPharmacology = Biojs.extend(
      /** @lends Biojs.OPSCompoundPharmacology# */
      {
-	 page: 1,
+         page: 1,
          assayOrganism: null,
-	 targetOrganism: null,
-	 activity: null,
-	 activityValue: null,
-	 minActivityValue: null,
-	 minExActivityValue: null,
-	 maxActivityValue: null,
-	 maxExActivityValue: null,
-	 unit: null,
-	 activityRelation: null,
-	 actualPchemblValue: null,
-	 minPchemblValue: null,
-	 minExPchemblValue: null,
-	 maxPchemblValue: null,
-	 maxExPchemblValue: null,
-	 targetType: null,
+         targetOrganism: null,
+         activity: null,
+         activityValue: null,
+         minActivityValue: null,
+         minExActivityValue: null,
+         maxActivityValue: null,
+         maxExActivityValue: null,
+         unit: null,
+         activityRelation: null,
+         actualPchemblValue: null,
+         minPchemblValue: null,
+         minExPchemblValue: null,
+         maxPchemblValue: null,
+         maxExPchemblValue: null,
+         targetType: null,
 
          constructor: function(options) {
 
              this.base(options);
              var self = this;
-	     self.page = self.opt.page != null ? self.opt.page : 1;
+             self.page = self.opt.page != null ? self.opt.page : 1;
              assayOrganism = self.opt.assayOrganism;
              targetOrganism = self.opt.targetOrganism;
              var lens = null;
@@ -196,7 +196,7 @@
                  pharmaTemplate += '<th>Units</th>';
                  pharmaTemplate += '<th>PubMed Article</th>';
                  pharmaTemplate += '<th>pChembl</th></tr></thead>';
-                 pharmaTemplate += '<tbody>{{#each pharmacology}}<tr class="record-deco"><td style="vertical-align:middle;" height="70">';
+                 pharmaTemplate += '<tbody id="pharmacology-table-body">{{#each pharmacology}}<tr class="record-deco"><td style="vertical-align:middle;" height="70">';
                  pharmaTemplate += '{{#each this.targets}}<p>{{this.title}}</p>{{/each}}</td>';
                  pharmaTemplate += '<td class="cell-basictext">{{#each this.targetOrganisms}} {{this.organism}} {{/each}}</td>';
                  pharmaTemplate += '<td class="cell-basictext">{{this.assayOrganism}}</td>';
@@ -213,11 +213,13 @@
              var pharmaCallback = function(success, status, response) {
                  if (success && response) {
                      var pharmaResults = searcher.parseCompoundPharmacologyResponse(response);
-		     //$.each(pharmaResults, function(index, result) {
-		//	     pharmacology.push(result);
-		  //   });
+                     //$.each(pharmaResults, function(index, result) {
+                     //	     pharmacology.push(result);
+                     //   });
                      var hbsTemplate = Handlebars.compile(pharmaTemplate);
-                     var html = hbsTemplate({'pharmacology': pharmaResults});
+                     var html = hbsTemplate({
+                         'pharmacology': pharmaResults
+                     });
                      jQuery('#' + self.opt.target).replaceWith(html);
                  } else {
                      //throw an error
@@ -240,7 +242,7 @@
              appKey: undefined,
              appURL: undefined,
              URI: undefined,
-	     template: undefined,
+             template: undefined,
              assayOrganism: undefined,
              targetOrganism: undefined,
              activity: undefined,
@@ -276,25 +278,41 @@
               */
              "error"
          ],
-
-	 fetchPage: function(page) {
-		 //fetch pharma for page and replace current results.
+         /**
+          * Fetch more pharmacology results and replace the current ones in the table
+          * @param {Number} page The required page
+          */
+         fetchPage: function(page) {
+             //fetch pharma for page and replace current results.
+             var self = this;
              var searcher = new Openphacts.CompoundSearch(self.opt.appURL, self.opt.appID, self.opt.appKey);
+             var pharmaTemplate = '<tbody id="pharmacology-table-body">{{#each pharmacology}}<tr class="record-deco"><td style="vertical-align:middle;" height="70">';
+             pharmaTemplate += '{{#each this.targets}}<p>{{this.title}}</p>{{/each}}</td>';
+             pharmaTemplate += '<td class="cell-basictext">{{#each this.targetOrganisms}} {{this.organism}} {{/each}}</td>';
+             pharmaTemplate += '<td class="cell-basictext">{{this.assayOrganism}}</td>';
+             pharmaTemplate += '<td class="cell-longtext">{{this.assayDescription}}</td>';
+             pharmaTemplate += '<td class="lead cell-basictext">{{this.activityActivityType}}</td>';
+             pharmaTemplate += '<td class="lead cell-basictext">{{this.activityRelation}}</td>'
+             pharmaTemplate += '<td class="lead cell-basictext">{{this.activityValue}}</td>';
+             pharmaTemplate += '<td class="lead cell-basictext">{{this.activityStandardUnits}}</td>';
+             pharmaTemplate += '<td class="cell-basictext">{{linkablePubmedId this.activityPubmedId}}</td>';
+             pharmaTemplate += '<td class="cell-basictext">{{this.pChembl}}</td></tr>{{/each}}</tbody>';
+
              var pharmaCallback = function(success, status, response) {
                  if (success && response) {
                      var pharmaResults = searcher.parseCompoundPharmacologyResponse(response);
-		     //$.each(pharmaResults, function(index, result) {
-		//	     pharmacology.push(result);
-		  //   });
                      var hbsTemplate = Handlebars.compile(pharmaTemplate);
-                     var html = hbsTemplate({'pharmacology': pharmaResults});
-                     jQuery('#' + self.opt.target).replaceWith(html);
+                     var html = hbsTemplate({
+                         'pharmacology': pharmaResults
+                     });
+                     jQuery('#pharmacology-table-body').replaceWith(html);
+                     self.page = page;
                  } else {
                      //throw an error
                  }
              };
-                         searcher.compoundPharmacology(self.opt.URI, assayOrganism, targetOrganism, activity, activityValue, minActivityValue, minExActivityValue, maxActivityValue, maxExActivityValue, unit, activityRelation, actualPchemblValue, minPchemblValue, minExPchemblValue, maxPchemblValue, maxExPchemblValue, targetType, page, self.opt.pageSize != null ? self.opt.pageSize : '50', sortBy, self.opt.lens, pharmaCallback);
- 
-	 }
+             searcher.compoundPharmacology(self.opt.URI, self.assayOrganism, self.targetOrganism, self.activity, self.activityValue, self.minActivityValue, self.minExActivityValue, self.maxActivityValue, self.maxExActivityValue, self.unit, self.activityRelation, self.actualPchemblValue, self.minPchemblValue, self.minExPchemblValue, self.maxPchemblValue, self.maxExPchemblValue, self.targetType, page, self.opt.pageSize != null ? self.opt.pageSize : '50', self.sortBy, self.opt.lens, pharmaCallback);
+
+         }
      }
  )
