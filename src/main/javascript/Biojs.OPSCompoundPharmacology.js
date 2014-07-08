@@ -92,25 +92,36 @@
  Biojs.OPSCompoundPharmacology = Biojs.extend(
      /** @lends Biojs.OPSCompoundPharmacology# */
      {
+	 page: 1,
+         assayOrganism: null,
+	 targetOrganism: null,
+	 activity: null,
+	 activityValue: null,
+	 minActivityValue: null,
+	 minExActivityValue: null,
+	 maxActivityValue: null,
+	 maxExActivityValue: null,
+	 unit: null,
+	 activityRelation: null,
+	 actualPchemblValue: null,
+	 minPchemblValue: null,
+	 minExPchemblValue: null,
+	 maxPchemblValue: null,
+	 maxExPchemblValue: null,
+	 targetType: null,
+
          constructor: function(options) {
 
              this.base(options);
              var self = this;
-
-             var assayOrganism = self.opt.assayOrganism;
-             var targetOrganism = self.opt.targetOrganism;
-             var targetType = null;
+	     self.page = self.opt.page != null ? self.opt.page : 1;
+             assayOrganism = self.opt.assayOrganism;
+             targetOrganism = self.opt.targetOrganism;
              var lens = null;
-             var activity = self.opt.activity;
-             var unit = self.opt.activityUnit;
+             activity = self.opt.activity;
+             unit = self.opt.activityUnit;
              var condition = self.opt.activityCondition;
              var currentActivityValue = self.opt.activityValue;
-             var activityRelation = null;
-             var minActivityValue = null;
-             var maxActivityValue = null;
-             var maxExActivityValue = null;
-             var activityValue = null;
-             var minExActivityValue = null;
              // only set activity filter if all filter boxes have been selected
              if (unit != null && activity != null && condition != null && currentActivityValue != null) {
                  switch (condition) {
@@ -141,11 +152,6 @@
              }
              var pchemblCondition = self.opt.pchemblCondition;
              var currentPchemblValue = self.opt.pchemblValue;
-             var minPchemblValue = null;
-             var maxPchemblValue = null;
-             var maxExPchemblValue = null;
-             var minExPchemblValue = null;
-             var actualPchemblValue = null;
              // pchembl filter only valid if all filter bits selected
              if (pchemblCondition != null && currentPchemblValue != null) {
                  switch (pchemblCondition) {
@@ -166,7 +172,6 @@
                          break;
                  }
              }
-             var sortBy = null;
              if (self.opt.sortBy !== null && self.opt.sortDirection !== null) {
                  // we have previously sorted descending on a header and it is still current
                  if (self.opt.sortDirection === "ascending") {
@@ -222,11 +227,11 @@
                  if (success && response) {
                      var count = searcher.parseCompoundPharmacologyCountResponse(response);
                      if (count > 0) {
-                         searcher.compoundPharmacology(self.opt.URI, assayOrganism, targetOrganism, activity, activityValue, minActivityValue, minExActivityValue, maxActivityValue, maxExActivityValue, unit, activityRelation, actualPchemblValue, minPchemblValue, minExPchemblValue, maxPchemblValue, maxExPchemblValue, targetType, self.opt.page != null ? self.opt.page : '1', self.opt.pageSize != null ? self.opt.pageSize : '50', sortBy, self.opt.lens, pharmaCallback);
+                         searcher.compoundPharmacology(self.opt.URI, self.assayOrganism, self.targetOrganism, self.activity, self.activityValue, self.minActivityValue, self.minExActivityValue, self.maxActivityValue, self.maxExActivityValue, self.unit, self.activityRelation, self.actualPchemblValue, self.minPchemblValue, self.minExPchemblValue, self.maxPchemblValue, self.maxExPchemblValue, self.targetType, self.opt.page != null ? self.opt.page : '1', self.opt.pageSize != null ? self.opt.pageSize : '50', self.sortBy, self.opt.lens, pharmaCallback);
                      }
                  }
              };
-             searcher.compoundPharmacologyCount(self.opt.URI, assayOrganism, targetOrganism, activity, activityValue, minActivityValue, minExActivityValue, maxActivityValue, maxExActivityValue, unit, activityRelation, actualPchemblValue, minPchemblValue, minExPchemblValue, maxPchemblValue, maxExPchemblValue, targetType, self.opt.lens, countCallback);
+             searcher.compoundPharmacologyCount(self.opt.URI, self.assayOrganism, self.targetOrganism, self.activity, self.activityValue, self.minActivityValue, self.minExActivityValue, self.maxActivityValue, self.maxExActivityValue, self.unit, self.activityRelation, self.actualPchemblValue, self.minPchemblValue, self.minExPchemblValue, self.maxPchemblValue, self.maxExPchemblValue, self.targetType, self.opt.lens, countCallback);
 
          },
          opt: {
@@ -270,6 +275,26 @@
               * );
               */
              "error"
-         ]
+         ],
+
+	 fetchPage: function(page) {
+		 //fetch pharma for page and replace current results.
+             var searcher = new Openphacts.CompoundSearch(self.opt.appURL, self.opt.appID, self.opt.appKey);
+             var pharmaCallback = function(success, status, response) {
+                 if (success && response) {
+                     var pharmaResults = searcher.parseCompoundPharmacologyResponse(response);
+		     //$.each(pharmaResults, function(index, result) {
+		//	     pharmacology.push(result);
+		  //   });
+                     var hbsTemplate = Handlebars.compile(pharmaTemplate);
+                     var html = hbsTemplate({'pharmacology': pharmaResults});
+                     jQuery('#' + self.opt.target).replaceWith(html);
+                 } else {
+                     //throw an error
+                 }
+             };
+                         searcher.compoundPharmacology(self.opt.URI, assayOrganism, targetOrganism, activity, activityValue, minActivityValue, minExActivityValue, maxActivityValue, maxExActivityValue, unit, activityRelation, actualPchemblValue, minPchemblValue, minExPchemblValue, maxPchemblValue, maxExPchemblValue, targetType, page, self.opt.pageSize != null ? self.opt.pageSize : '50', sortBy, self.opt.lens, pharmaCallback);
+ 
+	 }
      }
  )
