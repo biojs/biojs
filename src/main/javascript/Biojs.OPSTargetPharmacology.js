@@ -85,7 +85,7 @@
   *    appKey: '734a274b418b0dbe57fc40f86e85e20e',
   *    appURL: 'https://beta.openphacts.org/1.3',
   *    URI: 'http://www.conceptwiki.org/concept/5de0f011-68e0-4917-bac2-6d65e8f7effb',
-  *    assayOrganism = 'Homo sapiens',
+  *    assayOrganism: 'Homo sapiens',
   *    target: 'YourOwnDivId'
   * });
   */
@@ -265,11 +265,11 @@ var hbsTemplate = Handlebars.compile(pharmaTemplate);
 
          /**
           * Array containing the supported event names
-          * @name Biojs.OPSCompoundPharmacology-eventTypes
+          * @name Biojs.OPSTargetPharmacology-eventTypes
           */
          eventTypes: [
              /**
-              * @name Biojs.OPSCompoundPharmacology#error
+              * @name Biojs.OPSTargetPharmacology#error
               * @event
               * @param {function} actionPerformed A function which receives an {@link Biojs.Event}
               * object as argument.

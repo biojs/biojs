@@ -85,7 +85,7 @@
   *    appKey: '734a274b418b0dbe57fc40f86e85e20e',
   *    appURL: 'https://beta.openphacts.org/1.3',
   *    URI: 'http://www.conceptwiki.org/concept/dd758846-1dac-4f0d-a329-06af9a7fa413',
-  *    assayOrganism = 'Homo sapiens',
+  *    assayOrganism: 'Homo sapiens',
   *    target: 'YourOwnDivId'
   * });
   */
