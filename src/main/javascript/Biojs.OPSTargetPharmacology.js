@@ -93,7 +93,7 @@
      /** @lends Biojs.OPSTargetPharmacology# */
      {
          page: 1,
-	 pageSize: 50,
+         pageSize: 50,
          assayOrganism: null,
          targetOrganism: null,
          activity: null,
@@ -116,7 +116,7 @@
              this.base(options);
              var self = this;
              page = self.opt.page != null ? self.opt.page : 1;
-	     pageSize = self.opt.pageSize != null ? self.opt.pageSize : 50;
+             pageSize = self.opt.pageSize != null ? self.opt.pageSize : 50;
              assayOrganism = self.opt.assayOrganism;
              targetOrganism = self.opt.targetOrganism;
              var lens = null;
@@ -187,58 +187,51 @@
              if (self.opt.template) {
                  pharmaTemplate = self.opt.template;
              } else {
-	pharmaTemplate = '<table id="target-pharma-table"><thead><tr><th class="lead">Compound</th><th class="lead">Target</th><th></th><th class="lead" style="text-align:left;">Assay</th><th></th><th></th><th class="lead">Activity</th><th></th><th></th><th></th><th></th><th></th></tr>';
-	pharmaTemplate += '<tr><th align="center">Name</th>';
-pharmaTemplate += '<th>Organism</th>';
-	pharmaTemplate += '<th>Organism</th>';
-pharmaTemplate += '<th>Description</th>';
-pharmaTemplate += '<th>Type</th>';
-pharmaTemplate += '<th>Relation</th>';
-pharmaTemplate += '<th>Value</th>';
-pharmaTemplate += '<th>Units</th>';
-pharmaTemplate += '<th>Mol Weight</th>';
-pharmaTemplate += '<th>SMILES</th>';
-pharmaTemplate += '<th>InChi</th>';
-pharmaTemplate += '<th>InChiKey</th>';
-pharmaTemplate += '<th>pChembl</th></tr></thead>';
-pharmaTemplate += '<tbody id="pharmacology-table-body">';
-pharmaTemplate += '{{#each pharmacology}}<tr class="record-deco"><td class="cell-basictext">{{this.compoundPrefLabel}}</td>';
-pharmaTemplate += '<td class="cell-basictext">{{#each this.targetOrganisms}} {{this.organism}} {{/each}}</td>';
-pharmaTemplate += '<td class="cell-basictext">{{this.assayOrganism}}</td>';
-pharmaTemplate += '<td class="cell-longtext">{{this.assayDescription}}</td>';
-pharmaTemplate += '<td class="lead cell-basictext">{{this.activityActivityType}}</td>';
-pharmaTemplate += '<td class="lead cell-basictext">{{this.activityRelation}}</td>';
-pharmaTemplate += '<td class="lead cell-basictext">{{this.activityStandardValue}}</td>';
-pharmaTemplate += '<td class="lead cell-basictext">{{this.activityStandardUnits}}</td>';
-pharmaTemplate += '<td class="cell-basictext" >{{this.compoundFullMwt}}</td>';
-pharmaTemplate += '<td class="cell-longtext" style="word-wrap:break-word;">{{this.compoundSmiles}}</td>';
-pharmaTemplate += '<td class="cell-longtext" style="word-wrap:break-word;">{{this.compoundInchi}}</td>';
-pharmaTemplate += '<td class="cell-longtext" style="word-wrap:break-word;">{{this.compoundInchikey}}</td>';
-pharmaTemplate += '<td class="cell-basictext" >{{this.pChembl}}</td></tr>{{/each}}</tbody></table>';
+                 pharmaTemplate = '<table id="target-pharma-table" style="border-spacing: 0"><thead class="headingstyle" style="border-spacing: 0"><tr><th colspan="2" class="centre" style="border-right: 2px solid white; padding: 7px;">Target</th><th colspan="2" class="centre" style="border-right: 2px solid white; padding: 7px;">Assay</th><th colspan="4" class="centre" style="border-right: 2px solid white; padding: 7px;">Activity</th><th style="border-right: 2px solid white; padding: 7px;"></th><th style="border-right: 2px solid white; padding: 7px;"></th></tr>';
+                 pharmaTemplate += '<tr><th style="width: 20%;">Name</th>';
+                 pharmaTemplate += '<th style="width: 10%; border-right: 2px solid white; padding: 7px;">Organism</th>';
+                 pharmaTemplate += '<th style="width:10%;">Organism</th>';
+                 pharmaTemplate += '<th style="width: 30%; border-right: 2px solid white; padding: 7px;">Description</th>';
+                 pharmaTemplate += '<th style="width: 5%;">Type</th>';
+                 pharmaTemplate += '<th style="width: 5%;">Relation</th>';
+                 pharmaTemplate += '<th style="width: 5%;">Value</th>';
+                 pharmaTemplate += '<th style="width: 5%; border-right: 2px solid white; padding: 7px;">Units</th>';
+                 pharmaTemplate += '<th style="width: 5%; border-right: 2px solid white; padding: 7px;">Mol Weight</th>';
+                 pharmaTemplate += '<th style="width: 5%; border-right: 2px solid white; padding: 7px;">pChembl</th></tr></thead>';
+                 pharmaTemplate += '<tbody id="pharmacology-table-body">';
+                 pharmaTemplate += '{{#each pharmacology}}<tr class="record-deco"><td class="cell-basictext">{{this.compoundPrefLabel}}</td>';
+                 pharmaTemplate += '<td class="cell-basictext">{{#each this.targetOrganisms}} {{this.organism}} {{/each}}</td>';
+                 pharmaTemplate += '<td class="cell-basictext">{{this.assayOrganism}}</td>';
+                 pharmaTemplate += '<td class="cell-longtext">{{this.assayDescription}}</td>';
+                 pharmaTemplate += '<td class="lead cell-basictext">{{this.activityActivityType}}</td>';
+                 pharmaTemplate += '<td class="lead cell-basictext">{{this.activityRelation}}</td>';
+                 pharmaTemplate += '<td class="lead cell-basictext">{{this.activityStandardValue}}</td>';
+                 pharmaTemplate += '<td class="lead cell-basictext">{{this.activityStandardUnits}}</td>';
+                 pharmaTemplate += '<td class="cell-basictext" >{{this.pChembl}}</td></tr>{{/each}}</tbody></table>';
              }
-      var searcher = new Openphacts.TargetSearch(this.appURL, this.appID, this.appKey);
-      var pharmaCallback=function(success, status, response){
-      if (success && response) {
-        var pharmaResults = searcher.parseTargetPharmacologyResponse(response);
-var hbsTemplate = Handlebars.compile(pharmaTemplate);
+             var searcher = new Openphacts.TargetSearch(this.appURL, this.appID, this.appKey);
+             var pharmaCallback = function(success, status, response) {
+                 if (success && response) {
+                     var pharmaResults = searcher.parseTargetPharmacologyResponse(response);
+                     var hbsTemplate = Handlebars.compile(pharmaTemplate);
                      var html = hbsTemplate({
                          'pharmacology': pharmaResults
                      });
                      jQuery('#' + self.opt.target).replaceWith(html);
 
-      } else {
-	      //throw an error
-      }
-    };
-    var countCallback=function(success, status, response){
-      if (success && response) {
-          var count = searcher.parseTargetPharmacologyCountResponse(response);
-          if (count > 0) {
-              searcher.targetPharmacology(self.opt.URI, self.assayOrganism, self.targetOrganism, self.activity, self.activityValue, self.minActivityValue, self.minExActivityValue, self.maxActivityValue, self.maxExActivityValue, self.unit, self.activityRelation, self.actualPchemblValue, self.minPchemblValue, self.minExPchemblValue, self.maxPchemblValue, self.maxExPchemblValue, self.targetType, self.page, self.pageSize, self.sortBy, self.opt.lens, pharmaCallback);
-          }
-      }
-    };
-        searcher.targetPharmacologyCount(this.URI, this.assayOrganism, this.targetOrganism, this.activity, this.activityValue, this.minActivityValue, this.minExActivityValue, this.maxActivityValue, this.maxExActivityValue, this.unit, this.activityRelation, this.actualPchemblValue, this.minPchemblValue, this.minExPchemblValue, this.maxPchemblValue, this.maxExPchemblValue, this.targetType, this.opt.lens, countCallback);
+                 } else {
+                     //throw an error
+                 }
+             };
+             var countCallback = function(success, status, response) {
+                 if (success && response) {
+                     var count = searcher.parseTargetPharmacologyCountResponse(response);
+                     if (count > 0) {
+                         searcher.targetPharmacology(self.opt.URI, self.assayOrganism, self.targetOrganism, self.activity, self.activityValue, self.minActivityValue, self.minExActivityValue, self.maxActivityValue, self.maxExActivityValue, self.unit, self.activityRelation, self.actualPchemblValue, self.minPchemblValue, self.minExPchemblValue, self.maxPchemblValue, self.maxExPchemblValue, self.targetType, self.page, self.pageSize, self.sortBy, self.opt.lens, pharmaCallback);
+                     }
+                 }
+             };
+             searcher.targetPharmacologyCount(this.URI, this.assayOrganism, this.targetOrganism, this.activity, this.activityValue, this.minActivityValue, this.minExActivityValue, this.maxActivityValue, this.maxExActivityValue, this.unit, this.activityRelation, this.actualPchemblValue, this.minPchemblValue, this.minExPchemblValue, this.maxPchemblValue, this.maxExPchemblValue, this.targetType, this.opt.lens, countCallback);
 
          },
          opt: {
@@ -297,20 +290,17 @@ var hbsTemplate = Handlebars.compile(pharmaTemplate);
              if (template) {
                  pharmaTemplate = template;
              } else {
-var pharmaTemplate = '<tbody id="pharmacology-table-body">';
-pharmaTemplate += '{{#each pharmacology}}<tr class="record-deco"><td class="cell-basictext">{{this.compoundPrefLabel}}</td>';
-pharmaTemplate += '<td class="cell-basictext">{{#each this.targetOrganisms}} {{this.organism}} {{/each}}</td>';
-pharmaTemplate += '<td class="cell-basictext">{{this.assayOrganism}}</td>';
-pharmaTemplate += '<td class="cell-longtext">{{this.assayDescription}}</td>';
-pharmaTemplate += '<td class="lead cell-basictext">{{this.activityActivityType}}</td>';
-pharmaTemplate += '<td class="lead cell-basictext">{{this.activityRelation}}</td>';
-pharmaTemplate += '<td class="lead cell-basictext">{{this.activityStandardValue}}</td>';
-pharmaTemplate += '<td class="lead cell-basictext">{{this.activityStandardUnits}}</td>';
-pharmaTemplate += '<td class="cell-basictext" >{{this.compoundFullMwt}}</td>';
-pharmaTemplate += '<td class="cell-longtext" style="word-wrap:break-word;">{{this.compoundSmiles}}</td>';
-pharmaTemplate += '<td class="cell-longtext" style="word-wrap:break-word;">{{this.compoundInchi}}</td>';
-pharmaTemplate += '<td class="cell-longtext" style="word-wrap:break-word;">{{this.compoundInchikey}}</td>';
-pharmaTemplate += '<td class="cell-basictext" >{{this.pChembl}}</td></tr>{{/each}}</tbody>';
+                 var pharmaTemplate = '<tbody id="pharmacology-table-body">';
+                 pharmaTemplate += '{{#each pharmacology}}<tr class="record-deco"><td class="cell-basictext">{{this.compoundPrefLabel}}</td>';
+                 pharmaTemplate += '<td class="cell-basictext">{{#each this.targetOrganisms}} {{this.organism}} {{/each}}</td>';
+                 pharmaTemplate += '<td class="cell-basictext">{{this.assayOrganism}}</td>';
+                 pharmaTemplate += '<td class="cell-longtext">{{this.assayDescription}}</td>';
+                 pharmaTemplate += '<td class="lead cell-basictext">{{this.activityActivityType}}</td>';
+                 pharmaTemplate += '<td class="lead cell-basictext">{{this.activityRelation}}</td>';
+                 pharmaTemplate += '<td class="lead cell-basictext">{{this.activityStandardValue}}</td>';
+                 pharmaTemplate += '<td class="lead cell-basictext">{{this.activityStandardUnits}}</td>';
+                 pharmaTemplate += '<td class="cell-basictext" >{{this.compoundFullMwt}}</td>';
+                 pharmaTemplate += '<td class="cell-basictext" >{{this.pChembl}}</td></tr>{{/each}}</tbody>';
              }
              var pharmaCallback = function(success, status, response) {
                  if (success && response) {
