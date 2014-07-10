@@ -280,9 +280,14 @@
          ],
          /**
           * Fetch more pharmacology results and replace the current ones in the table
-          * @param {Number} page The required page
-          * @param {string} [template] Handlebars HTML template to populate with results
-          * @param {string} [replaceID] The id of the current HTML element to replace. The element which replaces it will be given the same id
+          * @param {Number} page
+	  *     The required page
+          * @param {string} [template]
+	  *     Handlebars HTML template to populate with results
+          * @param {string} [replaceID]
+	  *     The id of the current HTML element to replace. The element which replaces it will be given the same id
+	  * @example
+	  *     instance.fetchMore(2, null, "pharmacology-table-body")
           */
          fetchPage: function(page, template, replaceID) {
              //fetch pharma for page and replace current results.
