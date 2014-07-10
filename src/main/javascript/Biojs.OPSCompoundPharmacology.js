@@ -185,17 +185,17 @@
              if (self.opt.template) {
                  pharmaTemplate = self.opt.template;
              } else {
-                 pharmaTemplate = '<table class="mytable"><thead id="tablehead" class="headingstyle"><tr><th class="lead lead-target">Target</th><th></th><th class="lead lead-assay">Assay</th><th></th><th></th><th></th><th></th><th></th><th></th></tr>';
-                 pharmaTemplate += '<tr><th align="left">Name</th>';
-                 pharmaTemplate += '<th width="12%">Organism</th>';
-                 pharmaTemplate += '<th width="10%">Organism</th>';
-                 pharmaTemplate += '<th align="left" width="300px">Description</th>';
-                 pharmaTemplate += '<th>Type</th>';
-                 pharmaTemplate += '<th>Relation</th>';
-                 pharmaTemplate += '<th>Value</th>';
-                 pharmaTemplate += '<th>Units</th>';
-                 pharmaTemplate += '<th>PubMed Article</th>';
-                 pharmaTemplate += '<th>pChembl</th></tr></thead>';
+                 pharmaTemplate = '<table style="border-spacing: 0;"><thead style="border-spacing: 0;" class="headingstyle"><tr><th colspan="2" class="centre" style="border-right: 2px solid white; padding: 7px;">Target</th><th colspan="2" class="centre" style="border-right: 2px solid white; padding: 7px;">Assay</th><th colspan="4" class="centre" style="border-right: 2px solid white; padding: 7px;">Activity</th><th style="border-right: 2px solid white; padding: 7px;"></th><th style="border-right: 2px solid white; padding: 7px;"></th></tr>';
+                 pharmaTemplate += '<tr><th style="width: 20%;">Name</th>';
+                 pharmaTemplate += '<th style="width: 10%; border-right: 2px solid white; padding: 7px;">Organism</th>';
+                 pharmaTemplate += '<th style="width: 10%;">Organism</th>';
+                 pharmaTemplate += '<th style="width: 30%;border-right: 2px solid white; padding: 7px;">Description</th>';
+                 pharmaTemplate += '<th style="width: 5%;">Type</th>';
+                 pharmaTemplate += '<th style="width: 5%;">Relation</th>';
+                 pharmaTemplate += '<th style="width: 5%;">Value</th>';
+                 pharmaTemplate += '<th style="width: 5%; border-right: 2px solid white; padding: 7px;">Units</th>';
+                 pharmaTemplate += '<th style="width: 5%; border-right: 2px solid white; padding: 7px;">PubMed Article</th>';
+                 pharmaTemplate += '<th style="width: 5%; border-right: 2px solid white; padding: 7px;">pChembl</th></tr></thead>';
                  pharmaTemplate += '<tbody id="pharmacology-table-body">{{#each pharmacology}}<tr class="record-deco"><td style="vertical-align:middle;" height="70">';
                  pharmaTemplate += '{{#each this.targets}}<p>{{this.title}}</p>{{/each}}</td>';
                  pharmaTemplate += '<td class="cell-basictext">{{#each this.targetOrganisms}} {{this.organism}} {{/each}}</td>';
