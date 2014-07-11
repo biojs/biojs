@@ -39,6 +39,7 @@
   * @option {string} URI
   *    URI for the compound you are interested in.
   *
+  * @option {string} [template] Handlebars HTML template to be populated with results.
   *
   * @example
   * var instance = new Biojs.OPSCompoundInfo({
@@ -61,7 +62,12 @@
                  if (success) {
                      var compoundResult = searcher.parseCompoundResponse(response);
                      jQuery('#' + self.opt.target);
-                     var template = '<div><div><div class="large-top-spacing"><div"><div class="left"><div style="padding:0 0 0 20px;background:white;">{{cs_image_src csURI}}</div>';
+		     var template;
+		     if (self.opt.template != null) {
+                         template = self.opt.template;
+		     } else {
+
+                     template = '<div><div><div class="large-top-spacing"><div"><div class="left"><div style="padding:0 0 0 20px;background:white;">{{cs_image_src csURI}}</div>';
                      template += '<div id="boxes" class="small-top-spacing">{{#if logp}}<div class="summary-box"><div class="inner-property-content"><p><small>AlogP</small></p><p class="lead">{{logp}}</p></div></div>{{/if}}';
                      template += '{{#if hba}}<div class="summary-box"><div class="inner-property-content"><p><small># H-Bond Acceptors</small></p><p class="lead">{{hba}}</p></div></div>{{/if}}';
                      template += '{{#if hbd}}<div class="summary-box"><div class="inner-property-content"><p><small># H-Bond Donors</small></p><p class="lead">{{hbd}}</p></div></div>{{/if}}';
@@ -78,6 +84,7 @@
                      template += '{{#if inchiKey}}<dt class="medium-padding-top big-font bold-font">Standard InChIKey</dt><dd class="medium-padding-top">{{inchiKey}}</dd>{{/if}}';
                      template += '{{#if proteinBinding}}<dt class="medium-padding-top big-font bold-font">Protein Binding</dt><dd class="medium-padding-top">{{proteinBinding}}</dd>{{/if}}';
                      template += '{{#if toxicity}}<dt class="medium-padding-top big-font bold-font">Toxicity</dt><dd class="medium-padding-top">{{toxicity}}</dd>{{/if}}</dl></div></div></div></div></div></div>';
+		     }
                      var hbsTemplate = Handlebars.compile(template);
                      var html = hbsTemplate(compoundResult);
                      jQuery('#' + self.opt.target).replaceWith(html);
