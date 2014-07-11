@@ -264,7 +264,7 @@
           */
          eventTypes: [
              /**
-              * @name Biojs.OPSCompoundPharmacology#error
+              * @name Biojs.OPSCompoundPharmacology#onError
               * @event
               * @param {function} actionPerformed A function which receives an {@link Biojs.Event}
               * object as argument.
@@ -276,7 +276,7 @@
               *    }
               * );
               */
-             "error"
+             "onError"
          ],
          /**
           * Fetch more pharmacology results and replace the current ones in the table
