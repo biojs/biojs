@@ -10,7 +10,7 @@
  * 
  * @requires <a href=''>Server side proxy</a>
  * 
- * @requires <a href='../biojs/css/ChEBICompound.css'>ChEBICompound.css</a>
+ * @requires <a href='../biojs/css/biojs.ChEBICompound.css'>ChEBICompound.css</a>
  * @dependency <link href="../biojs/css/biojs.ChEBICompound.css" rel="stylesheet" type="text/css" />
  * 
  * @requires <a href='http://blog.jquery.com/2011/09/12/jquery-1-6-4-released/'>jQuery Core 1.6.4</a>
@@ -30,6 +30,9 @@
  * 
  * @option {int} [width=undefined]
  *    The width in pixels of how big this image should be displayed. If it's not specified, the CSS value will be used instead.
+ *
+ * @option {string} [displayId]
+ *    Alternative identifier to display instead of the CHEBI id. (e.g. MTBLC4991). Note: Component doesn't validate this value against chebi webservice.
  * 
  * @example
  * var instance = new Biojs.ChEBICompound({
@@ -49,6 +52,7 @@ Biojs.ChEBICompound = Biojs.extend(
 		var width = this.opt.width;
 		var height = this.opt.height;
 		var imageWidth, imageHeight;
+        var displayId = this.opt.displayId;
 
 		if ( "string" == (typeof this.opt.target) ) {
 			this._container = jQuery( "#" + this.opt.target );
@@ -107,14 +111,15 @@ Biojs.ChEBICompound = Biojs.extend(
 	   height: undefined,
 	   width: undefined,
 	   scale: false,
-	   imageIndex: 0
+	   imageIndex: 0,
+       displayId: undefined
 	},
 	
 	eventTypes : [
   		/**
   		 * @name Biojs.ChEBICompound#onRequestError
   		 * @event
-  		 * @param {function} actionPerformed An function which receives an {@link Biojs.Event} object as argument.
+  		 * @param {function} actionPerformed A function which receives a {@link Biojs.Event} object as argument.
   		 * @eventData {Object} source The component which did triggered the event.
   		 * @eventData {string} file The name of the loaded file.
   		 * @eventData {string} result A string with either value 'success' or 'failure'.
@@ -132,9 +137,9 @@ Biojs.ChEBICompound = Biojs.extend(
   		/**
   		 * @name Biojs.ChEBICompound#onImageLoaded
   		 * @event
-  		 * @param {function} actionPerformed An function which receives an {@link Biojs.Event} object as argument.
+  		 * @param {function} actionPerformed A function which receives a {@link Biojs.Event} object as argument.
   		 * @eventData {Object} source The component which did triggered the event.
-  		 * @eventData {string} id The identifier of the loaded file.
+  		 * @eventData {string} id The identifier of the loaded Compound.
   		 * 
   		 * @example 
   		 * instance.onImageLoaded(
@@ -144,9 +149,57 @@ Biojs.ChEBICompound = Biojs.extend(
   		 * ); 
   		 * 
   		 * */
-  		"onImageLoaded"
-	],
+  		"onImageLoaded",
+        
+        /**
+  		 * @name Biojs.ChEBICompound#onSummaryLoaded
+  		 * @event
+  		 * @param {function} actionPerformed A function which receives a {@link Biojs.Event} object as argument.
+  		 * @eventData {Object} source The component which did triggered the event.
+  		 * @eventData {string} id The identifier of the loaded Compound.
+  		 * 
+  		 * @example 
+  		 * instance.onSummaryLoaded(
+  		 *    function( e ) {
+  		 *       alert( e.id + " summary loaded." );
+  		 *    }
+  		 * ); 
+  		 * 
+  		 * */
+        "onSummaryLoaded"
 
+
+    ],
+    
+    /**
+    * Sets de display Identifier and triggers the setId method to display the component
+    *
+    * @param {string} text to display instead of the CHEBI id.
+    * @param {string} chebiId Chemical EBI's identifier for the compound to be displayed.
+    *
+    * @example
+    * instance.setDisplayIdAndLoad('MTBLC27732', 'CHEBI:27732');
+    * 
+    */
+    
+    setDisplayIdAndLoad: function ( displayId , chebiId) {
+        var self = this;
+        this.setDisplayId(displayId);
+        this.setId(chebiId);
+    },
+    
+    /**
+    * Sets de display Identifier.
+    *
+    * @param {string} text to display instead of the CHEBI id.
+    * 
+    */
+    
+    setDisplayId: function ( displayId ) {
+        var self = this;
+        this.opt.displayId = displayId;
+    },
+    
 	/**
     * Set the identifier of the chemical component. 
     * Shows both information and image for the new identifier.
@@ -264,9 +317,15 @@ Biojs.ChEBICompound = Biojs.extend(
 		    xmlResult = jQuery(xmlDoc).find('return');
 			
 		    data.chebiAsciiName = { name: "Name", value: xmlResult.find(' > chebiAsciiName').text() };
-			data.chebiId = { name: "Identifier", value: xmlResult.find('> chebiId').text() };
-			data.definition = { name: "Definition", value: xmlResult.find('> definition').text() };
-			data.SecondaryChEBIIds = { name: "Other Identifiers", value: xmlResult.find(' > SecondaryChEBIIds').text() };
+			
+            if (this.opt.displayId !== undefined) {
+                data.chebiId = { name: "Identifier", value: this.opt.displayId };
+            } else {
+                data.chebiId = { name: "Identifier", value: xmlResult.find('> chebiId').text() };
+            }
+			
+            data.definition = { name: "Definition", value: xmlResult.find('> definition').text() };
+			data.SecondaryChEBIIds = { name: "Other Identifiers", value: xmlResult.find(' > SecondaryChEBIIds').text().split("CHEBI").join(", CHEBI").substring(1) };
 			data.entityStar = { name: "Stars", value: xmlResult.find(' > entityStar').text() };
 			
 		}
@@ -307,7 +366,7 @@ Biojs.ChEBICompound = Biojs.extend(
 			}
 			
 			this.raiseEvent( Biojs.ChEBICompound.EVT_ON_SUMMARY_LOADED,{
-				id: data.Identifier
+				id: data.chebiId.value
 			});
 		}
 
