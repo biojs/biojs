@@ -35,14 +35,29 @@
  * 		"inputData": {
  *			
  *                  data: {
- *                       // jHeatmap reads data from external data files. Open them in order to understand the init function.
- *                       //  Also see http://jheatmap.github.io/jheatmap/ for detailed documentation.
- *                      rows: new jheatmap.readers.AnnotationReader({ url: "../biojs/data/jheatmap/genomic-alterations-rows.tsv" }),
- *                      cols: new jheatmap.readers.AnnotationReader({ url: "../biojs/data/jheatmap/genomic-alterations-cols.tsv" }),
- *                      values: new jheatmap.readers.TableHeatmapReader({ url: "../biojs/data/jheatmap/genomic-alterations-data.tsv" })
+ *                     // jHeatmap reads data from external data files. Open them in order to understand the init function.
+ *                     //  Also see http://jheatmap.github.io/jheatmap/ for detailed documentation.
+ *                     rows: new jheatmap.readers.AnnotationReader({ url: "../biojs/data/jheatmap/genomic-alterations-rows.tsv" }),
+ *                     cols: new jheatmap.readers.AnnotationReader({ url: "../biojs/data/jheatmap/genomic-alterations-cols.tsv" }),
+ *                     values: new jheatmap.readers.TableHeatmapReader({ url: "../biojs/data/jheatmap/genomic-alterations-data.tsv" })
  *                  },
  *        
  *                  init: function (heatmap) {
+ *                     // Selected layer
+ *                     heatmap.cells.selectedValue = "Expression";
+ *
+ *                     // Label to show at rows header
+ *                     heatmap.rows.selectedValue = "symbol";
+ *
+ *                     // Row and columns zoom
+ *                     heatmap.cols.zoom = 2;  // width in pixels (minimum = 3)
+ *                     heatmap.rows.zoom = 12; // height in pixels (minimum = 3)
+ *
+ *                      // Sort columns by subtype annotation
+ *                      heatmap.cols.sorter = new jheatmap.sorters.AnnotationSorter("subtype", true);
+ *
+ *                      // Sort rows aggregating all the "Expression" values
+ *                      heatmap.rows.sorter = new jheatmap.sorters.AggregationValueSorter("Expression", false, true);
  *        
  *                      // Column annotations
  *                      heatmap.cols.decorators["subtype"] = new jheatmap.decorators.CategoricalRandom();
@@ -115,7 +130,85 @@ Biojs.JHeatmap = Biojs.extend (
   * @param {object} inputData Input Data.
   * 
   * @example 
-  * instance.setInputData( {} )
+  * //Simple example
+  * instance.setInputData( {
+  *      data: {
+  *          values: new jheatmap.readers.TableHeatmapReader({ url: "../biojs/data/jheatmap/genomic-alterations-data.tsv" })
+  *      },
+  *
+  *      init: function (heatmap) {
+  *
+  *          // Decorators
+  *          heatmap.cells.decorators["Mutation"] = new jheatmap.decorators.Categorical({
+  *                          values: ["0","1"],
+  *                          colors : ["white","green"]
+  *          });
+  *
+  *          heatmap.cells.decorators["CNA Status"] = new jheatmap.decorators.Categorical({
+  *                          values: ["-2","2"],
+  *                          colors : ["blue","red"]
+  *          });
+  *
+  *          heatmap.cells.decorators["Expression"] = new jheatmap.decorators.Heat({
+  *                          minValue: -2,
+  *                          midValue: 0,
+  *                          maxValue: 2,
+  *                          minColor: [85, 0, 136],
+  *                          nullColor: [255,255,255],
+  *                          maxColor: [255, 204, 0],
+  *                          midColor: [240,240,240]
+  *          });
+  *      } 
+  *   });
+  *  
+  * @example
+  * //Simple example with data annotation 
+  * instance.setInputData( {
+  *			
+  *    data: {
+  *        rows: new jheatmap.readers.AnnotationReader({ url: "../biojs/data/jheatmap/genomic-alterations-rows.tsv" }),
+  *        cols: new jheatmap.readers.AnnotationReader({ url: "../biojs/data/jheatmap/genomic-alterations-cols.tsv" }),
+  *        values: new jheatmap.readers.TableHeatmapReader({ url: "../biojs/data/jheatmap/genomic-alterations-data.tsv" })
+  *    },
+  *
+  *    init: function (heatmap) {
+  *
+  *        // Column annotations
+  *        heatmap.cols.decorators["subtype"] = new jheatmap.decorators.CategoricalRandom();
+  *        heatmap.cols.annotations = ["subtype"];
+  *
+  *        // Rows annotations
+  *        heatmap.rows.decorators["fm-bias"] = new jheatmap.decorators.PValue({ cutoff: 0.05 });
+  *        heatmap.rows.annotations = ["fm-bias"];
+  *
+  *        // Aggregators
+  *        heatmap.cells.aggregators["Mutation"] = new jheatmap.aggregators.AbsoluteAddition();
+  *        heatmap.cells.aggregators["CNA Status"] = new jheatmap.aggregators.AbsoluteAddition();
+  *        heatmap.cells.aggregators["Expression"] = new jheatmap.aggregators.Median();
+  *
+  *        // Decorators
+  *        heatmap.cells.decorators["Mutation"] = new jheatmap.decorators.Categorical({
+  *                        values: ["0","1"],
+  *                        colors : ["white","green"]
+  *        });
+  *
+  *        heatmap.cells.decorators["CNA Status"] = new jheatmap.decorators.Categorical({
+  *                        values: ["-2","2"],
+  *                        colors : ["blue","red"]
+  *        });
+  *
+  *        heatmap.cells.decorators["Expression"] = new jheatmap.decorators.Heat({
+  *                        minValue: -2,
+  *                        midValue: 0,
+  *                        maxValue: 2,
+  *                        minColor: [85, 0, 136],
+  *                        nullColor: [255,255,255],
+  *                        maxColor: [255, 204, 0],
+  *                        midColor: [240,240,240]
+  *        });
+  *
+  *    }
+  * });	
   **/
   setInputData: function(inputData){
 		this.opt.inputData = inputData;
