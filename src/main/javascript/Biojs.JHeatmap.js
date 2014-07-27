@@ -1,13 +1,14 @@
 /** 
- * Display interactive heat maps and let the user sort and filter the displayed data
- * Test the jHeatmap example on this page or at it's official site: <a href="http://jheatmap.github.io/jheatmap/">http://jheatmap.github.io/jheatmap/</a>
+ * Display <b>fully interactive heatmaps</b>. Let the user <i>zoom</i>, <i>sort</i> and <i>filter</i> the displayed data.<br/> 
+ * jHeatmap is optimal for data from large cohorts as it supports multi-dimensional datasets plus data annotation files.<br/>
+ * Test jHeatmap on this BioJS page or at it's <a href="http://jheatmap.github.io/jheatmap/">official site</a>
  * 
  * @class
  * @extends Biojs
  * 
- * @author <a href="mailto:jordeu@jordeu.net">Jordi Deu-Pons</a>, <a href="mailtomichael.p.schroeder@gmail.com">Michael P Schroeder</a>
+ * @author <a href="mailto:jordeu@jordeu.net">Jordi Deu-Pons</a>, <a href="mailto:michael.p.schroeder@gmail.com">Michael P Schroeder</a>
  * @version 1.0.0
- * @category 2 
+ * @category 0 
  * 
  * @requires <a href='http://code.jquery.com/jquery-1.10.2.js'>jQuery Core 1.10.2</a>
  * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jquery/jquery-1.10.2.js"></script>
