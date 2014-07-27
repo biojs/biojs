@@ -1,41 +1,45 @@
 /** 
- * Component displaying a ENSEMBL gene view summary
+ * Display interactive heat maps and let the user sort and filter the displayed data
+ * Test the jHeatmap example on this page or at it's official site: <a href="http://jheatmap.github.io/jheatmap/">http://jheatmap.github.io/jheatmap/</a>
  * 
  * @class
  * @extends Biojs
  * 
- * @author <a href="jordeu@jordeu.net">Jordi Deu-Pons</a>, <a href="michael.p.schroeder@gmail.com">Michael P Schroeder</a>
+ * @author <a href="mailto:jordeu@jordeu.net">Jordi Deu-Pons</a>, <a href="mailtomichael.p.schroeder@gmail.com">Michael P Schroeder</a>
  * @version 1.0.0
- * @category 0
+ * @category 2 
  * 
- * @requires <a href='http://code.jquery.com/jquery-1.10.2.min.js'>jQuery Core 1.10.2</a>
- * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jquery/jquery-1.10.2.min.js"></script>
+ * @requires <a href='http://code.jquery.com/jquery-1.10.2.js'>jQuery Core 1.10.2</a>
+ * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jquery/jquery-1.10.2.js"></script>
  *
  * @requires <a href='http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css'>font awesome 4.0.3</a>
- * @dependency <link href="../biojs/dependencies/jheatmap/font-awesome-4.0.3.css" rel="stylesheet">
+ * @dependency <link href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
  *
  * @requires <a href='http://jheatmap.github.io/jheatmap/css/jheatmap-1.0.0.css'>jheatmap css 1.0.0</a>
  * @dependency <link href="../biojs/dependencies/jheatmap/css/jheatmap-1.0.0-min.css" rel="stylesheet">
  *
  * @requires <a href='http://jheatmap.github.io/jheatmap/js/jheatmap-1.0.0.js'>jheatmap 1.0.0</a>
- * @dependency <link href="../biojs/dependencies/jheatmap/css/jheatmap-1.0.0-min.css" rel="stylesheet">
+ * @dependency <script language="JavaScript" type="text/javascript" src="../biojs/dependencies/jheatmap/js/jheatmap-1.0.0-min.js"></script>
  * 
- * @param {Object} options An object with the options to display the component.
+ * @param {Object} options An object with the options to display the JHeatmap component.
  *    
  * @option {string} target 
  *    Identifier of the DIV tag where the component should be displayed.
  * 
  * @option {Object} inputData
- * 	  Parameters for the heatmap function from jHeatmap
+ * 	  Parameters for the heatmap function from jHeatmap. See example or JHeatmap documentation at <a href="http://jheatmap.github.io/jheatmap/">http://jheatmap.github.io/jheatmap/</a>
  *     
  * @example 
- * var instance = new Biojs.EnsemblGeneSummaryView({
+ * var instance = new Biojs.JHeatmap({
  * 		"target": "YourOwnDivId",
  * 		"inputData": {
+ *			
  *                  data: {
- *                      rows: new jheatmap.readers.AnnotationReader({ url: "quickstart-rows.tsv" }),
- *                      cols: new jheatmap.readers.AnnotationReader({ url: "quickstart-cols.tsv" }),
- *                      values: new jheatmap.readers.TableHeatmapReader({ url: "quickstart-data.tsv" })
+ *                       // jHeatmap reads data from external data files. Open them in order to understand the init function.
+ *                       //  Also see http://jheatmap.github.io/jheatmap/ for detailed documentation.
+ *                      rows: new jheatmap.readers.AnnotationReader({ url: "../biojs/data/jheatmap/genomic-alterations-rows.tsv" }),
+ *                      cols: new jheatmap.readers.AnnotationReader({ url: "../biojs/data/jheatmap/genomic-alterations-cols.tsv" }),
+ *                      values: new jheatmap.readers.TableHeatmapReader({ url: "../biojs/data/jheatmap/genomic-alterations-data.tsv" })
  *                  },
  *        
  *                  init: function (heatmap) {
