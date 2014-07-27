@@ -1,22 +1,25 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en-US" xml:lang="en-US">
 	<head>
-	  <script language="JavaScript" type="text/javascript" src="../../main/resources/dependencies/jquery/jquery-1.10.2.js"></script>
-	  <script language="JavaScript" type="text/javascript" src="../../main/resources/dependencies/jheatmap/js/jheatmap-1.0.0.js"></script>
-	  <script type="text/css" href="../../main/resources/dependencies/jheatmap/css/jheatmap-1.0.0-min.css"></script>
+	  <link rel="stylesheet" href="../../main/resources/dependencies/jheatmap/css/jheatmap-1.0.0-min.css"></script>
+	  <link rel="stylesheet" href="../../main/resources/css/font-awesome-4.0.3.css"></script>
+	  <link rel="stylesheet" href="../../main/resources/css/bootstrap-combined-2.3.2-min.css"></script>
+
+	  
+          <script type="text/javascript" src="../../main/resources/dependencies/jquery/jquery-1.10.2.js"></script>
 	  <script type="text/javascript" src="../../main/javascript/Biojs.js"></script>		
 	  <script type="text/javascript" src="../../main/javascript/Biojs.JHeatmap.js"></script>
+	  <script type="text/javascript" src="../../main/resources/dependencies/jheatmap/js/jheatmap-1.0.0.js"></script>
 	  
 	  <script type="text/javascript">       
-		var heatmap;
 		(function($) {		 
-			heatmap = new Biojs.JHeatmap({
+			new Biojs.JHeatmap({
 			        "target" : "holder",
 			        "initParams": {
 				    data: {
-					rows: new jheatmap.readers.AnnotationReader({ url: "../../main/resources/data/jheaetmap/quickstart-rows.tsv" }),
-					cols: new jheatmap.readers.AnnotationReader({ url: "../../main/resources/data/jheaetmap/quickstart-cols.tsv" }),
-					values: new jheatmap.readers.TableHeatmapReader({ url: "../../main/resources/data/jheaetmap/quickstart-data.tsv" })
+					rows: new jheatmap.readers.AnnotationReader({ url: "../../main/resources/data/jheatmap/genomic-alterations-rows.tsv" }),
+					cols: new jheatmap.readers.AnnotationReader({ url: "../../main/resources/data/jheatmap/genomic-alterations-cols.tsv" }),
+					values: new jheatmap.readers.TableHeatmapReader({ url: "../../main/resources/data/jheatmap/genomic-alterations-data.tsv" })
 				    },
 		 
 				    init: function (heatmap) {
@@ -79,7 +82,7 @@
 	   </script>	
 	</head>
 	<body>
-	  <div id="holder">Holden Caulfield</div>
+	  <div id="holder"></div>
 	  <div id="log"></div>
 	</body>
 </html>
