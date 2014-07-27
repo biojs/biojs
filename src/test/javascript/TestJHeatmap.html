@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en-US" xml:lang="en-US">
 	<head>
 	  <link rel="stylesheet" href="../../main/resources/dependencies/jheatmap/css/jheatmap-1.0.0-min.css"></script>
-	  <link rel="stylesheet" href="../../main/resources/css/font-awesome-4.0.3.css"></script>
+	  <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css"></script>
 	  <link rel="stylesheet" href="../../main/resources/css/bootstrap-combined-2.3.2-min.css"></script>
 
 	  
@@ -12,10 +12,15 @@
 	  <script type="text/javascript" src="../../main/resources/dependencies/jheatmap/js/jheatmap-1.0.0.js"></script>
 	  
 	  <script type="text/javascript">       
-		(function($) {		 
-			new Biojs.JHeatmap({
-			        "target" : "holder",
-			        "initParams": {
+	    $( document ).ready(function() {
+		console.log( "ready!" );
+		(function($) {
+		        var firstInputData = { 
+		                    data: {
+                                         values: new jheatmap.readers.TableHeatmapReader({ url: "../../main/resources/data/jheatmap/genomic-alterations-data.tsv" })
+		                   }
+		        };
+		        var newInputData = {
 				    data: {
 					rows: new jheatmap.readers.AnnotationReader({ url: "../../main/resources/data/jheatmap/genomic-alterations-rows.tsv" }),
 					cols: new jheatmap.readers.AnnotationReader({ url: "../../main/resources/data/jheatmap/genomic-alterations-cols.tsv" }),
@@ -74,15 +79,22 @@
 							midColor: [240,240,240]
 					});
 				    }
-				}
-			});
+				};
+		 
+			var jHeatmap = new Biojs.JHeatmap({
+			        "target" : "holder",
+			        "inputData": firstInputData  });
+		       setInterval(function(){
+		       			jHeatmap.setInputData(newInputData);
+		       },3000);
 		})(jQuery);
+		});
 		
 		    	   
 	   </script>	
 	</head>
 	<body>
-	  <div id="holder"></div>
+	  <div id="holder">Holden Caulfield</div>
 	  <div id="log"></div>
 	</body>
 </html>

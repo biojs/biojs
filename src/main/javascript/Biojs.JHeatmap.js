@@ -25,13 +25,13 @@
  * @option {string} target 
  *    Identifier of the DIV tag where the component should be displayed.
  * 
- * @option {Object} initParams
+ * @option {Object} inputData
  * 	  Parameters for the heatmap function from jHeatmap
  *     
  * @example 
  * var instance = new Biojs.EnsemblGeneSummaryView({
- * 		"target": "jHeatmapDiv",
- * 		"initParams": {
+ * 		"target": "YourOwnDivId",
+ * 		"inputData": {
  *                  data: {
  *                      rows: new jheatmap.readers.AnnotationReader({ url: "quickstart-rows.tsv" }),
  *                      cols: new jheatmap.readers.AnnotationReader({ url: "quickstart-cols.tsv" }),
@@ -83,20 +83,40 @@ Biojs.JHeatmap = Biojs.extend (
 /** @lends Biojs.JHeatmap# */
 {
   constructor: function (options) {
-    // Print HTML
-    $(document).ready(function() {
-        $("#"+options.target).heatmap(options.initParams);            
-    });
-  },
+      this.opt.target = options.target
+      //this.opt.inputData = options.inputData;
+      this.setInputData(options.inputData);
 
+  },
 
   /**
    *  Default values for the options
    *  @name Biojs.JHeatmap-opt
    */
   opt: {
-     target: "jHeatmapDiv",
-     initParams: {} 
-  }
-  
+     target: "YourOwnDivId",
+     inputData: {}
+  },
+  /**
+   * Function: Biojs.EnsemblGeneSummaryView._drawData
+   * Purpose:  Draw different sections of the display
+   * Returns:  -
+   * Inputs:  -
+   */
+  _drawData: function(){
+       this._container.heatmap(this.opt.inputData);
+   },
+  /**
+  * Set a new input.
+  * @param {object} inputData Input Data.
+  * 
+  * @example 
+  * instance.setInputData( {} )
+  **/
+  setInputData: function(inputData){
+		this.opt.inputData = inputData;
+		this._container = jQuery("#"+this.opt.target);
+		//this._clearData();	
+		this._drawData();
+	}
 });
