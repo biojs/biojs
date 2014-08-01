@@ -1,1 +1,1 @@
-module.exports = require('./lib/bionode-template')
+module.exports = require('./src/clustal')

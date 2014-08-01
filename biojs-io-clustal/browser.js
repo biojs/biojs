@@ -1,4 +1,4 @@
-if (typeof bionode === 'undefined') {
-  module.exports = bionode = {}
+if (typeof biojs === 'undefined') {
+  module.exports = biojs = {}
 }
-bionode.template = require('./')
+biojs.template = require('./')
