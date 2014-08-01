@@ -12,11 +12,11 @@
     "email": "biojs-technical@googlegroups.com"
   },
   "dependencies": {
-    "debug": "^1.0.3",
-    "browserify": "~4.2.0",
-    "uglify-js": "~2.4.15"
   },
   "devDependencies": {
+	"debug": "^1.0.3",
+	"browserify": "~4.2.0",
+	"uglify-js": "~2.4.15",
     "coveralls": "~2.11.1",
     "istanbul": "~0.3.0",
     "mocha": "~1.20.1",
@@ -24,7 +24,7 @@
     "should": "~4.0.4"
   },
   "keywords": [
-	"bio",
+	"bio"
   ],
   "main": "index.js",
   "scripts": {
