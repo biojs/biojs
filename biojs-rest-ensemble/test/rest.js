@@ -95,7 +95,7 @@ describe('BioJS2 REST', function () {
 				//assert.equal(err.status, 400);
 				//assert.equal(err.readyState, 4);
 				//assert.equal(err.statusText, "Bad Request");
-				//setTimeout(done, delay);
+				setTimeout(done, delay);
 				// done();
 			    }
 			   })
