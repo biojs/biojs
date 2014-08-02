@@ -1,5 +1,3 @@
-#HttpRequest = require("HTTPRequest")
-#HttpRequest = require("./http_request")
 if window?
   request = require('browser-request')
 
@@ -8,8 +6,7 @@ class GenericReader
 
   @read: (url, callback) ->
     onret = (err, response, text) => @_onRetrieval(text,callback)
-    request(url, 'GET',onret)
-    #HttpRequest.get(url, onret)
+    request(url, onret)
 
   @_onRetrieval: (text, callback) ->
     start = new Date().getTime()
