@@ -1,15 +1,19 @@
-HttpRequest = require("./http_request")
+#HttpRequest = require("HTTPRequest")
+#HttpRequest = require("./http_request")
+if window?
+  request = require('browser-request')
 
-genReader =
-  class GenericReader
+module.exports =
+class GenericReader
 
-    @read: (url, callback) ->
-      onret = (text) => @_onRetrieval(text,callback)
-      HttpRequest.fetch(url, onret)
+  @read: (url, callback) ->
+    onret = (err, response, text) => @_onRetrieval(text,callback)
+    request(url, 'GET',onret)
+    #HttpRequest.get(url, onret)
 
-    @_onRetrieval: (text, callback) ->
-      start = new Date().getTime()
-      rText = @parse(text)
-      end = new Date().getTime()
-      console.log "Parsing time: #{(end - start)} ms"
-      callback rText
+  @_onRetrieval: (text, callback) ->
+    start = new Date().getTime()
+    rText = @parse(text)
+    end = new Date().getTime()
+    console.log "Parsing time: #{(end - start)} ms"
+    callback rText

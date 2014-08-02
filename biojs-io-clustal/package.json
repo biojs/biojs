@@ -12,24 +12,31 @@
     "email": "biojs-technical@googlegroups.com"
   },
   "dependencies": {
-    "coffee-script": "^1.7.1"
+    "httpinvoke": "^1.3.0"
   },
   "devDependencies": {
-    "debug": "^1.0.3",
     "browserify": "~4.2.0",
-    "uglify-js": "~2.4.15",
+    "coffee-script": "^1.7.1",
+    "coffeeify": "^0.7.0",
     "coveralls": "~2.11.1",
+    "debug": "^1.0.3",
+    "gulp": "^3.8.6",
+    "gulp-util": "^3.0.0",
     "istanbul": "~0.3.0",
     "mocha": "~1.20.1",
     "mocha-lcov-reporter": "0.0.1",
-    "should": "~4.0.4"
+    "nock": "^0.43.0",
+    "should": "~4.0.4",
+    "uglify-js": "~2.4.15",
+    "vinyl-source-stream": "^0.1.1",
+    "watchify": "^1.0.1"
   },
   "keywords": [
     "bio"
   ],
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
-    "test": "mocha --reporter spec",
+    "test": "mocha --ui qunit --reporter spec",
     "coverage": "istanbul cover ./node_modules/.bin/_mocha --report lcovonly -- -R spec && rm -rf ./coverage",
     "coveralls": "istanbul cover ./node_modules/.bin/_mocha --report lcovonly -- -R spec && cat ./coverage/lcov.info | ./node_modules/.bin/coveralls && rm -rf ./coverage",
     "build-docs": "docco ./lib/file.js",

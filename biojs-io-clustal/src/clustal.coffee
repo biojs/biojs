@@ -2,6 +2,7 @@ Str = require("./strings")
 GenericReader = require("./generic_reader")
 Seq = require("./seq")
 
+module.exports =
 class Clustal extends GenericReader
 
   @parse: (text) ->
