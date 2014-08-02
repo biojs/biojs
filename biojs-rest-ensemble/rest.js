@@ -1,3 +1,5 @@
+//REST API for ensemble.org written by Miguel Pignatelli for TnT
+
 var eRest = function() {
 
     // Prefixes to use the REST API.
