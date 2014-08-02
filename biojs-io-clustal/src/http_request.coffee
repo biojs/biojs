@@ -1,21 +1,5 @@
-module.exports =module.exports =module.exports =module.exports =module.exports =
-module.exports =module.exports =module.exports =module.exports =module.exports =
-module.exports =module.exports =module.exports =module.exports =module.exports =
-module.exports =module.exports =module.exports =module.exports =module.exports =
-module.exports =module.exports =module.exports =module.exports =module.exports =
-module.exports =module.exports =module.exports =module.exports =module.exports =
-module.exports =module.exports =module.exports =module.exports =module.exports =
-module.exports =module.exports =module.exports =module.exports =module.exports =
-module.exports =module.exports =module.exports =module.exports =module.exports =
-module.exports =module.exports =module.exports =module.exports =module.exports =
-module.exports =module.exports =module.exports =module.exports =module.exports =
-module.exports =module.exports =module.exports =module.exports =module.exports =
-module.exports =module.exports =module.exports =module.exports =module.exports =
-module.exports =module.exports =module.exports =module.exports =module.exports =
-module.exports =module.exports =module.exports =module.exports =module.exports =
-module.exports =module.exports =module.exports =module.exports =module.exports =
-module.exports =module.exports =module.exports =module.exports =module.exports =
-module.exports =module.exports =module.exports =module.exports =module.exports = class HttpRequest
+module.exports =
+  class HttpRequest
 
     @fetch: (url, callback) ->
       req = HttpRequest.getXMLRequest()
