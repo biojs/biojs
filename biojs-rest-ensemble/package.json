@@ -12,7 +12,8 @@
     "email": "biojs-technical@googlegroups.com"
   },
   "dependencies": {
-    "d3": "^3.4.11"
+    "d3": "^3.4.11",
+    "nets": "^1.0.0"
   },
   "devDependencies": {
     "assert": "^1.1.1",
@@ -24,7 +25,8 @@
     "mocha": "~1.20.1",
     "mocha-lcov-reporter": "0.0.1",
     "should": "^4.0.4",
-    "uglify-js": "~2.4.15"
+    "uglify-js": "~2.4.15",
+    "underscore": "^1.6.0"
   },
   "keywords": [
     "bio"

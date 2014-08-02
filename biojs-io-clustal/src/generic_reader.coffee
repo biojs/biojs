@@ -1,12 +1,11 @@
-if window?
-  request = require('browser-request')
+xhr = require('nets')
 
 module.exports =
 class GenericReader
 
   @read: (url, callback) ->
     onret = (err, response, text) => @_onRetrieval(text,callback)
-    request(url, onret)
+    xhr(url,onret)
 
   @_onRetrieval: (text, callback) ->
     start = new Date().getTime()

@@ -2,7 +2,6 @@ require('coffee-script/register')
 var fs = require('fs')
 
 var Clustal = require('../')
-var should = require('should')
 
 require('mocha')
 var assert = require("assert")
@@ -16,12 +15,12 @@ var scope = nock('http://an.msa.url')
 
 suite("Clustal");
 
-//test('test parsing of sample clustal file', function(done){
-//  Clustal.read(testUrl, function(seqs) {
-//    assert.equal(seqs.length, 34, "invalid seq length" + seqs.length);
-//    done();
-//  });
-//});
+test('test parsing of sample clustal file', function(done){
+  Clustal.read(testUrl, function(seqs) {
+    assert.equal(seqs.length, 34, "invalid seq length" + seqs.length);
+    done();
+  });
+});
 
 test("test with fs", function(done) {
   fs.readFile(__dirname + '/p53.clustalo.clustal','utf8', function(err,data){
