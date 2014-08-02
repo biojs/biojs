@@ -56,12 +56,16 @@ var eRest = function() {
     connections++;
     xhr({uri: url,method:'GET', json:true}, function (error, xhrc, resp) {
       connections--;
-      if (resp !== undefined && error === null && on_success !== undefined) {
-        on_success(resp);
-      }
       if (error !== null && on_error !== undefined) {
         on_error(error);
       }
+      else if (resp !== undefined  ) {
+        if(resp.error !== undefined){
+          on_error(resp.error);
+        }else if(on_success !== undefined){
+          on_success(resp);
+        }
+      } 
     });
   };
 
