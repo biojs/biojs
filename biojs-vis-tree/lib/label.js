@@ -23,12 +23,12 @@ var label = function () {
 
     };
 
-    var api = tnt.utils.api (label)
-	.getset ('width', function () { throw "Need a width callback" })
-	.getset ('height', function () { throw "Need a height callback" })
-	.getset ('display', function () { throw "Need a display callback" })
-	.getset ('transform', function () { return [10, 5] })
-	.getset ('on_click');
+    //var api = tnt.utils.api (label)
+	label.width = function () { throw "Need a width callback" };
+	label.height = function () { throw "Need a height callback" };
+	label.display = function () { throw "Need a display callback" };
+	label.transform = function () { return [10, 5] };
+	label.on_click;
 
     label.remove = function () {
 	d3.select(this)
