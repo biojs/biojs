@@ -53,15 +53,15 @@ var eRest = function() {
 	var on_success = obj.success;
 	var on_error   = obj.error;
 	connections++;
-	d3.json (url, function (error, resp) {
-	    connections--;
-	    if (resp !== undefined && error === null && on_success !== undefined) {
-		on_success(resp);
-	    }
-	    if (error !== null && on_error !== undefined) {
-		on_error(error);
-	    }
-	});
+	//d3.json (url, function (error, resp) {
+	//    connections--;
+	//    if (resp !== undefined && error === null && on_success !== undefined) {
+	//	on_success(resp);
+	//    }
+	//    if (error !== null && on_error !== undefined) {
+	//	on_error(error);
+	//    }
+	//});
     };
 
 
