@@ -1,0 +1,27 @@
+{
+  "name": "biojs-model",
+  "description": "Biological data models",
+  "version": "0.0.1",
+  "homepage": "http://github.com/greenify/biojs",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/greenify/biojs2"
+  },
+  "author": {
+    "name": "BioJS",
+    "email": "biojs-technical@googlegroups.com"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "browserify": "^5.9.1"
+  },
+  "keywords": [
+    "bio",
+    "models"
+  ],
+  "main": "src/index.js",
+  "scripts": {
+    "build-browser": "browserify browser.js > build/biojs.models.min.js"
+  },
+  "license": "Apache 2"
+}
