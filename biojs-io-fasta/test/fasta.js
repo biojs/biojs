@@ -13,7 +13,7 @@ var scope = nock('http://an.msa.url')
 .get('/foo')
 .replyWithFile(200, __dirname + '/foo.fasta');
 
-suite("Clustal");
+suite("Fasta");
 
 test('test parsing of sample fasta file', function(done){
     Fasta.parse.read(testUrl, function(seqs){
