@@ -1,4 +1,4 @@
-var label = function () {
+var export_label = function () {
 "use strict";
 
     // TODO: Not sure if we should be removing by default prev labels
@@ -40,20 +40,20 @@ var label = function () {
 };
 
 // Text based labels
-label.text = function () {
-    var label = label();
+export_label.text = function () {
+    var label = export_label();
 
-    //var api = tnt.utils.api (label)
-    //	.getset ('fontsize', 10)
-    //	.getset ('color', "#000")
-    //	.getset ('text', function (d) {
-    //	    return d.data().name;
-    //	})
+    label.fontsize = 10;
+    label.color = "#000";
+    label.text = function (d) {
+    	    return d.data().name;
+    };
 
     label.display = function (node) {
-	var l = d3.select(this)
-	    .append("text")
+	var l = d3.select(this);
+	l = l.append("text")
 	    .text(function(){
+			console.log("hi");
 		return label.text()(node)
 	    })
 	    .style('font-size', label.fontsize() + "px")
@@ -87,8 +87,8 @@ label.text = function () {
 };
 
 // Image based labels
-label.img = function () {
-    var label = label();
+export_label.img = function () {
+    var label = export_label();
 
     //var api = tnt.utils.api (label)
     //	.getset ('src', function () {})
@@ -115,7 +115,7 @@ label.img = function () {
 };
 
 // Labels made of 2+ simple labels
-label.composite = function () {
+export_label.composite = function () {
 
     var labels = [];
 
@@ -184,4 +184,4 @@ label.composite = function () {
     return label;
 };
 
-module.exports = label;
+module.exports = export_label;

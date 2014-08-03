@@ -362,15 +362,15 @@ var tree = function () {
     //	.getset (conf)
     
     
-    tree.duration         = 500;      // Duration of the transitions
-    tree.label            = label.text();
-    tree.layout           = layout.vertical();
-    tree.on_click         = function () {};
-    tree.on_dbl_click     = function () {};
-    tree.on_mouseover    = function () {};
-    tree.link_color       = 'steelblue';
-    tnode_color       = 'steelblue';
-    tnode_circle_size = 4.5;
+  //  tree.duration         = 500;      // Duration of the transitions
+  //  tree.label            = label.text();
+  //  tree.layout           = layout.vertical();
+  //  tree.on_click         = function () {};
+  //  tree.on_dbl_click     = function () {};
+  //  tree.on_mouseover    = function () {};
+  //  tree.link_color       = 'steelblue';
+  //  node_color       = 'steelblue';
+  //  node_circle_size = 4.5;
 
 
 
@@ -465,6 +465,15 @@ var tree = function () {
 //
 //	return tree_tooltip;
 //    });
+
+	// set default conf
+	console.log(conf);
+	for(var key in conf){
+		console.log("key " +key);
+		tree[key]= conf[key];
+	}
+	console.log(tree);
+	console.log("--");
 
 
     return tree;

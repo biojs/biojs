@@ -1,6 +1,7 @@
 // Based on the code by Ken-ichi Ueda in http://bl.ocks.org/kueda/1036776#d3.phylogram.js
+var diagonal = require("./diagonal");
 
-var layout = function () {
+var elayout = function () {
 
     var l = function () {
     };
@@ -41,8 +42,8 @@ var layout = function () {
     return l;
 };
 
-layout.vertical = function () {
-    var layout = layout();
+elayout.vertical = function () {
+    var layout = elayout();
 
     //var api = tnt.utils.api (layout)
 	layout.width = 360;
@@ -72,8 +73,8 @@ layout.vertical = function () {
     return layout;
 };
 
-layout.radial = function () {
-    var layout = layout();
+elayout.radial = function () {
+    var layout = elayout();
     var default_width = 360;
     var r = default_width / 2;
 
@@ -111,4 +112,4 @@ layout.radial = function () {
     return layout;
 };
 
-module.exports = layout;
+module.exports = elayout;
