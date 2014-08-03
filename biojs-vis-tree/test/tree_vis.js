@@ -39,9 +39,9 @@ describe ('tnt tree_vis', function () {
 	console.log(btree);
 	btree.layout (layout.vertical());
 	btree.width = 600;
-	btree.scale=false;
+	btree.scale = false;
 	console.log(tree_data.tree);
-	btree.data (tree_data.tree);
+	btree.data(tree_data.tree);
 	debugger;
 	btree.label(label);
 
