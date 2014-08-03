@@ -17,7 +17,6 @@ describe('BioJS2 Tree Test', function () {
 	beforeEach(function(){
 		newick = "((human, chimp), mouse)";
 		tree = parser(newick);
-		console.log(tree);
 	});
 
 	it("Exists and is called tree", function () {
