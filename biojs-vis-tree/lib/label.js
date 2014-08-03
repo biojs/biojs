@@ -51,13 +51,15 @@ export_label.text = function () {
 
     label.display = function (node) {
 	var l = d3.select(this);
-	l = l.append("text")
-	    .text(function(){
+	console.log("---");
+	console.log(l);
+	l = l.append("text");
+	l = l.text(function(){
 			console.log("hi");
 		return label.text()(node)
-	    })
-	    .style('font-size', label.fontsize() + "px")
-	    .style('fill', d3.functor(label.color())(node));
+	    });
+	l = l.style('font-size', label.fontsize() + "px");
+	l = l.style('fill', d3.functor(label.color())(node));
 
 	return l;
     };
