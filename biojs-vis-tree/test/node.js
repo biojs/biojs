@@ -1,8 +1,10 @@
-var newick = require('biojs-io-newick');
-var tree = require('../lib/tree')
-var should = require('should')
+var parser = require('biojs-io-newick').newick;
+var tree = require('../lib/tree');
+var should = require('should');
 
-require('mocha')
+console.log(parser);
+
+require('mocha');
 var assert = require("chai").assert;
 
 
@@ -16,12 +18,12 @@ describe('BioJS2 Tree Test', function () {
     })
 
     var newick = "((human, chimp), mouse)";
-    var tree = tree.parse_newick(newick);
+    var tree = parser(newick);
 
     // Newick
     describe ('Newick reader', function () {
 	it ("Exists and is called tree.parse_newick", function () {
-	    assert.isDefined(tnt.tree.parse_newick);
+	    assert.isDefined(parser);
 	});
 
 	it ("Can read a simple tree", function () {
@@ -38,7 +40,7 @@ describe('BioJS2 Tree Test', function () {
 
 	it ("Reads the branch lenghts", function () {
 	    var newick = "((human:0.2,chimp:0.3),mouse:0.5)";
-	    var tree = tnt.tree.parse_newick(newick);
+	    var tree = parser(newick);
 	    assert.closeTo(tree.children[1].branch_length, 0.5, 0.05);
 	    assert.closeTo(tree.children[0].children[0].branch_length, 0.2, 0.05);
 	    assert.closeTo(tree.children[0].children[1].branch_length, 0.3, 0.05);

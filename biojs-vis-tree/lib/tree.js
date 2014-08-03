@@ -1,6 +1,6 @@
-var label = require("label");
-var layout = require("layout");
-var tnode = require("node");
+var label = require("./label");
+var layout = require("./layout");
+var tnode = require("./node");
 
 var tree = function () {
  "use strict";
