@@ -199,7 +199,7 @@ var tree = function () {
 	    });
 
 	// Update plots an updated tree
-	api.method ('update', function() {
+	tree.update = function() {
 	    var cluster = conf.layout.cluster;
 	    var diagonal = conf.layout.diagonal();
 	    var transform = conf.layout.transform_node;
@@ -354,7 +354,7 @@ var tree = function () {
 	    node
 		.exit()
 		.remove();
-	});
+	};
     };
 
     // API
