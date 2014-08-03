@@ -1,0 +1,15 @@
+.biojs_msa_marker{
+	color:grey;
+	font-size:10px;
+	white-space: nowrap;
+	cursor: pointer;
+}
+
+.biojs_msa_marker span{
+	text-align: center;
+}
+
+.biojs_msa_marker-special {
+	color: red;
+	font-weight: bold;
+}

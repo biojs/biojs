@@ -1,0 +1,12 @@
+module.exports.msa = require("./msa");
+module.exports.colorator = require("./colorator");
+module.exports.ordering = require("./ordering");
+module.exports.menu = require("./menu/index");
+module.exports.utils = require("./utils");
+module.exports.row = require("./row");
+module.exports.eventhandler = require("./eventhandler");
+module.exports.selection = require("./selection");
+module.exports.zoombar = require("./zoombar"); 
+module.exports.stage = require("./stage/index");
+module.exports.feature = require("./feature");
+module.exports.seqmgr = require("./seqmgr");

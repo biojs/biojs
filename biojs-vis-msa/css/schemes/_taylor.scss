@@ -1,0 +1,41 @@
+$normalOpacity: 0.3;
+$selectedOpacity: 1.0;
+$schemeName: taylor;
+
+$residues: (
+A: #fff,
+B: #fff,
+C: #ffff00,
+D: #ff0000,
+E: #ff0066,
+F: #00ff66,
+G: #ff9900,
+H: #0066ff,
+I: #66ff00,
+J: #fff,
+K: #6600ff,
+L: #33ff00,
+M: #fff,
+N: #cc00ff,
+O: #fff,
+P: #ffcc00,
+Q: #ff00cc,
+R: #0000ff,
+S: #ff3300,
+T: #ff6600,
+U: #fff,
+V: #99ff00,
+W: #00ccff,
+X: #fff,
+Y: #00ffcc,
+Z: #fff,
+Gap: #fff,
+);
+
+$residuesSelected: (
+A: black,
+M: black,
+Gap: black,
+);
+
+@import "select_builder"

@@ -1,0 +1,6 @@
+@for $i from 1 through 60 {
+	 .biojs-msa-stage-level#{$i} span {
+	 	 height: #{5 + $i}px;
+	 	 width: #{$i}px;
+	 }
+ }
