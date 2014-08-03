@@ -20,11 +20,7 @@
     "assert": "^1.1.1",
     "browserify": "~4.2.0",
     "chai": "^1.9.1",
-    "coveralls": "~2.11.1",
-    "debug": "^1.0.3",
-    "istanbul": "~0.3.0",
     "mocha": "~1.20.1",
-    "mocha-lcov-reporter": "0.0.1",
     "should": "^4.0.4",
     "uglify-js": "~2.4.15"
   },
@@ -34,10 +30,7 @@
   "main": "lib/index.js",
   "scripts": {
     "test": "mocha --reporter spec",
-    "coverage": "istanbul cover ./node_modules/.bin/_mocha --report lcovonly -- -R spec && rm -rf ./coverage",
-    "coveralls": "istanbul cover ./node_modules/.bin/_mocha --report lcovonly -- -R spec && cat ./coverage/lcov.info | ./node_modules/.bin/coveralls && rm -rf ./coverage",
-    "build-docs": "docco ./lib/file.js",
-    "build-browser": "browserify browser.js  | uglifyjs  > biojs_rest_ensemble.min.js"
+    "build-browser": "browserify browser.js  | uglifyjs  > biojs_vis_tree.min.js"
   },
   "license": "Apache 2"
 }
