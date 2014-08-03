@@ -30,7 +30,7 @@
   "main": "lib/index.js",
   "scripts": {
     "test": "mocha --reporter spec",
-    "build-browser": "browserify browser.js  | uglifyjs  > biojs_vis_tree.min.js"
+    "build-browser": "browserify browser.js  > biojs_vis_tree.min.js"
   },
   "license": "Apache 2"
 }
