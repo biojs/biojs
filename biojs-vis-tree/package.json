@@ -31,7 +31,7 @@
   "keywords": [
     "bio,phylogeny,d3"
   ],
-  "main": "index.js",
+  "main": "lib/index.js",
   "scripts": {
     "test": "mocha --reporter spec",
     "coverage": "istanbul cover ./node_modules/.bin/_mocha --report lcovonly -- -R spec && rm -rf ./coverage",
