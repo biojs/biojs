@@ -1,4 +1,4 @@
-var node = function (data) {
+var export_node = function (data) {
     "use strict";
 
     var node = function () {
@@ -29,9 +29,18 @@ var node = function (data) {
 	    }
 	}
     };
-
+	
+	//iterator copied from tnt.utils.iterator 	
+    var iterator = function (init_val) {
+		var i = init_val;
+		var iter = function () {
+			return i++;
+		};	
+		return iter;
+	}
+	
     var create_ids = function () {
-	var i = tnt.utils.iterator(1);
+	var i = iterator(1);
 	// We can't use apply because apply creates new trees on every node
 	// We should use the direct data instead
 	apply_to_data (data, function (d) {
@@ -83,10 +92,15 @@ var node = function (data) {
 	compute_root_dists(data);
 	return node;
     };
+	
     // We bind the data that has been passed
     node.data(data);
 
     node.find_node_by_field = function(value, field) {
+	
+	
+
+
 	if (typeof (field) === 'function') {
 	    if (field (data) === value) {
 		return node;
@@ -98,7 +112,7 @@ var node = function (data) {
 	}
 	if (data._children !== undefined) {
 	    for (var j=0; j<data._children.length; j++) {
-		var c = node(data._children[j]);
+		var c = export_node(data._children[j]);
 		var f = c.find_node_by_field(value, field);
 		if (f !== undefined) {
 		    return f;
@@ -108,7 +122,10 @@ var node = function (data) {
 
 	if (data.children !== undefined) {
 	    for (var i=0; i<data.children.length; i++) {
-		var n = node(data.children[i]);
+		
+	
+		var n = export_node(data.children[i]);
+		
 		var found = n.find_node_by_field(value, field);
 		if (found !== undefined) {
 		    return found;
@@ -176,7 +193,7 @@ var node = function (data) {
 	    lca_node = _lca(lca_node, nodes[i]);
 	}
 	return lca_node;
-	// return node(lca_node);
+	// return export_node(lca_node);
     };
 
     var _lca = function(node1, node2) {
@@ -231,7 +248,7 @@ var node = function (data) {
 	if (parent !== undefined) {
 	    parent.upstream(cbak);
 	}
-//	node(parent).upstream(cbak);
+//	export_node(parent).upstream(cbak);
 // 	node.upstream(node._parent, cbak);
     };
 
@@ -329,7 +346,7 @@ var node = function (data) {
 	    return false;
 	});
 
-	return node(subtree.children[0]);
+	return export_node(subtree.children[0]);
     };
 
     // TODO: This method visits all the nodes
@@ -355,7 +372,7 @@ var node = function (data) {
 
 	var new_children = [];
 	for (var i=0; i<data.children.length; i++) {
-	    new_children.push(node(data.children[i]));
+	    new_children.push(export_node(data.children[i]));
 	}
 
 	new_children.sort(cbak);
@@ -365,7 +382,7 @@ var node = function (data) {
 	}
 
 	for (var i=0; i<data.children.length; i++) {
-	    node(data.children[i]).sort(cbak);
+	    export_node(data.children[i]).sort(cbak);
 	}
     };
 
@@ -373,7 +390,7 @@ var node = function (data) {
 	cbak(node);
 	if (data.children !== undefined) {
 	    for (var i=0; i<data.children.length; i++) {
-		var n = node(data.children[i])
+		var n = export_node(data.children[i])
 		n.apply(cbak);
 	    }
 	}
@@ -397,7 +414,7 @@ var node = function (data) {
 	return node;
     };
 
-    node.method.is_leaf = function() {
+    node.is_leaf = function() {
 	return data.children === undefined;
     };
 
@@ -438,7 +455,7 @@ var node = function (data) {
 	}
 	var children = [];
 	for (var i=0; i<data.children.length; i++) {
-	    children.push(node(data.children[i]));
+	    children.push((data.children[i]));
 	}
 	return children;
     };
@@ -447,12 +464,12 @@ var node = function (data) {
 	if (data._parent === undefined) {
 	    return undefined;
 	}
-	return node(data._parent);
+	return export_node(data._parent);
     };
 
     return node;
 
 };
 
-module.exports = node;
+module.exports = export_node;
 

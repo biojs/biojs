@@ -1,6 +1,6 @@
 {
-  "name": "biojs-rest-ensemble",
-  "description": "REST API for ensemble.org",
+  "name": "biojs-vis-tree",
+  "description": "Visualizing phylogenetic trees using d3",
   "version": "0.0.1",
   "homepage": "http://github.com/greenify/biojs",
   "repository": {
@@ -12,8 +12,9 @@
     "email": "biojs-technical@googlegroups.com"
   },
   "dependencies": {
-    "biojs-io-newick": "0.0.1",
-    "d3": "^3.4.11"
+    "biojs-io-newick": "0.0.2",
+    "d3": "^3.4.11",
+    "underscore": "^1.6.0"
   },
   "devDependencies": {
     "assert": "^1.1.1",
@@ -28,7 +29,7 @@
     "uglify-js": "~2.4.15"
   },
   "keywords": [
-    "bio"
+    "bio,phylogeny,d3"
   ],
   "main": "index.js",
   "scripts": {
