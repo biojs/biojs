@@ -1,64 +1,22 @@
-<!DOCTYPE html>
 <html>
-	<head>
-		<meta charset="utf-8">
-		<title>BioJS MSA</title>
-		<link rel="stylesheet" href="qunit.css">
-		<script src="qunit.js" /></script>
-		<script src="libs/require.js" /></script>
-		<!--		<script src="../build/biojs_vis_msa.min.js" /></script> -->
-		<script>
-requirejs.config({
-	"paths": {
-		cs: 'libs/cs',
-		'coffee-script': 'libs/coffee-script',
-	},
-	/*
-	   shim: {
-	   'QUnit': {
-	   exports: 'QUnit',
-	   init: function() {
-	   QUnit.config.autoload = false;
-	   QUnit.config.autostart = false;
-	// global timeout
-	QUnit.config.testTimeout = 3000;
-	}
-	} 
-	}
-	 */
-});
-QUnit.config.autostart = false;
-QUnit.config.autoload = false;
-// add all modules here and call them before QUnit
-
-console.log("hi there");
-
-var testModules = [
-	"cs!test_utils_str",
-	"cs!test_utils_arrays",
-	"cs!test_tiles_viewport",
-	"cs!test_tiles_zooming",
-	"cs!test_tiles_dragging",
-	"cs!test_tiles_dblclick"];
-
-require(
-		testModules,
-		function() {
-			QUnit.load();
-			QUnit.start();
-		}
-		, function (err) {
-			console.log("error happend " + error);
-		});
-		</script>
-	</head>
-	<body>
-		<div id="qunit"></div>
-		<div id="qunit-fixture">
-			<!-- all elements inside the fixture are reseted after each tests -->
-
-			<div id="msa"></div>
-
-		</div>
-	</body>
+  <head>
+    <meta charset="utf-8">
+  </head>
+  <body>
+    <div id="mocha"></div>
+    <script src="../node_modules/mocha/mocha.js"></script>
+	<link rel="stylesheet" href="mocha.css">
+	<script src="../node_modules/chai/chai.js"></script>
+    <script>
+      mocha.ui('qunit');
+      mocha.reporter('html');
+      expect = chai.expect;
+    </script>
+    <script src="./all_test.js"></script>
+    <script>
+      if (window.mochaPhantomJS) { mochaPhantomJS.run(); }
+      else { mocha.run(); }
+    </script>
+	<div id="msa"></div>
+  </body>
 </html>

@@ -18,7 +18,11 @@ module.exports =
     constructor: (divName, seqsInit, conf) ->
 
       @_loadDefaultConfig(conf)
-      @container = document.getElementById divName
+      if typeof divName is "string"
+        @container = document.getElementById divName
+      else
+        @container = divName
+
       @container.className += " biojs_msa_div"
 
       @colorscheme = new Colorator()

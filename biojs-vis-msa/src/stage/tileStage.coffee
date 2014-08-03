@@ -2,11 +2,11 @@ Utils = require "../utils/general"
 TileEventHandler = require "./tileEventHandler"
 TileStageButtons = require "./tileStageButtons"
 TileStageSequence = require "./tileStageSequence"
-StageElement = require "./StageElement"
+stage = require "./stage"
 
 module.exports =
 
-  class TileStage extends StageElement
+  class TileStage extends stage
 
     constructor: (@msa) ->
       @msa.zoomer.setZoomLevel 1

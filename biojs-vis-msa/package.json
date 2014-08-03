@@ -18,10 +18,12 @@
   },
   "devDependencies": {
     "browserify": "~4.2.0",
+    "chai": "^1.9.1",
     "coffee-script": "^1.7.1",
     "coffeeify": "^0.7.0",
     "mocha": "~1.20.1",
     "nock": "^0.43.0",
+    "node-qunit-phantomjs": "^0.2.2",
     "qunit": "^0.7.2",
     "uglify-js": "~2.4.15"
   },
@@ -30,7 +32,7 @@
   ],
   "main": "src/index.js",
   "scripts": {
-    "test": "mocha --ui qunit --reporter spec",
+    "test": "bash ./test/test.sh",
     "build-browser": "browserify -t coffeeify --extension='.coffee'  browser.js > build/biojs_vis_msa.min.js"
   },
   "license": "Apache 2"
