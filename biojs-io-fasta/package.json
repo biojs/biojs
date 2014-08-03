@@ -1,7 +1,7 @@
 {
-  "name": "biojs-io-clustal",
-  "description": "Parses clustal files",
-  "version": "0.0.1",
+  "name": "biojs-io-fasta",
+  "description": "Parses FASTA files",
+  "version": "0.0.3",
   "homepage": "http://github.com/greenify/biojs",
   "repository": {
     "type": "git",
@@ -24,11 +24,14 @@
     "uglify-js": "~2.4.15"
   },
   "keywords": [
-    "bio"
+    "bio",
+    "fasta",
+    "sequence"
   ],
-  "main": "src/index.js",
+  "main": "lib/index.js",
   "scripts": {
     "test": "mocha --ui qunit --reporter spec",
+    "prepublish":   "coffee --bare --compile --output lib/ src/*.coffee",
     "build-browser": "browserify -t coffeeify --extension='.coffee'  browser.js > build/biojs_io_fasta.min.js"
   },
   "license": "Apache 2"

@@ -4,4 +4,4 @@ if (typeof biojs === 'undefined') {
 if (typeof biojs.io === 'undefined') {
   module.exports = biojs.io = {}
 }
-biojs.io.fasta = require('./')
+biojs.io.fasta = require('./src/index')
