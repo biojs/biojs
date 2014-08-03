@@ -1,8 +1,9 @@
 var parser = require('biojs-io-newick').newick;
-var tree = require('../lib/tree');
+var ttree = require('../lib/tree');
 var should = require('should');
-
-console.log(parser);
+var tnode = require("../lib/node");
+var tree = {};
+var _ = require('underscore');
 
 require('mocha');
 var assert = require("chai").assert;
@@ -13,14 +14,17 @@ var _t = {"tree":{"events":{"type":"speciation"},"branch_length":0,"children":[{
 
 
 describe('BioJS2 Tree Test', function () {
-    it("Exists and is called tree", function () {
+	beforeEach(function(){
+		newick = "((human, chimp), mouse)";
+		tree = parser(newick);
+		console.log(tree);
+	});
+
+	it("Exists and is called tree", function () {
         assert.isDefined(tree);
     })
 
-    var newick = "((human, chimp), mouse)";
-    var tree = parser(newick);
-
-    // Newick
+        // Newick
     describe ('Newick reader', function () {
 	it ("Exists and is called tree.parse_newick", function () {
 	    assert.isDefined(parser);
@@ -47,26 +51,32 @@ describe('BioJS2 Tree Test', function () {
 	});
     });
 
-    describe ('tnt.tree.node', function () {
-	var mytree = tnt.tree.node(tree);
+    describe ('tnode', function () {
+	var mytree = tnode(tree);
+
+
+
 	it ("Can create trees", function () {
 	    assert.isDefined(mytree);
 	})
 
 	it ("Can create trees from JSON objects", function () {
-	    var this_tree = tnt.tree.node(_t.tree);
+	    var this_tree = tnode(_t.tree);
 	    assert.isDefined(this_tree);
 	    assert.isDefined(this_tree.children);
 	});
 
 	it ("Can return the original data", function () {
-	    var mytree = tnt.tree.parse_newick("((human,chimp)anc1,mouse)anc2");
-	    var mynewtree = tnt.tree.node(mytree);
+	    var mytree = parser("((human,chimp)anc1,mouse)anc2");
+	    var mynewtree = tnode(mytree);
 	    assert.property(mytree, "name");
 	    var orig_data = mynewtree.data();
 	    assert.deepEqual(mytree, orig_data);
 	    assert.strictEqual(mynewtree.data().name, "anc2");
 	});
+
+
+
 
 	it ('Inserts ids in all the nodes', function () {
 	    var nodes_with_ids = 0;
@@ -79,14 +89,17 @@ describe('BioJS2 Tree Test', function () {
 	    });
 	    assert.strictEqual(nodes_with_ids, nodes);
 	});
-
+	
 	it ("Doesn't override ids", function () {
-	    var node = mytree.find_node_by_name('human');
+	
+		var mytree = tnode(tree);
+	    var node = mytree.find_node_by_name('human');		
 	    assert.notEqual(node.property('_id'), 1);
 	    assert.strictEqual(node.property('_id'), 3);
 	});
 
 	it("Can retrieve ids", function () {
+		var mytree = tnode(tree);
 	    assert.property(mytree, "id");
 	    var id = mytree.id();
 	    assert.isDefined(id);
@@ -94,6 +107,7 @@ describe('BioJS2 Tree Test', function () {
 	});
 
 	it("Can retrieve names", function () {
+		var mytree = tnode(tree);
 	    assert.property(mytree, "node_name");
 	    var root_name = mytree.node_name();
 	    assert.strictEqual(root_name, "");
@@ -103,6 +117,7 @@ describe('BioJS2 Tree Test', function () {
 	});
 
 	it('Has the correct number of parents', function () {
+		var mytree = tnode(tree);
 	    var parents = 0;
 	    var nodes = 0;
 	    mytree.apply(function (node) {
@@ -115,18 +130,20 @@ describe('BioJS2 Tree Test', function () {
 	});
 
 	it('Inserts correct distances to root', function () {
-	    var newick = "((human:0.2,chimp:0.3):0.2,mouse:0.5)";
-	    var data = tnt.tree.parse_newick(newick);
-	    var tree = tnt.tree.node(data);
-	    assert.isDefined(tree.root_dist);
-	    assert.isFunction(tree.root_dist);
+	    var bnewick = "((human:0.2,chimp:0.3):0.2,mouse:0.5)";
+		
+	    var data = parser(bnewick);
+	    var btree = tnode(data);
+	    assert.isDefined(btree.root_dist);
+	    assert.isFunction(btree.root_dist);
 	    var root_dists = [];
-	    tree.apply(function (node) {
-		root_dists.push(node.root_dist());
+	    btree.apply(function (bnode) {
+			root_dists.push(bnode.root_dist());
 	    });
 	    var undef_dists = _.filter(root_dists, function(d) {return d === undefined});
 	    assert.strictEqual(undef_dists.length, 0);
-	    var human = tree.find_node_by_name('human');
+		console.log(btree.data()._children);
+	    var human = btree.find_node_by_name('human');
 	    assert.closeTo(human.root_dist(),0.4, 0.01);
 	});
 
@@ -150,7 +167,7 @@ describe('BioJS2 Tree Test', function () {
 	    	    ]
 	    	};
 
-	    	var root = tnt.tree.node(tree_obj);
+	    	var root = tnode(tree_obj);
 
 	    	it ('Accesses data properties', function () {
 	    	    var prop1 = root.property('name');
@@ -182,8 +199,8 @@ describe('BioJS2 Tree Test', function () {
 	    });
 
 	    describe('find_node_by_field', function () {
-		var tree_from_newick = tnt.tree.node(tnt.tree.parse_newick("((human,chimp)anc1,mouse)anc2"));
-		var tree_from_json   = tnt.tree.node(_t.tree);
+		var tree_from_newick = tnode(parser("((human,chimp)anc1,mouse)anc2"));
+		var tree_from_json   = tnode(_t.tree);
 
 		it ("Finds a node by name", function () {
 		    assert.isDefined (tree_from_newick);
@@ -222,8 +239,8 @@ describe('BioJS2 Tree Test', function () {
 	    });
 
 	    describe('find_node_by_name', function () {
-		var newtree = tnt.tree.parse_newick("((human,chimp)anc1,mouse)anc2");
-		var mynewtree = tnt.tree.node(newtree);
+		var newtree = parser("((human,chimp)anc1,mouse)anc2");
+		var mynewtree = tnode(newtree);
 
 		it("Returns the correct node", function () {
 		    assert.isDefined(newtree);
@@ -240,7 +257,7 @@ describe('BioJS2 Tree Test', function () {
 		    assert.isDefined(root);
 		    assert.strictEqual(root.data().name, "anc2");
 		})
-		it("Returns nodes that are tnt.tree.node's", function () {
+		it("Returns nodes that are tnode's", function () {
 		    var node = mynewtree.find_node_by_name('anc1');
 		    assert.property(node, 'find_node_by_name');
 		})
@@ -263,8 +280,8 @@ describe('BioJS2 Tree Test', function () {
 	    });
 
 	    describe('lca', function () {
-		var newtree = tnt.tree.parse_newick("((human,chimp)anc1,mouse)anc2");
-		var mynewtree = tnt.tree.node(newtree);
+		var newtree = parser("((human,chimp)anc1,mouse)anc2");
+		var mynewtree = tnode(newtree);
 
 		it("Finds the correct lca node", function () {
 		    var nodes = [];
@@ -277,8 +294,8 @@ describe('BioJS2 Tree Test', function () {
 	    });
 
 	    describe('is_leaf', function () {
-		var newtree = tnt.tree.parse_newick("((human,chimp)anc1,mouse)anc2");
-		var mynewtree = tnt.tree.node(newtree);
+		var newtree = parser("((human,chimp)anc1,mouse)anc2");
+		var mynewtree = tnode(newtree);
 		it("Returns the correct number of leaves", function () {
 		    var leaves = 0;
 		    mynewtree.apply(function(node) {
@@ -300,8 +317,8 @@ describe('BioJS2 Tree Test', function () {
 	    });
 
 	    describe('parent', function () {
-		var newtree = tnt.tree.parse_newick("((human,chimp)anc1,mouse)anc2");
-		var mynewtree = tnt.tree.node(newtree);
+		var newtree = parser("((human,chimp)anc1,mouse)anc2");
+		var mynewtree = tnode(newtree);
 		var node = mynewtree.find_node_by_name("anc1");
 		var parent = node.parent();
 		it("Can take parents from nodes", function () {
@@ -310,7 +327,7 @@ describe('BioJS2 Tree Test', function () {
 		it("Returns the right node", function () {
 		    assert.strictEqual(parent.data().name, "anc2");
 		});
-		it("Returns an tnt.tree.node object", function () {
+		it("Returns an tnode object", function () {
 		    assert.property(parent, "is_leaf");
 		});
 		it("Returns undefined parent on root", function () {
@@ -320,8 +337,8 @@ describe('BioJS2 Tree Test', function () {
 	    });
 
 	    describe('children', function () {
-		var newtree = tnt.tree.parse_newick("((human,chimp)anc1,mouse)anc2");
-		var mynewtree = tnt.tree.node(newtree);
+		var newtree = parser("((human,chimp)anc1,mouse)anc2");
+		var mynewtree = tnode(newtree);
 		var node = mynewtree.find_node_by_name("anc1");
 		var children = node.children();
 		it("Can take children from nodes", function () {
@@ -330,7 +347,7 @@ describe('BioJS2 Tree Test', function () {
 		it("Returns a list of children", function () {
 		    assert.isArray(children);
 		});
-		it("Returns a list of tnt.tree.node's", function () {
+		it("Returns a list of tnode's", function () {
 		    _.each(children, function (el) {
 			assert.property(el, "is_leaf");
 		    });
@@ -343,8 +360,8 @@ describe('BioJS2 Tree Test', function () {
 	    });
 
 	    describe('upstream', function() {
-		var mytree = tnt.tree.parse_newick("((human,chimp)anc1,mouse)anc2");
-		var mynewtree = tnt.tree.node(mytree);
+		var mytree = parser("((human,chimp)anc1,mouse)anc2");
+		var mynewtree = tnode(mytree);
 		var node = mynewtree.find_node_by_name('human');
 		it("Visits the correct number of antecesors", function () {
 		    var visited_parents = [];
@@ -495,8 +512,8 @@ describe('BioJS2 Tree Test', function () {
 
 		it("Sorts based on a numerical value", function () {
 		    var newick = "(((4,2),(5,1)),3)";
-		    var data = tnt.tree.parse_newick(newick);
-		    var tree = tnt.tree.node(data);
+		    var data = parser(newick);
+		    var tree = tnode(data);
 		    var ids = [];
 		    tree.apply(function (node) {
 			ids.push(node.id());
