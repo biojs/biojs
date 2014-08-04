@@ -4,4 +4,4 @@ if (typeof biojs === 'undefined') {
 if (typeof biojs.vis === 'undefined') {
   module.exports = biojs.vis = {}
 }
-biojs.vis.tree = require('./lib/index')
+biojs.vis.tree = require('./')
