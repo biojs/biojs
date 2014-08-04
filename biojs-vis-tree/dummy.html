@@ -1,12 +1,13 @@
 <html>
 <link type="text/css" rel="stylesheet" href="css/msa.css" />
 <body>
-<script src="biojs_vis_tree.min.js">
-<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+<script src="./d3.min.js"></script>
+<script src="./biojs_io_newick.min.js"></script>
+<script src="./biojs_vis_tree.min.js"></script>
 <script src="newick-tree.js"></script>
 <div id='tree'></div>
 <script>
-var tree = biojs.vis.tree();
+var tree = biojs.vis.tree.tree();
 var theme = newick_tree();
 theme(tree,document.getElementById('tree'));
 </script>

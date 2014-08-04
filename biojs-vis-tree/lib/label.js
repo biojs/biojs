@@ -58,7 +58,7 @@ export_label.text = function () {
 			console.log("hi");
 		return label.text()(node)
 	    });
-	l = l.style('font-size', label.fontsize() + "px");
+	l = l.style('font-size', label.fontsize + "px");
 	l = l.style('fill', d3.functor(label.color())(node));
 
 	return l;
@@ -72,8 +72,9 @@ export_label.text = function () {
 
 	var text = svg
 	    .append("text")
-	    .style('font-size', label.fontsize() + "px")
-	    .text(label.text()(node));
+	    .style('font-size', label.fontsize + "px");
+	var foo = label.text(node);
+	text = text.text(foo);
 
 	var width = text.node().getBBox().width;
 	svg.remove();
@@ -82,7 +83,7 @@ export_label.text = function () {
     };
 
     label.height = function (node) {
-	return label.fontsize();
+	return label.fontsize;
     };
 
     return label;
