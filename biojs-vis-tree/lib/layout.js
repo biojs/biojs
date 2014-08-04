@@ -1,5 +1,6 @@
 // Based on the code by Ken-ichi Ueda in http://bl.ocks.org/kueda/1036776#d3.phylogram.js
 var diagonal = require("./diagonal");
+//var d3 = require("d3");
 
 var elayout = function () {
 
@@ -22,7 +23,7 @@ var elayout = function () {
 	l.height = function () {throw "height is not defined in the base object"};
 
     l.scale_branch_lengths = function (curr) {
-	if (l.scale() === false) {
+	if (l.scale === false) {
 	    return
 	}
 
@@ -60,12 +61,12 @@ elayout.vertical = function () {
     layout.yscale = function (dists) {
     	return d3.scale.linear()
     	    .domain([0, d3.max(dists)])
-    	    .range([0, layout.width() - 20 - layout.max_leaf_label_width()]);
+    	    .range([0, layout.width - 20 - layout.max_leaf_label_width]);
     };
 
     layout.adjust_cluster_size = function (params) {
     	var h = layout.height(params);
-    	var w = layout.width() - layout.max_leaf_label_width() - layout.translate_vis()[0] - params.label_padding;
+    	var w = layout.width - layout.max_leaf_label_width - layout.translate_vis[0] - params.label_padding;
     	layout.cluster.size ([h,w]);
     	return layout;
     };

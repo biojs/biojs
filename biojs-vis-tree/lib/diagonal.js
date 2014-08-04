@@ -10,9 +10,12 @@ var diagonal = function () {
 	return d.path()(pathData, radial_calc.call(this,pathData))
     };
 
-    var api = tnt.utils.api (d)
-	.getset ('projection')
-	.getset ('path')
+    d.projection = undefined;
+    d.path = undefined;
+
+ //   var api = tnt.utils.api (d)
+//	.getset ('projection')
+//	.getset ('path')
     
     var coordinateToAngle = function (coord, radius) {
       	var wholeAngle = 2 * Math.PI,
@@ -87,9 +90,10 @@ diagonal.vertical = function () {
 	    "L" + dst;
     };
 
-    return diagonal()
-      	.path(path)
-      	.projection(projection);
+    var foo = diagonal();
+      	foo.path = path;
+      	foo.projection = projection;
+    return foo;
 };
 
 diagonal.radial = function () {

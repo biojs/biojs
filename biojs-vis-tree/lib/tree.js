@@ -83,7 +83,7 @@ var tree = function () {
 	    var max = 0;
 	    var leaves = tree.get_all_leaves();
 	    for (var i=0; i<leaves.length; i++) {
-		var label_width = conf.label.width()(leaves[i]);
+		var label_width = conf.label.width(leaves[i]);
 		if (label_width > max) {
 		    max = label_width;
 		}
@@ -93,7 +93,7 @@ var tree = function () {
 
 
 	var max_label_length = max_leaf_label_length(curr.tree);
-	conf.layout.max_leaf_label_width(max_label_length);
+	conf.layout.max_leaf_label_width = max_label_length;
 
 	// Cluster size is the result of...
 	// total width of the vis - transform for the tree - max_leaf_label_width - horizontal transform of the label
@@ -111,7 +111,7 @@ var tree = function () {
 
 	svg = tree_div
 	    .append("svg")
-	    .attr("width", conf.layout.width())
+	    .attr("width", conf.layout.width)
 //	    .attr("height", (n_leaves * label.height()()) + 20)
 	    .attr("height", conf.layout.height(cluster_size_params) + 30)
 	    .attr("fill", "none");
@@ -121,9 +121,9 @@ var tree = function () {
 	    .attr("id", "tnt_st_" + div_id)
 	    .attr("transform",
 		  "translate(" +
-		  conf.layout.translate_vis()[0] +
+		  conf.layout.translate_vis[0] +
 		  "," +
-		  conf.layout.translate_vis()[1] +
+		  conf.layout.translate_vis[1] +
 		  ")");
 
 	curr.nodes = cluster.nodes(curr.data);
