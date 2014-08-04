@@ -155,7 +155,7 @@ tree = function () {
 	    	return "tree_link_" + div_id + "_" + d.target._id;
 	    })
 	    .style("stroke", function (d) {
-		return d3.functor(conf.link_color)(tree.node(d.source), tnt.tree.node(d.target));
+		return d3.functor(conf.link_color)(tree.node(d.source), tree.node(d.target));
 	    })
 	    .attr("d", diagonal);	    
 
