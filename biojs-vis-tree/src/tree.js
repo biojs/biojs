@@ -384,7 +384,7 @@ tree = function () {
 	base.data = d;
 	curr.data = d;
 
-	tree.node = require("../tree/node");
+	tree.node = require("./node");
 	// Set up a new tree based on the data
 	var newtree = tree.node(base.data);
 	
