@@ -1,0 +1,73 @@
+{
+  "name": "ieee754",
+  "version": "1.1.3",
+  "description": "Read/write IEEE754 floating point numbers from/to a Buffer or array-like object",
+  "main": "index.js",
+  "dependencies": {},
+  "devDependencies": {
+    "tape": "*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/feross/ieee754.git"
+  },
+  "testling": {
+    "files": "test/*.js",
+    "browsers": [
+      "ie/6..latest",
+      "chrome/4..latest",
+      "firefox/3..latest",
+      "safari/5.1..latest",
+      "opera/11.0..latest",
+      "iphone/6",
+      "ipad/6"
+    ]
+  },
+  "keywords": [
+    "ieee754",
+    "IEEE 754",
+    "floating point",
+    "buffer",
+    "convert"
+  ],
+  "author": {
+    "name": "Feross Aboukhadijeh",
+    "email": "feross@feross.org",
+    "url": "http://feross.org/"
+  },
+  "contributors": [
+    {
+      "name": "Romain Beauxis",
+      "email": "toots@rastageeks.org"
+    }
+  ],
+  "scripts": {
+    "test": "tape test/*.js"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/feross/ieee754/issues"
+  },
+  "homepage": "https://github.com/feross/ieee754",
+  "_id": "ieee754@1.1.3",
+  "dist": {
+    "shasum": "1d4baae872e15ba69f6ab7588a965e09d485ec50",
+    "tarball": "http://registry.npmjs.org/ieee754/-/ieee754-1.1.3.tgz"
+  },
+  "_from": "ieee754@~1.1.1",
+  "_npmVersion": "1.3.25",
+  "_npmUser": {
+    "name": "feross",
+    "email": "feross@feross.org"
+  },
+  "maintainers": [
+    {
+      "name": "feross",
+      "email": "feross@feross.org"
+    }
+  ],
+  "directories": {},
+  "_shasum": "1d4baae872e15ba69f6ab7588a965e09d485ec50",
+  "_resolved": "https://registry.npmjs.org/ieee754/-/ieee754-1.1.3.tgz",
+  "readme": "ERROR: No README data found!"
+}
