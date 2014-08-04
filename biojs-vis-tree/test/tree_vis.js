@@ -5,12 +5,12 @@ require("d3");
 
 var tnt = {};
 
-tnt.tree = require("../tree/tree.js");
+tnt.tree = require("../src/tree.js");
 
-tnt.tree.label = require("../tree/label.js");
-tnt.tree.diagonal = require("../tree/diagonal.js");
-tnt.tree.layout = require("../tree/layout.js");
-tnt.tree.node = require("../tree/node.js");
+tnt.tree.label = require("../src/label.js");
+tnt.tree.diagonal = require("../src/diagonal.js");
+tnt.tree.layout = require("../src/layout.js");
+tnt.tree.node = require("../src/node.js");
 
 
 
