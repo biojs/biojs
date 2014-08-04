@@ -1,0 +1,45 @@
+{
+  "name": "builtins",
+  "version": "0.0.5",
+  "description": "List of node.js builtin modules",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/segmentio/builtins"
+  },
+  "license": "MIT",
+  "main": "builtins.json",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org"
+  },
+  "gitHead": "6fdb09e119dfdd35ddcac1821a5cb58fd5ca8a8f",
+  "bugs": {
+    "url": "https://github.com/segmentio/builtins/issues"
+  },
+  "homepage": "https://github.com/segmentio/builtins",
+  "_id": "builtins@0.0.5",
+  "scripts": {},
+  "_shasum": "86dd881f9862856e62fd7ed7767b438c4d79b7ab",
+  "_from": "builtins@~0.0.3",
+  "_npmVersion": "1.4.14",
+  "_npmUser": {
+    "name": "segment",
+    "email": "tj@segment.io"
+  },
+  "maintainers": [
+    {
+      "name": "juliangruber",
+      "email": "julian@juliangruber.com"
+    },
+    {
+      "name": "segment",
+      "email": "tj@segment.io"
+    }
+  ],
+  "dist": {
+    "shasum": "86dd881f9862856e62fd7ed7767b438c4d79b7ab",
+    "tarball": "http://registry.npmjs.org/builtins/-/builtins-0.0.5.tgz"
+  },
+  "directories": {},
+  "_resolved": "https://registry.npmjs.org/builtins/-/builtins-0.0.5.tgz",
+  "readme": "ERROR: No README data found!"
+}

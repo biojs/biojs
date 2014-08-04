@@ -1,0 +1,89 @@
+{
+  "name": "buffer",
+  "description": "Node.js Buffer API, for the browser",
+  "version": "2.5.0",
+  "author": {
+    "name": "Feross Aboukhadijeh",
+    "email": "feross@feross.org",
+    "url": "http://feross.org"
+  },
+  "bugs": {
+    "url": "https://github.com/feross/buffer/issues"
+  },
+  "contributors": [
+    {
+      "name": "Romain Beauxis",
+      "email": "toots@rastageeks.org"
+    },
+    {
+      "name": "James Halliday",
+      "email": "mail@substack.net"
+    }
+  ],
+  "dependencies": {
+    "base64-js": "~0.0.4",
+    "ieee754": "~1.1.1"
+  },
+  "devDependencies": {
+    "benchmark": "^1.0.0",
+    "browserify": "^3.46.0",
+    "tape": "^2.12.3"
+  },
+  "homepage": "https://github.com/feross/buffer",
+  "keywords": [
+    "buffer",
+    "browserify",
+    "compatible",
+    "browser",
+    "arraybuffer",
+    "uint8array",
+    "dataview"
+  ],
+  "license": "MIT",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/feross/buffer.git"
+  },
+  "scripts": {
+    "test": "tape test/*.js",
+    "prepublish": "./bundle.sh",
+    "perf": "cd perf/solo && browserify --debug readUInt32BE.js > bundle.js && open index.html",
+    "size": "browserify -r ./ | uglifyjs -c -m | gzip | wc -c"
+  },
+  "testling": {
+    "files": "test/*.js",
+    "browsers": [
+      "ie/6..latest",
+      "chrome/4..latest",
+      "firefox/3..latest",
+      "safari/5.1..latest",
+      "opera/12.0..latest",
+      "iphone/6",
+      "ipad/6",
+      "android-browser/latest"
+    ]
+  },
+  "gitHead": "582b9bac3594d01954866e45606cce76ea9503d7",
+  "_id": "buffer@2.5.0",
+  "_shasum": "ee451ce8cd122dc922027674338dcef9e0eadd9a",
+  "_from": "buffer@^2.3.0",
+  "_npmVersion": "1.4.14",
+  "_npmUser": {
+    "name": "feross",
+    "email": "feross@feross.org"
+  },
+  "maintainers": [
+    {
+      "name": "feross",
+      "email": "feross@feross.org"
+    }
+  ],
+  "dist": {
+    "shasum": "ee451ce8cd122dc922027674338dcef9e0eadd9a",
+    "tarball": "http://registry.npmjs.org/buffer/-/buffer-2.5.0.tgz"
+  },
+  "directories": {},
+  "_resolved": "https://registry.npmjs.org/buffer/-/buffer-2.5.0.tgz",
+  "readme": "ERROR: No README data found!"
+}
