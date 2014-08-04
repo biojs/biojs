@@ -30,7 +30,7 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha --reporter spec",
-    "build-browser": "browserify browser.js  | uglifyjs  > biojs_io_newick.min.js"
+    "build-browser": "browserify browser.js  > biojs_io_newick.min.js"
   },
   "license": "Apache 2"
 }
