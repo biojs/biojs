@@ -17,7 +17,7 @@ biojs2
 __WARNING__: this is work in progress and NOT in production yet.
 
 
-Currently every folder is a seperate npm package (to ease development). Every folder will be moved to a seperate repo soon.
+Currently every folder is a seperate npm package (to ease development). Every folder will be __moved to a seperate repo__ soon.
 
 Install a package (inside a package folder)
 
