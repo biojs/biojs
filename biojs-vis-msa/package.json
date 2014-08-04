@@ -34,7 +34,7 @@
   "main": "src/index.js",
   "scripts": {
     "test": "bash ./test/test.sh",
-    "build-browser": "browserify -t coffeeify --extension='.coffee'  browser.js > build/biojs_vis_msa.min.js"
+    "build-browser": "mkdir build && browserify -t coffeeify --extension='.coffee'  browser.js > build/biojs_vis_msa.min.js"
   },
   "license": "Apache 2"
 }
