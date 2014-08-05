@@ -14,7 +14,7 @@
   "dependencies": {
     "biojs-io-clustal": "0.0.1",
     "biojs-io-fasta": "0.0.3",
-    "biojs-model": "0.0.1"
+    "biojs-model": "0.0.2"
   },
   "devDependencies": {
     "browserify": "~4.2.0",
@@ -26,7 +26,8 @@
     "nock": "^0.43.0",
     "phantomjs": "^1.9.7-15",
     "qunit": "^0.7.2",
-    "uglify-js": "~2.4.15"
+    "uglify-js": "~2.4.15",
+    "watchify": "^1.0.1"
   },
   "keywords": [
     "bio"
@@ -34,6 +35,10 @@
   "main": "src/index.js",
   "scripts": {
     "test": "bash ./test/test.sh",
+<<<<<<< HEAD
+=======
+    "watch": "watchify -v -t coffeeify --extension='.coffee' browser.js -o build/biojs_vis_msa.min.js",
+>>>>>>> 4b4f740ce12c48296cd0850eca371e7147f490d6
     "build-browser": "browserify -t coffeeify --extension='.coffee'  browser.js > build/biojs_vis_msa.min.js"
   },
   "license": "Apache 2"

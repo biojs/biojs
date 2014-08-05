@@ -23,6 +23,7 @@ module.exports =
       else
         @container = divName
 
+      @container.className = "" unless @container.className?
       @container.className += " biojs_msa_div"
 
       @colorscheme = new Colorator()
