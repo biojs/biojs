@@ -28,17 +28,16 @@ Version
 
 Current Features of BioJS 2.0
 ----
-BioJS 2.0 is a framework for __processing__ and __visualizing__ biological data in *Javascript*
-  - REST APIs can be found in biojs-rest
-        REST API for Ensembl 
-  - Parsers can be found in biojs-io
-        Newick parser
-        Extended Newick parser
-        Clustal parser
-        Fasta parser
-  - Visualizations can be found in biojs-vis
-        Multiple Sequence Alignment Viewer
-        Phylogenetic Tree Viewer
+- REST APIs can be found in biojs-rest
+ - REST API for Ensembl 
+- Parsers can be found in biojs-io
+ - Newick parser
+ - Extended Newick parser
+ - Clustal parser
+ - Fasta parser
+- Visualizations can be found in biojs-vis
+ - Multiple Sequence Alignment Viewer
+ - Phylogenetic Tree Viewer
 
 How to setup BioJS 
 --------------
@@ -90,11 +89,10 @@ Build the file for a browser
 npm run build-browser
 ```
 
-----
+
 
 Working examples of the component can be found in the *snippet folder* of each package
 
-----
 
 Demos
 ----------------
