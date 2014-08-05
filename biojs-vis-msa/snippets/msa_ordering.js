@@ -1,13 +1,10 @@
-require(["cs!msa/msa", "cs!msa/sequence"], function (MSA, Sequence) {
+var msa = new biojs.vis.msa.msa('msa-ordering');
+msa.log.setConsole('msa-ordering-console');
 
-  var msa = new MSA('msa-ordering');
-  msa.log.setConsole('msa-ordering-console');
+// define seqs
+var seqs = [new biojs.model.seq("MSPFTACAPDRLNAGECTF", "awesome name", 1)
+       ,new biojs.model.seq("QQTSPLQQQDILDMTVYCD", "awesome name2", 2)
+       ,new biojs.model.seq("FTQHGMSGHEISPPSEPGH", "awesome name3", 3)];
 
-  // define seqs
-  var seqs = [new Sequence("MSPFTACAPDRLNAGECTF", "awesome name", 1)
-         ,new Sequence("QQTSPLQQQDILDMTVYCD", "awesome name2", 2)
-         ,new Sequence("FTQHGMSGHEISPPSEPGH", "awesome name3", 3)];
-
-  msa.addSeqs(seqs);
-  msa.ordering.setOrdering([2,3,1]);
-});
+msa.addSeqs(seqs);
+msa.ordering.setOrdering([2,3,1]);

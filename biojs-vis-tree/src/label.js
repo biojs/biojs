@@ -1,4 +1,9 @@
-var export_label = function () {
+var tree = {};
+var utils = {};
+utils.api = require('../utils/api');
+
+
+tree.label = function () {
 "use strict";
 
     // TODO: Not sure if we should be removing by default prev labels
@@ -12,7 +17,7 @@ var export_label = function () {
         }
 
 	label.display().call(this, node)
-	    .attr("class", "label")
+	    .attr("class", "tree_label")
 	    .attr("transform", "translate (" + label.transform()()[0] + " " + label.transform()()[1] + ")")
 	    .on("click", function(){
 		if (label.on_click() !== undefined) {
@@ -23,48 +28,46 @@ var export_label = function () {
 
     };
 
-    //var api = tnt.utils.api (label)
-	label.width = function () { throw "Need a width callback" };
-	label.height = function () { throw "Need a height callback" };
-	label.display = function () { throw "Need a display callback" };
-	label.transform = function () { return [10, 5] };
-	label.on_click;
+    var api = utils.api (label)
+	.getset ('width', function () { throw "Need a width callback" })
+	.getset ('height', function () { throw "Need a height callback" })
+	.getset ('display', function () { throw "Need a display callback" })
+	.getset ('transform', function () { return [10, 5] })
+	.getset ('on_click');
 
-    label.remove = function () {
+    api.method ('remove', function () {
 	d3.select(this)
-	    .selectAll(".label")
+	    .selectAll(".tree_label")
 	    .remove();
-    };
+    });
 
     return label;
 };
 
 // Text based labels
-export_label.text = function () {
-    var label = export_label();
+tree.label.text = function () {
+    var label = tree.label();
 
-    label.fontsize = 10;
-    label.color = "#000";
-    label.text = function (d) {
-    	    return d.data().name;
-    };
+    var api = utils.api (label)
+	.getset ('fontsize', 10)
+	.getset ('color', "#000")
+	.getset ('text', function (d) {
+	    return d.data().name;
+	})
 
-    label.display = function (node) {
-	var l = d3.select(this);
-	console.log("---");
-	console.log(l);
-	l = l.append("text");
-	l = l.text(function(){
-			console.log("hi");
+    label.display (function (node) {
+	var l = d3.select(this)
+	    .append("text")
+	    .text(function(){
 		return label.text()(node)
-	    });
-	l = l.style('font-size', label.fontsize + "px");
-	l = l.style('fill', d3.functor(label.color())(node));
+	    })
+	    .style('font-size', label.fontsize() + "px")
+	    .style('fill', d3.functor(label.color())(node));
 
 	return l;
-    };
+    });
 
-    label.width = function (node) {
+    label.width (function (node) {
 	var svg = d3.select("body")
 	    .append("svg")
 	    .attr("height", 0)
@@ -72,31 +75,30 @@ export_label.text = function () {
 
 	var text = svg
 	    .append("text")
-	    .style('font-size', label.fontsize + "px");
-	var foo = label.text(node);
-	text = text.text(foo);
+	    .style('font-size', label.fontsize() + "px")
+	    .text(label.text()(node));
 
 	var width = text.node().getBBox().width;
 	svg.remove();
 
 	return width;
-    };
+    });
 
-    label.height = function (node) {
-	return label.fontsize;
-    };
+    label.height (function (node) {
+	return label.fontsize();
+    });
 
     return label;
 };
 
 // Image based labels
-export_label.img = function () {
-    var label = export_label();
+tree.label.img = function () {
+    var label = tree.label();
 
-    //var api = tnt.utils.api (label)
-    //	.getset ('src', function () {})
+    var api = utils.api (label)
+	.getset ('src', function () {})
 
-    label.display = function (node) {
+    label.display (function (node) {
 	if (label.src()(node)) {
 	    var l = d3.select(this)
 		.append("image")
@@ -108,17 +110,17 @@ export_label.img = function () {
 	// TODO:
 	return d3.select(this)
 	    .append("text");
-    };
+    });
 
-    label.transform = function () {
+    label.transform (function () {
 	return ([10, -(label.height()() / 2)]);
-    };
+    });
 
     return label;
 };
 
 // Labels made of 2+ simple labels
-export_label.composite = function () {
+tree.label.composite = function () {
 
     var labels = [];
 
@@ -128,16 +130,16 @@ export_label.composite = function () {
 	}
     };
 
-    //var api = tnt.utils.api (label)
+    var api = utils.api (label)
 
-    label.add_label = function (display) {
+    api.method ('add_label', function (display) {
 	var curr_labels = [];
 	for (var i=0; i<labels.length; i++) {
 	    curr_labels.push(labels[i]);
 	}
 
 	display._super_ = {};
-	tnt.utils.api (display._super_)
+	utils.api (display._super_)
 	    .get ('transform', display.transform());
 
 	display.transform( function (node) {
@@ -151,9 +153,9 @@ export_label.composite = function () {
 
 	labels.push(display);
 	return label;
-    };
+    });
 
-    label.width = function () {
+    api.method ('width', function () {
 	return function (node) {
 	    var tot_width = 0;
 	    for (var i=0; i<labels.length; i++) {
@@ -163,9 +165,9 @@ export_label.composite = function () {
 
 	    return tot_width;
 	}
-    };
+    });
 
-    label.height = function () {
+    api.method ('height', function () {
 	return function (node) {
 	    var max_height = 0;
 	    for (var i=0; i<labels.length; i++) {
@@ -176,15 +178,15 @@ export_label.composite = function () {
 	    }
 	    return max_height;
 	}
-    };
+    });
 
-    label.remove = function (node) {
+    api.method ('remove', function (node) {
 	for (var i=0; i<labels.length; i++) {
 	    labels[i].remove.call(this, node);
 	}
-    };
+    });
 
     return label;
 };
 
-module.exports = export_label;
+module.exports = exports = tree.label;

@@ -1,0 +1,29 @@
+{
+  "name": "biojs-legacy-events",
+  "description": "Biological event system",
+  "version": "0.0.3",
+  "homepage": "http://github.com/biojs/biojs",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/biojs/biojs2"
+  },
+  "author": {
+    "name": "BioJS",
+    "email": "biojs-technical@googlegroups.com"
+  },
+  "dependencies": {
+    "backbone-events-standalone": "^0.2.2"
+  },
+  "devDependencies": {
+    "browserify": "^5.9.1"
+  },
+  "keywords": [
+    "bio",
+    "models"
+  ],
+  "main": "src/index.js",
+  "scripts": {
+    "build-browser": "browserify browser.js > biojs.legacy.events.min.js"
+  },
+  "license": "Apache 2"
+}

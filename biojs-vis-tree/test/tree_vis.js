@@ -1,17 +1,16 @@
-require('d3');
-var parser = require('biojs-io-newick').newick;
-var layout = require('../lib/layout');
-var diagonal = require('../lib/diagonal');
-var tree = require('../lib/tree');
-var should = require('should');
-var tnode = require("../lib/node");
-var tlabel = require("../lib/label");
-var _ = require('underscore');
-
+var should = require('should');  
 require('mocha');
 var assert = require("chai").assert;
+require("d3");
 
+var tnt = {};
 
+tnt.tree = require("../src/tree.js");
+
+tnt.tree.label = require("../src/label.js");
+tnt.tree.diagonal = require("../src/diagonal.js");
+tnt.tree.layout = require("../src/layout.js");
+tnt.tree.node = require("../src/node.js");
 
 
 
@@ -20,30 +19,24 @@ var tree_data = {"tree":{"events":{"type":"speciation"},"branch_length":0,"child
 describe ('tnt tree_vis', function () {
 
     it ('Exists and is called tree', function () {
-	assert.isDefined (tree);
-	assert.isFunction (tree);
+	assert.isDefined (tnt.tree);
+	assert.isFunction (tnt.tree);
     });
 
-    var label = tlabel.text();
-	label.text = function (node) {
+    var label = tnt.tree.label.text()
+	.text (function (node) {
 	    if (node.children) {
 		return "";
 	    } else {
-		return
-	   	node.id.accession
+		return node.id.accession
 	    }
-	};
-	label.fontsize =10;
+	})
+	.fontsize(10);
 
-    var btree = tree();
-	console.log(btree);
-	btree.layout (layout.vertical());
-	btree.width = 600;
-	btree.scale = false;
-	console.log(tree_data.tree);
-	btree.data(tree_data.tree);
-	debugger;
-	btree.label(label);
+    var tree = tnt.tree()
+	.layout (tnt.tree.layout.vertical().width(600).scale(false))
+	.data (tree_data.tree)
+	.label(label);
 
     it ('Accepts data', function () {
 	assert.isDefined (tree);

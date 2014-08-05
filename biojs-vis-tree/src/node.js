@@ -1,10 +1,16 @@
-var export_node = function (data) {
+var tree = {};
+var utils = {}; 
+utils.api = require('../utils/api');
+
+utils.utils = require('../utils/utils');
+
+tree.node = function (data) {
     "use strict";
 
     var node = function () {
     };
 
-    //var api = tnt.utils.api (node);
+    var api = utils.api (node);
 
     // API
 //     node.nodes = function() {
@@ -29,18 +35,9 @@ var export_node = function (data) {
 	    }
 	}
     };
-	
-	//iterator copied from tnt.utils.iterator 	
-    var iterator = function (init_val) {
-		var i = init_val;
-		var iter = function () {
-			return i++;
-		};	
-		return iter;
-	}
-	
+
     var create_ids = function () {
-	var i = iterator(1);
+	var i = utils.utils.utils.iterator(1);
 	// We can't use apply because apply creates new trees on every node
 	// We should use the direct data instead
 	apply_to_data (data, function (d) {
@@ -92,15 +89,10 @@ var export_node = function (data) {
 	compute_root_dists(data);
 	return node;
     };
-	
     // We bind the data that has been passed
     node.data(data);
 
-    node.find_node_by_field = function(value, field) {
-	
-	
-
-
+    api.method ('find_node_by_field', function(value, field) {
 	if (typeof (field) === 'function') {
 	    if (field (data) === value) {
 		return node;
@@ -112,7 +104,7 @@ var export_node = function (data) {
 	}
 	if (data._children !== undefined) {
 	    for (var j=0; j<data._children.length; j++) {
-		var c = export_node(data._children[j]);
+		var c = tree.node(data._children[j]);
 		var f = c.find_node_by_field(value, field);
 		if (f !== undefined) {
 		    return f;
@@ -122,23 +114,20 @@ var export_node = function (data) {
 
 	if (data.children !== undefined) {
 	    for (var i=0; i<data.children.length; i++) {
-		
-	
-		var n = export_node(data.children[i]);
-		
+		var n = tree.node(data.children[i]);
 		var found = n.find_node_by_field(value, field);
 		if (found !== undefined) {
 		    return found;
 		}
 	    }
 	}
-    };
+    });
 
-    node.find_node_by_name = function(name) {
+    api.method ('find_node_by_name', function(name) {
 	return node.find_node_by_field(name, 'name');
-    };
+    });
 
-    node.toggle = function() {
+    api.method ('toggle', function() {
 	if (data) {
 	    if (data.children) { // Uncollapsed -> collapse
 		var hidden = 0;
@@ -155,11 +144,11 @@ var export_node = function (data) {
 		data._children = undefined;
 	    }
 	}
-    };
+    });
 
-    node.is_collapsed = function () {
+    api.method ('is_collapsed', function () {
 	return (data._children !== undefined && data.children === undefined);
-    };
+    });
 
     var has_ancestor = function(n, ancestor) {
 	// It is better to work at the data level
@@ -184,7 +173,7 @@ var export_node = function (data) {
     // It is working fine by now, but in case it needs to be more performant we can implement the LCA
     // algorithm explained here:
     // http://community.topcoder.com/tc?module=Static&d1=tutorials&d2=lowestCommonAncestor
-    node.lca = function (nodes) {
+    api.method ('lca', function (nodes) {
 	if (nodes.length === 1) {
 	    return nodes[0];
 	}
@@ -193,8 +182,8 @@ var export_node = function (data) {
 	    lca_node = _lca(lca_node, nodes[i]);
 	}
 	return lca_node;
-	// return export_node(lca_node);
-    };
+	// return tree.node(lca_node);
+    });
 
     var _lca = function(node1, node2) {
 	if (node1.data() === node2.data()) {
@@ -206,23 +195,23 @@ var export_node = function (data) {
 	return _lca(node1, node2.parent());
     };
 
-    node.n_hidden = function (val) {
+    api.method('n_hidden', function (val) {
 	if (!arguments.length) {
 	    return node.property('_hidden');
 	}
 	node.property('_hidden', val);
 	return node
-    };
+    });
 
-    node.get_all_nodes = function () {
+    api.method ('get_all_nodes', function () {
 	var nodes = [];
 	node.apply(function (n) {
 	    nodes.push(n);
 	});
 	return nodes;
-    };
+    });
 
-    node.get_all_leaves = function () {
+    api.method ('get_all_leaves', function () {
 	var leaves = [];
 	node.apply(function (n) {
 	    if (n.is_leaf()) {
@@ -230,9 +219,9 @@ var export_node = function (data) {
 	    }
 	});
 	return leaves;
-    };
+    });
 
-    node.get_all_descendents = function () {
+    api.method ('get_all_descendents', function () {
 	var leaves = [];
 	node.apply(function (n) {
 	    // if (n.is_leaf()) {
@@ -240,19 +229,19 @@ var export_node = function (data) {
 	    // }
 	});
 	return leaves;
-    };
+    });
 
-    node.upstream = function(cbak) {
+    api.method ('upstream', function(cbak) {
 	cbak(node);
 	var parent = node.parent();
 	if (parent !== undefined) {
 	    parent.upstream(cbak);
 	}
-//	export_node(parent).upstream(cbak);
+//	tree.node(parent).upstream(cbak);
 // 	node.upstream(node._parent, cbak);
-    };
+    });
 
-    node.subtree = function(nodes) {
+    api.method ('subtree', function(nodes) {
     	var node_counts = {};
     	for (var i=0; i<nodes.length; i++) {
 	    var n = nodes[i];
@@ -346,13 +335,13 @@ var export_node = function (data) {
 	    return false;
 	});
 
-	return export_node(subtree.children[0]);
-    };
+	return tree.node(subtree.children[0]);
+    });
 
     // TODO: This method visits all the nodes
     // a more performant version should return true
     // the first time cbak(node) is true
-    node.present = function (cbak) {
+    api.method ('present', function (cbak) {
 	// cbak should return true/false
 	var is_true = false;
 	node.apply (function (n) {
@@ -361,18 +350,18 @@ var export_node = function (data) {
 	    }
 	});
 	return is_true;
-    };
+    });
 
     // cbak is called with two nodes
     // and should return -1,0,1
-    node.sort = function (cbak) {
+    api.method ('sort', function (cbak) {
 	if (data.children === undefined) {
 	    return;
 	}
 
 	var new_children = [];
 	for (var i=0; i<data.children.length; i++) {
-	    new_children.push(export_node(data.children[i]));
+	    new_children.push(tree.node(data.children[i]));
 	}
 
 	new_children.sort(cbak);
@@ -382,25 +371,25 @@ var export_node = function (data) {
 	}
 
 	for (var i=0; i<data.children.length; i++) {
-	    export_node(data.children[i]).sort(cbak);
+	    tree.node(data.children[i]).sort(cbak);
 	}
-    };
+    });
 
-    node.apply = function(cbak) {
+    api.method ('apply', function(cbak) {
 	cbak(node);
 	if (data.children !== undefined) {
 	    for (var i=0; i<data.children.length; i++) {
-		var n = export_node(data.children[i])
+		var n = tree.node(data.children[i])
 		n.apply(cbak);
 	    }
 	}
-    };
+    });
 
     // TODO: Not sure if it makes sense to set via a callback:
     // root.property (function (node, val) {
     //    node.deeper.field = val
     // }, 'new_value')
-    node.property = function(prop, value) {
+    api.method ('property', function(prop, value) {
 	if (arguments.length === 1) {
 	    if ((typeof prop) === 'function') {
 		return prop(data)	
@@ -412,14 +401,14 @@ var export_node = function (data) {
 	}
 	data[prop] = value;
 	return node;
-    };
+    });
 
-    node.is_leaf = function() {
+    api.method ('is_leaf', function() {
 	return data.children === undefined;
-    };
+    });
 
     // It looks like the cluster can't be used for anything useful here
-    // It is now included as an optional parameter to the ) method call
+    // It is now included as an optional parameter to the tree() method call
     // so I'm commenting the getter
     // node.cluster = function() {
     // 	return cluster;
@@ -433,43 +422,42 @@ var export_node = function (data) {
 //         return node.name;
 //     };
 
-    node.id = function () {
+    api.method ('id', function () {
 	return node.property('_id');
-    };
+    });
 
-    node.node_name = function () {
+    api.method ('node_name', function () {
 	return node.property('name');
-    };
+    });
 
-    node.branch_length = function () {
+    api.method ('branch_length', function () {
 	return node.property('branch_length');
-    };
+    });
 
-    node.root_dist = function () {
+    api.method ('root_dist', function () {
 	return node.property('_root_dist');
-    };
+    });
 
-    node.children = function () {
+    api.method ('children', function () {
 	if (data.children === undefined) {
 	    return;
 	}
 	var children = [];
 	for (var i=0; i<data.children.length; i++) {
-	    children.push((data.children[i]));
+	    children.push(tree.node(data.children[i]));
 	}
 	return children;
-    };
+    });
 
-    node.parent = function () {
+    api.method ('parent', function () {
 	if (data._parent === undefined) {
 	    return undefined;
 	}
-	return export_node(data._parent);
-    };
+	return tree.node(data._parent);
+    });
 
     return node;
 
 };
 
-module.exports = export_node;
-
+module.exports = exports = tree.node;

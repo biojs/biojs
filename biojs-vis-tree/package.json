@@ -2,13 +2,13 @@
   "name": "biojs-vis-tree",
   "description": "Visualizing phylogenetic trees using d3",
   "version": "0.0.1",
-  "homepage": "http://github.com/greenify/biojs",
+  "homepage": "http://github.com/biojs/biojs2",
   "repository": {
     "type": "git",
-    "url": "git://github.com/greenify/biojs2"
+    "url": "git://github.com/biojs/biojs2"
   },
   "author": {
-    "name": "BioJS",
+    "name": "David Dao, Miguel Pignatelli",
     "email": "biojs-technical@googlegroups.com"
   },
   "dependencies": {
@@ -18,6 +18,7 @@
   },
   "devDependencies": {
     "assert": "^1.1.1",
+    "biojs-io-newick": "0.0.2",
     "browserify": "~4.2.0",
     "chai": "^1.9.1",
     "mocha": "~1.20.1",
@@ -25,12 +26,12 @@
     "uglify-js": "~2.4.15"
   },
   "keywords": [
-    "bio,phylogeny,d3"
+    "bio,phylogeny,d3,tnt"
   ],
-  "main": "lib/index.js",
+  "main": "tree/index.js",
   "scripts": {
     "test": "mocha --reporter spec",
-    "build-browser": "browserify browser.js  > biojs_vis_tree.min.js"
+    "build-browser": "browserify browser.js > build/biojs_vis_tree.min.js"
   },
   "license": "Apache 2"
 }

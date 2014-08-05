@@ -1,4 +1,8 @@
-var diagonal = function () {
+var tree = {};
+var utils = {};
+utils.api = require('../utils/api');
+
+tree.diagonal = function () {
 
     var d = function (diagonalPath) {
 	var source = diagonalPath.source;
@@ -10,12 +14,9 @@ var diagonal = function () {
 	return d.path()(pathData, radial_calc.call(this,pathData))
     };
 
-    d.projection = undefined;
-    d.path = undefined;
-
- //   var api = tnt.utils.api (d)
-//	.getset ('projection')
-//	.getset ('path')
+    var api = utils.api (d)
+	.getset ('projection')
+	.getset ('path')
     
     var coordinateToAngle = function (coord, radius) {
       	var wholeAngle = 2 * Math.PI,
@@ -74,7 +75,7 @@ var diagonal = function () {
 };
 
 // vertical diagonal for rect branches
-diagonal.vertical = function () {
+tree.diagonal.vertical = function () {
     var projection = function(d) { 
 	return [d.y, d.x];
     }
@@ -90,13 +91,12 @@ diagonal.vertical = function () {
 	    "L" + dst;
     };
 
-    var foo = diagonal();
-      	foo.path = path;
-      	foo.projection = projection;
-    return foo;
+    return tree.diagonal()
+      	.path(path)
+      	.projection(projection);
 };
 
-diagonal.radial = function () {
+tree.diagonal.radial = function () {
     var path = function(pathData, obj) {
       	var src = pathData[0];
       	var mid = pathData[1];
@@ -114,9 +114,9 @@ diagonal.radial = function () {
       	return [r * Math.cos(a), r * Math.sin(a)];
     };
 
-    return diagonal()
+    return tree.diagonal()
       	.path(path)
       	.projection(projection)
 };
 
-module.exports = diagonal;
+module.exports = exports = tree.diagonal;
