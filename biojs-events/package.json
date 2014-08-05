@@ -1,0 +1,26 @@
+{
+  "name": "biojs-events",
+  "version": "0.0.1",
+  "description": "Biojs event system",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/biojs/biojs2"
+  },
+  "keywords": [
+    "biojs",
+    "event"
+  ],
+  "author": "jmvillaveces",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/biojs/biojs2/issues"
+  },
+  "homepage": "https://github.com/biojs/biojs2",
+  "dependencies": {
+    "backbone-events-standalone": "^0.2.2"
+  }
+}
