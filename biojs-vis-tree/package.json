@@ -2,7 +2,7 @@
   "name": "biojs-vis-tree",
   "description": "Visualizing phylogenetic trees using d3",
   "version": "0.0.1",
-  "homepage": "http://github.com/biojs/biojs",
+  "homepage": "http://github.com/biojs/biojs2",
   "repository": {
     "type": "git",
     "url": "git://github.com/biojs/biojs2"
@@ -14,8 +14,6 @@
   "dependencies": {
     "biojs-io-newick": "0.0.2",
     "d3": "^3.4.11",
-    "grunt": "^0.4.5",
-    "smash": "0",
     "underscore": "^1.6.0"
   },
   "devDependencies": {
@@ -33,7 +31,7 @@
   "main": "tree/index.js",
   "scripts": {
     "test": "mocha --reporter spec",
-    "build-browser": "browserify src/index.js > build/biojs_vis_tree.min.js"
+    "build-browser": "browserify browser.js > build/biojs_vis_tree.min.js"
   },
   "license": "Apache 2"
 }
