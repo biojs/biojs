@@ -1,7 +1,12 @@
-var events = require("./events");
+var events = require("./event");
 var eventHandler = require("./eventHandler");
 var utils = require("./utils");
 
+var Biojs = function(){
+    //dummy
+}
+
+Biojs.Utils = utils;
 
 /**
  * Extend this class <tt>Biojs</tt> in order to create a new component.
@@ -257,7 +262,7 @@ Biojs.prototype =
     
     var alias = function (handler) {
       return function (actionPerformed) {
-        handler.listeners.push(actionPerformed);
+        handler.addListener(actionPerformed);
       } 
     };
     

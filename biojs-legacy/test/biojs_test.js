@@ -11,16 +11,24 @@ describe("biojs core", function() {
 
   describe("legacy code supports new API", function() {
     it("fires new API when event triggered from old API", function() {
-      var Class = Biojs.extend();
+      var Class = Biojs.extend({
+          constructor : function (options) {},
+          eventTypes :['eventA']
+      });
+      
       var instance = new Class;
 
+      
+        
       var listenerSpy = sinon.spy();
-      instance.on("eventA", listenerSpy);
-
+      instance.eventA(listenerSpy);
+      
+     
+      
       var id = "aaff22";
       instance.raiseEvent("eventA", { id: id });
 
-      assert(listenerSpy.calledWithArgs({ id: id }), "event triggered from old API fires new API");
+      assert(listenerSpy.calledWith({ id: id }), "event triggered from old API fires new API");
     });
 
     // events fired from new API for firing events ( .trigger(name, arg1 ... argN ) 
