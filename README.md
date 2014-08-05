@@ -110,3 +110,6 @@ http://biojs.github.io/biojs2/biojs-vis-tree/snippets/examples.html
 ###Sample for biojs-vis-msa
 
 http://dev.biojs-msa.org/v2/dummy.html
+
+
+More detailed *Documentation* and *Tutorials* follow soon
