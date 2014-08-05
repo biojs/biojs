@@ -69,37 +69,40 @@ That's it! Now you can build your component!
 How to build a BioJS package
 ---------------
 
+###1. Create a git clone on your desktop
+```sh
+git clone https://github.com/biojs/biojs2.git
+```
 
-Go inside the package folder
+###2. Go inside the package folder
 
 ```
 npm install
 ```
 
-
-Run tests
+###3. Run tests
 
 ```
 npm test
 ```
 
-Build the file for a browser
+###4. Build the file for a browser
 
 ```
 npm run build-browser
 ```
-
-
 
 Working examples of the component can be found in the *snippet folder* of each package
 
 
 Demos
 ----------------
-###Sample for biojs-vis-msa
-
-http://dev.biojs-msa.org/v2/dummy.html
 
 ###Sample for biojs-vis-tree 
 
-biojs-vis-tree/snippets
+http://biojs.github.io/biojs2/
+
+
+###Sample for biojs-vis-msa
+
+http://dev.biojs-msa.org/v2/dummy.html
