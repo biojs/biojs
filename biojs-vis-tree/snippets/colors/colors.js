@@ -50,6 +50,9 @@ var tnt_theme_tree_colors = function() {
 	tree_vis(div);
     };
 
+    tree_vis
+	    .label().height(function(){return 50});
+
     return tree_theme;
 };
 

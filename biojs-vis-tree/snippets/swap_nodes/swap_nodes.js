@@ -50,6 +50,9 @@ var tnt_theme_tree_swap_nodes = function() {
 	    tree_vis.update();
 	}, 2000);
 
+    tree_vis
+        .label().height(function(){return 50});
+
     };
 
     return tree_theme;
