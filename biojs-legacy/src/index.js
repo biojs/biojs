@@ -1,5 +1,5 @@
 var events = require("./event");
-var eventHandler = require("./eventHandler");
+var eventHandler = require("./eventhandler");
 var utils = require("./utils");
 
 var Biojs = function(){
