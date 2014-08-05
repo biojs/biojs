@@ -39,6 +39,7 @@ Current Features of BioJS 2.0
  - HPA Feature Viewer 
  - Multiple Sequence Alignment Viewer
  - Phylogenetic Tree Viewer
+ - Gene Track Viewer (under construction)
 
 Old Components of BioJS 0.1 will rely on biojs-legacy
 
