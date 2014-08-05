@@ -9,3 +9,14 @@ module.exports.tree.layout = require("./layout.js");
 module.exports.tree.node = require("./node.js");
 
 
+
+var tree = module.exports.tree();
+console.log(tree);
+
+
+
+
+
+
+
+

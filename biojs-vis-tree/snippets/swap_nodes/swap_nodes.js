@@ -9,12 +9,12 @@ var tnt_theme_tree_swap_nodes = function() {
 
 	var newick = "(((2,4),(5,1)),3)";
 
-	var data = tnt.tree.parse_newick(newick);
+	var data = biojs.vis.tree.parse_newick(newick);
 
 	tree_vis
 	    .data(data)
 	    .duration(2000)
-	    .layout(tnt.tree.layout.vertical().width(600).scale(false));
+	    .layout(biojs.vis.tree.tree.layout.vertical().width(600).scale(false));
 
 	var root = tree_vis.root();
 

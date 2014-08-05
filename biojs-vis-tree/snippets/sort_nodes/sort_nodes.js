@@ -1,4 +1,4 @@
-var tnt_theme_tree_sort_nodes = function() {
+var sort_tree_theme = function() {
     "use strict";
 
     var tree_theme = function (tree_vis, div) {
@@ -92,7 +92,7 @@ var tnt_theme_tree_sort_nodes = function() {
 
 	var newick = "(((((((Mus musculus:0.0845,Rattus norvegicus:0.0916):0.2567,Oryctolagus cuniculus:0.2157):0.0153,(((((Pan troglodytes:0.0067,Homo sapiens:0.0067):0.0022,Gorilla gorilla:0.0088):0.0097,Pongo abelii:0.0183):0.0143,Macaca mulatta:0.0375):0.0220,Callithrix jacchus:0.0661):0.0891):0.0206,(((Felis catus:0.0986,Canis familiaris:0.1025):0.0498,Equus caballus:0.1094):0.0107,((Ovis aries:0.0618,Bos taurus:0.0618):0.0869,Sus scrofa:0.1073):0.0403):0.0329):0.2584,Monodelphis domestica:0.3408):0.0717,Ornithorhynchus anatinus:0.4566):0.1095,(((Gallus gallus:0.0414,Meleagris gallopavo:0.0414):0.1242,Taeniopygia guttata:0.1715):0.3044,Anolis carolinensis:0.4989):0.1700)";
 
-	var tree_data = tnt.tree.parse_newick(newick);
+	var tree_data = biojs.vis.tree.parse_newick(newick);
 
 	var prop = "Chromosome pairs";
 	var vals = [];
@@ -107,14 +107,14 @@ var tnt_theme_tree_sort_nodes = function() {
 	tree_vis
 	    .data(tree_data)
 	    .duration(2000)
-	    .layout(tnt.tree.layout.vertical().width(600).scale(false))
+	    .layout(biojs.vis.tree.tree.layout.vertical().width(600).scale(false))
 	    .node_color(function (node) {
 		if (node.is_leaf()) {
 		    return scale(node.data()[prop]);
 		}
 		return "steelblue";
 	    })
-	    .on_click (tree_vis.tooltip(tnt.tooltip.table()));
+	    //.on_click (tree_vis.tooltip(biojs.vis.tree.tooltip.table()));
 
 	tree_vis
 	    .label()

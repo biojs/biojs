@@ -40,8 +40,8 @@ var tnt_theme_tree_ensembl_species = function() {
 	    .attr("selected", 1);
 
 	tree_vis
-	    .data(tnt.tree.parse_newick(newick))
-	    .layout(tnt.tree.layout.radial().width(650).scale(false));
+	    .data(biojs.vis.tree.parse_newick(newick))
+	    .layout(biojs.vis.tree.tree.layout.radial().width(650).scale(false));
 
 	tree_vis(div);
 	base_root = tree_vis.root();

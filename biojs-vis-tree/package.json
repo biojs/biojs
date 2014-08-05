@@ -33,7 +33,7 @@
   "main": "tree/index.js",
   "scripts": {
     "test": "mocha --reporter spec",
-    "build": "browserify browser.js > build/biojs_vis_tree.min.js"
+    "build": "browserify src/index.js > build/biojs_vis_tree.min.js"
   },
   "license": "Apache 2"
 }

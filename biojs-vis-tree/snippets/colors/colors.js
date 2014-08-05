@@ -7,7 +7,7 @@ var tnt_theme_tree_colors = function() {
 	tree_vis
 	    .data(tree_data.tree)
 	    .duration(2000)
-	    .layout(tnt.tree.layout.vertical().width(500).scale(false))
+	    .layout(biojs.vis.tree.tree.layout.vertical().width(500).scale(false))
 	    .link_color(function (source, target) {
 		var col = "steelblue";
 		var source_data = source.data();
