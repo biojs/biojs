@@ -35,7 +35,10 @@
   "main": "src/index.js",
   "scripts": {
     "test": "bash ./test/test.sh",
+<<<<<<< HEAD
+=======
     "watch": "watchify -v -t coffeeify --extension='.coffee' browser.js -o build/biojs_vis_msa.min.js",
+>>>>>>> 4b4f740ce12c48296cd0850eca371e7147f490d6
     "build-browser": "browserify -t coffeeify --extension='.coffee'  browser.js > build/biojs_vis_msa.min.js"
   },
   "license": "Apache 2"
