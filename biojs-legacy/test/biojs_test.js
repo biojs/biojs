@@ -1,4 +1,4 @@
-var Biojs = require("../src/biojs");
+var Biojs = require("../src/index");
 
 describe("biojs core", function() {
   describe("old events API", function() {

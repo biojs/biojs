@@ -15,12 +15,11 @@
     "biojs-events": "0.0.1"
   },
   "devDependencies": {
-    "browserify": "^5.9.1"
+    "browserify": "^5.9.1",
     "chai": "~1.9.1",
     "mocha": "~1.21.3",
     "pprint": "0.0.1",
     "sinon": "~1.10.3"
-
   },
   "keywords": [
     "bio",
