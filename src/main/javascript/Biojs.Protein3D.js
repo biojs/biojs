@@ -233,7 +233,7 @@ Biojs.Protein3D = Biojs.extend(
 	   Biojs.console.log("registring callback function loadStructCallback " + functionCbName);
 		
 	   // Register the function this._loadStructCallback as global for JmolApplet use 
-	   Biojs.registerGlobal( functionCbName , self._loadStructCallback );
+	   Biojs.registerGlobal( functionCbName , self._loadStructCallback.bind(self) );
 		
 	   // Tell Jmol the name of the function in global scope
 	   jmolSetCallback("loadStructCallback", functionCbName );
@@ -1205,9 +1205,8 @@ Biojs.Protein3D = Biojs.extend(
 		
 		// Ignore the execution of the callback on replacing pdb file.
 		if ( "zapped" != result ) {
-			var instanceId = parseInt( appletId.replace("jmolApplet",'') );
-			var instance = Biojs.getInstance(instanceId);
-	
+     var instance = this;
+
 			if ( "success" == result ) {
 				instance.showControls();
 				instance.displayAntialias(instance.opt.antialias);

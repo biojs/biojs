@@ -273,9 +273,7 @@ Biojs.Tooltip = Biojs.extend (
               // Event triggering 
               self.raiseEvent( Biojs.Tooltip.EVT_ON_SHOW_UP, { 'target': target });
           
-          }).mouseout( function() {
-              timer = setTimeout( 'Biojs.getInstance(' + self.getId()  + ')._hide()' , self.opt.delay );
-          });
+          }).mouseout(hideAfterDelay);
     	  
       } else {
     	  jQuery( targetSelector ).mouseover( function (e) {
@@ -304,21 +302,22 @@ Biojs.Tooltip = Biojs.extend (
               // Event triggering 
               self.raiseEvent( Biojs.Tooltip.EVT_ON_SHOW_UP, { 'target': target });
           
-          }).mouseout( function() {
-              timer = setTimeout( 'Biojs.getInstance(' + self.getId()  + ')._hide()' , self.opt.delay );
-          });
+          }).mouseout(hideAfterDelay);
       }
       
       self._container.mouseover( function(){
           clearTimeout(timer);
-          timer = 0;
           self._show();
       
-      }).mouseout( function() {
-          timer = setTimeout( 'Biojs.getInstance(' + self.getId()  + ')._hide()' , self.opt.delay );
-      });
+      }).mouseout(hideAfterDelay);
       
       this._hide();
+
+      function hideAfterDelay() {
+          timer = setTimeout(function() {
+            self._hide();
+          }, self.opt.delay);
+      }
   },
  
   _hide: function() {

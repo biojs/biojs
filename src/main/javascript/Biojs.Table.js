@@ -526,7 +526,7 @@ Biojs.Table = Biojs.extend (
     	 // Set URL of the data source
     	 settings.sAjaxSource = this.opt.dataSet.url;
     	 // Set the function which manages the Ajax requests
-    	 settings.fnServerData = this._fetchData;
+    	 settings.fnServerData = this._fetchData.bind(this);
     	 // Enable/disable filtering depending on the support by the server
     	 settings.bFilter = this.opt.dataSet.filter;
      },
@@ -547,9 +547,7 @@ Biojs.Table = Biojs.extend (
     	 var httpRequest = { url: sSource };
     	 var params = aoData;
 
-    	 // Get the Biojs Table instance 
-    	 var biojsId = oSettings.sTableId.substr( "biojs_Table_".length );
-    	 var instance = Biojs.getInstance(biojsId);
+      var instance = this;
 
     	 // Rename param names using those defined in the options instance.opt.dataSet.mapParams
     	 instance._mapUrlParams(aoData);
