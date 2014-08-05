@@ -1,15 +1,12 @@
-require(["cs!msa/msa", "cs!msa/seqmgr"], function (MSA, SeqMgr) {
+var msa = new biojs.vis.msa.msa('msa-mark-column');
 
-  var msa = new MSA('msa-mark-column');
+var seqs = biojs.vis.msa.seqmgr.getDummySequences(4,40);
 
-  var seqs = SeqMgr.getDummySequences(4,40);
+// labels
+seqs[0].special = true;
+seqs[2].special = true;
 
-  // labels
-  seqs[0].special = true;
-  seqs[2].special = true;
+// markers
+msa.plugs.marker.specials = [0,3,10,20];
 
-  // markers
-  msa.plugs.marker.specials = [0,3,10,20];
-
-  msa.addSeqs(seqs);
-});
+msa.addSeqs(seqs);

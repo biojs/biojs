@@ -1,9 +1,5 @@
-require(["cs!msa/msa", "cs!msa/zoombar"], function (MSA, ZoomBar) {
+var msa = new biojs.vis.msa.msa('msa-zooming');
+msa.columnWidth = 15;
 
-  var msa = new MSA('msa-zooming');
-  msa.columnWidth = 15;
-
-  msa.seqmgr.addDummySequences();
-
-  msa.addPlugin(new ZoomBar(msa), "0_zoombar");
-});
+msa.seqmgr.addDummySequences();
+msa.addPlugin(new biojs.vis.msa.zoombar(msa), "0_zoombar");

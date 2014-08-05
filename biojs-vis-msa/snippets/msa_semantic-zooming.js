@@ -1,6 +1,2 @@
-require(["cs!msa/msa"], function (MSA) {
-
-  var msa = new MSA('msa-semantic-zooming');
-
-  msa.seqmgr.addDummySequences();
-});
+var msa = new biojs.vis.msa.msa('msa-semantic-zooming');
+msa.seqmgr.addDummySequences();
