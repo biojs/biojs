@@ -112,4 +112,7 @@ http://biojs.github.io/biojs2/biojs-vis-tree/snippets/examples.html
 http://dev.biojs-msa.org/v2/dummy.html
 
 
+Documentation & Tutorials
+-----------------
+
 More detailed *Documentation* and *Tutorials* follow soon
