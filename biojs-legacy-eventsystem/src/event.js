@@ -1,1 +1,1 @@
-var events = require("backbone-events-standalone");
+var events = require("biojs-events");

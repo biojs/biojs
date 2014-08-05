@@ -12,7 +12,7 @@
     "email": "biojs-technical@googlegroups.com"
   },
   "dependencies": {
-    "backbone-events-standalone": "^0.2.2"
+    "biojs-events": "0.0.1"
   },
   "devDependencies": {
     "browserify": "^5.9.1"
