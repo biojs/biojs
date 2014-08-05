@@ -36,8 +36,11 @@ Current Features of BioJS 2.0
  - Clustal parser
  - Fasta parser
 - Visualizations can be found in biojs-vis
+ - HPA Feature Viewer 
  - Multiple Sequence Alignment Viewer
  - Phylogenetic Tree Viewer
+
+Old Components of BioJS 0.1 will rely on biojs-legacy
 
 How to setup BioJS 
 --------------
