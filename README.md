@@ -100,7 +100,7 @@ Demos
 
 ###Sample for biojs-vis-tree 
 
-http://biojs.github.io/biojs2/
+http://biojs.github.io/biojs2/biojs-vis-tree/snippets/examples.html
 
 
 ###Sample for biojs-vis-msa
