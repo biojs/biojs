@@ -1,0 +1,28 @@
+{
+  "name": "biojs-vis-hpaFeature",
+  "description": "Component to represent one summary feature. Originally design to display protein expression information from the Human Protein Atlas (HPA).",
+  "version": "0.0.1",
+  "homepage": "http://github.com/rajido/biojs2",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/rajido/biojs2"
+  },
+  "author": {
+    "name": "Rafael C Jimenez",
+    "email": "rajido@gmail.com"
+  },
+  "dependencies": {
+      "jquery":"2.1.1"
+  },
+  "devDependencies": {
+    "browserify": "~4.2.0"
+  },
+  "keywords": [
+    "bio"
+  ],
+  "main": "index.js",
+  "scripts": {
+    "build-browser": "browserify browser.js  > build/biojs-vis-hpaFeature.min.js"
+  },
+  "license": "Apache 2"
+}
