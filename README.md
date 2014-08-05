@@ -45,3 +45,7 @@ Sample for biojs-vis-msa
 
 http://dev.biojs-msa.org/v2/dummy.html
 
+Sample for biojs-vis-tree 
+
+biojs-vis-tree/snippets
+
