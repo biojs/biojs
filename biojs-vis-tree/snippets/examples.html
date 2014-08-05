@@ -25,6 +25,39 @@
     }());
   </script>
 
+  <!-- Tree.js -->
+  <script src="./newick_input/newick_input.js"></script>
+
+  <h2>Newick Annotation Theme</h2>
+  <div id="7"></div>
+
+  <script>
+    //var options = ["A","B","C","D"];
+
+    //Choose the overall layout ta
+    var ta = biojs.vis.tree.tree();
+    //var theme = tnt_theme().newick("(((human, chimp), mouse))").buttons(options);
+
+    //Use the theme we just generated!
+    var theme = tnt_theme();
+
+    theme(ta,document.getElementById('7'));
+
+  </script>
+
+  <p>
+  Example Trees in Newick format: 
+  <ul>
+  <li>(((((homo_sapiens:9,pan_troglodytes:9)207598:34,callithrix_jacchus:43)314293:52,mus_musculus:95)314146:215,taeniopygia_guttata:310)32524:107,danio_rerio:417)117571:135;
+  </li>
+  <li>(homo_sapiens:1,(mus_musculus:2,danio_rerio:17):4);
+  </li>
+  <li>(homo_sapiens:1,(mus_musculus:2,(danio_rerio:13,(pan_troglodytes:9,taeniopygia_guttata:10,callithrix_jacchus:1):12):4);
+  </li>
+  </ul>
+
+  </p>
+
   <script src="./sort_nodes/sort_nodes.js"></script>
 
   <h1>Sorting nodes</h1>
