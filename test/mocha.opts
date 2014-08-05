@@ -1,0 +1,2 @@
+--ui bdd
+-r test/setup.js
