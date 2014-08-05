@@ -1,4 +1,4 @@
-var event = require("./event");
+var events = require("biojs-events");
 
 /**
  * @class
@@ -13,14 +13,14 @@ var eventHandler = function(eventType) {
      * @param {function} actionPerformed The action listener to be registered.
      */
 	this.addListener = function ( actionPerformed ) {
-	  event.on(this.eventType, actionPerformed);
+	  events.on(this.eventType, actionPerformed);
 	};
     /**
      * Removes an action listener for the event.
      * @param {function} actionPerformed The action listener to be removed.
      */
 	this.removeListener = function ( actionPerformed ) {
-    event.off(this.eventType, actionPerformed);
+    events.off(this.eventType, actionPerformed);
 	};
 
 	/**
@@ -28,7 +28,7 @@ var eventHandler = function(eventType) {
      * @param {Object} eventObject The event' object to be passed as argument to the listeners.
      */
 	this.triggerEvent = function( eventObject ) {
-	  event.trigger(this.eventType, eventObject);
+	  events.trigger(this.eventType, eventObject);
 	}
 };
 
