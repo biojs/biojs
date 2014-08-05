@@ -62,6 +62,11 @@ ruby -e "$(curl -fsSL https://raw.github.com/Homebrew/homebrew/go/install)"
 brew install node
 ```
 
+###4. Create a git clone on your desktop
+```sh
+git clone https://github.com/biojs/biojs2.git
+```
+
 That's it! Now you can build your component!
 
 ----
