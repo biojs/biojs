@@ -724,4 +724,6 @@ Biojs = Biojs.extend({
 });
 
 
-
+if(typeof module !== "undefined") {
+  module.exports = Biojs;
+}

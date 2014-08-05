@@ -1,0 +1,35 @@
+{
+  "name": "biojs",
+  "version": "2.0.0",
+  "description": "core for the bio-js family of biological visualizations, with legacy support for biojs 1 components",
+  "main": "src/main/javascript/Biojs.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "mocha test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/biojs/biojs.git"
+  },
+  "keywords": [
+    "biojs",
+    "biology",
+    "biological",
+    "genes",
+    "dna",
+    "visualizations"
+  ],
+  "author": "",
+  "license": "apache-2",
+  "bugs": {
+    "url": "https://github.com/biojs/biojs/issues"
+  },
+  "devDependencies": {
+    "chai": "~1.9.1",
+    "mocha": "~1.21.3",
+    "pprint": "0.0.1",
+    "sinon": "~1.10.3"
+  }
+}
