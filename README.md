@@ -96,10 +96,12 @@ Working examples of the component can be found in the *snippet folder* of each p
 
 Demos
 ----------------
-###Sample for biojs-vis-msa
-
-http://dev.biojs-msa.org/v2/dummy.html
 
 ###Sample for biojs-vis-tree 
 
-biojs-vis-tree/snippets
+http://biojs.github.io/biojs2/
+
+
+###Sample for biojs-vis-msa
+
+http://dev.biojs-msa.org/v2/dummy.html
