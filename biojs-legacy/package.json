@@ -1,8 +1,8 @@
 {
   "name": "biojs-legacy",
-  "description": "Biological event system",
-  "version": "0.0.3",
-  "homepage": "http://github.com/biojs/biojs",
+  "description": "This is a legacy for old BioJS 0.1 components. DO NOT USE!",
+  "version": "0.0.1",
+  "homepage": "http://github.com/biojs/biojs2",
   "repository": {
     "type": "git",
     "url": "git://github.com/biojs/biojs2"
@@ -16,10 +16,16 @@
   },
   "devDependencies": {
     "browserify": "^5.9.1"
+    "chai": "~1.9.1",
+    "mocha": "~1.21.3",
+    "pprint": "0.0.1",
+    "sinon": "~1.10.3"
+
   },
   "keywords": [
     "bio",
-    "models"
+    "models",
+    "legacy"
   ],
   "main": "src/index.js",
   "scripts": {
