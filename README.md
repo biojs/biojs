@@ -73,13 +73,12 @@ That's it! Now you can build your component!
 How to build a BioJS package
 ---------------
 
-###1. Create a git clone on your desktop
+###1. Go into the package folder
 ```sh
-git clone https://github.com/biojs/biojs2.git
+cd [Package Destination]
 ```
 
-###2. Go inside the package folder
-
+###2. Npm install
 ```
 npm install
 ```
