@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>BioJS 2 Tree Viewer snippets</title>
+
+<div id="body">
+
+  <!-- D3.js -->
+  <script src="http://d3js.org/d3.v3.min.js"></script>
+
+  <!-- TnT -->
+  <link rel="stylesheet" href="../tnt.css" type="text/css" />
+  <script src="../build/biojs_vis_tree.min.js"></script>
+
+  <!-- Tree.js -->
+  <script src="./swap_nodes/swap_nodes.js"></script>
+
+  <h1>Swap tree nodes</h1>
+  <div id="1"></div>
+
+  <script>
+    (function() {
+    var tree_vis = biojs.vis.tree.tree()
+    var theme = tnt_theme_tree_swap_nodes();
+    theme(tree_vis, document.getElementById("1"));
+    }());
+  </script>
+
+  <script src="./sort_nodes/sort_nodes.js"></script>
+
+  <h1>Sorting nodes</h1>
+  <div id="2"></div>
+
+  <script>
+    var tree_vis = biojs.vis.tree.tree();
+    var theme = sort_tree_theme();
+    theme(tree_vis, document.getElementById("2"));
+  </script>
+
+  <script src="./scaled_branches/scaled_branches.js"></script>
+
+  <h1>Scaled branches</h1>
+  <div id="3"></div>
+
+  <script>
+    (function() {
+    var tree_vis = biojs.vis.tree.tree()
+    var theme = tnt_theme_tree_scaled_branches();
+    theme(tree_vis, document.getElementById("3"));
+    }());
+  </script>
+
+  <script src="./ensembl_species/ensembl_species.js"></script>
+
+  <h1>Ensembl Species</h1>
+  <div id="4"></div>
+
+  <script>
+    (function() {
+    var tree_vis = biojs.vis.tree.tree()
+    var theme = tnt_theme_tree_ensembl_species();
+    theme(tree_vis, document.getElementById("4"));
+    }());
+  </script>
+
+  <!-- Tree.js -->
+  <script src="./colors/colors.js"></script>
+
+  <h1>Colors</h1>
+  <div id="5"></div>
+
+  <script>
+    (function() {
+    var tree_vis = biojs.vis.tree.tree()
+    var theme = tnt_theme_tree_colors();
+    theme(tree_vis, document.getElementById("5"));
+    }());
+  </script>
+
+  <script src="./collapse_nodes/collapse_nodes.js"></script>
+
+  <h1>Collapse tree nodes</h1>
+  <div id="6"></div>
+
+  <script>
+    (function() {
+    var tree_vis = biojs.vis.tree.tree()
+    var theme = tnt_theme_tree_collapse_nodes();
+    theme(tree_vis, document.getElementById("6"));
+    }());
+  </script>
+
+  <footer>
+    <aside>Released under <a href="http://www.opensource.org/licenses/apache2.0.php">Apache 2.0</a> by David Dao for BioJS 2 based on the TnT Library
+    <aside>
+  </footer>
+
+
+</div>
+
+
