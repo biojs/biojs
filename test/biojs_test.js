@@ -14,24 +14,19 @@ describe("biojs core", function() {
       var Class = Biojs.extend();
       var instance = new Class;
 
-      var called = false;
-      instance.on("eventA", function() {
-        called = true;
-      });
+      var listenerSpy = sinon.spy();
+      instance.on("eventA", listenerSpy);
 
-      assert(called, "event triggered from old API fires new API");
+      var id = "aaff22";
+      instance.raiseEvent("eventA", { id: id });
+
+      assert(listenerSpy.calledWithArgs({ id: id }), "event triggered from old API fires new API");
     });
 
-    it("fires old API when event triggered from new API", function() {
-      var Class = Biojs.extend();
-      var instance = new Class;
-
-      var called = false;
-      instance.addListener("eventA", function() {
-        called = true;
-      });
-
-      assert(called, "event triggered from new API fires old API");
-    });
+    // events fired from new API for firing events ( .trigger(name, arg1 ... argN ) 
+    // should never be listened for via the old API for listening to them, as positional
+    // event args are incompatible with an event object.
+    //
+    // so: old events + new listeners = :) and there's no other interaction between the two APIs
   });
 });
