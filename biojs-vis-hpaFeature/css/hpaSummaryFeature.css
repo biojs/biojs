@@ -1,0 +1,63 @@
+table.hpaSummaryFeature_table {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    outline: 0;
+    font-size: 100%;
+    vertical-align: baseline;
+    background: transparent;
+    border-collapse:collapse;
+    border-spacing:0;
+}
+
+.hpaSummaryFeature_leftColumn {
+    background-color:#E0E0E0;
+    padding:8px;
+    border:#E0E0E0 solid 1px;
+    border-top:#E0E0E0 solid 0px;
+}
+
+.hpaSummaryFeature_rightColumn {
+    padding:8px;
+    border:#E0E0E0 solid 0px;
+    border-top:#E0E0E0 solid 1px;
+    border-left:#C0C0C0 solid 3px;
+    line-height:120%;
+}
+
+.hpaSummaryFeature_image {
+    border: #808080 solid 1px;
+}
+
+.hpaSummaryFeature_linkImage{
+    background: url('Rocky32px/link.png') no-repeat top right;
+    background-size:20px;
+    opacity:0.6;
+    filter:alpha(opacity=60);
+    float:right;
+    z-index:1;
+    height:30px;
+    position:absolute;
+    top:3px;
+    width:100%;
+}
+
+.hpaSummaryFeature_contentTitle {
+    font-size:120%;
+    font-weight:bold;
+}
+
+.hpaSummaryFeature_imageTitle {
+    font-size:85%;
+    font-style:italic;
+}
+
+.hpaSummaryFeature_leftContainer{
+    width:100%;
+    text-align:right;
+    position:relative;
+}
+
+.hpaSummaryFeature_contentNotes, .hpaSummaryFeature_contentLinks {
+    list-style-type:square;
+}
