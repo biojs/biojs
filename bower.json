@@ -1,0 +1,26 @@
+{
+  "name": "biojs",
+  "version": "2.0.0",
+  "homepage": "https://github.com/biojs/biojs",
+  "authors": [
+    "\"\""
+  ],
+  "description": "core for the bio-js family of biological visualizations, with legacy support for biojs 1 components",
+  "main": "src/main/javascript/Biojs.js",
+  "keywords": [
+    "biojs",
+    "biology",
+    "biological",
+    "genes",
+    "dna",
+    "visualizations"
+  ],
+  "license": "apache-2",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
