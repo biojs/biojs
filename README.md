@@ -1,5 +1,5 @@
-biojs2
-======
+BioJS 2.0
+=========
 
 ```
 
@@ -19,7 +19,59 @@ __WARNING__: this is work in progress and NOT in production yet.
 
 Currently every folder is a seperate npm package (to ease development). Every folder will be __moved to a seperate repo__ soon.
 
-Install a package (inside a package folder)
+
+
+Version
+----
+
+2.0
+
+Current Features of BioJS 2.0
+----
+BioJS 2.0 is a framework for __processing__ and __visualizing__ biological data in *Javascript*
+  - REST APIs can be found in biojs-rest
+        REST API for Ensembl 
+  - Parsers can be found in biojs-io
+        Newick parser
+        Extended Newick parser
+        Clustal parser
+        Fasta parser
+  - Visualizations can be found in biojs-vis
+        Multiple Sequence Alignment Viewer
+        Phylogenetic Tree Viewer
+
+How to setup BioJS 
+--------------
+
+For Mac Users
+
+###1. Clone our repository
+
+```sh
+git clone https://github.com/biojs/biojs2.git
+```
+
+ 
+###2. Install homebrew
+
+```sh
+ruby -e "$(curl -fsSL https://raw.github.com/Homebrew/homebrew/go/install)"
+```
+
+###3. Install node and npm
+```sh
+brew install node
+```
+
+That's it! Now you can build your component!
+
+----
+
+How to build a BioJS package
+---------------
+
+
+Go inside the package folder
 
 ```
 npm install
@@ -38,14 +90,18 @@ Build the file for a browser
 npm run build-browser
 ```
 
+----
 
+Working examples of the component can be found in the *snippet folder* of each package
 
+----
 
-Sample for biojs-vis-msa
+Demos
+----------------
+###Sample for biojs-vis-msa
 
 http://dev.biojs-msa.org/v2/dummy.html
 
-Sample for biojs-vis-tree 
+###Sample for biojs-vis-tree 
 
 biojs-vis-tree/snippets
-
