@@ -12,7 +12,6 @@
     "email": "biojs-technical@googlegroups.com"
   },
   "dependencies": {
-    "chai": "^1.9.1"
   },
   "devDependencies": {
     "debug": "^1.0.3",
@@ -21,7 +20,6 @@
     "coveralls": "~2.11.1",
     "istanbul": "~0.3.0",
     "mocha": "~1.20.1",
-    "mocha-lcov-reporter": "0.0.1",
     "should": "~4.0.4"
   },
   "keywords": [
