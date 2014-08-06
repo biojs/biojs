@@ -13,7 +13,7 @@ var utils = {
     var newObj = (obj instanceof Array) ? [] : {};
     for (i in obj) {
       if (obj[i] && typeof obj[i] == "object") {
-        newObj[i] = Biojs.Utils.clone(obj[i]);
+        newObj[i] = utils.clone(obj[i]);
       } else {
         newObj[i] = obj[i];
       }
