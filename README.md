@@ -36,8 +36,12 @@ Current Features of BioJS 2.0
  - Clustal parser
  - Fasta parser
 - Visualizations can be found in biojs-vis
+ - HPA Feature Viewer 
  - Multiple Sequence Alignment Viewer
  - Phylogenetic Tree Viewer
+ - Gene Track Viewer (under construction)
+
+Old Components of BioJS 0.1 will rely on biojs-legacy
 
 How to setup BioJS 
 --------------
@@ -69,13 +73,12 @@ That's it! Now you can build your component!
 How to build a BioJS package
 ---------------
 
-###1. Create a git clone on your desktop
+###1. Go into the package folder
 ```sh
-git clone https://github.com/biojs/biojs2.git
+cd [Package Destination]
 ```
 
-###2. Go inside the package folder
-
+###2. Npm install
 ```
 npm install
 ```
@@ -100,9 +103,15 @@ Demos
 
 ###Sample for biojs-vis-tree 
 
-http://biojs.github.io/biojs2/
+http://biojs.github.io/biojs2/biojs-vis-tree/snippets/examples.html
 
 
 ###Sample for biojs-vis-msa
 
 http://dev.biojs-msa.org/v2/dummy.html
+
+
+Documentation & Tutorials
+-----------------
+
+More detailed *Documentation* and *Tutorials* follow soon

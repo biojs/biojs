@@ -1,5 +1,3 @@
-//biojs-vis-tree is proudly based on code by Miguel Pignatellis TnT Library and edited for npm using CJS
-
 if (typeof biojs === 'undefined') {
   module.exports = biojs = {}
 }
