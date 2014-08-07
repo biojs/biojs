@@ -15,8 +15,8 @@
  * @requires <a href='http://d3js.org/'>D3 3.4.6</a>
  * @dependency <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.4.6/d3.min.js"></script>
  *
- * @requires <a href='../biojs/css/biojs.TaxonomyViewer.css'>biojs.TaxonomyViewer</a>
- * @dependency <link href="../biojs/css/biojs.TaxonomyViewer.css" rel="stylesheet" type="text/css" />
+ * @requires <a href='../biojs/css/biojs.ProteomeTaxonomyViewer.css'>biojs.ProteomeTaxonomyViewer</a>
+ * @dependency <link href="../biojs/css/biojs.ProteomeTaxonomyViewer.css" rel="stylesheet" type="text/css" />
  *
  *
  * @option {string} target 
@@ -47,13 +47,13 @@
 
  *
  * @example 
- * var instance = new Biojs.TaxonomyViewer({
+ * var instance = new Biojs.ProteomeTaxonomyViewer({
  * 		target : 'YourOwnDivId',
  *      rootTaxa : 68525
  * });
  */
-Biojs.TaxonomyViewer = Biojs.extend (
-/** @lends Biojs.TaxonomyViewer# */
+Biojs.ProteomeTaxonomyViewer = Biojs.extend (
+/** @lends Biojs.ProteomeTaxonomyViewer# */
 {
     constructor: function (options) {
         
@@ -112,12 +112,12 @@ Biojs.TaxonomyViewer = Biojs.extend (
 
     /**
 	 * Default values for the options
-	 * @name Biojs.TaxonomyViewer-opt
+	 * @name Biojs.ProteomeTaxonomyViewer-opt
 	 */
     opt: {
         target: 'YourOwnDivId',
         graphReduction: true,
-        taxaURL: '../biojs/data/BioJS.TaxonomyViewer.taxa.json',
+        taxaURL: '../biojs/data/BioJS.ProteomeTaxonomyViewer.taxa.json',
         rootTaxa: -1,
         nodeColours: ['steelblue','orange','green','purple','red','gold','gray']
     },
@@ -125,7 +125,7 @@ Biojs.TaxonomyViewer = Biojs.extend (
     eventTypes: [
     
         /**
-		 * @name Biojs.TaxonomyViewer#onTaxaChanged
+		 * @name Biojs.ProteomeTaxonomyViewer#onTaxaChanged
 		 * @event
 		 * @param {function} actionPerformed A function which receives an {@link Biojs.Event} object as argument.
 		 * @eventData {Object} source The node which did triggered the event.
@@ -140,7 +140,7 @@ Biojs.TaxonomyViewer = Biojs.extend (
 		'onTaxaChanged',
         
         /**
-		 * @name Biojs.TaxonomyViewer#onTaxaMouseOver
+		 * @name Biojs.ProteomeTaxonomyViewer#onTaxaMouseOver
 		 * @event
 		 * @param {function} actionPerformed A function which receives an {@link Biojs.Event} object as argument.
 		 * @eventData {Object} source The node which did triggered the event.
