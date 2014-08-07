@@ -1,0 +1,39 @@
+/*
+ * Package.json file summarizes all necessary dependencies for npm and important information 
+ * of the component.
+ * It also defines the standard npm test command and the npm run build-browser command
+ */
+{
+  "name": "biojs-template",
+  "description": "A template for developing biojs2 components",
+  "version": "0.0.1",
+  "homepage": "http://github.com/biojs/biojs2",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/biojs/biojs2"
+  },
+  "author": {
+    "name": "David Dao",
+    "email": "biojs-technical@googlegroups.com"
+  },
+  "dependencies": {
+
+  },
+  "devDependencies": {
+    "assert": "^1.1.1",
+    "browserify": "~4.2.0",
+    "chai": "^1.9.1",
+    "mocha": "~1.20.1",
+    "should": "^4.0.4",
+    "uglify-js": "~2.4.15"
+  },
+  "keywords": [
+    "bio,phylogeny,d3,tnt"
+  ],
+  "main": "./index.js",
+  "scripts": {
+    "test": "mocha --reporter spec",
+    "build-browser": "browserify browser.js > build/biojs-template.min.js"
+  },
+  "license": "Apache 2"
+}

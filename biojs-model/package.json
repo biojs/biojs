@@ -1,7 +1,7 @@
 {
   "name": "biojs-model",
   "description": "Biological data models",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "homepage": "http://github.com/greenify/biojs",
   "repository": {
     "type": "git",
@@ -21,7 +21,7 @@
   ],
   "main": "src/index.js",
   "scripts": {
-    "build-browser": "browserify browser.js > build/biojs.models.min.js"
+    "build-browser": "browserify browser.js > biojs.model.min.js"
   },
   "license": "Apache 2"
 }
