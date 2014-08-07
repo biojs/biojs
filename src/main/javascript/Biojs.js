@@ -341,9 +341,6 @@ Biojs.extend = function(_child, _static) { // subclass
 				// Set the unique id for the instance
 				instance.biojsObjectId = Biojs.uniqueId();
 				
-				// register instance
-				Biojs.addInstance(instance);
-				
 				// execute the instance's constructor
 				constructor.apply(instance, arguments);
 				
@@ -674,23 +671,6 @@ Biojs = Biojs.extend({
 	    	Biojs.prototype.__uniqueid = 0;
 	    }
 	    return Biojs.prototype.__uniqueid++;
-	},
-	/**
-     * Register a Biojs instance. 
-     * @type {function}
-     */
-	addInstance: function ( instance ) {
-	    if ( typeof Biojs.prototype.__instances == "undefined" ) {
-	    	Biojs.prototype.__instances = {};
-	    }
-	    return Biojs.prototype.__instances[instance.biojsObjectId] = instance;
-	},
-	/**
-     * Get a Biojs instance by means of its id. 
-     * @type {function}
-     */
-	getInstance: function ( id ) {
-	    return Biojs.prototype.__instances[id];
 	},
 	/**
      * Set a variable in the DOM window. 

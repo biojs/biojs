@@ -215,8 +215,7 @@ Biojs.console.log("executing _loadStructCallback for " + appletId);
 		
 		if ( "zapped" != result ) {
 			//uncover the loading image
-			var instanceId = parseInt( appletId.replace("jmolApplet",'') );
-			var instance = Biojs.getInstance(instanceId);
+     var instance = this;
 			
 			if ( "success" == result ) {
 				instance.displayAntialias(instance.opt.antialias);
