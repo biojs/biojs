@@ -1,0 +1,23 @@
+<html>
+    
+    <head>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.4.6/d3.min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore-min.js"></script>
+        
+        <link rel="stylesheet" href="../../main/resources/css/biojs.ProteomeTaxonomyViewer.css"/>
+    </head>
+    
+    <body>
+        <div id="YourOwnDivId" style="width:100%; height:100%"></div>
+    </body>
+</html>
+<script src="../../main/javascript/Biojs.js"></script>
+<script src="../../main/javascript/Biojs.ProteomeTaxonomyViewer.js"></script>
+<script language="JavaScript" type="text/javascript">
+    window.onload = function() {
+        var instance = new Biojs.ProteomeTaxonomyViewer({
+            rootTaxa:-1,
+            taxaURL:'../../main/resources/data/BioJS.ProteomeTaxonomyViewer.taxa.json'
+        });
+    }
+</script>
