@@ -20,7 +20,7 @@
     "chai": "~1.9.1"
   },
   "keywords": [
-    "bio"
+    "biojs, parser, newick, extended newick"
   ],
   "main": "index.js",
   "scripts": {
