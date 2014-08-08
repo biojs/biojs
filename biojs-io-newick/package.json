@@ -1,26 +1,23 @@
 {
   "name": "biojs-io-newick",
   "description": "Parses newick formats",
-  "version": "0.0.2",
-  "homepage": "http://github.com/greenify/biojs",
+  "version": "0.0.3",
+  "homepage": "http://github.com/biojs/biojs2",
   "repository": {
     "type": "git",
-    "url": "git://github.com/greenify/biojs2"
+    "url": "git://github.com/biojs/biojs2"
   },
   "author": {
-    "name": "BioJS",
+    "name": "David Dao",
     "email": "biojs-technical@googlegroups.com"
   },
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
-    "debug": "^1.0.3",
     "browserify": "~4.2.0",
     "uglify-js": "~2.4.15",
-    "coveralls": "~2.11.1",
-    "istanbul": "~0.3.0",
     "mocha": "~1.20.1",
-    "should": "~4.0.4"
+    "should": "~4.0.4",
+    "chai": "~1.9.1"
   },
   "keywords": [
     "bio"
@@ -28,7 +25,7 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha --reporter spec",
-    "build-browser": "browserify browser.js  > biojs_io_newick.min.js"
+    "build-browser": "browserify browser.js  > build/biojs_io_newick.min.js"
   },
   "license": "Apache 2"
 }
