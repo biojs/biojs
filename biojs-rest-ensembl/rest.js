@@ -25,8 +25,6 @@ var eRest = function() {
     region : 5000000
   };
 
-  //var api = tnt.utils.api (eRest);
-
 
   /** <strong>localREST</strong> points the queries to a local REST service to debug.
     TODO: This method should be removed in "production"
