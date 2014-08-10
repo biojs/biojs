@@ -1,0 +1,33 @@
+
+<!DOCTYPE html>
+
+<meta charset="utf-8">
+<title>TnT Themes</title>
+
+<div id="body">
+
+  <!-- D3 -->
+  <script src="../../../lib/d3.min.js"></script>
+
+  <!-- TnT -->
+  <link rel="stylesheet" href="../../../lib/tnt.css" type="text/css" />
+
+  <script src="../../../lib/tnt.js"></script>
+  <script src="track_minimal.js"></script>
+
+  <h1>The Minimal Theme</h1>
+  <div id="my_board"></div>
+  <script>
+    (function() {
+	var board = tnt.board().from(20).to(500);
+        var theme = tnt_theme_track_track_minimal();
+        theme(board, document.getElementById("my_board"));
+    })();
+ 
+  </script>
+  <footer>
+    <aside>Released under <a href="http://www.opensource.org/licenses/apache2.0.php">Apache 2.0</a>.</aside>
+    Copyright 2014 <a href="http://www.ebi.ac.uk/~mp" rel="author">Miguel Pignatelli</a>
+  </footer>
+
+</div>

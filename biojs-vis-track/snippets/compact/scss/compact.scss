@@ -1,0 +1,74 @@
+@import "../../../../src/scss/main";
+
+/* OPTIONS */
+.tnt_options_pane {
+    display : block;
+    
+    span {
+	@include normal-font;
+    }
+}
+
+
+div {
+    .tnt_TabBlock {
+	display  : block;
+	height   : 40px;
+	position : absolute;
+	opacity  : 0;
+
+	@include transition(all, 0.5s);
+    }
+    .tnt_TabBlock_active {
+	opacity : 1;
+	z-index : 1000;
+    }
+}
+
+.tnt_option_label {
+    margin-right        : 10px;
+#     border-bottom-style : solid;
+    cursor              : pointer;
+}
+
+.tnt_link_label, .tnt_qrtag_label {
+    margin-right     : 10px;
+#     border-top-style : solid;
+    cursor           : pointer;
+}
+
+.tnt_top_option {
+    display    : inline;
+    position   : absolute;
+    top        : 50%;
+    margin-top : -10px;
+}
+
+.tnt_options_pane span, .tnt_links_pane span {
+    @include normal-font;
+}
+
+.tnt_options_pane, .tnt_links_pane {
+    margin : 10px 10px 10px 5px;
+}
+
+.tnt_links_pane {
+    position : absolute;
+    right : 0px;
+}
+
+.tnt_text_rotated {
+    display     : block;
+    position    : absolute;
+    z-index     : 1002;
+    right       : 0px;
+
+    @include rotate;
+}
+
+.tnt_link {
+    cursor : pointer;
+}
+
+
+

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>TnT Themes</title>
+
+<div id="body">
+
+  <!-- D3 -->
+  <script src="../../../lib/d3.min.js"></script>
+
+  <!-- ePeek -->
+  <link rel="stylesheet" href="../../../lib/tnt.css" type="text/css" />
+
+  <script src="../../../lib/tnt.js"></script>
+  <script src="2_data_and_features.js"></script>
+
+  <h1>Showing 2 Features in one Track</h1>
+  <div id="my_tree"></div>
+
+  <script>
+
+    (function() {
+	var board = tnt.board().from(20).to(500);
+        var theme = tnt_theme_track_2_data_and_features();
+        theme(board, document.getElementById("my_tree"));
+    })();
+ 
+  </script>
+
+  <footer>
+    <aside>Released under <a href="http://www.opensource.org/licenses/apache2.0.php">Apache 2.0</a>.</aside>
+    Copyright 2014 <a href="http://www.ebi.ac.uk/~mp" rel="author">Miguel Pignatelli</a>
+  </footer>
+
+</div>
