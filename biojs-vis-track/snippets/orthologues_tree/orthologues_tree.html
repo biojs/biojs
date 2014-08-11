@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>e!Peek Themes</title>
+
+<style>
+  @import url(../../index.css)
+</style>
+
+<div id="body">
+
+  <!-- D3.js -->
+  <script src="../../lib/d3.min.js"></script>
+
+  <!-- Tree.js -->
+  <script src="orthologues_tree.js"></script>
+
+  <!-- ePeek -->
+  <link rel="stylesheet" href="../../src/ePeek.css" type="text/css" />
+  <script src="../../ePeek.js"></script>
+
+  <h1>The Orthologues Tree Theme</h1>
+  <div id="genomeBrowser"></div>
+
+
+  <script>
+    (function() {
+    var gB = epeek.genome().width(950).height(200).background_color("#FFFFFF").foreground_color("#4682b4").species("Human").chr("10").from(12100000).to(12890000);
+    var theme = epeek_theme_track_orthologues_tree();
+    theme(gB, document.getElementById("genomeBrowser"));
+    }());
+
+  </script>
+
+  <h2>Overview</h2>
+
+  <h2>API</h2>
+
+  <footer>
+    <aside>Released under <a href="http://www.opensource.org/licenses/apache2.0.php">Apache 2.0</a>.</aside>
+    Copyright 2014 <a href="http://www.ebi.ac.uk/~mp" rel="author">Miguel Pignatelli</a>
+  </footer>
+
+</div>
+<script src="../../highlight.v0.min.js"></script>
+
+

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<html>
+  <head>
+    <title>e!Peek</title>
+
+    <!-- Remote D3.js -->
+    <script src="../../lib/d3.min.js"></script>
+
+    <!-- ePeek -->
+    <link rel="stylesheet" href="../../src/ePeek.css" type="text/css" />
+    <script src="../../ePeek.js"></script>
+    <script src="mobile.js"></script>
+
+
+    <!-- Local jqTouch -->
+    <link rel="stylesheet" href="lib/jqtouch-1.0-b4-rc/themes/css/apple.css" title="jQTouch">
+    <!-- <style type="text/css" media="screen">@import "lib/jqtouch-1.0-b4-rc/themes/css/jqtouch.css";</style> -->
+    <script src="lib/jqtouch-1.0-b4-rc/src/lib/zepto.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="lib/jqtouch-1.0-b4-rc/src/jqtouch.js" type="text/javascript" charset="utf-8"></script>
+
+    <script type="text/javascript" charset="utf-8">
+      var jQT = new $.jQTouch({
+        statusBar: 'black',
+        icon: 'apple-touch-icon.png',
+        statusBar: 'black-translucent',
+        startupScreen: 'apple-touch-startup-graphic.png',
+        preloadImages: []
+      });
+    </script>
+
+    <link rel="apple-touch-icon" href="ePeek_logo.png"/>
+
+    <!-- Full screen mode in iPhone -->
+    <meta name="apple-mobile-web-app-capable" content="yes"></meta>
+
+    <!-- Startup graphic -->
+    <link rel="apple-touch-startup-image" href="apple-touch-startup-graphic.png" />
+
+    <!-- controls the appearance of the status bar in full-screen mode -->  
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+
+  </head>
+
+
+  <body>
+
+    <!-- Browser div -->
+    <div id="browser">
+      <div class="toolbar">
+	<h1>e!Peek</h1>
+	<a class="button" href="#search">Search</a>
+      </div>
+      <a id="ePeek_gene_info_link" href="#gene_info" class="flip"></a>
+      <ul class="edgetoedge"> <!-- IS THIS LIST NEEDED HERE? I DON'T THINK SO -->
+	<li><div id="GenomeBrowser"></div></li>
+      </ul>
+    </div>
+
+    <!-- The search div -->
+    <div id="search">
+      <div class="toolbar">
+	<h1>Search</h1>
+	<a class="button" href="#browser">Browser</a>
+      </div>
+            <form method="get"> <!-- Needed?? -->
+	<ul>
+	  <li><input type="text" placeholder="BRCA2" name="location" id="ePeek_loc"  autocapitalize="off" autocorrect="off" autocomplete="off" /></li>
+	  <li><input type="submit" class="submit" name="action" value="Jump!" onclick="var val=$('#ePeek_loc').val(); window.location.href='mobile.html?loc=' + val + '#browser'"/></li>
+	</ul>
+      </form>
+      <ul class="edgetoedge">
+	<!-- TODO: Make the examples clickable -->
+	<li>Examples:</li>
+	<li>ENSG00000139618</li>
+	<li>SNORD73</li>
+	<li>human:5:1533225-1555555</li>
+      </ul>
+    </div>
+
+    <div id="gene_info">
+      <div class="toolbar">
+	<h1>Gene</h1>
+	<a class="button back" href="#browser">Back</a>
+      </div>
+      <div id="gene_content"></div>
+    </div>
+
+    <script>
+      (function() {
+      var w = document.documentElement.clientWidth;
+        var gB = epeek.genome()
+                      .species("human")
+                      .width(w-10)
+                      .height(300)
+                      .background_color("#FFFFFF")
+                      .foreground_color("#7389A5");
+        var gBTheme = epeek_theme_track_mobile();
+
+        gBTheme(gB, document.getElementById("browser"));
+
+      })();
+    </script>
+ 
+
+  </body>
+
+</html>

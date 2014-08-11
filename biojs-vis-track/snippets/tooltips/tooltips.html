@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>TnT Themes</title>
+
+<div id="body">
+
+  <!-- D3 -->
+  <script src="../../../lib/d3.min.js"></script>
+
+  <!-- TnT -->
+  <link rel="stylesheet" href="../../../lib/tnt.css" type="text/css" />
+
+  <script src="../../../lib/tnt.js"></script>
+  <script src="tooltips.js"></script>
+
+  <header>
+    <a style="margin-left:1em;" href="../../index.html">Overview</a>
+    <a style="margin-left:1em;" href="../index.html"><b>Themes</b></a>
+    <a style="margin-left:1em;" href="../../index.html">Examples</a>
+    <a style="margin-left:1em;" href="../../doc/api/index.html">Documentation</a>
+    <a style="margin-left:1em;" href="https://github.com/emepyc">Source</a>
+  </header>
+
+  <h1>Adding Tooltips</h1>
+  <div id="genomeBrowser"></div>
+  <script>
+    (function() {
+        var gB = tnt.board.genome().species("human").gene("brca2").width(950);
+        var gBTheme = tnt_theme_track_tooltips();
+        gBTheme(gB, document.getElementById("genomeBrowser"));
+    })();
+ 
+  </script>
+
+  <p><aside>Click on genes to show basic information</aside></p>
+  <h2>Overview</h2>
+  <p>By default, the <i>epeek_genome</i> object doesn't react to gene selection (clicking on a gene/gene name). This is so because there is no clear default behavior: each theme may want to react differently to this event. Displaying a tooltip showing basic gene information may look like a reasonable default in some simple situations. For this reason, <i>epeek_genome</i> makes this action easy to implement in your <i>theme</i>. 
+  <p>Writing a custom tooltip library is not a trivial task. The <i>epeek_genome</i> plug-in offers tooltips as an opt-in in your theme. The only thing needed is to plug the epeek.<a href="../../doc/api/genome/index.html#gene_info_callback">gene_info_callback</i> method of the <i>epeek_genome</i> object to epeek.<a href="../../doc/api/genome/index.html#tooltip">tooltip</a> in your theme. For example:</p>
+
+  <pre><code>
+var epeek_theme = function() {
+    var theme = function(gB, div) {
+
+        var tooltip = epeek.tooltip()
+                           .type("table");
+
+	gB.gene_info_callback = epeek.genome.tooltip(tooltip);
+	
+	gB(div);
+	gB.start();
+    };
+
+    return theme;
+};
+  </code></pre>
+  <p>Having a different response when clicking on genes is possible by assigning a different callback to epeek<a href="../../doc/api/genome/index.html#gene_info_callback">gene_info_callback</a>
+
+  <footer>
+    <aside>Released under <a href="http://www.opensource.org/licenses/apache2.0.php">Apache 2.0</a>.</aside>
+    Copyright 2014 <a href="http://www.ebi.ac.uk/~mp" rel="author">Miguel Pignatelli</a>
+  </footer>
+
+</div>

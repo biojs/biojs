@@ -101,17 +101,13 @@ Working examples of the component can be found in the *snippet folder* of each p
 Demos
 ----------------
 
-###Sample for biojs-vis-tree 
-
-http://biojs.github.io/biojs2/biojs-vis-tree/snippets/examples.html
+###[Sample for biojs-vis-tree](http://edu.biojs.net/treeviewer.html)
 
 
-###Sample for biojs-vis-msa
-
-http://dev.biojs-msa.org/v2/dummy.html
+###[Sample for biojs-vis-msa](http://edu.biojs.net/msa.html)
 
 
 Documentation & Tutorials
 -----------------
 
-More detailed *Documentation* and *Tutorials* follow soon
+More detailed *Documentation* and *Tutorials* follow soon on [edu.biojs.net](http://edu.biojs.net/)

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>TnT Themes</title>
+
+<div id="body">
+
+  <!-- D3 -->
+  <script src="../../../lib/d3.min.js"></script>
+
+  <!-- TnT -->
+  <link rel="stylesheet" href="../../../lib/tnt.css" type="text/css" />
+
+  <script src="../../../lib/tnt.js"></script>
+  <script src="buttons.js"></script>
+
+  <h1>The Buttons-based theme</h1>
+  <div id="genomeBrowser"></div>
+  <script>
+
+    (function() {
+        var gB = tnt.board.genome().species("human").gene("brca2").width(950).allow_drag(false);
+        var gBTheme = tnt_theme_track_buttons();
+        gBTheme(gB, document.getElementById("genomeBrowser"));
+    })();
+ 
+  </script>
+
+  <h2>Overview</h2>
+  <p>This example shows another way of panning and zooming the genome browser by using the <a href="../../doc/api/genome/index.html#left">left</a>, <a href="../../doc/api/genome/index.html#right">right</a> and <a href="../../doc/api/genome/index.html#zoom">zoom</a> methods exposed by the <a href="../../doc/api/genome/index.html">epeek.genome API</a></p>
+
+  <p>Notice that, in this example, controlling panning and zooming directly via mouse gestures in the <i>plug-in</i> like in the <a href="../minimal/minimal.html">minimal theme</a> is also possible by pressing the button with a crossed-out hand icon. This feature can be switched on/off at any moment by calling the <a href="../../doc/api/genome/index.html#allow_drag">genome_browser.allow_drag</a> method on the theme object.</p>
+
+  <p>A slider to control the sensibility of the buttons has also been added. When set to 0, no change occurs when buttons are pressed. When set to 1, panning/zooming occurs at 100% of the current coordinates.</p>
+
+  <footer>
+    <aside>Released under <a href="http://www.opensource.org/licenses/apache2.0.php">Apache 2.0</a>.</aside>
+    Copyright 2014 <a href="http://www.ebi.ac.uk/~mp" rel="author">Miguel Pignatelli</a>
+  </footer>
+  
+</div>

@@ -12,13 +12,13 @@
     "email": "biojs-technical@googlegroups.com"
   },
   "dependencies": {
-    "biojs-io-newick": "0.0.2",
+    "biojs-io-newick": "0.0.3",
     "d3": "^3.4.11",
     "underscore": "^1.6.0"
   },
   "devDependencies": {
     "assert": "^1.1.1",
-    "biojs-io-newick": "0.0.2",
+    "biojs-io-newick": "0.0.3",
     "browserify": "~4.2.0",
     "chai": "^1.9.1",
     "mocha": "~1.20.1",
@@ -26,9 +26,9 @@
     "uglify-js": "~2.4.15"
   },
   "keywords": [
-    "bio,phylogeny,d3,tnt"
+    "biojs,phylogenetic tree viewer,d3,tnt"
   ],
-  "main": "tree/index.js",
+  "main": "index.js",
   "scripts": {
     "test": "mocha --reporter spec",
     "build-browser": "browserify browser.js > build/biojs_vis_tree.min.js"
