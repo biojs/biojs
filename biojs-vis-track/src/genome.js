@@ -1,7 +1,7 @@
 "use strict"
 
 var tnt = {};
-tnt.board = {};
+tnt.board = require('./board');
 tnt.utils = {};
 tnt.utils.api = require("../utils/api");
 

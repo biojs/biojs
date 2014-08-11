@@ -1,7 +1,7 @@
 "use strict";
 
 var tnt = {};
-tnt.track = {};
+tnt.track = require('./track');
 tnt.utils = {};
 tnt.utils.api = require("../utils/api");
 
@@ -54,7 +54,7 @@ tnt.track.data = function() {
     tnt.track.retriever.ensembl = function() {
 	var success = [function () {}];
 	var endpoint;
-	var eRest = tnt.eRest();
+	var eRest = require('biojs-rest-ensembl'); //Check if it is really working that way!
 	var update_track = function(obj) {
             // Object has loc and a plug-in defined callback
             var loc         = obj.loc;

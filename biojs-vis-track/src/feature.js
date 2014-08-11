@@ -1,9 +1,9 @@
 
 var tnt = {};
-tnt.track = {};
+tnt.track = require('./track');
 tnt.utils = {};
 tnt.utils.api = require("../utils/api");
-
+tnt.track.layout = require("./layout");
 
 
 // FEATURE VIS
@@ -18,11 +18,10 @@ tnt.track.feature = function () {
 	on_mouseover : function () {},
 	guider   : function () {},
 	index    : undefined,
-	layout   : tnt.track.layout.identity(),
+	layout   : require('./layout').identity(),
 	foreground_color : '#000'
     };
-
-
+	
     // The returned object
     var feature = {};
 
@@ -130,6 +129,7 @@ tnt.track.feature = function () {
 
     return feature;
 };
+
 
 tnt.track.feature.composite = function () {
     var displays = {};

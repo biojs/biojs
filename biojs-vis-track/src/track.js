@@ -3,7 +3,7 @@ tnt = {};
 
 tnt.utils = {};
 tnt.utils.api = require("../utils/api");
-tnt.utils.utils = require("../utils/utils");
+var utils = require("../utils/utils");
 
 
 
@@ -61,6 +61,6 @@ tnt.track = function () {
     return track;
 
 };
-tnt.track.id = tnt.utils.utils.utils.iterator(1);
+tnt.track.id = utils.utils.iterator(1);
 
 module.exports = exports = tnt.track;

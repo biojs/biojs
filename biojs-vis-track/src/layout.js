@@ -1,5 +1,8 @@
 var tnt = {};
-tnt.track = {};
+tnt.track = require('./track');
+
+tnt.utils = {};
+tnt.utils.api = require('../utils/api');
 
 tnt.track.layout = {};
 
