@@ -1,17 +1,17 @@
 require("d3");
 
-module.exports = require("./board");
-var track = module.exports = require("./track");
-module.exports = require("./data");
-track.layout = module.exports = require("./layout");
-track.feature = module.exports = require("./feature");
-module.exports = require("./genome");
+module.exports.board = require("./board");
+module.exports.track = require("./track");
+module.exports.track.data = require("./data");
+module.exports.track.layout = require("./layout");
+module.exports.track.feature = require("./feature");
+module.exports.track.genome = require("./genome");
 
 
 //TODO: Fix data.js missing rest API
 //TODO: Delete all tnt namespaces
 
-
+var track = module.exports.track;
 var test = track()
 			.height(30)
 		    .background_color("#FFCFDD")

@@ -6,12 +6,12 @@ var tnt_theme_track_2_data_and_features = function() {
 	board.right (1000);
 
 	// Block Track1
-	var block_track = tnt.track()
+	var block_track = biojs.vis.track.track()
 	    .height(30)
 	    .background_color("#FFCFDD")
-	    .data(tnt.track.data()
+	    .data(biojs.vis.track.track.data()
 		  .update(
-		      tnt.track.retriever.sync()
+		      biojs.vis.track.track.retriever.sync()
 			  .retriever (function () {
 			      return {
 				  'blocks' : [
@@ -32,13 +32,13 @@ var tnt_theme_track_2_data_and_features = function() {
 			  })
 		  )
 		 )
-	    .display(tnt.track.feature.composite()
+	    .display(biojs.vis.track.track.feature.composite()
 		     .add ("blocks", tnt.track.feature.block()
 			   .foreground_color("blue")
 			   .index(function (d) {
 			       return d.start;
 			   }))
-		     .add ("lines", tnt.track.feature.vline()
+		     .add ("lines", biojs.vis.track.track.feature.vline()
 			   .foreground_color("red")
 		     	   .index(function (d) {
 		     	       return d.pos;
@@ -46,14 +46,14 @@ var tnt_theme_track_2_data_and_features = function() {
 		    );
 
 	// Axis Track1
-	var axis_track = tnt.track()
+	var axis_track = biojs.vis.track.track()
 	    .height(30)
 	    .background_color("white")
 	    .display(tnt.track.feature.axis()
 		     .orientation("top"));
 
 	// Location Track1
-	var loc_track = tnt.track()
+	var loc_track = biojs.vis.track.track()
 	    .height(30)
 	    .background_color("white")
 	    .display(tnt.track.feature.location());

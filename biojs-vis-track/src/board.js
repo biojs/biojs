@@ -1,6 +1,6 @@
 "use strict"
 var tnt = {};
-
+var utils = require('../utils/utils');
 tnt.utils = {};
 tnt.utils.api = require("../utils/api");
 
@@ -469,7 +469,7 @@ tnt.board = function() {
 	}
     };
     // The deferred_cbak is deferred at least this amount of time or re-scheduled if deferred is called before
-    var _deferred = tnt.utils.defer_cancel(_move_cbak, 300);
+    var _deferred = utils.utils.defer_cancel(_move_cbak, 300);
 
     // api.method('update', function () {
     // 	_move();

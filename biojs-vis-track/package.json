@@ -1,6 +1,6 @@
 {
-  "name": "biojs-vis-tree",
-  "description": "Visualizing phylogenetic trees using d3",
+  "name": "biojs-vis-track",
+  "description": "Visualizing gene tracks using d3",
   "version": "0.0.1",
   "homepage": "http://github.com/biojs/biojs2",
   "repository": {
@@ -27,12 +27,12 @@
     "uglify-js": "~2.4.15"
   },
   "keywords": [
-    "bio,phylogeny,d3,tnt"
+    "biojs,track,d3,tnt"
   ],
-  "main": "tree/index.js",
+  "main": "index.js",
   "scripts": {
     "test": "mocha --reporter spec",
-    "build-browser": "browserify browser.js > build/biojs_vis_tree.min.js"
+    "build-browser": "browserify browser.js > build/biojs_vis_track.min.js"
   },
   "license": "Apache 2"
 }
