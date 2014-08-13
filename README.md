@@ -20,28 +20,24 @@ __WARNING__: this is work in progress and NOT in production yet.
 Currently every folder is a seperate npm package (to ease development). Every folder will be __moved to a seperate repo__ soon.
 
 
+You can browse the [registry](http://biojs.net/registry-ui/client/#/)/.
+
 
 Version
 ----
 
 2.0
 
-Current Features of BioJS 2.0
-----
-- REST APIs can be found in biojs-rest
- - REST API for Ensembl 
-- Parsers can be found in biojs-io
- - Newick parser
- - Extended Newick parser
- - Clustal parser
- - Fasta parser
-- Visualizations can be found in biojs-vis
- - HPA Feature Viewer 
- - Multiple Sequence Alignment Viewer
- - Phylogenetic Tree Viewer
- - Gene Track Viewer (under construction)
+Old Components of BioJS 0.1 can rely on [biojs-legacy](http://edu.biojs.net/tutorials/aQuickGuideForMigrating.html). But we highly encourage you to write your code more modular.
 
-Old Components of BioJS 0.1 will rely on biojs-legacy
+
+FAQ
+----
+
+> What happened with the BioJS event system?
+
+We realised that a custom (buggy) implentation of the Observer pattern is too hard to maintain. For more info see our [wiki](https://github.com/biojs/biojs2/wiki/Event-systems)
+
 
 How to setup BioJS 
 --------------
