@@ -4,10 +4,11 @@
 	<link type="text/css" rel="stylesheet" href="../node_modules/jquery-ui/themes/base/jquery-ui.css" />
 	<script src="../biojs-util-area_selector.min.js"></script>
 	<script>
-	    var selector = biojs.util.area_selector;
+	    var selector = new biojs.util.area_selector();
 	    selector.init({
 	        target: "container",
-	        area: [10,10,40,40]
+	        area: [10,10,40,40],
+	        resize_left:false
 	    });
 	    selector.on("onRegionChanged",function(d){
 	    	console.debug(d);

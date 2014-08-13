@@ -1,0 +1,82 @@
+
+.band {
+	position: relative;
+	z-index: 3;
+	height: 15px;
+	border: 1px solid #333;
+	border-right: 0px;
+	border-left: 0px;
+	border-image: initial;
+	cursor: pointer;
+	float:left;
+}
+.band:hover {
+	border-color: #F00;
+	background-color: #FEE;
+	
+}
+.q_acen, .first{
+	border-left: 1px solid #333;
+	border-top-left-radius: 4px;
+	border-bottom-left-radius: 4px;
+	-webkit-top-bottom-left-radius: 4px;
+	-moz-border-radius-bottomright: 4px;
+	-moz-border-radius-topleft: 4px;
+}
+.p_acen, .last {
+	border-right: 1px solid #333;
+	border-top-right-radius: 4px;
+	border-bottom-right-radius: 4px;
+	-webkit-top-bottom-right-radius: 4px;
+	-moz-border-radius-bottomright: 4px;
+	-moz-border-radius-topright: 4px;
+}
+.p_acen,.q_acen {
+	background-color: #DDD;
+}
+.gpos25 {
+	background-color: rgb(25%, 25%, 25%);
+}
+.gpos50 {
+	background-color: rgb(50%, 50%, 50%);
+}
+.gpos75 {
+	background-color: rgb(75%, 75%, 75%);
+}
+.gpos100 {
+	background-color: #000;
+}
+.gneg {
+	background-color: #FFF;
+}
+.gvar {
+	background-color: #CCC;
+}
+.stalk {
+	background-color: #666;
+	height: 10px;
+	top:3px;
+}
+div.band:before{ 
+	content:attr(title); 
+	display:none; 
+}
+div.band:hover::before{ 
+	width:60px; 
+	display:block; 
+	background:#CCF; 
+	border:1px solid #99C; 
+	padding:4px; 
+	margin: 25px 0 0 -20px; 
+	text-align:center;
+	border-radius: 3px;
+	-webkit-radius: 3px;
+	-moz-border-radius: 3px;
+}
+div:hover{ 
+	z-index:5; 
+}
+#YourOwnDivId {
+	padding: 10px;
+	padding-bottom: 40px;
+}
