@@ -17,7 +17,7 @@ BioJS 2.0
 __WARNING__: this is work in progress and NOT in production yet.
 
 
-Currently every folder is a seperate npm package (to ease development). Every folder will be __moved to a seperate repo__ soon.
+__PLEASE MOVE YOUR PACKAGE FOLDER TO A SEPARATE REPO __ 
 
 
 You can browse the [registry](http://biojs.net/registry-ui/client/#/).
