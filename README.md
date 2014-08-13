@@ -19,9 +19,11 @@ __WARNING__: this is work in progress and NOT in production yet.
 
 __PLEASE MOVE YOUR PACKAGE FOLDER TO A SEPARATE REPO__ 
 
+(keeping them as a separate folder allows people to install directly from git)
+
 
 You can browse the [registry](http://biojs.net/registry-ui/client/#/).
-(keeping them as a separate folder allows people to install directly from git)
+
 
 Documentation
 --------------
