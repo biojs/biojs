@@ -1,0 +1,34 @@
+{
+  "name": "biojs-util-area_selector",
+  "description": "Component to select an area over a component",
+  "version": "0.0.1",
+  "homepage": "http://github.com/biojs/biojs2",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/biojs/biojs2"
+  },
+  "author": "Gustavo A. Salazar <gustavoadolfo.salazar@gmail.com>",
+  "dependencies": {
+    "biojs-events": "0.0.2",
+    "jquery": "^2.1.1",
+    "jquery-ui": "^1.10.5"
+  },
+  "devDependencies": {
+    "browserify": "~4.2.0",
+    "chai": "^1.9.1",
+    "mocha": "^1.21.4"
+  },
+  "keywords": [
+    "div",
+    "area"
+  ],
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha --reporter spec",
+    "build-browser": "browserify browser.js  > biojs-util-area_selector.min.js"
+  },
+  "license": "Apache 2",
+  "bugs": {
+    "url": "https://github.com/biojs/biojs2/issues"
+  }
+}
