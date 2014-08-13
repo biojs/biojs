@@ -21,6 +21,7 @@ __PLEASE MOVE YOUR PACKAGE FOLDER TO A SEPARATE REPO__
 
 
 You can browse the [registry](http://biojs.net/registry-ui/client/#/).
+(keeping them as a separate folder allows people to install directly from git)
 
 Documentation
 --------------
