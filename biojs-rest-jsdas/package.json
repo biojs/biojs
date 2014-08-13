@@ -1,7 +1,7 @@
 {
-  "name": "biojs-io-jsdas",
+  "name": "biojs-rest-jsdas",
   "description": "Component to query DAS sources",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "homepage": "http://github.com/biojs/biojs2",
   "repository": {
     "type": "git",
