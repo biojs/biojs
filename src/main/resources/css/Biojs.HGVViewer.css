@@ -1,0 +1,222 @@
+body{
+    margin: 0;
+}
+#opening{
+    font: 13px sans-serif;
+    width: 100%;
+    text-align: center;
+}
+#zoomPanel{
+    width: 100%;
+    text-align: center;
+}
+#sliderPanel {
+    visibility: hidden;
+    width: 100%;
+    text-align: center;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    font: 11px sans-serif;
+    color: white;
+}
+.zoomedRuler{
+    font: 13px monospace;
+}
+.zoomedText {
+    font: 13px monospace;
+    fill: white; 
+    text-align: center;
+    text-anchor: middle;
+    shape-rendering: crispEdges;
+}
+input[type='range'] {
+        -webkit-appearance: none;
+        border-radius: 5px;
+        box-shadow: inset 0 0 5px #333;
+        background-color: grey;
+        height: 10px;
+        vertical-align: middle;
+    }
+    input[type='range']::-moz-range-track {
+        -moz-appearance: none;
+        border-radius: 5px;
+        box-shadow: inset 0 0 5px #333;
+        background-color: grey;
+        width: 130px;
+        height: 10px;
+    }
+    input[type='range']::-webkit-slider-thumb {
+        -webkit-appearance: none !important;
+        border-radius: 20px;
+        background-color: #FFF;
+        box-shadow:inset 0 0 10px rgba(000,000,000,0.5);
+        border: 1px solid red;
+        height: 20px;
+        width: 20px;
+    }
+    input[type='range']::-moz-range-thumb {
+        -moz-appearance: none;
+        border-radius: 20px;
+        background-color: #FFF;
+        box-shadow:inset 0 0 10px rgba(000,000,000,0.5);
+        border: 1px solid #999;
+        height: 20px;
+        width: 20px;
+    }
+.zoomedGroup {
+    font: 11px sans-serif;
+    shape-rendering: crispEdges;
+}
+.openview{
+    clear: left;
+    display: block;
+    visibility: hidden;
+    margin-top: 100px;
+}
+.tooltip {
+    text-transform:capitalize;
+    color: white;
+    position: absolute;
+    text-align: center;
+    width: 150px;
+    height: auto;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 4px;
+    font: 10px sans-serif;
+    display: block;
+}
+.overview{
+    width: 800px;
+    overflow: hidden;
+    float: left;
+    display: inline;
+}
+#overviewSVG{
+    display: inline;
+    overflow: scroll;
+}
+.variationview{
+    display: inline-block;
+    float: left;
+    clear: right;
+}
+.tooltipSVG {
+    color: white;
+    font: 10px sans-serif;
+    background: rgba(0, 0, 0, 0.8);
+    background-color: rgba(0, 0, 0, 0.8);
+}
+.tooltipSVGRect {
+    fill: rgba(0, 0, 0, 0.8);
+}
+.leftPanel {
+    float: left;
+    font-family: "Helvetica neue", Helvetica, Arial, sans-serif;
+    background: #71aacc;
+    width: 150px;    
+}
+.leftPanelTitle{
+    position: absolute;
+    font: 12px sans-serif;
+    background: #71aacc;
+    width: 150px;
+    height: 30px;
+}
+.icon{
+    font: 12px sans-serif;
+    float: left;
+    margin: 4px;
+    padding: 4px;
+    cursor: pointer;
+}
+.icon.textdesc {
+    cursor: none;
+    text-transform:capitalize;
+}
+span.icon.gear{
+    vertical-align: center;
+    float: right;
+    margin-right: 4px;
+    padding: 0px;
+    font: 24px sans-serif;
+}
+span.icon.cross{    
+    float: right;
+    margin: 0px;
+    padding: 0px;
+}
+.leftPanelSettingsBody{
+    position: absolute;
+    z-index: 1;
+    margin-top: 20px;
+    background: white;
+    border-style: solid;
+    border-width: 2px;
+    margin-left: 135px;
+    visibility: hidden;
+    font: 12px sans-serif;
+    font-family: "Helvetica neue", Helvetica, Arial, sans-serif;
+    height: 150px;
+    width: 150px;
+}
+.leftPanelBody {
+    position: absolute;
+    font: 12px sans-serif;
+    font-family: "Helvetica neue", Helvetica, Arial, sans-serif;	
+    margin-top: 30px;
+    width: 150px;
+    height: auto;
+    text-transform:capitalize;
+    background: #71aacc;
+    visibility: none;	
+}
+.leftPanelActive, .leftPanelInActive  {
+    margin-top: 20px;
+}
+.label{
+    display: block;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    padding-left: 14px;
+}
+.tooltipText{
+    fill: white;
+    font: 12px sans-serif;
+    display: inline-block;
+    padding: 1px;
+    width: inherit;
+}
+.damaging{
+    fill: #D7191C;
+}
+.mixed{
+    fill: #FDAE61;
+}
+.benign{
+    fill: #2C7BB6;
+}
+.missing{
+    fill: black;
+}
+#message{
+    position:absolute;
+    top:0;
+    left:50%;
+    margin:0 auto;
+    clear:left;
+    height:auto;
+    color: white;
+    background-color: #71a8bf;
+    text-align: center;
+}
+.separator{
+    display: block;
+    height: 10px;
+    width: auto;
+    background-color: black;    
+}
+.settingsPostSeparator{
+    position: absolute;
+    text-transform: capitalize;
+    margin-top: 10px;
+}

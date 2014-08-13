@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>BioJS Human Genetic Varition Viewer Component</title>
+        <link rel="stylesheet" type="text/css" href="../../main/resources/css/Biojs.HGVViewer.css" />
+        <script type="text/javascript" src="../../main/javascript/Biojs.js"></script>
+        <script type="text/javascript" src="../../main/resources/dependencies/d3.v3.min.js"></script>
+        <script type="text/javascript" src="../../main/resources/dependencies/queue.v1.min.js"></script>
+        <script type="text/javascript" src="../../main/javascript/Biojs.HGVViewer.js"></script>
+        <script type="text/javascript">
+            window.onload = function(){
+                var hgvViewer = new Biojs.HGVViewer({
+                    accession : "J3KP33",//"O15234",// "P00533",//O15234",//P15289",//"P45985",
+                    //baseUrl: "http://localhost/",
+                    target: "holder"
+                    });
+            }
+            </script>
+    </head>
+
+    <body>
+        <div id="opening">
+            This is a demo page for the 'Human Genetic Variation Viewer' BioJS component.
+            <br/>
+            The default protein being displayed is 'J3KP33'. 
+            <br/>
+            To display other proteins, append '?q=ProteinID'. 
+            <br/>
+            For example: 
+            <br/>
+            <br/>
+            <a href="?q=P00533">P00533</a>
+            <br/>
+            <a href="?q=P45985">P45985</a>
+
+        </div>
+        <div id="holder"></div>
+    </body>
+</html>
+
