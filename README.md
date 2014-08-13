@@ -17,97 +17,85 @@ BioJS 2.0
 __WARNING__: this is work in progress and NOT in production yet.
 
 
-Currently every folder is a seperate npm package (to ease development). Every folder will be __moved to a seperate repo__ soon.
+__PLEASE MOVE YOUR PACKAGE FOLDER TO A SEPARATE REPO__ 
+
+(keeping them as a separate folder allows people to install directly from git)
 
 
+You can browse the [registry](http://biojs.net/registry-ui/client/#/).
 
-Version
-----
 
-2.0
-
-Current Features of BioJS 2.0
-----
-- REST APIs can be found in biojs-rest
- - REST API for Ensembl 
-- Parsers can be found in biojs-io
- - Newick parser
- - Extended Newick parser
- - Clustal parser
- - Fasta parser
-- Visualizations can be found in biojs-vis
- - HPA Feature Viewer 
- - Multiple Sequence Alignment Viewer
- - Phylogenetic Tree Viewer
- - Gene Track Viewer (under construction)
-
-Old Components of BioJS 0.1 will rely on biojs-legacy
-
-How to setup BioJS 
+Documentation
 --------------
 
-For Mac Users
+We are working on a new platform [edu.biojs.net](http://edu.biojs.net/).
+[Pull requests](https://github.com/biojs/tutorials) are welcome.
 
-###1. Clone our repository
+More detailed *documentation* and *tutorials* follow soo
 
-```sh
-git clone https://github.com/biojs/biojs2.git
-```
-
- 
-###2. Install homebrew
-
-```sh
-ruby -e "$(curl -fsSL https://raw.github.com/Homebrew/homebrew/go/install)"
-```
-
-###3. Install node and npm
-```sh
-brew install node
-```
-
-That's it! Now you can build your component!
-
+Upgrading to BioJS 2.0
 ----
+
+Old Components of BioJS 0.1 can rely on [biojs-legacy](http://edu.biojs.net/tutorials/aQuickGuideForMigrating.html). But we highly encourage you to write your code more modular.
+
+
+FAQ
+----
+
+> What happened with the BioJS event system?
+
+We realised that a custom (buggy) implentation of the Observer pattern is too hard to maintain. For more info see our [wiki](https://github.com/biojs/biojs2/wiki/Event-systems)
+
+> How do I create a new package?
+
+We have a [beginners guide](http://edu.biojs.net/tutorials/02_howtoCreate.html).
 
 How to build a BioJS package
 ---------------
 
-###1. Go into the package folder
-```sh
-cd [Package Destination]
-```
+In the package folder
 
-###2. Npm install
+###1. Npm install
 ```
 npm install
 ```
 
-###3. Run tests
+###2. Run tests
 
 ```
 npm test
 ```
 
-###4. Build the file for a browser
+###3. Build the file for a browser
 
 ```
 npm run build-browser
 ```
 
-Working examples of the component can be found in the *snippet folder* of each package
+Working examples of the component can be found in the `snippets` folder of a package
 
 
-Demos
-----------------
+How to setup npm 
+--------------
 
-###[Sample for biojs-vis-tree](http://edu.biojs.net/treeviewer.html)
-
-
-###[Sample for biojs-vis-msa](http://edu.biojs.net/msa.html)
+For Mac Users
 
 
-Documentation & Tutorials
------------------
+###1. Install homebrew
 
-More detailed *Documentation* and *Tutorials* follow soon on [edu.biojs.net](http://edu.biojs.net/)
+```sh
+ruby -e "$(curl -fsSL https://raw.github.com/Homebrew/homebrew/go/install)"
+```
+
+###2. Install node and npm
+```sh
+brew install node
+```
+
+###3. Clone our repository
+
+```sh
+git clone https://github.com/biojs/biojs2.git
+```
+
+That's it! Now you can build your component!
