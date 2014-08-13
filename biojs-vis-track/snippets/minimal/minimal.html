@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>TnT Themes</title>
+
+<div id="body">
+
+  <!-- D3 -->
+  <script src="../../../lib/d3.min.js"></script>
+
+  <!-- TnT -->
+  <link rel="stylesheet" href="../../../lib/tnt.css" type="text/css" />
+
+  <script src="../../../lib/tnt.js"></script>
+  <script src="minimal.js"></script>
+
+  <h1>The Minimal Theme - Genome</h1>
+  <div id="genomeBrowser"></div>
+  <script>
+    (function() {
+        var gB = tnt.board.genome().species("human").gene("brca2").width(950);
+        var gBTheme = tnt_theme_track_minimal();
+        gBTheme(gB, document.getElementById("genomeBrowser"));
+    })();
+ 
+  </script>
+
+  <h2>Overview</h2>
+  <p><aside><i>Panning</i> and <i>zooming</i> are still possible in the minimal theme</aside></p>
+  <p>This theme just shows the e!Peek plug-in without any decoration or extra functionality. It doesn't response to gene selection, retrieve orthology information or any other goodie shown in the other themes apart from those available in the core plug-in (like panning or zooming).</p>
+  <p>Because of its simplicity it is a good starting point for any other more complex theme as it shows the general pattern used in e!Peek to build the themes</p>
+  <p><aside>Check the <a href="">source code</a> on github</aside></p>
+  <p>The complete code of this theme is just:</p>
+
+  <pre><code>
+var epeek_theme = function() {
+    var theme = function(gB, div) {
+        gB(div);
+        gB.start();
+    };
+    return theme;
+};
+  </code></pre>
+  <p>The code above defines the function <i>epeek_theme</i>. By convention, this function should always be defined as a top-level function in every theme (and normally it is the only thing defined at the top level). Inside this function, the themes normally define a closure that accepts at least two arguments:</p>
+  <ul>
+    <li>An instance of the <i>epeek.genome</i> core object</li>
+    <li>A container DOM element (usually a div element)</li>
+  </ul>
+  <p><aside>Checkout other <a href="../index.html">themes</a></aside></p>
+  <p>This closure is the only thing returned by the <i>theme</i>. Since a closure is a piece of code treated as a value, it is important to remember that nothing that is defined inside of the closure will be executed until the returned closure is called. The closure is responsible of calling the core object in the appropriate <i>DOM element</i>. In this case, we put the <i>epeek.genome</i> plugin in the container element passed as an argument, but other more sophisticated themes may define other <i>DOM elements</i> and encapsulate the <i>epeek.genome</i> core object into any of them. Finally, the closure has to call the <i>start</i> method of the <i>epeek.genome</i> core object to start the genome browser. With this code, when the <i>epeek_theme</i> function is called, the closure is returned and ready to use.
+  </p>
+  <p><aside>Check the <a href="">source code</a> on github</aside></p>
+  <p>So, this is how the client page should set the theme up:</p>
+  <pre><code>
+var gB = epeek.genome().width(920); // other methods can be included here
+
+// gBTheme is the closure returned by the theme, ready to be run
+var gBTheme = epeek_theme();
+
+// The theme closure is called with the epeek.genome core instance and a DOM element
+gBTheme(gB, document.getElementById('DOM_element_id');
+  </code></pre>
+
+  <p>First, an instance of the <i>epeek.genome</i> object is created (gB). Then, the <i>epeek_theme</i> function is called returning the theme closure (gBTheme). Finally, the theme closure is called with the epeek.genome object as its first argument and a valid DOM container element id as the second.</p>
+
+  <p>Of course, because the minimal <i>theme</i> is only calling the <i>epeek.genome</i> object without including any other interesting feature, we could have got rid of it entirely and write the client code as:</p>
+
+  <pre><code class="javascript">
+var gB = epeek.genome()
+              .species("human")
+              .gene("brca2");
+
+gB(document.getElementById("genomeBrowser"));
+gB.start();
+  </code></pre>
+
+  <p>But the <i>minimal theme</i> is a good starting point for writing more complex themes. Checkout the <a href="../index.html">other themes</a> to see more examples</p>
+
+  <footer>
+    <aside>Released under <a href="http://www.opensource.org/licenses/apache2.0.php">Apache 2.0</a>.</aside>
+    Copyright 2014 <a href="http://www.ebi.ac.uk/~mp" rel="author">Miguel Pignatelli</a>
+  </footer>
+
+</div>
+

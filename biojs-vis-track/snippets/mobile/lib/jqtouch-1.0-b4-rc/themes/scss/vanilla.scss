@@ -1,0 +1,15 @@
+$base-color: #ccc;
+$base-button-gradient: flat;
+
+
+@import 'include/core';
+
+#jqt {
+    > * {
+        background-color: $base-color;
+    }
+
+    .toolbar {
+        background-color: $toolbar-background-color;
+    }
+}

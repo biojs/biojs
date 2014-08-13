@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>TnT Theme</title>
+
+<div id="body">
+
+  <!-- D3 -->
+  <script src="../../../lib/d3.min.js"></script>
+
+  <!-- TnT -->
+  <link rel="stylesheet" href="../../../lib/tnt.css" type="text/css" />
+
+  <script src="../../../lib/tnt.js"></script>
+  <script src="comparative.js"></script>
+
+
+  <h1>The Comparative Theme</h1>
+
+<div id="genomeBrowser"></div>
+<script>
+
+  (function() {
+        var width   = 800;
+        var gene    = "BRCA2";
+        var bgColor = "#DCE6E6";
+        var fgColor = "#0099CC";
+
+        var gBs = [ tnt.board.genome().species("human").width(width).gene(gene).allow_drag(false),
+                    tnt.board.genome().species("mouse").width(width).gene(gene).allow_drag(false)];
+        gBTheme = tnt_theme_track_comparative();
+        gBTheme(gBs, document.getElementById("genomeBrowser"));
+
+  })();
+ 
+</script>
+
+<h2>Overview</h2>
+  <p><aside>Select different genes and species</aside></p>
+  <p>In this theme two genome browsers showing the same gene in two different species are displayed. It uses buttons to control the panning and zooming as in the <a href="buttons.html">buttons theme</a>. In this theme buttons to control both genome browsers at the same time and each of them independently are displayed.</p>
+
+    <p><aside>Check the <a href="">theme's source code</a></aside></p>
+  <p>Because this theme displays more than one genome browsers, its "signature" is a bit different from the <a href="../index.html">general pattern explained for other themes</a>. In this case, instead of accepting a genome browser and a div element, it accepts an array of genome browsers as its first argument. So, the theme is initialized as follows:</p>
+
+  <pre><code class="javascript">
+var gB1 = epeek().species("human").gene(gene).allow_drag(false);
+var gB2 = epeek().species("mouse").gene(gene).allow_drag(false);
+gBTheme = epeek_theme();
+gBTheme([gB1, gB2], document.getElementById("genomeBrowser"));
+  </code></pre>
+
+  <p>While the theme itself looks like:</p>
+
+  <pre><code class="javascript">
+var epeek_theme = function() {
+    "use strict";
+    // theme variables here
+
+    // Now, the first argument is an array of gBs 
+    var gBrowserTheme = function(gBs, div) {
+
+        // ...
+
+        for (var i=0; i&lt;gBs.length; i++) {
+            setupGenomeBrowser(i);
+        }
+
+        // ...
+    };
+
+  </code></pre>
+
+
+  <footer>
+    <aside>Released under <a href="http://www.opensource.org/licenses/apache2.0.php">Apache 2.0</a>.</aside>
+    Copyright 2014 <a href="http://www.ebi.ac.uk/~mp" rel="author">Miguel Pignatelli</a>
+  </footer>
+
+</div>

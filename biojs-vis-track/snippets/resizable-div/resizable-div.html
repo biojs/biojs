@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>TnT Themes</title>
+
+<div id="body">
+
+  <script src="../../../lib/d3.min.js"></script>
+
+  <link rel="stylesheet" href="../../../lib/tnt.css" type="text/css" />
+
+  <script src="../../../lib/tnt.js"></script>
+  <script src="resizable-div.js"></script>
+
+  <h1>The Resizable Theme</h1>
+  <div class="resize" id="genomeBrowser"></div>
+  <script>
+
+    (function() {
+         var gB = tnt.board.genome().species("human").gene("brca2").width(800);
+         var gBTheme = tnt_theme_track_resizable_div();
+         gBTheme(gB, document.getElementById("genomeBrowser"));
+    })();
+
+  </script>
+
+  <footer>
+    <aside>Released under <a href="http://www.opensource.org/licenses/apache2.0.php">Apache 2.0</a>.</aside>
+    Copyright 2014 <a href="http://www.ebi.ac.uk/~mp" rel="author">Miguel Pignatelli</a>
+  </footer>
+</div>
+

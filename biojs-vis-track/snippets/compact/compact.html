@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>TnT Themes</title>
+
+<div id="body">
+
+  <!-- D3 -->
+  <script src="../../../lib/d3.min.js"></script>
+
+  <!-- Remote QRtag -->
+  <script type="text/javascript" src="http://api.qrtag.net/js"></script>
+
+
+  <!-- TnT -->
+  <link rel="stylesheet" href="../../../lib/tnt.css" type="text/css" />
+  <link rel="stylesheet" href="css/compact.css" type="text/css" />
+
+  <script src="../../../lib/tnt.js"></script>
+  <script src="compact.js"></script>
+
+  <h1>The Compact Theme</h1>
+  <div id="genomeBrowser"></div>
+  <script>
+
+    (function() {
+        var gB = tnt.board.genome().species("human").gene("brca2").width(950);
+        var gBTheme = tnt_theme_track_compact()
+                       .show_title(false)
+                       .foreground_color("#586471")
+                       .background_color("#DDDDDD");
+        gBTheme(gB, document.getElementById("genomeBrowser"));
+    })();
+ 
+  </script>
+
+  <h2>Overview</h2>
+  <p>This example shows a more sophisticated <i>theme</i> that includes many others capabilities like searching, jumping to orthologues/paralogues, etc... It also includes links to the <a href="www.ensembl.org">Ensembl browser</a> and links to the <a href="../mobile/mobile.html?loc=BRCA1#browser">mobile theme</a> via a QR-code</p>
+
+  <p>The structure of the theme is exactly the same as we have seen in the <a href="../index.html">other examples</a></p>
+
+  <h2>API</h2>
+  <p>This theme also defines its own basic API to control some of the themes parameters:</p>
+
+  <p><a name="title" href="#title">#</a> theme.<b>title</b> ([string])</p>
+  <p>This method sets/gets the title to be displayed in the theme</p>
+
+  <p><a name="show_title" href="#show_title">#</a> theme.<b>show_title</b> (&lt;boolean&gt;)</p>
+  <p>This method is used to set the visibility of the title. By default it is set to <i>true</i></p>
+
+  <p><a name="show_options" href="#show_options">#</a> theme.<b>show_options</b> (&lt;boolean&gt;)</p>
+  <p>This method is used to determine if the theme's options are displayed or not. By default the options are displayed</p>
+
+  <p><a name="show_link" href="#show_links">#</a> theme.<b>show_links</b> (&lt;boolean&gt;)</p>
+  <p>This method is used to determine if the theme's links bottom panel is displayed. By default it is set to <i>true</i></p>
+
+
+  <footer>
+    <aside>Released under <a href="http://www.opensource.org/licenses/apache2.0.php">Apache 2.0</a>.</aside>
+    Copyright 2014 <a href="http://www.ebi.ac.uk/~mp" rel="author">Miguel Pignatelli</a>
+  </footer>
+  
+</div>
+

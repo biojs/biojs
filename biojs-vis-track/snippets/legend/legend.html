@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>TnT Themes</title>
+
+<div id="body">
+
+  <!-- D3 -->
+  <script src="../../../lib/d3.min.js"></script>
+
+  <!-- ePeek -->
+  <link rel="stylesheet" href="../../../lib/tnt.css" type="text/css" />
+
+  <script src="../../../lib/tnt.js"></script>
+  <script src="legend.js"></script>
+
+  <h1>The Legend Theme</h1>
+  <div id="genomeBrowser"></div>
+  <script>
+
+    (function() {
+        var gB = tnt.board.genome().species("human").gene("brca2").width(950);
+        var gBTheme = tnt_theme_track_legend();
+        gBTheme(gB, document.getElementById("genomeBrowser"));
+    })();
+ 
+  </script>
+
+  <h2>Overview</h2>
+  <p><aside>Checkout the <a href="">full code in github</a></aside></p>
+  <p>This example shows an easy way of inserting a simple legend explaining the type of the displayed genes. This legend is dynamic in the sense that only shows the type of genes currently displayed. This gene type is based on the "biotype" of the genes and can be one of "protein_coding", "pseudogene", "processed transcript", "ncRNA" or "antisense"</p>
+
+  <p><aside>Check the <a href="../../doc/api/rest/index.html">epeek.rest API</a></aside></p>
+  <p>In this example, the legend needs to be updated every time a panning/zooming event is fired. To do this, the <a href="../../doc/api/genome/index.html#genes_callback">genome_browser.genes_callback</a> method is used. This callback is called every time the genome browser plug-in queries the <a href="http://beta.rest.ensembl.org/documentation/info/feature_region">/feature/region/:species/:region</a> endpoint of the <a href="http://beta.rest.ensembl.org">Ensembl REST API</a></p>
+
+  <footer>
+    <aside>Released under <a href="http://www.opensource.org/licenses/apache2.0.php">Apache 2.0</a>.</aside>
+    Copyright 2014 <a href="http://www.ebi.ac.uk/~mp" rel="author">Miguel Pignatelli</a>
+  </footer>
+  
+</div>
