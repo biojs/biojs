@@ -22,8 +22,8 @@ var tnt_theme_tree_collapse_nodes = function() {
         });
 
         tree_vis
-        .label().height(function(){return 50});
-
+        .label()
+            .height(function(){return 50});
         // The visualization is started at this point
         tree_vis(div);
         

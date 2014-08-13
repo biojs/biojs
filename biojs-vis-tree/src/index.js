@@ -10,10 +10,6 @@ module.exports.tree.node = require("./node.js");
 
 
 
-var tree = module.exports.tree();
-console.log(tree);
-
-
 
 
 
