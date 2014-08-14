@@ -1,5 +1,5 @@
 var $ = require('jquery');
-var AreaSelector = require('biojs-util-area_selector');
+var AreaSelector = require('area_selector');
 var JSDAS = require('biojs-rest-jsdas');
 
 var chromosome = function ()  {

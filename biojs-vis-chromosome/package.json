@@ -9,9 +9,9 @@
   },
   "author": "Gustavo A. Salazar <gustavoadolfo.salazar@gmail.com>",
   "dependencies": {
+    "area_selector": "0.0.3",
     "biojs-events": "0.0.2",
     "biojs-rest-jsdas": "0.0.4",
-    "biojs-util-area_selector": "0.0.3",
     "jquery": "^2.1.1"
   },
   "devDependencies": {
