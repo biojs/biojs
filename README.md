@@ -66,6 +66,30 @@ You are completely free to choose your own awesome name. However if you are a bi
 - `rest` for REST apis to databases
 - `algo` for server/client side algorithms processing the data (e.g. alignments, neural networks, markov models, graph algorithms)
 
+> How to setup continous integration (or how to get the fancy build badges)?
+
+* new project -> github -> add your project
+* choose node
+* setup build script
+```
+npm install --silent
+npm test
+npm run build-browser
+```
+* change the nvm to node __0.10__
+* artifcats: enter the relative dir of files that should be downloadable (e.g. `build/biojs_io_fasta.min.js`)
+* get your badges
+
+If you prefer Travis
+
+Add a `.travis.yml` and add your project on Travis.
+```
+language: node_js
+node_js:
+  - "0.11"
+  - "0.10"
+```
+(they automatically run `npm install` and `npm test`)
 
 How to build a BioJS package
 ---------------
