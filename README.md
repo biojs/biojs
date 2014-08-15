@@ -59,7 +59,7 @@ So just start with your own github account and wait until the community says it 
 
 You are completely free to choose your own awesome name. However if you are a bit uncreative, you can adapt this naming convention (it helps you to be modular).
 
-__biojs-[io/rest/vis/algo/...]-[name]__
+`biojs-[io/rest/vis/algo/...]-[name]`
 
 - `io` for components which are responsible for parsing data into a specific format (aka parser)
 - `vis` for components which are visualizing data sets
