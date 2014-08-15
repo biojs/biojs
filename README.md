@@ -50,6 +50,23 @@ We realised that a custom (buggy) implentation of the Observer pattern is too ha
 
 We have a [beginners guide](http://edu.biojs.net/tutorials/02_howtoCreate.html).
 
+> Where should I publish my package on github?
+
+We try to keep popular / "recommended" components under the biojs account (e.g `biojs-events`)
+So just start with your own github account and wait until the community says it is "super-duper-mega-awesome-recomended". 
+
+> How to name my package?
+
+You are completely free to choose your own awesome name. However if you are a bit uncreative, you can adapt this naming convention (it helps you to be modular).
+
+__biojs-[io/rest/vis/algo/...]-[name]__
+
+- `io` for components which are responsible for parsing data into a specific format (aka parser)
+- `vis` for components which are visualizing data sets
+- `rest` for REST apis to databases
+- `algo` for server/client side algorithms processing the data (e.g. alignments, neural networks, markov models, graph algorithms)
+
+
 How to build a BioJS package
 ---------------
 
