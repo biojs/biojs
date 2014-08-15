@@ -1,7 +1,7 @@
 {
   "name": "biojs-io-newick",
-  "description": "Parses newick formats",
-  "version": "0.0.3",
+  "description": "Parses newick strings(nwk) and extended newick strings(nhx) into JSON ",
+  "version": "0.0.4",
   "homepage": "http://github.com/biojs/biojs2",
   "repository": {
     "type": "git",

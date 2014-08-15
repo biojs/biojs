@@ -1,2 +1,2 @@
-module.exports.newick = require('./newick');
-module.exports.extended = require('./extended_newick');
+module.exports.parse_nwk = require('./newick');
+module.exports.parse_nhx = require('./extended_newick');

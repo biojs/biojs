@@ -1,22 +1,24 @@
-Newick-Parser for BioJS 2
+BioJS Newick Parser 
 ----------
-Just call Biojs.io.newick.newick(string) for parsing a newick string. 
+Just call method `parse_nwk(string)` for parsing a newick string into JSON. 
 
 ```javascript
-Biojs.io.newick.newick('((A,B),C)');
+Biojs.io.newick.parse_nwk('((A,B),C)');
 ```
 
-Call Biojs.io.newick.extended(string) for parsing an extended newick format.
+Call the method `parse_nhx(string)` for parsing an extended newick formats into JSON.
 
 ```javascript
-Biojs.io.newick.extended('((A,B),C)');
+Biojs.io.newick.parse_nhx('((A,B),C)');
 ```
 
-Example tree (from http://en.wikipedia.org/wiki/Newick_format):
+[Example tree](http://en.wikipedia.org/wiki/Newick_format):
 
 Newick format:
 
-`(A:0.1,B:0.2,(C:0.3,D:0.4)E:0.5)F`
+```sh
+(A:0.1,B:0.2,(C:0.3,D:0.4)E:0.5)F
+```
 
 Converted to JSON:
 
