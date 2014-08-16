@@ -156,7 +156,7 @@ tnt.board = function () {
         var cont = function (resp) {
             limits.right = resp;
 
-            zoomEventHandler.xExtent([limits.left, limits.right]);
+            //zoomEventHandler.xExtent([limits.left, limits.right]);
             if ((loc.to - loc.from) < limits.zoom_in) {
                 if ((loc.from + limits.zoom_in) > limits.zoom_in) {
                     loc.to = limits.right;
@@ -335,7 +335,7 @@ tnt.board = function () {
             // When this method is called on the object before starting the simulation, we don't have defined xScale
             if (xScale !== undefined) {
                 svg_g.call(zoomEventHandler.x(xScale)
-                    .xExtent([0, limits.right])
+                    //.xExtent([0, limits.right])
                     .scaleExtent([(loc.to - loc.from) / (limits.zoom_out - 1), (loc.to - loc.from) / limits.zoom_in])
                     .on("zoom", _move));
             }

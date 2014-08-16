@@ -14,7 +14,7 @@ var tnt_theme_track_compact = function () {
 
     var path = biojs.vis.track.utils.script_path("compact.js");
 
-    var qr_tooltip = tnt.tooltip.plain();
+    //var qr_tooltip = tnt.tooltip.plain();
 
     // div_ids to display different elements
     // They have to be set dynamically because the IDs contain the div_id of the main element containing the plug-in
@@ -223,7 +223,7 @@ var tnt_theme_track_compact = function () {
 
         gene_track
             .display()
-            .on_click(gene_track.display().tooltip());
+        //.on_click(gene_track.display().tooltip());
 
         gBrowser(div);
         gBrowser.add_track(gene_track);
@@ -306,8 +306,8 @@ var tnt_theme_track_compact = function () {
         // We remove previously created QRtag
         // d3.select("#tnt_" + div_id + "_QRcode").remove();
 
-        var tooltip_obj = '<div id="tnt_' + div_id + '_qrtag_div"></id>';
-        qr_tooltip.call(this, tooltip_obj);
+        //var tooltip_obj = '<div id="tnt_' + div_id + '_qrtag_div"></id>';
+        //qr_tooltip.call(this, tooltip_obj);
 
         var qrtag = new QRtag();
         qrtag.data(buildLink("mobile"));
