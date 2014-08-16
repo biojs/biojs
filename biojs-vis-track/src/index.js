@@ -1,4 +1,5 @@
-require("d3");
+module.exports.utils = require("../utils/utils");
+require("../utils/d3_utils");
 
 module.exports.board = require("./board");
 module.exports.track = require("./track");
@@ -13,50 +14,48 @@ module.exports.track.genome = require("./genome");
 
 var track = module.exports.track;
 var test = track()
-			.height(30)
-		    .background_color("#FFCFDD")
+    .height(30)
+    .background_color("#FFCFDD")
 
 
-	// Gene Track1
-	var gene_track = track()
-	    .background_color("#cccccc")
-	    .height(200)
-	    .data(track.data.gene())
-	    .display(track.feature.gene()
-		     .foreground_color("red")
-		    );
+// Gene Track1
+var gene_track = track()
+    .background_color("#cccccc")
+    .height(200)
+    .data(track.data.gene())
+    .display(track.feature.gene()
+        .foreground_color("red")
+    );
 
-	// Gene Track2
-	var gene_track2 = track()
-	    .height(100)
-	    .background_color("#DDDD00")
-	    .data(track.data.gene())
-	    .display(track.feature.gene()
-		     .foreground_color("blue")
-		    );
+// Gene Track2
+var gene_track2 = track()
+    .height(100)
+    .background_color("#DDDD00")
+    .data(track.data.gene())
+    .display(track.feature.gene()
+        .foreground_color("blue")
+    );
 
-	// Block Track1
-	var block_track = track()
-	    .height(30)
-	    .background_color("#FFCFDD")
-		
-	    .data(track.data()
-		  .update(
-		      track.retriever.sync()
-			  .retriever (function () {
-			      return [
-				  {
-				      start : 32890000,
-				      end   : 32890500
-				  }
-			      ]
-			  })
-		  )
-		 )
-	    .display(track.feature.block()
-		     .foreground_color("blue")
-		     .index(function (d) {
-			 return d.start;
-		     }));
+// Block Track1
+var block_track = track()
+    .height(30)
+    .background_color("#FFCFDD")
 
-
+.data(track.data()
+    .update(
+        track.retriever.sync()
+        .retriever(function () {
+            return [
+                {
+                    start: 32890000,
+                    end: 32890500
+      }
+         ]
+        })
+    )
+)
+    .display(track.feature.block()
+        .foreground_color("blue")
+        .index(function (d) {
+            return d.start;
+        }));

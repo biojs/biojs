@@ -12,13 +12,13 @@
     "email": "biojs-technical@googlegroups.com"
   },
   "dependencies": {
-    "biojs-io-newick": "0.0.3",
+    "biojs-io-newick": "0.0.4",
     "d3": "^3.4.11",
     "underscore": "^1.6.0"
   },
   "devDependencies": {
     "assert": "^1.1.1",
-    "biojs-io-newick": "0.0.3",
+    "biojs-io-newick": "0.0.4",
     "browserify": "~4.2.0",
     "chai": "^1.9.1",
     "mocha": "~1.20.1",

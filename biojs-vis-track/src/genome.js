@@ -1,17 +1,18 @@
 "use strict"
+var ensembl_rest = require('biojs-rest-ensembl');
 
 var tnt = {};
 tnt.board = require('./board');
 tnt.utils = {};
 tnt.utils.api = require("../utils/api");
-
+tnt.track = require('./track');
 
 
 tnt.board.genome = function() {
 
     // Private vars
     var ens_re = /^ENS\w+\d+$/;
-    var eRest = tnt.eRest();
+    var eRest = ensembl_rest();
     var chr_length;
 
     // Vars exposed in the API

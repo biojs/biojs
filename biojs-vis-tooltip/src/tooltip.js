@@ -1,3 +1,4 @@
+require("d3");
 var tnt = {};
 
 tnt.tooltip = function() {

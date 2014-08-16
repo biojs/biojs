@@ -15,4 +15,4 @@ if (typeof biojs.vis === 'undefined') {
 }
 
 
-biojs.vis.tooltips = require('./') //Looks up the ./index.js file and add all functionality to biojs.template
+biojs.vis.tooltip = require('./') //Looks up the ./index.js file and add all functionality to biojs.template

@@ -1,20 +1,20 @@
 {
-  "name": "biojs-vis-tooltips", 
-  "description": "A tooltip pop up for biojs phylogenetics", 
+  "name": "biojs-vis-tooltip",
+  "description": "A tooltip pop-up plugin for biojs",
   "version": "0.0.1",
-  "homepage": "http://github.com/biojs/biojs2", 
+  "homepage": "http://github.com/biojs/biojs2",
   "repository": {
     "type": "git",
     "url": "git://github.com/biojs/biojs2"
   },
   "author": {
-    "name": "David Dao", 
+    "name": "David Dao",
     "email": "biojs-technical@googlegroups.com"
   },
   "dependencies": {
-
+    "d3": "^3.4.11"
   },
-  "devDependencies": { 
+  "devDependencies": {
     "assert": "^1.1.1",
     "browserify": "~4.2.0",
     "chai": "^1.9.1",
@@ -25,10 +25,10 @@
   "keywords": [
     "biojs, tooltips"
   ],
-  "main": "./index.js", 
+  "main": "./index.js",
   "scripts": {
     "test": "mocha --reporter spec",
-    "build-browser": "browserify browser.js > build/biojs-vis-tooltips.min.js" 
+    "build-browser": "browserify browser.js > build/biojs-vis-tooltip.min.js"
   },
   "license": "Apache 2"
 }
