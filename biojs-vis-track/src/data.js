@@ -52,9 +52,10 @@ tnt.track.data = function() {
     };
 
     tnt.track.retriever.ensembl = function() {
+	var ensembl_rest = require('biojs-rest-ensembl');
 	var success = [function () {}];
 	var endpoint;
-	var eRest = require('biojs-rest-ensembl'); //Check if it is really working that way!
+	var eRest = ensembl_rest(); //Check if it is really working that way!
 	var update_track = function(obj) {
             // Object has loc and a plug-in defined callback
             var loc         = obj.loc;
