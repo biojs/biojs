@@ -45,3 +45,5 @@ var tooltip = function () {
         return gene_tooltip;
     };
 ```
+
+Use `tnt.css` or your custom CSS file to design the tooltip.
