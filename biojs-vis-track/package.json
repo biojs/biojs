@@ -14,6 +14,7 @@
   "dependencies": {
     "biojs-io-newick": "0.0.4",
     "biojs-rest-ensembl": "0.0.1",
+    "biojs-vis-tooltip": "0.0.1",
     "d3": "^3.4.11",
     "underscore": "^1.6.0"
   },

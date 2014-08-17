@@ -1,4 +1,4 @@
-var biojs_tooltip = require('../../biojs-vis-tooltip/index');
+var biojs_tooltip = require('biojs-vis-tooltip');
 
 var utils = {};
 utils.api = require('../utils/api');
