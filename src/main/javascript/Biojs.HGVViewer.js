@@ -361,6 +361,7 @@ Biojs.HGVViewer = Biojs.extend(
             this.opt.accession = proteinID;
         }
         this.activeMutationTypes = this._mutationTypes.slice(0);
+        this.activeMutationTypes.sort();
         this._arrowDownText = this._arrowDown + " " + this._leftPanelText + " " + this._settingsIcon;
         this._arrowRightText = this._arrowRight + " " + this._leftPanelText + " " + this._settingsIcon;
         this._leftPanelDiv = target.append("div")
@@ -979,9 +980,11 @@ Biojs.HGVViewer = Biojs.extend(
         }
         if(this._zoomedViewExists){
             var width = (this.sequenceLength+2)*that._widthPerMutation;
+            if(position>0){
+                d3.selectAll(".zoomedGroup")
+                    .attr("transform", "translate("+ -1*that._widthPerMutation*(position) +",0)");
+            }
             d3.select("#overviewSVG").attr("width", width);
-            d3.selectAll(".zoomedGroup")
-                .attr("transform", "translate("+ -1*that._widthPerMutation*(position) +",0)");
             if(that._isArrowDown){
                 d3.selectAll(".individualview .zoomedGroup").style("display", "inline-block");
             }
@@ -1000,6 +1003,10 @@ Biojs.HGVViewer = Biojs.extend(
         this.plotZoomedRulerLine(this._zoomedView, true);
         var svg = that._zoomedView.append("g").attr("class", "zoomedVariants");
         that.variantsPlotProcessor(svg);
+        if(position>0){
+            d3.selectAll(".zoomedGroup")
+                .attr("transform", "translate("+ -1*that._widthPerMutation*(position) +",0)");
+        }
         endTime = this._getTime();
         Biojs.console.log("SVG drawing: " + String(endTime-startTime) + "ms");
     },
@@ -1110,15 +1117,20 @@ Biojs.HGVViewer = Biojs.extend(
             //Remove it from active scores
             this.activeMutationTypes.splice(this.activeMutationTypes.indexOf(id), 1);
         }
+        this.activeMutationTypes.sort();
+        Biojs.console.log("Active types: " + this.activeMutationTypes)
         if (this._isZoomActive){
             this._mutationTypes.map(function(mutation){
                 d3.selectAll("."+mutation).remove();
             });
             this._zoomedViewExists = false;
-            this.plotZoomedOverview();
+            d3.selectAll(".zoomedGroup").remove();
+            var sliderPosition = d3.select("#positionText").html();
+            this.plotZoomedOverview(sliderPosition);
             this.plotZoomedIndividualView();
         }
         else{
+            //d3.selectAll(".overviewGroup").remove();
             this.plotOverview();
             this.plotIndividualView(true);
         }
@@ -1218,7 +1230,6 @@ Biojs.HGVViewer = Biojs.extend(
             if (prediction == null){
                     Biojs.console.log("ERROR!: prediction null, check: " + position + ", with score:  "  + averageScore + " key " + range  );
             }
-            var predictionKey = prediction + "TypeVariantsList";
             var variantInfo = {};
             variantInfo["activeScore"] = averageScore;
             var temp = Object.keys(that.opt.availableScores)
@@ -1230,6 +1241,7 @@ Biojs.HGVViewer = Biojs.extend(
             variantInfo["frequency"] = +variants[d].frequency;
             variantInfo["prediction"] = prediction;
             variantInfo["consequenceTypes"] = consequenceTypes;
+            var predictionKey = prediction + "TypeVariantsList";
             this.variantDataObject[position]["variantInfo"]
                 .push(variantInfo);
             this.variantDataObject[position][predictionKey].push(variantInfo);
