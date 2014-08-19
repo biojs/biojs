@@ -950,10 +950,14 @@ Biojs.HGVViewer = Biojs.extend(
      * instance.plotZoomedIndividualView();
      *
     **/
-    plotZoomedIndividualView: function(){
+    plotZoomedIndividualView: function(repaint){
         var that = this;
         var consequences = that.consequenceTypesList;
         consequences.map(function(consequence){
+            if(repaint === true){
+                that.individualViewZoomedSVG[consequence] = that.individualViewSVG[consequence]
+                                                            .append("g").attr("class", "zoomedGroup");
+            }
             var svg = that.individualViewZoomedSVG[consequence];
             var svgtemp = null;
             that._cloneSVGContents("#overviewZoomedRuler", svg);
@@ -1126,13 +1130,49 @@ Biojs.HGVViewer = Biojs.extend(
             this._zoomedViewExists = false;
             d3.selectAll(".zoomedGroup").remove();
             var sliderPosition = d3.select("#positionText").html();
+            this.plotZoomedIndividualView(true);
             this.plotZoomedOverview(sliderPosition);
-            this.plotZoomedIndividualView();
+            //d3.select("#mainSVGContents .zoomedGroup").style("display", "inline-block");
+            //d3.select("#mainSVGContents .overviewGroup").style("display", "none");
+            if(that._isArrowDown){
+                //Hide Overview
+                d3.select("#mainSVGContents .overviewGroup").style("display", "none");
+                d3.select("#mainSVGContents .zoomedGroup").style("display", "none");
+                //Show Zoomed Group for Individual view
+                d3.selectAll(".variationview .zoomedGroup").style("display", "inline-block");
+                d3.selectAll(".variationview .overviewGroup").style("display", "none");
+            }
+            else{
+                //hide openview
+                d3.selectAll(".variationview .zoomedGroup").style("display", "none");
+                d3.selectAll(".variationview .overviewGroup").style("display", "none");
+                //show overview zoomed
+                d3.select("#mainSVGContents .overviewGroup").style("display", "none");
+                d3.select("#mainSVGContents .zoomedGroup").style("display", "inline-block");
+            }
         }
         else{
             //d3.selectAll(".overviewGroup").remove();
             this.plotOverview();
             this.plotIndividualView(true);
+         //   d3.select("#mainSVGContents .overviewGroup").style("display", "inline-block");
+           // d3.select("#mainSVGContents .zoomedGroup").style("display", "none");
+            if(that._isArrowDown){
+                //Hide Overview
+                d3.select("#mainSVGContents .overviewGroup").style("display", "none");
+                d3.select("#mainSVGContents .zoomedGroup").style("display", "none");
+                //Show Zoomed Group for Individual view
+                d3.selectAll(".variationview .zoomedGroup").style("display", "none");
+                d3.selectAll(".variationview .overviewGroup").style("display", "inline-block");
+            }
+            else{
+                //hide openview
+                d3.selectAll(".variationview .zoomedGroup").style("display", "none");
+                d3.selectAll(".variationview .overviewGroup").style("display", "none");
+                //show overview zoomed
+                d3.select("#mainSVGContents .overviewGroup").style("display", "inline-block");
+                d3.select("#mainSVGContents .zoomedGroup").style("display", "none");
+            }
         }
     },
     /**
