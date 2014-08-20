@@ -904,17 +904,14 @@ Biojs.HGVViewer = Biojs.extend(
      * instance.plotOverview();
      *
     **/
-    plotOverview: function(){
-        if(this._zoomedViewExists){
+    plotOverview: function(repaint){
+        if(this._zoomedViewExists && repaint != true){
             d3.selectAll("svg").attr("width", this.opt.width);
             d3.select("#mainSVGContents .overviewGroup").style("display", "inline-block");
             return 0;
         }
         var that = this;
         var typeOfMutation = this.activeMutationTypes;
-        this._mutationTypes.map(function(mutation){
-            d3.selectAll("."+mutation).remove();
-        });
         for (position in this.variantDataObject){
             var aaData = this.variantDataObject[position];
             var shift = 0;
@@ -1124,16 +1121,11 @@ Biojs.HGVViewer = Biojs.extend(
         this.activeMutationTypes.sort();
         Biojs.console.log("Active types: " + this.activeMutationTypes)
         if (this._isZoomActive){
-            this._mutationTypes.map(function(mutation){
-                d3.selectAll("."+mutation).remove();
-            });
             this._zoomedViewExists = false;
             d3.selectAll(".zoomedGroup").remove();
             var sliderPosition = d3.select("#positionText").html();
             this.plotZoomedIndividualView(true);
             this.plotZoomedOverview(sliderPosition);
-            //d3.select("#mainSVGContents .zoomedGroup").style("display", "inline-block");
-            //d3.select("#mainSVGContents .overviewGroup").style("display", "none");
             if(that._isArrowDown){
                 //Hide Overview
                 d3.select("#mainSVGContents .overviewGroup").style("display", "none");
@@ -1150,13 +1142,14 @@ Biojs.HGVViewer = Biojs.extend(
                 d3.select("#mainSVGContents .overviewGroup").style("display", "none");
                 d3.select("#mainSVGContents .zoomedGroup").style("display", "inline-block");
             }
+            that._zoomedViewExists = false;
         }
         else{
-            //d3.selectAll(".overviewGroup").remove();
-            this.plotOverview();
+            that._mutationTypes.map(function(mutation){
+                d3.selectAll(".overviewGroup " + "."+mutation).remove();
+            });
+            this.plotOverview(true);
             this.plotIndividualView(true);
-         //   d3.select("#mainSVGContents .overviewGroup").style("display", "inline-block");
-           // d3.select("#mainSVGContents .zoomedGroup").style("display", "none");
             if(that._isArrowDown){
                 //Hide Overview
                 d3.select("#mainSVGContents .overviewGroup").style("display", "none");
@@ -1171,7 +1164,6 @@ Biojs.HGVViewer = Biojs.extend(
                 d3.selectAll(".variationview .overviewGroup").style("display", "none");
                 //show overview zoomed
                 d3.select("#mainSVGContents .overviewGroup").style("display", "inline-block");
-                d3.select("#mainSVGContents .zoomedGroup").style("display", "none");
             }
         }
     },
