@@ -52,7 +52,7 @@
 * @example
 * var instance = new Biojs.HGVViewer({
 *    target: "YourOwnDivId",
-*    baseUrl: "http://wwwdev.ebi.ac.uk/uniprot/services/variant/",
+*    baseUrl: "http://saketkc.github.io/biojs/src/main/resources/data/hgv/",
 *    accession: "J3KP33"
 * });
 *
@@ -70,7 +70,7 @@ Biojs.HGVViewer = Biojs.extend(
     opt:{
         accession: null, //accession number of the protein to be fetched
         availableScores: {"SIFT": "siftScore", "Polyphen": "polyphenScore"},
-        baseUrl: "http://wwwdev.ebi.ac.uk/uniprot/services/variant/", //Base Url
+        baseUrl: "http://saketkc.github.io/biojs/src/main/resources/data/hgv/", //Base Url
         height: 170, //SVG Height
         width: 800, //SVG Width
         target: "", //target div
