@@ -1,5 +1,3 @@
-//require("d3");
-
 module.exports.tree = require("./tree.js");
 module.exports.tree.label = require("./label.js");
 module.exports.tree.diagonal = require("./diagonal.js");
