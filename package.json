@@ -2,14 +2,14 @@
   "name": "biojs-template", 
   "description": "A template for developing biojs2 components", 
   "version": "0.0.1",
-  "homepage": "http://github.com/biojs/biojs2", 
+  "homepage": "http://github.com/<username>/<repo>", 
   "repository": {
     "type": "git",
     "url": "git://github.com/biojs/biojs2"
   },
   "author": {
-    "name": "David Dao", 
-    "email": "biojs-technical@googlegroups.com"
+    "name": "Your name", 
+    "email": "your mail"
   },
   "dependencies": {
 
