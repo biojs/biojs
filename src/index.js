@@ -4,22 +4,24 @@
 */
 
 
-var biojs = {}
+var graduates = {};
 
-biojs.graduates = function() {
+graduates.parse = function() {
     
     var data = ["greenify:DE","daviddao:HK","mhelvens:NL","timruffles:UK","iriscshih:TW"];
-    var graduates = {};
+    var parsed = {};
 
     // count countries
     for (var i = 0; i < data.length; i++) {
         // Please fill in your code here! 
     }
 
-    console.log(graduates); 
+    console.log(parsed); 
+
+    return parsed;
 }
 
-biojs.graduates(); //Should print {DE: 1, HK: 1, NL: 1, UK: 1, TW: 1}
+graduates.parse(); //Should print {DE: 1, HK: 1, NL: 1, UK: 1, TW: 1}
 
 
-//module.exports = biojs; //Uncomment this to export the object for other biojs components!
+module.exports = graduates; // Export the object for other components

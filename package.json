@@ -15,11 +15,9 @@
 
   },
   "devDependencies": { 
-    "assert": "^1.1.1",
     "browserify": "~4.2.0",
     "chai": "^1.9.1",
     "mocha": "~1.20.1",
-    "should": "^4.0.4",
     "uglify-js": "~2.4.15"
   },
   "keywords": [
