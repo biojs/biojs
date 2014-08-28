@@ -25,7 +25,8 @@ Documentation
 We are working on a new platform [edu.biojs.net](http://edu.biojs.net/).
 [Pull requests](https://github.com/biojs/tutorials) are welcome.
 
-More detailed *documentation* and *tutorials* will follow soon.
+For beginners there is a [BioJS 2 101 tutorial series](http://edu.biojs.net/categories/101_tutorial/index.html).
+For a quick migration to BioJS 2 we created [this document](http://edu.biojs.net/tutorials/aQuickGuideForMigrating.html).
 
 
 What do I need?
