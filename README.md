@@ -39,58 +39,6 @@ Upgrading to BioJS 2.0
 Old Components of BioJS 0.1 can rely on [biojs-legacy](http://edu.biojs.net/tutorials/aQuickGuideForMigrating.html). But we highly encourage you to write your code more modular.
 
 
-FAQ
-----
-
-> What happened with the BioJS event system?
-
-We realised that a custom (buggy) implentation of the Observer pattern is too hard to maintain. For more info see our [wiki](https://github.com/biojs/biojs2/wiki/Event-systems)
-
-> How do I create a new package?
-
-We have a [beginners guide](http://edu.biojs.net/tutorials/02_howtoCreate.html).
-
-> Where should I publish my package on github?
-
-We try to keep popular / "recommended" components under the biojs account (e.g `biojs-events`)
-So just start with your own github account and wait until the community says it is "super-duper-mega-awesome-recomended". 
-
-> How to name my package?
-
-You are completely free to choose your own awesome name. However if you are a bit uncreative, you can adapt this naming convention (it helps you to be modular).
-
-`biojs-[io/rest/vis/algo/...]-[name]`
-
-- `io` for components which are responsible for parsing data into a specific format (aka parser)
-- `vis` for components which are visualizing data sets
-- `rest` for REST apis to databases
-- `algo` for server/client side algorithms processing the data (e.g. alignments, neural networks, markov models, graph algorithms)
-
-> How to setup continous integration (or how to get the fancy build badges)?
-
-* new project -> github -> add your project
-* choose node
-* setup build script
-```
-npm install --silent
-npm test
-npm run build-browser
-```
-* change the nvm to node __0.10__
-* artifcats: enter the relative dir of files that should be downloadable (e.g. `build/biojs_io_fasta.min.js`)
-* get your badges
-
-If you prefer Travis
-
-Add a `.travis.yml` and add your project on Travis.
-```
-language: node_js
-node_js:
-  - "0.11"
-  - "0.10"
-```
-(they automatically run `npm install` and `npm test`)
-
 How to build a BioJS package
 ---------------
 
