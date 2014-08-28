@@ -14,15 +14,9 @@ BioJS 2.0
 
  ```
 
-__WARNING__: this is work in progress and NOT in production yet.
+You can already browse the new [registry](http://biojs.net/registry-ui/client/#/). Transition of components from BioJS1 is in progress.
 
-
-__PLEASE MOVE YOUR PACKAGE FOLDER TO A SEPARATE REPO__ 
-
-(keeping them as a separate folder allows people to install directly from git)
-
-
-You can browse the [registry](http://biojs.net/registry-ui/client/#/).
+We recently switched to a new concept, so maybe you are looking for the old [BioJS 1](https://github.com/biojs/biojs1)?
 
 
 Documentation
@@ -31,60 +25,69 @@ Documentation
 We are working on a new platform [edu.biojs.net](http://edu.biojs.net/).
 [Pull requests](https://github.com/biojs/tutorials) are welcome.
 
-More detailed *documentation* and *tutorials* follow soo
+More detailed *documentation* and *tutorials* will follow soon.
+
+
+What do I need?
+---------------
+
+* [git](https://try.github.io/levels/1/challenges/1)
+* npm
+
+
+How to use a package?
+---------------------
+
+Normally the author provides you with a minimized version of his component, for convenience we also maintain meta packages where we bundle several packages and put them on a CDN for super-fast loading (coming soon).
+
+In general the README.md of each project should explain you how to interact with it. Furthermore we have a few guidelines like 
+
+* (biojs-events)[https://github.com/biojs/biojs-events] (Convention for the Observer pattern)
+* (example snippets)[https://github.com/greenify/biojs-sniper] (coming soon: snippets on JSBin)
+
+Especially the snippets should give you a quick start on how to use a component.
+
+How to build a BioJS package
+----------------------------
+
+In the package folder
+
+```
+npm install # this downloads all the dependencies of a package
+npm test # optional
+npm run build-browser # this will generate a JS file usuable in every browser (normally in build)
+```
+
+Working examples of the component can be found in the [`snippets`](https://github.com/greenify/biojs-sniper) folder of a package.
+
+
+How to create a package?
+-------------------------
+
+-> read our [guide](http://edu.biojs.net/).
+
+
+How to publish a package?
+-------------------------
+
+Publish it on [npm](npmjs.org) and just send us a pull request to the [index.toml](https://github.com/biojs/registry/blob/master/index.toml).
+
+
+Install npm
+--------------
+
+Mac Users
+
+
+```sh
+ruby -e "$(curl -fsSL https://raw.github.com/Homebrew/homebrew/go/install)"  # this installs homebrew (package manager)
+brew install node # now we install the npm package
+```
+
+[Extended guide](http://edu.biojs.net/tutorials/01_gettingStarted.html)
+
 
 Upgrading to BioJS 2.0
 ----
 
 Old Components of BioJS 0.1 can rely on [biojs-legacy](http://edu.biojs.net/tutorials/aQuickGuideForMigrating.html). But we highly encourage you to write your code more modular.
-
-
-How to build a BioJS package
----------------
-
-In the package folder
-
-###1. Npm install
-```
-npm install
-```
-
-###2. Run tests
-
-```
-npm test
-```
-
-###3. Build the file for a browser
-
-```
-npm run build-browser
-```
-
-Working examples of the component can be found in the `snippets` folder of a package
-
-
-How to setup npm 
---------------
-
-For Mac Users
-
-
-###1. Install homebrew
-
-```sh
-ruby -e "$(curl -fsSL https://raw.github.com/Homebrew/homebrew/go/install)"
-```
-
-###2. Install node and npm
-```sh
-brew install node
-```
-
-###3. Clone our repository
-
-```sh
-git clone https://github.com/biojs/biojs2.git
-```
-
-That's it! Now you can build your component!
