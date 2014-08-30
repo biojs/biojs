@@ -43,8 +43,8 @@ Normally the author provides you with a minimized version of his component, for 
 
 In general the README.md of each project should explain you how to interact with it. Furthermore we have a few guidelines like 
 
-* (biojs-events)[https://github.com/biojs/biojs-events] (Convention for the Observer pattern)
-* (example snippets)[https://github.com/greenify/biojs-sniper] (coming soon: snippets on JSBin)
+* [biojs-events](https://github.com/biojs/biojs-events) (Convention for the Observer pattern)
+* [example snippets](https://github.com/greenify/biojs-sniper) (coming soon: snippets on JSBin)
 
 Especially the snippets should give you a quick start on how to use a component.
 
