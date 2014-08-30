@@ -85,7 +85,7 @@ ruby -e "$(curl -fsSL https://raw.github.com/Homebrew/homebrew/go/install)"  # t
 brew install node # now we install the npm package
 ```
 
-[Extended guide](http://edu.biojs.net/tutorials/01_gettingStarted.html)
+[Extended guide](http://edu.biojs.net/series/101_graduate/02_getting_started.html)
 
 
 Upgrading to BioJS 2.0
