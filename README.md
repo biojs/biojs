@@ -91,7 +91,7 @@ What do I need to develop?
 * [npm](http://nodejs.org/download/)
 
 
-[Detailed instllation instructions](http://edu.biojs.net/series/101_graduate/02_getting_started.html).
+[Detailed installation instructions](http://edu.biojs.net/series/101_graduate/02_getting_started.html).
 
 Even tough you can install node on Windows, a Unix-like OS is generally a more productive development enviroment.
 
@@ -124,7 +124,7 @@ Publish it on [npm](npmjs.org) and just send us a pull request to the [index.tom
 Contact
 -------
 
-[There are many ways too contact us](http://0.0.0.0:4000/get_involved.html)
+↝ [There are many ways too contact us](http://0.0.0.0:4000/get_involved.html)
 
 License
 -------
