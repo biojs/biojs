@@ -14,10 +14,31 @@ BioJS 2.0
 
  ```
 
-You can already browse the new [registry](http://biojs.net/registry-ui/client/#/). Transition of components from BioJS1 is in progress.
+Annoucements
+----------------
 
 We recently switched to a new concept, so maybe you are looking for the old [BioJS 1](https://github.com/biojs/biojs1)?
 
+You can already browse the new [registry](http://biojs.net/registry-ui/client/#/). Transition of components from BioJS1 is in progress.
+
+
+Upgrading to BioJS 2.0
+----------------------
+
+Old Components of BioJS 0.1 can rely on [biojs-legacy](http://edu.biojs.net/tutorials/aQuickGuideForMigrating.html). But we highly encourage you to write your code more [modular](http://edu.biojs.net/categories/101_tutorial/index.html).
+
+
+Objectives
+----------
+
+* Represent consistently biological information across different projects
+* Ease discovery, test and integration of graphical components
+* Standardize and facilitate components development
+
+Why is nothing in this repo?
+---------------------------
+
+For BioJS 2.0 every component is a separate github repository - here you see only the template project for our 8101 tutorial](http://edu.biojs.net/categories/101_tutorial/index.html). To search for a package, visit our [registry](registry.biojs.net)
 
 Documentation
 --------------
@@ -28,25 +49,51 @@ We are working on a new platform [edu.biojs.net](http://edu.biojs.net/).
 For beginners there is a [BioJS 2 101 tutorial series](http://edu.biojs.net/categories/101_tutorial/index.html).
 For a quick migration to BioJS 2 we created [this document](http://edu.biojs.net/tutorials/aQuickGuideForMigrating.html).
 
+What is a package?
+------------------
 
-What do I need?
----------------
+A tiny building block like a FASTA parser or a visulization piece. If it obeys the rule "do one thing and do it well" , then it is (most likely) a package. The BioJS packages are published on the JavaScript package manager [npm](npmjs.org).
 
-* [git](https://try.github.io/levels/1/challenges/1)
-* npm
+What do I need to use a package?
+-------------------------------
 
+A web browser. For convenience you can grab a recent CDN version of
 
-How to use a package?
----------------------
+* [all parsers](https://github.com/biojs/biojs-meta-parser)
+* [all visulization components](https://github.com/biojs/biojs-meta-vis)
 
-Normally the author provides you with a minimized version of his component, for convenience we also maintain meta packages where we bundle several packages and put them on a CDN for super-fast loading (coming soon).
+Normally the author provides also provides you with a minimized version of his component, but you can always easily build it yourself by running "npm run build-browser".
 
-In general the README.md of each project should explain you how to interact with it. Furthermore we have a few guidelines like 
+How do I use a package?
+-------------------------------
+
+In general the `README.md` of each project should explain you how to interact with it.
+
+Guidelines
+-----------
+
+We have a few guidelines like 
 
 * [biojs-events](https://github.com/biojs/biojs-events) (Convention for the Observer pattern)
 * [example snippets](https://github.com/greenify/biojs-sniper) (coming soon: snippets on JSBin)
 
 Especially the snippets should give you a quick start on how to use a component.
+
+Gold standards
+--------------
+
+Our [gold standards](https://github.com/biojs/biojs/wiki/Gold-standards) are conventions we highly encourage you to follow. They will help you to create a great package!
+
+What do I need to develop?
+-------------------------------
+
+* [git](https://try.github.io/levels/1/challenges/1)
+* [npm](http://nodejs.org/download/)
+
+
+[Detailed instllation instructions](http://edu.biojs.net/series/101_graduate/02_getting_started.html).
+
+Even tough you can install node on Windows, a Unix-like OS is generally a more productive development enviroment.
 
 How to build a BioJS package
 ----------------------------
@@ -56,7 +103,7 @@ In the package folder
 ```
 npm install # this downloads all the dependencies of a package
 npm test # optional
-npm run build-browser # this will generate a JS file usuable in every browser (normally in build)
+npm run build-browser # this will generate a JS file usuable in every browser (normally in the build folder)
 ```
 
 Working examples of the component can be found in the [`snippets`](https://github.com/greenify/biojs-sniper) folder of a package.
@@ -65,7 +112,7 @@ Working examples of the component can be found in the [`snippets`](https://githu
 How to create a package?
 -------------------------
 
--> read our [guide](http://edu.biojs.net/).
+↝ read our [guide](http://edu.biojs.net/categories/101_tutorial/index.html).
 
 
 How to publish a package?
@@ -74,21 +121,12 @@ How to publish a package?
 Publish it on [npm](npmjs.org) and just send us a pull request to the [index.toml](https://github.com/biojs/registry/blob/master/index.toml).
 
 
-Install npm
---------------
+Contact
+-------
 
-Mac Users
+[There are many ways too contact us](http://0.0.0.0:4000/get_involved.html)
 
+License
+-------
 
-```sh
-ruby -e "$(curl -fsSL https://raw.github.com/Homebrew/homebrew/go/install)"  # this installs homebrew (package manager)
-brew install node # now we install the npm package
-```
-
-[Extended guide](http://edu.biojs.net/series/101_graduate/02_getting_started.html)
-
-
-Upgrading to BioJS 2.0
-----
-
-Old Components of BioJS 0.1 can rely on [biojs-legacy](http://edu.biojs.net/tutorials/aQuickGuideForMigrating.html). But we highly encourage you to write your code more modular.
+[Apache 2](http://www.apache.org/licenses/LICENSE-2.0)
