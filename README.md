@@ -124,7 +124,7 @@ Publish it on [npm](npmjs.org) and just send us a pull request to the [index.tom
 Contact
 -------
 
-↝ [There are many ways too contact us](http://0.0.0.0:4000/get_involved.html)
+↝ [There are many ways to contact us](http://0.0.0.0:4000/get_involved.html)
 
 License
 -------
