@@ -20,7 +20,7 @@ snipspector.parse = function() {
     "rs9604959	22	15479107	CG",
     "rs9604967	22	15492342	CC"];
 
-    var parsed = {};
+    var chromosomes = [];
 
     // analyze snippets
     // homo(zygous): AA
@@ -30,9 +30,9 @@ snipspector.parse = function() {
         // Please fill in your code here! 
     }
 
-    console.log(parsed); 
+    console.log(chromosomes); 
 
-    return parsed;
+    return chromosomes;
 }
 
 snipspector.parse(); //Should print [{name: "20", homo: 2, hetero: 1, del: 0,

@@ -5,7 +5,7 @@
   "homepage": "http://github.com/<username>/<repo>", 
   "repository": {
     "type": "git",
-    "url": "git://github.com/biojs/biojs2"
+    "url": "git://github.com/<username>/<repo>"
   },
   "author": {
     "name": "Your name", 
