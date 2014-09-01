@@ -7,12 +7,14 @@ var tutorial = require("../");
 describe('Graduates', function(){
   // do any init stuff here
   beforeEach(function(){
-    graduates = tutorial.parse;
+    snipspector = tutorial.parse;
   });
   describe('parse', function(){
     it('should return match with default object', function(){
-      dummyObj = {DE: 1, HK: 1, NL: 1, UK: 1, TW: 1};
-      assert.deepEqual(graduates(), dummyObj);
+      dummyObj = [{name: "20", homo: 2, hetero: 1, del: 0,
+                  {name: "21", homo: 1, hetero: 1, del: 1}, 
+                  {name: "22", homo 1, hetero: 1, del: 0 }];
+      assert.deepEqual(snipspector(), dummyObj);
     });
   });
 });
