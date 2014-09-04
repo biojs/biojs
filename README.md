@@ -19,14 +19,7 @@ Annoucements
 
 We recently switched to a new concept, so maybe you are looking for the old [BioJS 1](https://github.com/biojs/biojs1)?
 
-You can already browse the new [registry](http://biojs.net/registry-ui/client/#/). Transition of components from BioJS1 is in progress.
-
-
-Upgrading to BioJS 2.0
-----------------------
-
-Old Components of BioJS 0.1 can rely on [biojs-legacy](http://edu.biojs.net/tutorials/aQuickGuideForMigrating.html). But we highly encourage you to write your code more [modular](http://edu.biojs.net/categories/101_tutorial/index.html).
-
+You can already browse the new [registry][registry]. Transition of components from BioJS1 is in progress.
 
 Objectives
 ----------
@@ -35,10 +28,33 @@ Objectives
 * Ease discovery, test and integration of graphical components
 * Standardize and facilitate components development
 
+What is different in BioJS 2.0?
+-------------------------------
+
+↝ [Summary presentation](https://docs.google.com/presentation/d/17Q4olwMEd0hFKa0MA01Dx9RHEWbNiI1hJ0Ng2v_1D30/) of the differences between BioJS1 and BioJS 2.0.
+
+Upgrading to BioJS 2.0
+----------------------
+
+Old Components of BioJS 0.1 can rely on [biojs-legacy][migrationguide]. But we highly encourage you to write your code more [modular][101].
+
+We can ensure that if you have contributed with a component in the BioJS1 registry, it will continue to work in BioJS2.
+In fact we will script the migration and at some day in November or December migrate all remaining BioJS1 components.
+The final update of the EBI registry will be at the end of this year.
+
+
+Contact
+-------
+
+↝ [There are many ways to contact us](http://biojs.net/get_involved.html)
+
+For technical queries (questions, suggestions, proposal or bug reports) [Github issues](https://github.com/biojs/biojs/issues) are preferred.
+
+
 Why is nothing in this repo?
 ---------------------------
 
-For BioJS 2.0 every component is a separate github repository - here you see only the template project for our  [101 tutorial](http://edu.biojs.net/categories/101_tutorial/index.html). To search for a package, visit our [registry](http://registry.biojs.net)
+For BioJS 2.0 every component is a separate github repository - here you see only the template project for our  [101 tutorial][101]. To search for a package, visit our [registry][registry].
 
 Documentation
 --------------
@@ -46,13 +62,13 @@ Documentation
 We are working on a new platform [edu.biojs.net](http://edu.biojs.net/).
 [Pull requests](https://github.com/biojs/tutorials) are welcome.
 
-For beginners there is a [BioJS 2 101 tutorial series](http://edu.biojs.net/categories/101_tutorial/index.html).
-For a quick migration to BioJS 2 we created [this document](http://edu.biojs.net/tutorials/aQuickGuideForMigrating.html).
+For beginners there is a [BioJS 2 101 tutorial series][101].
+For a quick migration to BioJS 2 we created [this document][migrationguide].
 
 What is a package?
 ------------------
 
-A tiny building block like a FASTA parser or a visulization piece. If it obeys the rule "do one thing and do it well" , then it is (most likely) a package. The BioJS packages are published on the JavaScript package manager [npm](npmjs.org).
+A tiny building block like a FASTA parser or a visualization piece. If it obeys the rule "do one thing and do it well" , then it is (most likely) a package. The BioJS packages are published on the JavaScript package manager [npm](npmjs.org).
 
 What do I need to use a package?
 -------------------------------
@@ -75,14 +91,14 @@ Guidelines
 We have a few guidelines like 
 
 * [biojs-events](https://github.com/biojs/biojs-events) (Convention for the Observer pattern)
-* [example snippets](https://github.com/greenify/biojs-sniper) (coming soon: snippets on JSBin)
+* [example snippets](https://github.com/greenify/biojs-sniper) (coming soon: generic snippets on JSBin)
 
 Especially the snippets should give you a quick start on how to use a component.
 
 Gold standards
 --------------
 
-Our [gold standards](https://github.com/biojs/biojs/wiki/Gold-standards) are conventions we highly encourage you to follow. They will help you to create a great package!
+Our [gold standards](https://github.com/biojs/biojs/wiki/Gold-standards) are conventions we highly encourage you to follow (especially for JS beginners). They will help you to create a great package!
 
 What do I need to develop?
 -------------------------------
@@ -93,7 +109,7 @@ What do I need to develop?
 
 [Detailed installation instructions](http://edu.biojs.net/series/101/02_getting_started.html).
 
-Even tough you can install node on Windows, a Unix-like OS is generally a more productive development enviroment.
+Even tough you can easily install node on Windows, a Unix-like OS is generally a more productive development enviroment.
 
 How to build a BioJS package
 ----------------------------
@@ -112,7 +128,7 @@ Working examples of the component can be found in the [`snippets`](https://githu
 How to create a package?
 -------------------------
 
-↝ read our [guide](http://edu.biojs.net/categories/101_tutorial/index.html).
+↝ read our [guide][101]
 
 
 How to publish a package?
@@ -120,13 +136,12 @@ How to publish a package?
 
 Publish it on [npm](npmjs.org) and just send us a pull request to the [index.toml](https://github.com/biojs/registry/blob/master/index.toml).
 
-
-Contact
--------
-
-↝ [There are many ways to contact us](http://0.0.0.0:4000/get_involved.html)
-
 License
 -------
 
 [Apache 2](http://www.apache.org/licenses/LICENSE-2.0)
+
+
+[101]: http://edu.biojs.net/categories/101_tutorial/index.html
+[migrationguide]: http://edu.biojs.net/tutorials/aQuickGuideForMigrating.html
+[registry]: http://registry.biojs.net/client/
