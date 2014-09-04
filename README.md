@@ -38,7 +38,7 @@ Objectives
 Why is nothing in this repo?
 ---------------------------
 
-For BioJS 2.0 every component is a separate github repository - here you see only the template project for our  [101 tutorial](http://edu.biojs.net/categories/101_tutorial/index.html). To search for a package, visit our [registry](registry.biojs.net)
+For BioJS 2.0 every component is a separate github repository - here you see only the template project for our  [101 tutorial](http://edu.biojs.net/categories/101_tutorial/index.html). To search for a package, visit our [registry](http://registry.biojs.net)
 
 Documentation
 --------------
