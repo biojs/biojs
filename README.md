@@ -91,7 +91,7 @@ What do I need to develop?
 * [npm](http://nodejs.org/download/)
 
 
-[Detailed installation instructions](http://edu.biojs.net/series/101_graduate/02_getting_started.html).
+[Detailed installation instructions](http://edu.biojs.net/series/101/02_getting_started.html).
 
 Even tough you can install node on Windows, a Unix-like OS is generally a more productive development enviroment.
 
