@@ -3,7 +3,7 @@
 * You can find the documentation about this tutorial here
 * http://edu.biojs.net/categories/101_tutorial/index.html
 *
-* Can you build a parser to analyze this snippet file?
+* Can you build a parser to analyze this SNP file?
 */
 
 
@@ -22,7 +22,7 @@ snipspector.parse = function() {
 
     var chromosomes = [];
 
-    // analyze snippets
+    // analyze SNPs
     // homo(zygous): AA
     // hetero(zygous): AC
     // del(etion): A-, -A or --
