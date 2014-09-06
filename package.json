@@ -1,5 +1,5 @@
 {
-  "name": "biojs-template", 
+  "name": "biojs-vis-snipspector", 
   "description": "A template for developing biojs2 components", 
   "version": "0.0.1",
   "homepage": "http://github.com/<username>/<repo>", 
@@ -26,7 +26,7 @@
   "main": "./index.js", 
   "scripts": {
     "test": "mocha --reporter spec",
-    "build-browser": "browserify browser.js > build/biojs-template.min.js" 
+    "build-browser": "browserify browser.js > build/biojs-vis-snipspector.min.js" 
   },
   "license": "Apache 2"
 }
