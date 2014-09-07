@@ -1,32 +1,31 @@
 {
-  "name": "biojs-template", 
-  "description": "A template for developing biojs2 components", 
+  "name": "biojs-template",
+  "description": "A template for developing biojs2 components",
   "version": "0.0.1",
-  "homepage": "http://github.com/<username>/<repo>", 
+  "homepage": "http://github.com/<username>/<repo>",
   "repository": {
     "type": "git",
     "url": "git://github.com/<username>/<repo>"
   },
   "author": {
-    "name": "Your name", 
+    "name": "Your name",
     "email": "your mail"
   },
-  "dependencies": {
-
-  },
-  "devDependencies": { 
+  "dependencies": {},
+  "devDependencies": {
     "browserify": "~4.2.0",
     "chai": "^1.9.1",
+    "mkdirp": "^0.5.0",
     "mocha": "~1.20.1",
     "uglify-js": "~2.4.15"
   },
   "keywords": [
     "biojs, tutorial"
   ],
-  "main": "./index.js", 
+  "main": "./index.js",
   "scripts": {
     "test": "mocha --reporter spec",
-    "build-browser": "browserify browser.js > biojs-template.min.js" 
+    "build-browser": "mkdirp build; browserify browser.js > build/biojs-template.min.js"
   },
   "license": "Apache 2"
 }
