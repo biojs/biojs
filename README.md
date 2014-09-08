@@ -98,7 +98,7 @@ Especially the snippets should give you a quick start on how to use a component.
 Gold standards
 --------------
 
-Our [gold standards](https://github.com/biojs/biojs/wiki/Gold-standards) are conventions we highly encourage you to follow (especially for JS beginners). They will help you to create a great package!
+Our [gold standards](http://edu.biojs.net/series/101/70_gold_standard.html) are conventions we highly encourage you to follow (especially for JS beginners). They will help you to create a great package!
 
 What do I need to develop?
 -------------------------------
