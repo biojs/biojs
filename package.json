@@ -36,6 +36,7 @@
   "scripts": {
     "test": "mocha --reporter spec",
     "build-browser": "mkdirp build; browserify browser.js -o build/biojs-template.js",
+	"build-browser-min": "gulp build-browser-gzip",
     "watch": "mkdirp build; watchify browser.js -o build/biojs-template.js"
   },
   "license": "Apache 2"
