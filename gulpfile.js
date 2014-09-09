@@ -16,7 +16,8 @@ var browserify = require('gulp-browserify');
 // config
 var buildDir = "build";
 var browserFile = "browser.js";
-var outputFile = "template";
+var packageConfig = require('./package.json');
+var outputFile = packageConfig.name;
 
 // auto config
 var outputFileSt = outputFile + ".js";
