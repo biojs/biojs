@@ -8,7 +8,6 @@ var uglify = require('gulp-uglify');
 var path = require('path');
 var join = path.join;
 var mkdirp = require('mkdirp');
-var watchify = require("watchify");
 var gzip = require('gulp-gzip');
 var clean = require('gulp-rimraf');
 var rename = require('gulp-rename');
@@ -25,7 +24,8 @@ var outputFilePath = join(buildDir,outputFileSt);
 var outputFileMinSt = outputFile + ".min.js";
 var outputFileMin = join(buildDir,outputFileMinSt);
 
-gulp.task('default', ['lint', 'test', 'build-browser', 'build-browser-gzip']);
+// a failing test breaks the whole build chain
+gulp.task('default', ['lint', 'build-browser', 'build-browser-gzip']);
 
 gulp.task('lint', function() {
   return gulp.src('./src/*.js')
@@ -42,7 +42,6 @@ gulp.task('test', function () {
 });
 
 gulp.task('watch', function() {
-   // watch coffee files
    gulp.watch(['./src/**/*.js', './test/**/*.js'], function() {
      gulp.run('test');
    });
@@ -50,20 +49,14 @@ gulp.task('watch', function() {
 
 // browserify debug
 gulp.task('build-browser',['init'], function() {
-  gulp.src(outputFilePath).pipe(clean());
-
-  // make a copy the
-  var browserifyOptions = {debug: true};
-
   return gulp.src(browserFile)
-  .pipe(browserify(browserifyOptions))
+  .pipe(browserify({debug:true}))
   .pipe(rename(outputFileSt))
   .pipe(gulp.dest(buildDir));
 });
 
 // browserify min
 gulp.task('build-browser-min',['init'], function() {
-  gulp.src(outputFileMin).pipe(clean());
   return gulp.src(browserFile)
   .pipe(browserify({}))
   .pipe(uglify())
@@ -82,12 +75,11 @@ gulp.task('build-browser-gzip', ['build-browser-min'], function() {
 
 // will remove everything in build
 gulp.task('clean', function() {
-  gulp.src(buildDir).pipe(clean());
-  gulp.run('init');
+  return gulp.src(buildDir).pipe(clean());
 });
 
 // just makes sure that the build dir exists
-gulp.task('init', function() {
+gulp.task('init', ['clean'], function() {
   mkdirp(buildDir, function (err) {
     if (err) console.error(err)
   });
