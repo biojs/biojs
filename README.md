@@ -130,6 +130,7 @@ How to create a package?
 
 ↝ read our [guide][101]
 
+To bootstrap a new project you can use the BioJS [slush generator](https://github.com/biojs/slush-biojs).
 
 How to publish a package?
 -------------------------
