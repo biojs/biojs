@@ -42,6 +42,17 @@ We can ensure that if you have contributed with a component in the BioJS1 regist
 In fact we will script the migration and at some day in November or December migrate all remaining BioJS1 components.
 The final update of the EBI registry will be at the end of this year.
 
+Searching for packages
+----------------------
+
+[registry.biojs.net](http://registry.biojs.net)
+
+Playing with BioJS packages
+-----------------------------
+
+↝ [Playground](http://edu.biojs.net/categories/playground/index.html)
+
+__warning__: in build!
 
 Contact
 -------
@@ -131,6 +142,12 @@ How to create a package?
 ↝ read our [guide][101]
 
 To bootstrap a new project you can use the BioJS [slush generator](https://github.com/biojs/slush-biojs).
+
+```
+npm install -g slush slush-biojs
+mkdir biojsAWesome && cd biojsAwesome
+slush biojs
+```
 
 How to publish a package?
 -------------------------
