@@ -163,7 +163,7 @@ slush biojs
 How to publish a package?
 -------------------------
 
-Publish it on [npm](npmjs.org) and just send us a pull request to the [index.toml](https://github.com/biojs/registry/blob/master/index.toml).
+Publish it on [npm](npmjs.org) and add `biojs` as keyword ([more info][publishit]).
 
 License
 -------
@@ -174,6 +174,7 @@ License
 [101]: http://edu.biojs.net/categories/101_tutorial/index.html
 [issue]: https://github.com/biojs/biojs/issues
 [migrationguide]: http://edu.biojs.net/tutorials/aQuickGuideForMigrating.html
+[publishit]: http://edu.biojs.net/series/101/60_publish_it.html
 [realmigration]: https://github.com/biojs/biojs/wiki/biojs1-biojs2-migration
 [registry]: http://registry.biojs.net/client/
 [registryui]: https://github.com/biojs/registry-ui
