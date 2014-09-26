@@ -38,6 +38,7 @@ Why is nothing in this repo?
 
 For BioJS 2.0 every component is a separate github repository. To search for a package, visit our [registry][registry].
 This repo is kept as intro guide and discussion repo. Feel free to open an [issue][issue] (questions, suggestions, proposal or bug reports) here).
+However you are still invited to show your interest in this project and to __star__ this repo.
 
 What is different in BioJS 2.0?
 -------------------------------
