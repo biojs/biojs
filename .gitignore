@@ -1,6 +1,0 @@
-*.swp
-.sass-cache
-node_modules
-npm-debug.log
-*.min.js
-build
