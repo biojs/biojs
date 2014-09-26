@@ -28,6 +28,17 @@ Objectives
 * Ease discovery, test and integration of graphical components
 * Standardize and facilitate components development
 
+What is BioJS?
+------------------
+
+BioJS builds a infrastructure, guidelines and tools to avoid the reinvention of the wheel in life sciences (= "Docker for Bio web components"). Our community builds modules than can be reused by anyone.
+
+Why is nothing in this repo?
+---------------------------
+
+For BioJS 2.0 every component is a separate github repository. To search for a package, visit our [registry][registry].
+This repo is kept as intro guide and discussion repo. Feel free to open an [issue][issue] (questions, suggestions, proposal or bug reports) here).
+
 What is different in BioJS 2.0?
 -------------------------------
 
@@ -36,7 +47,9 @@ What is different in BioJS 2.0?
 Upgrading to BioJS 2.0
 ----------------------
 
-Old Components of BioJS 0.1 can rely on [biojs-legacy][migrationguide]. But we highly encourage you to write your code more [modular][101].
+Old Components of BioJS 0.1 can rely on [biojs-legacy][migrationguide], but we highly encourage you to write your code more [modular][101].
+
+↝ [Modular migration guide][realmigration]
 
 We can ensure that if you have contributed with a component in the BioJS1 registry, it will continue to work in BioJS2.
 In fact we will script the migration and at some day in November or December migrate all remaining BioJS1 components.
@@ -46,6 +59,8 @@ Searching for packages
 ----------------------
 
 [registry.biojs.net](http://registry.biojs.net)
+
+([Frontend repo][registryui], [backend][registry-workmen]).
 
 Playing with BioJS packages
 -----------------------------
@@ -61,11 +76,6 @@ Contact
 
 For technical queries (questions, suggestions, proposal or bug reports) [Github issues](https://github.com/biojs/biojs/issues) are preferred.
 
-
-Why is nothing in this repo?
----------------------------
-
-For BioJS 2.0 every component is a separate github repository - here you see only the template project for our  [101 tutorial][101]. To search for a package, visit our [registry][registry].
 
 Documentation
 --------------
@@ -161,5 +171,9 @@ License
 
 
 [101]: http://edu.biojs.net/categories/101_tutorial/index.html
+[issue]: https://github.com/biojs/biojs/issues
 [migrationguide]: http://edu.biojs.net/tutorials/aQuickGuideForMigrating.html
+[realmigration]: https://github.com/biojs/biojs/wiki/biojs1-biojs2-migration
 [registry]: http://registry.biojs.net/client/
+[registryui]: https://github.com/biojs/registry-ui
+[registry-workmen]: https://github.com/biojs/registry-workmen
