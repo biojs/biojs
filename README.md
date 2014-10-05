@@ -83,11 +83,14 @@ For technical queries (questions, suggestions, proposal or bug reports) [Github 
 Documentation
 --------------
 
-We are working on a new platform [edu.biojs.net](http://edu.biojs.net/).
+* We are working on a new learning platform [edu.biojs.net](http://edu.biojs.net/).
 [Pull requests](https://github.com/biojs/tutorials) are welcome.
-
-For beginners there is a [BioJS 2 101 tutorial series][101].
-For a quick migration to BioJS 2 we created [this document][migrationguide].
+  - For beginners: [BioJS 2 101 tutorial series][101].
+  - For a quick migration:  [migration guide][migrationguide].
+* There is also a community-based [wiki][wiki]
+ - [Common error messages](https://github.com/biojs/biojs/wiki/Common-error-messages)
+ - [FAQ](https://github.com/biojs/biojs/wiki/FAQ)
+ - [Migration without BioJS legacy][realmigration]
 
 What is a package?
 ------------------
@@ -181,3 +184,4 @@ License
 [registry]: http://registry.biojs.net/client/
 [registryui]: https://github.com/biojs/registry-ui
 [registry-workmen]: https://github.com/biojs/registry-workmen
+[wiki]: (https://github.com/biojs/biojs/wiki)
