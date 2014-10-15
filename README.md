@@ -16,7 +16,7 @@ BioJS 2.0
 
 [![Version](http://img.shields.io/badge/npm-v2.0.0_alpha-orange.svg?style=flat)](#) [![Build Status](http://img.shields.io/travis/biojs/edu.svg?style=flat)](https://travis-ci.org/biojs/edu)  [![License: Apache 2](http://img.shields.io/hexpm/l/plug.svg?style=flat)](https://github.com/biojs/biojs/blob/master/LICENSE) [![DOI](https://zenodo.org/badge/6143/biojs/biojs.png)](http://dx.doi.org/10.5281/zenodo.11893)
 
-Annoucements
+Announcements
 ----------------
 
 We recently switched to a new concept, so maybe you are looking for the old [BioJS 1](https://github.com/biojs/biojs1)?
@@ -104,7 +104,7 @@ A tiny building block like a FASTA parser or a visualization piece. If it obeys 
 A web browser. For convenience you can grab a recent CDN version of
 
 * [all parsers](https://github.com/biojs/biojs-meta-parser)
-* [all visulization components](https://github.com/biojs/biojs-meta-vis)
+* [all visualization components](https://github.com/biojs/biojs-meta-vis)
 
 Normally the author provides also provides you with a minimized version of his component, but you can always easily build it yourself by running "npm run build-browser".
 
