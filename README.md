@@ -27,32 +27,32 @@ Contents
 ----------
 
 
-1. [Essentials](#essentials) 
- 1.1. [Objectives](#objectives)    
- 1.2. [What is BioJS](#what-is-biojs)  
- 1.3. [Why is nothing in this repo](#why-is-nothing-in-this-repo)  
-2. [BioJS 1 vs.  BioJS 2](#biojs-1-vs.-biojs-2)  
-  2.1 [What is different in BioJS 2.0?](what-is-different-in-biojs-20)  
-  2.2 Upgrading to BioJS 2.0  
-3. Packages  
-  3.1. What is a package?  
-  3.2. What do I need to use a package?  
-  3.3. How do I use a package?  
-  3.4. How to build a BioJS package  
-4. Registry  
-  4.1. Searching for packages  
-  4.2. Embedding BioJS packages  
-5. Developing packages  
-  5.1. What do I need to develop?  
-  5.2. How to create a package?  
-  5.3. How to use snippets?  
-  5.4. Guidelines  
-  5.5. Gold standards  
-  5.6. How to publish a package?  
-6. Support  
-  6.1. Contact  
-  6.2. Documentation  
-7. License  
+1. [Essentials](#1-essentials)  
+ 1.1. [Objectives](#11-objectives)    
+ 1.2. [What is BioJS](#12-what-is-biojs)  
+ 1.3. [Why is nothing in this repo](#13-why-is-nothing-in-this-repo)  
+2. [BioJS 1 vs.  BioJS 2](#2-biojs-1-vs-biojs-2)  
+  2.1 [What is different in BioJS 2.0?](21-what-is-different-in-biojs-20)  
+  2.2 [Upgrading to BioJS 2.0](#22-upgrading-to-biojs-20)  
+3. [Packages](#3-packages)  
+  3.1. [What is a package?](#31-what-is-a-package)  
+  3.2. [What do I need to use a package?](#32-what-do-i-need-to-use-a-package)  
+  3.3. [How do I use a package?](#33-how-do-i-use-a-package)  
+  3.4. [How to build a BioJS package](#34-how-to-build-a-biojs-package)  
+4. [Registry](#4-registry) 
+  4.1. [Searching for packages](#41-searching-for-packages)  
+  4.2. [Embedding BioJS packages](#42-embedding-biojs-packages)  
+5. [Developing packages](#5-developing-packages)  
+  5.1. [What do I need to develop?](#51-what-do-i-need-to-develop)  
+  5.2. [How to create a package?](#52-how-to-create-a-package)  
+  5.3. [How to use snippets?](#53-how-to-use-snippets)  
+  5.4. [Guidelines](#54-guidelines)  
+  5.5. [Gold standards](#55-gold-standards)  
+  5.6. [How to publish a package?](#56-how-to-publish-a-package)  
+6. [Support](#6-support)  
+  6.1. [Contact](#61-contact)  
+  6.2. [Documentation](#62-documentation)  
+7. [License](#7-license)  
 
 1. Essentials
 --------------
@@ -86,7 +86,7 @@ However you are still invited to show your interest in this project and to __sta
 
 Old Components of BioJS 0.1 can rely on [biojs-legacy][migrationguide], but we highly encourage you to write your code more [modular][101].
 
-↝ [Modular migration guide][realmigration]
+↝ [Modular migration guide][migration]
 
 We can ensure that if you have contributed with a component in the BioJS1 registry, it will continue to work in BioJS2.
 In fact we will script the migration and at some day in November or December migrate all remaining BioJS1 components.
