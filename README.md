@@ -27,32 +27,32 @@ Contents
 ----------
 
 
-1. [Essentials][#essentials]
- 1.1. [Objectives][#objectives]
- 1.2. [What is BioJS][#what-is-biojs]
- 1.3. [Why is nothing in this repo][#why-is-nothing-in-this-repo]
-2. [BioJS 1 vs.  BioJS 2][#biojs-1-vs.-biojs-2]
-  2.1 [What is different in BioJS 2.0?][what-is-different-in-biojs-20]
-  2.2 Upgrading to BioJS 2.0
-3. Packages
-  3.1. What is a package?
-  3.2. What do I need to use a package?
-  3.3. How do I use a package?
-  3.4. How to build a BioJS package
-4. Registry
-  4.1. Searching for packages
-  4.2. Embedding BioJS packages
-5. Developing packages
-  5.1. What do I need to develop?
-  5.2. How to create a package?
-  5.3. How to use snippets?
-  5.4. Guidelines
-  5.5. Gold standards
-  5.6. How to publish a package?
-6. Support
-  6.1. Contact
-  6.2. Documentation
-7. License
+1. [Essentials](#essentials) 
+ 1.1. [Objectives](#objectives)    
+ 1.2. [What is BioJS](#what-is-biojs)  
+ 1.3. [Why is nothing in this repo](#why-is-nothing-in-this-repo)  
+2. [BioJS 1 vs.  BioJS 2](#biojs-1-vs.-biojs-2)  
+  2.1 [What is different in BioJS 2.0?](what-is-different-in-biojs-20)  
+  2.2 Upgrading to BioJS 2.0  
+3. Packages  
+  3.1. What is a package?  
+  3.2. What do I need to use a package?  
+  3.3. How do I use a package?  
+  3.4. How to build a BioJS package  
+4. Registry  
+  4.1. Searching for packages  
+  4.2. Embedding BioJS packages  
+5. Developing packages  
+  5.1. What do I need to develop?  
+  5.2. How to create a package?  
+  5.3. How to use snippets?  
+  5.4. Guidelines  
+  5.5. Gold standards  
+  5.6. How to publish a package?  
+6. Support  
+  6.1. Contact  
+  6.2. Documentation  
+7. License  
 
 1. Essentials
 --------------
