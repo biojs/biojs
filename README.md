@@ -35,24 +35,22 @@ Contents
   2.1 [What is different in BioJS 2.0?](21-what-is-different-in-biojs-20)  
   2.2 [Upgrading to BioJS 2.0](#22-upgrading-to-biojs-20)  
 * [Packages](#3-packages)  
-  3.1. [What is a package?](#31-what-is-a-package)  
-  3.2. [What do I need to use a package?](#32-what-do-i-need-to-use-a-package)  
-  3.3. [How do I use a package?](#33-how-do-i-use-a-package)  
-  3.4. [How to build a BioJS package](#34-how-to-build-a-biojs-package)  
-* [Registry](#4-registry)  
-  4.1. [Searching for packages](#41-searching-for-packages)  
-  4.2. [Embedding BioJS packages](#42-embedding-biojs-packages)  
-* [Developing packages](#5-developing-packages)  
-  5.1. [What do I need to develop?](#51-what-do-i-need-to-develop)  
-  5.2. [How to create a package?](#52-how-to-create-a-package)  
-  5.3. [How to use snippets?](#53-how-to-use-snippets)  
-  5.4. [Guidelines](#54-guidelines)  
-  5.5. [Gold standards](#55-gold-standards)  
-  5.6. [How to publish a package?](#56-how-to-publish-a-package) 
-* [Support](#6-support)  
-  6.1. [Contact](#61-contact)  
-  6.2. [Documentation](#62-documentation)
-* [License](#7-license)  
+  3.1. [What is a package?](#31-what-is-a-package) 
+  3.2. [How to search for a package](#32-how-to-search-for-a-package)
+  3.3. [What do I need to use a package?](#33-what-do-i-need-to-use-a-package)  
+  3.4. [How do I use a package?](#34-how-do-i-use-a-package)  
+  3.5. [How to build a BioJS package](#35-how-to-build-a-biojs-package)  
+* [Developing packages](#4-developing-packages)  
+  4.1. [What do I need to develop?](#41-what-do-i-need-to-develop)  
+  4.2. [How to create a package?](#42-how-to-create-a-package)  
+  4.3. [How to use snippets?](#43-how-to-use-snippets)  
+  4.4. [Guidelines](#44-guidelines)  
+  4.5. [Gold standards](#45-gold-standards)  
+  4.6. [How to publish a package?](#46-how-to-publish-a-package) 
+* [Support](#5-support)  
+  5.1. [Contact](#51-contact)  
+  5.2. [Documentation](#52-documentation)
+* [License](#6-license)  
 
 1. Essentials
 --------------
@@ -66,7 +64,7 @@ Contents
 ### 1.2. What is BioJS?
 
 
-BioJS builds a infrastructure, guidelines and tools to avoid the reinvention of the wheel in life sciences (= "Docker for Bio web components"). Our community builds modules than can be reused by anyone.
+BioJS builds a infrastructure, guidelines and tools to __avoid the reinvention of the wheel in life sciences__(= "Docker for Bio web components"). Our community builds modules than can be reused by anyone.
 
 ### 1.3. Why is nothing in this repo?
 
@@ -97,9 +95,16 @@ The final update of the EBI registry will be at the end of this year.
 
 ### 3.1. What is a package?
 
-A tiny building block like a FASTA parser or a visualization piece. If it obeys the rule "do one thing and do it well" , then it is (most likely) a package. The BioJS packages are published on the JavaScript package manager [npm](npmjs.org).
+A __tiny building block__ like a FASTA parser or a visualization piece. If it obeys the rule _"do one thing and do it well"_ , then it is (most likely) a package. The BioJS packages are published on the JavaScript package manager [npm](npmjs.org).
 
-### 3.2. What do I need to use a package?
+## 3.2. How to search for a package
+
+[registry.biojs.net](http://registry.biojs.net)
+
+([Frontend repo][registryui], [backend][registry-workmen]).
+
+
+### 3.3. What do I need to use a package?
 
 A web browser. For convenience you can grab a recent CDN version of
 
@@ -108,11 +113,14 @@ A web browser. For convenience you can grab a recent CDN version of
 
 Normally the author provides also provides you with a minimized version of his component, but you can always easily build it yourself by running "npm run build-browser".
 
-### 3.3. How do I use a package?
+### 3.4. How do I use a package?
 
 In general the `README.md` of each project should explain you how to interact with it.
+For visualization components you can just copy the JSBin or Codepen example.
 
-### 3.4. How to build a BioJS package
+You can also add it as a dependency of your project by using `npm install <package> --save`.
+
+### 3.5. How to build a BioJS package
 
 Clone the package an run
 
@@ -124,29 +132,11 @@ npm run build-browser # this will generate a JS file usuable in every browser (n
 
 Working examples of the component can be found in the [`snippets`](https://github.com/greenify/biojs-sniper) folder of a package.
 
-4. Registry
--------------
 
-4.1. Searching for packages
-----------------------
-
-[registry.biojs.net](http://registry.biojs.net)
-
-([Frontend repo][registryui], [backend][registry-workmen]).
-
-
-4.2. Embedding BioJS packages
-------------------------
-
-For visualization components: just copy the generated text of the JSBin or CodePen examples.
-
-Otherwise use `npm install <package>`
-
-
-5. Developing packages
+4. Developing packages
 -----------------------
 
-### 5.1. What do I need to develop?
+### 4.1. What do I need to develop?
 
 * [git](https://try.github.io/levels/1/challenges/1)
 * [npm](http://nodejs.org/download/)
@@ -156,8 +146,7 @@ Otherwise use `npm install <package>`
 
 Even tough you can easily install node on Windows, a Unix-like OS is generally a more productive development enviroment.
 
-
-### 5.2. How to create a package?
+### 4.2. How to create a package?
 
 ↝ read our [guide][101]
 
@@ -169,11 +158,11 @@ mkdir biojsAWesome && cd biojsAwesome
 slush biojs
 ```
 
-### 5.3. How to use snippets?
+### 4.3. How to use snippets?
 
 ↝ read our [sniper][sniper].
 
-### 5.4. Guidelines
+### 4.4. Guidelines
 
 We have a few guidelines like 
 
@@ -182,36 +171,40 @@ We have a few guidelines like
 
 Especially the snippets should give you a quick start on how to use a component.
 
-### 5.5. Gold standards
+### 4.5. Gold standards
 
 Our [gold standards](http://edu.biojs.net/series/101/70_gold_standard.html) are conventions we highly encourage you to follow (especially for JS beginners). They will help you to create a great package!
 
-### 5.6. How to publish a package?
+### 4.6. How to publish a package?
 
 Publish it on [npm](npmjs.org) and add `biojs` as keyword ([more info][publishit]).
 (For visualization snippets, see the [sniper][sniper]).
 
-6. Support
+5. Support
 --------
 
-### 6.1. Contact
+### 5.1. Contact
 
 ↝ [There are many ways to contact us](http://biojs.net/get_involved.html)
 
 For technical queries (questions, suggestions, proposal or bug reports) [Github issues](https://github.com/biojs/biojs/issues) are preferred.
 
-### 6.2. Documentation
+### 5.2. Documentation
 
-* We are working on a new learning platform [edu.biojs.net](http://edu.biojs.net/).
+* We maintain a learning platform [edu.biojs.net](http://edu.biojs.net/).
+
 [Pull requests](https://github.com/biojs/tutorials) are welcome.
-  - For beginners: [BioJS 2 101 tutorial series][101].
-* There is also a community-based [wiki][wiki]
+
+Contents:
+  - [BioJS 2 101 tutorial series][101].
+
+There is also a community-based [wiki][wiki]:
+
  - [Common error messages](https://github.com/biojs/biojs/wiki/Common-error-messages)
  - [FAQ](https://github.com/biojs/biojs/wiki/FAQ)
  - [Migration][migration]
 
-
-7. License
+6. License
 ----------
 
 [Apache 2](http://www.apache.org/licenses/LICENSE-2.0)
