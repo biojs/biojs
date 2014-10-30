@@ -35,9 +35,9 @@ Contents
   2.1 [What is different in BioJS 2.0?](21-what-is-different-in-biojs-20)  
   2.2 [Upgrading to BioJS 2.0](#22-upgrading-to-biojs-20)  
 * [Packages](#3-packages)  
-  3.1. [What is a package?](#31-what-is-a-package) 
-  3.2. [How to search for a package](#32-how-to-search-for-a-package)
-  3.3. [What do I need to use a package?](#33-what-do-i-need-to-use-a-package)  
+  3.1. [What is a package?](#31-what-is-a-package)  
+  3.2. [How to search for a package](#32-how-to-search-for-a-package)  
+  3.3. [What do I need to use a package?](#33-what-do-i-need-to-use-a-package)   
   3.4. [How do I use a package?](#34-how-do-i-use-a-package)  
   3.5. [How to build a BioJS package](#35-how-to-build-a-biojs-package)  
 * [Developing packages](#4-developing-packages)  
@@ -47,9 +47,10 @@ Contents
   4.4. [Guidelines](#44-guidelines)  
   4.5. [Gold standards](#45-gold-standards)  
   4.6. [How to publish a package?](#46-how-to-publish-a-package) 
-* [Support](#5-support)  
-  5.1. [Contact](#51-contact)  
-  5.2. [Documentation](#52-documentation)
+* [Support](#5-support) 
+  5.1  [Get involved](#51-get-involved)
+  5.2. [Contact](#52-contact)  
+  5.3. [Documentation](#53-documentation)
 * [License](#6-license)  
 
 1. Essentials
@@ -183,13 +184,19 @@ Publish it on [npm](npmjs.org) and add `biojs` as keyword ([more info][publishit
 5. Support
 --------
 
-### 5.1. Contact
+### 5.1. Get involved
+
+Whether you want to [write your own component](#4-developing-packages) and just [submit](#46-how-to-publish-a-package) it onto our BioJS registry or help to increase our ecosystem -  we also __value__ contributions :)
+
+↝ [Get involved](http://biojs.net/get_involved.html)
+
+### 5.2. Contact
 
 ↝ [There are many ways to contact us](http://biojs.net/get_involved.html)
 
 For technical queries (questions, suggestions, proposal or bug reports) [Github issues](https://github.com/biojs/biojs/issues) are preferred.
 
-### 5.2. Documentation
+### 5.3. Documentation
 
 * We maintain a learning platform [edu.biojs.net](http://edu.biojs.net/).
 
