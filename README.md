@@ -143,7 +143,7 @@ Working examples of the component can be found in the [`snippets`](https://githu
 * [npm](http://nodejs.org/download/)
 
 
-[Detailed installation instructions](http://edu.biojs.net/series/101/02_getting_started.html).
+[Detailed installation instructions](http://edu.biojs.net/series/101/20_getting_started.html).
 
 Even tough you can easily install node on Windows, a Unix-like OS is generally a more productive development enviroment.
 
