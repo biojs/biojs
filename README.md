@@ -47,9 +47,9 @@ Contents
   4.4. [Guidelines](#44-guidelines)  
   4.5. [Gold standards](#45-gold-standards)  
   4.6. [How to publish a package?](#46-how-to-publish-a-package) 
-* [Support](#5-support) 
-  5.1  [Get involved](#51-get-involved)
-  5.2. [Contact](#52-contact)  
+* [Support](#5-support)  
+  5.1  [Get involved](#51-get-involved)  
+  5.2. [Contact](#52-contact)   
   5.3. [Documentation](#53-documentation)
 * [License](#6-license)  
 
