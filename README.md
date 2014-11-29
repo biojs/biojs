@@ -30,7 +30,7 @@ Contents
 1. [Essentials](#1-essentials)  
  1.1. [Objectives](#11-objectives)    
  1.2. [What is BioJS](#12-what-is-biojs)  
- 1.3. [Why is nothing in this repo](#13-why-is-there-nothing-in-this-repo)  
+ 1.3. [Why is there nothing in this repo](#13-why-is-there-nothing-in-this-repo)  
 * [BioJS 1 vs.  BioJS 2](#2-biojs-1-vs-biojs-2)  
   2.1 [What is different in BioJS 2.0?](21-what-is-different-in-biojs-20)  
   2.2 [Upgrading to BioJS 2.0](#22-upgrading-to-biojs-20)  
