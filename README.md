@@ -30,7 +30,7 @@ Contents
 1. [Essentials](#1-essentials)  
  1.1. [Objectives](#11-objectives)    
  1.2. [What is BioJS](#12-what-is-biojs)  
- 1.3. [Why is nothing in this repo](#13-why-is-nothing-in-this-repo)  
+ 1.3. [Why is nothing in this repo](#13-why-is-there-nothing-in-this-repo)  
 * [BioJS 1 vs.  BioJS 2](#2-biojs-1-vs-biojs-2)  
   2.1 [What is different in BioJS 2.0?](21-what-is-different-in-biojs-20)  
   2.2 [Upgrading to BioJS 2.0](#22-upgrading-to-biojs-20)  
@@ -65,13 +65,14 @@ Contents
 ### 1.2. What is BioJS?
 
 
-BioJS builds a infrastructure, guidelines and tools to __avoid the reinvention of the wheel in life sciences__(= "Docker for Bio web components"). Our community builds modules than can be reused by anyone.
+BioJS builds a infrastructure, guidelines and tools to __avoid the reinvention of the wheel in life sciences__ (= "Docker for Bio web components"). Our community builds modules than can be reused by anyone and makes them available for download via a centralised [registry][registry].
 
-### 1.3. Why is nothing in this repo?
+### 1.3. Why is there nothing in this repo?
 
 For BioJS 2.0 every component is a separate github repository. To search for a package, visit our [registry][registry].
-This repo is kept as intro guide and discussion repo. Feel free to open an [issue][issue] (questions, suggestions, proposal or bug reports) here).
-However you are still invited to show your interest in this project and to __star__ this repo.
+This repo is kept as intro guide and discussion repo. Feel free to open an [issue][issue] (questions, suggestions, proposal or bug reports here).
+
+However you are still invited to show your interest in this project by __starring__ this repo.
 
 2. BioJS 1 vs.  BioJS 2
 -----------------------
