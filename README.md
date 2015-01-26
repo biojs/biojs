@@ -67,7 +67,7 @@ BioJS builds a infrastructure, guidelines and tools to __avoid the reinvention o
 ### 1.3. Why is there nothing in this repo?
 
 For BioJS 2.0 every component is a separate github repository. To search for a package, visit our [registry][registry].
-This repo is kept as intro guide and discussion repo. Feel free to open an [issue][issue] (questions, suggestions, proposal or bug reports here).
+This repo is kept as intro guide and discussion repo. Feel free to open an [issue][issue] (questions, suggestions, proposal or bug reports here) or [to submit a component wish][wishlist].
 
 However you are still invited to show your interest in this project by __starring__ this repo.
 
@@ -180,6 +180,14 @@ Whether you want to [write your own component](#4-developing-packages) and just 
 
 ↝ [Get involved](http://biojs.net/get_involved.html)
 
+Here are some general ideas:
+
+* Browse our [issue list][issue] (or [all BioJS repositories][issue_all]) for ideas
+* Propose your own ideas
+* Ask on [gitter][gitter], our [mailing list][groups] or [irc][irc]
+
+↝ [more information](./CONTRIBUTING.md)
+
 ### 5.2. Contact
 
 ↝ [There are many ways to contact us](http://biojs.net/get_involved.html)
@@ -208,7 +216,11 @@ There is also a community-based [wiki][wiki]:
 
 
 [101]: http://edu.biojs.net/categories/101_tutorial/index.html
+[gitter]: https://gitter.im/biojs/biojs
+[groups]: https://groups.google.com/forum/#!forum/biojs
+[irc]: http://webchat.freenode.net/?channels=biojs 
 [issue]: https://github.com/biojs/biojs/issues
+[issues_all]: https://github.com/search?l=&o=desc&q=user%3Abiojs+state%3Aopen&ref=advsearch&s=created&type=Issues&utf8=%E2%9C%93 
 [publishit]: http://edu.biojs.net/series/101/60_publish_it.html
 [migration]: https://github.com/biojs/biojs/wiki/biojs1-biojs2-migration
 [registry]: http://registry.biojs.net/client/
@@ -216,3 +228,4 @@ There is also a community-based [wiki][wiki]:
 [registry-workmen]: https://github.com/biojs/registry-workmen
 [sniper]: https://github.com/greenify/biojs-sniper
 [wiki]: (https://github.com/biojs/biojs/wiki)
+[wishlist]: https://github.com/biojs/biojs/issues/new?title=%5BWish%5D&body=%3E+Try+to+be+as+detailed+as+possible.+Why+do+you+need+it%3F+What+data+does+it+use%3F+What+should+the+user+experience%3F%0A%0A%0A%3E+Complexity+%28approx.+estimate+in+dates%29
