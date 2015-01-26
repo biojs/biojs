@@ -16,16 +16,13 @@ BioJS 2.0
 
 [![Version](http://img.shields.io/badge/npm-v2.0.0_alpha-orange.svg?style=flat)](#) [![Build Status](http://img.shields.io/travis/biojs/edu.svg?style=flat)](https://travis-ci.org/biojs/edu)  [![License: Apache 2](http://img.shields.io/hexpm/l/plug.svg?style=flat)](https://github.com/biojs/biojs/blob/master/LICENSE) [![DOI](https://zenodo.org/badge/6143/biojs/biojs.png)](http://dx.doi.org/10.5281/zenodo.11893)
 
-Announcements
-----------------
+[![Gitter](https://badges.gitter.im/BioJS.png)](https://gitter.im/biojs/biojs)
 
-We recently switched to a new concept, so maybe you are looking for the old [BioJS 1](https://github.com/biojs/biojs1)?
 
-You can already browse the new [registry][registry]. Transition of components from BioJS1 is in progress.
+TL;DR: you can browse the [registry][registry].
 
 Contents
 ----------
-
 
 1. [Essentials](#1-essentials)  
  1.1. [Objectives](#11-objectives)    
@@ -43,7 +40,7 @@ Contents
 * [Developing packages](#4-developing-packages)  
   4.1. [What do I need to develop?](#41-what-do-i-need-to-develop)  
   4.2. [How to create a package?](#42-how-to-create-a-package)  
-  4.3. [How to use snippets?](#43-how-to-use-snippets)  
+  4.3. [How to use snippets/examples?](#43-how-to-use-snippets)  
   4.4. [Guidelines](#44-guidelines)  
   4.5. [Gold standards](#45-gold-standards)  
   4.6. [How to publish a package?](#46-how-to-publish-a-package) 
@@ -74,23 +71,16 @@ This repo is kept as intro guide and discussion repo. Feel free to open an [issu
 
 However you are still invited to show your interest in this project by __starring__ this repo.
 
-2. BioJS 1 vs.  BioJS 2
+2. BioJS 1 vs. BioJS 2
 -----------------------
 
 ### 2.1. What is different in BioJS 2.0?
-
 
 ↝ [Summary presentation](https://docs.google.com/presentation/d/17Q4olwMEd0hFKa0MA01Dx9RHEWbNiI1hJ0Ng2v_1D30/) of the differences between BioJS1 and BioJS 2.0.
 
 ### 2.2 Upgrading to BioJS 2.0
 
-Old Components of BioJS 0.1 can rely on [biojs-legacy][migrationguide], but we highly encourage you to write your code more [modular][101].
-
-↝ [Modular migration guide][migration]
-
-We can ensure that if you have contributed with a component in the BioJS1 registry, it will continue to work in BioJS2.
-In fact we will script the migration and at some day in November or December migrate all remaining BioJS1 components.
-The final update of the EBI registry will be at the end of this year.
+Old Components of BioJS 0.1 can use this [migration guide][migration].
 
 3. Packages
 -------------
@@ -101,10 +91,9 @@ A __tiny building block__ like a FASTA parser or a visualization piece. If it ob
 
 ## 3.2. How to search for a package
 
-[registry.biojs.net](http://registry.biojs.net)
+[registry.biojs.net][registry]
 
-([Frontend repo][registryui], [backend][registry-workmen]).
-
+(Find it on github: [Frontend repo][registryui], [backend repo][registry-workmen]).
 
 ### 3.3. What do I need to use a package?
 
@@ -160,7 +149,7 @@ mkdir biojsAWesome && cd biojsAwesome
 slush biojs
 ```
 
-### 4.3. How to use snippets?
+### 4.3. How to use snippets/examples?
 
 ↝ read our [sniper][sniper].
 
@@ -187,7 +176,7 @@ Publish it on [npm](npmjs.org) and add `biojs` as keyword ([more info][publishit
 
 ### 5.1. Get involved
 
-Whether you want to [write your own component](#4-developing-packages) and just [submit](#46-how-to-publish-a-package) it onto our BioJS registry or help to increase our ecosystem -  we also __value__ contributions :)
+Whether you want to [write your own component](#4-developing-packages) and just [submit](#46-how-to-publish-a-package) it onto our BioJS registry or help to increase our ecosystem -  we __value__ your contribution(s)!
 
 ↝ [Get involved](http://biojs.net/get_involved.html)
 
@@ -220,7 +209,6 @@ There is also a community-based [wiki][wiki]:
 
 [101]: http://edu.biojs.net/categories/101_tutorial/index.html
 [issue]: https://github.com/biojs/biojs/issues
-[migrationguide]: http://edu.biojs.net/tutorials/aQuickGuideForMigrating.html
 [publishit]: http://edu.biojs.net/series/101/60_publish_it.html
 [migration]: https://github.com/biojs/biojs/wiki/biojs1-biojs2-migration
 [registry]: http://registry.biojs.net/client/
