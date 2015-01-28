@@ -22,6 +22,8 @@ Interesting talks:
 * [Intro into JS](https://greenify.github.io/js-intro/#/)
 * [Advanced JS](http://greenify.github.io/js-adv)
 
+You can find more [talks here](https://github.com/biojs-edu/talks).
+
 ## <a name="howto"></a> How to contribute?
 
 Here are some general ideas:
