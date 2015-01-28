@@ -28,7 +28,7 @@ Here are some general ideas:
 
 * Browse our [issue list][issue] (or [all BioJS repositories][issues_all]) for ideas
 * Propose your own ideas
-* Don't hesitate to ask more specific questions on [github][issue_new], [gitter][gitter] or our [mailing list][groups]
+* Don't hesitate to ask more __specific questions__ on [github][issue_new], [gitter][gitter] or our [mailing list][groups]
 
 Your contribution could be:
 
