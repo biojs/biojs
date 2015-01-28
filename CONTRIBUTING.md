@@ -1,20 +1,34 @@
 # Contributing
 
 We'd love for you to contribute to our source code and to make BioJS even better than it is
-today! Here are the tips for you to make an awesome contribution.
+today! The BioJS community is very young and rapidly growing - so we are still working on making it more smooth for newcomers to get started into this. So here are the tips for you to make an awesome contribution.
 
+ - [How to get started](#getstarted)
  - [How to contribute](#howto)
  - [Issues and Bugs](#issue)
  - [Feature/Component requests](#feature)
  - [Submission guidelines](#submission)
 
+## <a name="getstarted"></a> How to get started?
+
+* Learn how to create your [own BioJS][edu] component
+* Look at existing components and learn how they are written
+
+Interesting talks:
+
+* [BioJS tech fundamentals](http://slides.biojs.net/ebi-tech-fundamentals-1/#/22)
+* [Reusable JavaScript](https://docs.google.com/presentation/d/1XmLTOI066-mOKGgUe3ynr1LcSpJsfHrTo-u2YK1vVhc/)
+* [Intro into HTML](http://slides.biojs.net/ebi-tech-fundamentals-2/#/)
+* [Intro into JS](https://greenify.github.io/js-intro/#/)
+* [Advanced JS](http://greenify.github.io/js-adv)
+
 ## <a name="howto"></a> How to contribute?
 
 Here are some general ideas:
 
-* Browse our [issue list][issue] (or [all BioJS repositories][issue_all]) for ideas
+* Browse our [issue list][issue] (or [all BioJS repositories][issues_all]) for ideas
 * Propose your own ideas
-* Ask on gitter or our mailing list
+* Don't hesitate to ask more specific questions on [github][issue_new], [gitter][gitter] or our [mailing list][groups]
 
 Your contribution could be:
 
@@ -55,9 +69,11 @@ That's it! Thank you for your contribution!
 
 We are happy to help you via [Gitter][gitter], [Google groups][groups] or [IRC][irc].
 
+[edu]: http://edu.biojs.net/categories/101_tutorial/index.html
 [gitter]: https://gitter.im/biojs/biojs
 [groups]: https://groups.google.com/forum/#!forum/biojs
 [irc]: http://webchat.freenode.net/?channels=biojs 
 [issue]: https://github.com/biojs/biojs/issues
+[issue_new]: https://github.com/biojs/biojs/issues/new
 [issues_all]: https://github.com/search?l=&o=desc&q=user%3Abiojs+state%3Aopen&ref=advsearch&s=created&type=Issues&utf8=%E2%9C%93 
 [wishlist]: https://github.com/biojs/biojs/issues?q=is%3Aopen+is%3Aissue+label%3Awishlist
