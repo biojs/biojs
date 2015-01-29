@@ -27,7 +27,7 @@ Contents
 1. [Essentials](#1-essentials)  
  1.1. [Objectives](#11-objectives)    
  1.2. [What is BioJS](#12-what-is-biojs)  
- 1.3. [Why is there nothing in this repo](#13-why-is-there-nothing-in-this-repo)  
+ 1.3. [Why is there nothing in this repo?](#13-why-is-there-nothing-in-this-repo)  
 * [BioJS 1 vs.  BioJS 2](#2-biojs-1-vs-biojs-2)  
   2.1 [What is different in BioJS 2.0?](21-what-is-different-in-biojs-20)  
   2.2 [Upgrading to BioJS 2.0](#22-upgrading-to-biojs-20)  
@@ -41,9 +41,10 @@ Contents
   4.1. [What do I need to develop?](#41-what-do-i-need-to-develop)  
   4.2. [How to create a package?](#42-how-to-create-a-package)  
   4.3. [How to use snippets/examples?](#43-how-to-use-snippets)  
-  4.4. [Guidelines](#44-guidelines)  
-  4.5. [Gold standards](#45-gold-standards)  
-  4.6. [How to publish a package?](#46-how-to-publish-a-package) 
+  4.4. [Guidelines](#44-guidelines)
+  4.5  [I need the functionality X](#45-i-need-the-functionality-x)
+  4.6. [Gold standards](#46-gold-standards)  
+  4.7. [How to publish a package?](#47-how-to-publish-a-package) 
 * [Support](#5-support)  
   5.1  [Get involved](#51-get-involved)  
   5.2. [Contact](#52-contact)   
@@ -162,11 +163,17 @@ We have a few guidelines like
 
 Especially the snippets should give you a quick start on how to use a component.
 
-### 4.5. Gold standards
+### 4.5. I need the functionality X
+
+You are now ready to enjoy the benefits of npm. For common use cases (requests, drag and drop, promises) you will always find plenty of npm modules.
+
+↝ [Learn more](https://github.com/biojs/biojs/wiki/I-need-a-npm-module-for-X)
+
+### 4.6. Gold standards
 
 Our [gold standards](http://edu.biojs.net/series/102/70_gold_standard.html) are conventions we highly encourage you to follow (especially for JS beginners). They will help you to create a great package!
 
-### 4.6. How to publish a package?
+### 4.7. How to publish a package?
 
 Publish it on [npm](npmjs.org) and add `biojs` as keyword ([more info][publishit]).
 (For visualization snippets, see the [sniper][sniper]).
