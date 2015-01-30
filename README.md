@@ -230,7 +230,7 @@ There is also a community-based [wiki][wiki]:
 [issues_all]: https://github.com/search?l=&o=desc&q=user%3Abiojs+state%3Aopen&ref=advsearch&s=created&type=Issues&utf8=%E2%9C%93 
 [publishit]: http://edu.biojs.net/series/101/60_publish_it.html
 [migration]: https://github.com/biojs/biojs/wiki/biojs1-biojs2-migration
-[registry]: http://registry.biojs.net/client/
+[registry]: http://biojs.io
 [registryui]: https://github.com/biojs/registry-ui
 [registry-workmen]: https://github.com/biojs/registry-workmen
 [sniper]: https://github.com/greenify/biojs-sniper
