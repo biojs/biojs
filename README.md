@@ -19,7 +19,7 @@ BioJS 2.0
 [![Gitter](https://badges.gitter.im/BioJS.png)](https://gitter.im/biojs/biojs)
 
 
-TL;DR: you can browse the [registry][registry].
+TL;DR: you can browse the [registry][registry] at [biojs.io][registry].
 
 Contents
 ----------
@@ -45,7 +45,7 @@ Contents
 * [Support](#4-support)  
   4.1  [Get involved](#41-get-involved)  
   4.2. [Contact](#42-contact)   
-  4.3. [More questions?](#43-more-questions)
+  4.3. [More questions?](#43-more-questions)  
   4.4. [Documentation](#44-documentation)  
 * [License](#5-license)  
 
