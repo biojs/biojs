@@ -39,6 +39,8 @@ Your contribution could be:
 2. Create your own component (see the [wishlist][wishlist] if you don't have an own idea)
 3. Help us at building the BioJS infrastructure (registry, docs, ...)
 
+If you are about to create a new component, is generally a good idea to ask us (github issues, gitter, irc) if someone is already working on a similar project.
+
 ## <a name="issue"></a> Found an Issue?
 
 If you find a bug in the source code or a mistake in the documentation, you can help us by
