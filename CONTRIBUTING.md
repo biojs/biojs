@@ -13,6 +13,7 @@ today! The BioJS community is very young and rapidly growing - so we are still w
 
 * Learn how to create your [own BioJS][edu] component
 * Look at existing components and learn how they are written
+* Here is a list of [services provides by BioJS](https://github.com/biojs/biojs/wiki/BioJS-services)
 
 Interesting talks:
 
