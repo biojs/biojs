@@ -48,7 +48,8 @@ Contents
 * [Support](#5-support)  
   5.1  [Get involved](#51-get-involved)  
   5.2. [Contact](#52-contact)   
-  5.3. [Documentation](#53-documentation)
+  5.3. [More questions?](#53-more-questions)
+  5.4. [Documentation](#54-documentation)  
 * [License](#6-license)  
 
 1. Essentials
@@ -201,20 +202,24 @@ Here are some general ideas:
 
 For technical queries (questions, suggestions, proposal or bug reports) [Github issues](https://github.com/biojs/biojs/issues) are preferred.
 
-### 5.3. Documentation
+### 5.3. More questions
 
-* We maintain a learning platform [edu.biojs.net](http://edu.biojs.net/).
+↝ We have a community-based [wiki][wiki].
+Some topics include:
+
+ - [Common error messages](https://github.com/biojs/biojs/wiki/Common-error-messages)
+ - [FAQ](https://github.com/biojs/biojs/wiki/FAQ)
+ - [Migration][migration]
+
+### 5.4. Documentation
+
+We maintain a learning platform [edu.biojs.net](http://edu.biojs.net/).
 
 [Pull requests](https://github.com/biojs/tutorials) are welcome.
 
 Contents:
   - [BioJS 2 101 tutorial series][101].
 
-There is also a community-based [wiki][wiki]:
-
- - [Common error messages](https://github.com/biojs/biojs/wiki/Common-error-messages)
- - [FAQ](https://github.com/biojs/biojs/wiki/FAQ)
- - [Migration][migration]
 
 6. License
 ----------
