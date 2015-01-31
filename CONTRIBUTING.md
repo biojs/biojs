@@ -37,7 +37,7 @@ Your contribution could be:
 
 1. Improve an existing component and send a pull request (see the BioJS registry)
 2. Create your own component (see the [wishlist][wishlist] if you don't have an own idea)
-3. Help us at building the infrastructure (registry, docs, ...)
+3. Help us at building the BioJS infrastructure (registry, docs, ...)
 
 ## <a name="issue"></a> Found an Issue?
 
@@ -48,7 +48,7 @@ with a fix.
 ## <a name="feature"></a> Want a Feature/Component?
 
 You can request a new feature by submitting an issue to our [GitHub Repository][github].  If you
-would like to implement a new feature or component then consider what kind of change it is.
+would like to implement a new feature or component, you can also get help on our issue tracker ;-)
 
 ## <a name="submission"></a> Submission Guidelines
 
@@ -73,6 +73,7 @@ That's it! Thank you for your contribution!
 We are happy to help you via [Gitter][gitter], [Google groups][groups] or [IRC][irc].
 
 [edu]: http://edu.biojs.net/categories/101_tutorial/index.html
+[github]: https://github.com/biojs/biojs
 [gitter]: https://gitter.im/biojs/biojs
 [groups]: https://groups.google.com/forum/#!forum/biojs
 [irc]: http://webchat.freenode.net/?channels=biojs 
