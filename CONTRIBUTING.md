@@ -1,7 +1,7 @@
 # Contributing
 
 We'd love for you to contribute to our source code and to make BioJS even better than it is
-today! The BioJS community is very young and rapidly growing - so we are still working on making it more smooth for newcomers to get started into this. So here are the tips for you to make an awesome contribution.
+today! The BioJS community is very young and rapidly growing - so we are still working on making it more smooth for newcomers to get started into this. So here are tips for you to make an awesome contribution.
 
  - [How to get started](#getstarted)
  - [How to contribute](#howto)
