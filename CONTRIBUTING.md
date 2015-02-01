@@ -12,7 +12,7 @@ today! The BioJS community is very young and rapidly growing - so we are still w
 ## <a name="getstarted"></a> How to get started?
 
 * Learn how to create your [own BioJS][edu] component
-* Look at existing components and learn how they are written
+* Look at [existing components][registry] and learn how they are written
 * Here is a list of [services provides by BioJS](https://github.com/biojs/biojs/wiki/BioJS-services)
 
 Interesting talks:
@@ -30,14 +30,15 @@ You can find more [talks here](https://github.com/biojs-edu/talks).
 Here are some general ideas:
 
 * Browse our [issue list][issue] (or [all BioJS repositories][issues_all]) for ideas
-* Propose your own ideas
+* [Propose][issue_new] your own ideas
 * Don't hesitate to ask more __specific questions__ on [github][issue_new], [gitter][gitter] or our [mailing list][groups]
 
 Your contribution could be:
 
-1. Improve an existing component and send a pull request (see the BioJS registry)
+1. Improve an existing component and send a pull request (see the BioJS [registry][registry])
 2. Create your own component (see the [wishlist][wishlist] if you don't have an own idea)
 3. Help us at building the BioJS infrastructure (registry, docs, ...)
+(not a complete list)
 
 If you are about to create a new component, is generally a good idea to ask us (github issues, gitter, irc) if someone is already working on a similar project.
 
@@ -82,4 +83,5 @@ We are happy to help you via [Gitter][gitter], [Google groups][groups] or [IRC][
 [issue]: https://github.com/biojs/biojs/issues
 [issue_new]: https://github.com/biojs/biojs/issues/new
 [issues_all]: https://github.com/search?l=&o=desc&q=user%3Abiojs+state%3Aopen&ref=advsearch&s=created&type=Issues&utf8=%E2%9C%93 
+[registry]: http://biojs.io
 [wishlist]: https://github.com/biojs/biojs/issues?q=is%3Aopen+is%3Aissue+label%3Awishlist
