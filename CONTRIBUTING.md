@@ -75,7 +75,7 @@ That's it! Thank you for your contribution!
 
 We are happy to help you via [Gitter][gitter], [Google groups][groups] or [IRC][irc].
 
-[edu]: http://edu.biojs.net/categories/101_tutorial/index.html
+[edu]: http://edu.biojs.net/
 [github]: https://github.com/biojs/biojs
 [gitter]: https://gitter.im/biojs/biojs
 [groups]: https://groups.google.com/forum/#!forum/biojs
