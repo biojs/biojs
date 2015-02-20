@@ -213,7 +213,7 @@ Contents:
 [Apache 2](http://www.apache.org/licenses/LICENSE-2.0)
 
 
-[101]: http://edu.biojs.net/categories/101_tutorial/index.html
+[101]: http://edu.biojs.net/series/101/10_intro.html
 [gitter]: https://gitter.im/biojs/biojs
 [groups]: https://groups.google.com/forum/#!forum/biojs
 [irc]: http://webchat.freenode.net/?channels=biojs 
