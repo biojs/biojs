@@ -42,6 +42,7 @@ Contents
   3.5  [I need the functionality X](#35-i-need-the-functionality-x)  
   3.6. [Gold standards](#36-gold-standards)    
   3.7. [How to publish a package?](#37-how-to-publish-a-package)   
+  3.8. [How can I report a package?](#38-how-can-I-report-defective-components)
 * [Support](#4-support)  
   4.1  [Get involved](#41-get-involved)  
   4.2. [Contact](#42-contact)   
@@ -165,6 +166,10 @@ Our [gold standards](http://edu.biojs.net/series/102/70_gold_standard.html) are 
 Just publish it on [npm](npmjs.org).
 
 ↝ [Learn more](https://github.com/biojs/biojs/wiki/Gotchas-about-the-BioJS-registry)
+
+### 3.7. How can I report defective components?
+
+Either open a github issue on thei repository or use [io-ratings]https://github.com/biojs/io-ratings).
 
 4. Support
 ----------
