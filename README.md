@@ -121,7 +121,7 @@ Working examples of the component can be found in the [`snippets`](https://githu
 * [npm](http://nodejs.org/download/)
 
 
-[Detailed installation instructions](http://edu.biojs.net/series/101/getting_started).
+[Detailed installation instructions](http://edu.biojs.net/101/getting_started).
 
 Even tough you can easily install node on Windows, a Unix-like OS is generally a more productive development enviroment.
 
@@ -218,13 +218,13 @@ Contents:
 [Apache 2](http://www.apache.org/licenses/LICENSE-2.0)
 
 
-[101]: http://edu.biojs.net/series/101/intro
+[101]: http://edu.biojs.net/101/intro
 [gitter]: https://gitter.im/biojs/biojs
 [groups]: https://groups.google.com/forum/#!forum/biojs
 [irc]: http://webchat.freenode.net/?channels=biojs 
 [issue]: https://github.com/biojs/biojs/issues
 [issues_all]: https://github.com/search?l=&o=desc&q=user%3Abiojs+state%3Aopen&ref=advsearch&s=created&type=Issues&utf8=%E2%9C%93 
-[publishit]: http://edu.biojs.net/series/101/publish_it
+[publishit]: http://edu.biojs.net/101/publish_it
 [migration]: https://github.com/biojs/biojs/wiki/biojs1-biojs2-migration
 [registry]: http://biojs.io
 [registryui]: https://github.com/biojs/registry-ui
