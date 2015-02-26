@@ -121,7 +121,7 @@ Working examples of the component can be found in the [`snippets`](https://githu
 * [npm](http://nodejs.org/download/)
 
 
-[Detailed installation instructions](http://edu.biojs.net/series/101/20_getting_started.html).
+[Detailed installation instructions](http://edu.biojs.net/series/101/getting_started).
 
 Even tough you can easily install node on Windows, a Unix-like OS is generally a more productive development enviroment.
 
@@ -159,7 +159,7 @@ You are now ready to enjoy the benefits of npm. For common use cases (requests, 
 
 ### 3.6. Gold standards
 
-Our [gold standards](http://edu.biojs.net/series/102/70_gold_standard.html) are conventions we highly encourage you to follow (especially for JS beginners). They will help you to create a great package!
+Our [gold standards](http://edu.biojs.net/details/conventions) are conventions we highly encourage you to follow (especially for JS beginners). They will help you to create a great package!
 
 ### 3.7. How to publish a package?
 
@@ -218,17 +218,17 @@ Contents:
 [Apache 2](http://www.apache.org/licenses/LICENSE-2.0)
 
 
-[101]: http://edu.biojs.net/series/101/10_intro.html
+[101]: http://edu.biojs.net/series/101/intro
 [gitter]: https://gitter.im/biojs/biojs
 [groups]: https://groups.google.com/forum/#!forum/biojs
 [irc]: http://webchat.freenode.net/?channels=biojs 
 [issue]: https://github.com/biojs/biojs/issues
 [issues_all]: https://github.com/search?l=&o=desc&q=user%3Abiojs+state%3Aopen&ref=advsearch&s=created&type=Issues&utf8=%E2%9C%93 
-[publishit]: http://edu.biojs.net/series/101/60_publish_it.html
+[publishit]: http://edu.biojs.net/series/101/publish_it
 [migration]: https://github.com/biojs/biojs/wiki/biojs1-biojs2-migration
 [registry]: http://biojs.io
 [registryui]: https://github.com/biojs/registry-ui
 [registry-workmen]: https://github.com/biojs/registry-workmen
 [sniper]: https://github.com/greenify/biojs-sniper
-[wiki]: (https://github.com/biojs/biojs/wiki)
+[wiki]: https://github.com/biojs/biojs/wiki
 [wishlist]: https://github.com/biojs/biojs/issues/new?title=%5BWish%5D&body=%3E+Try+to+be+as+detailed+as+possible.+Why+do+you+need+it%3F+What+data+does+it+use%3F+What+should+the+user+experience%3F%0A%0A%0A%3E+Complexity+%28approx.+estimate+in+dates%29
