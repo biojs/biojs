@@ -9,7 +9,7 @@ BioJS 2.0
 88aaaaaa8P' 88  ,adPPYba,          88 `Y8aaaaa,           ,d8P"   
 88""""""8b, 88 a8"     "8a         88   `"""""8b,       a8P"      
 88      `8b 88 8b       d8         88         `8b     a8P'        
-88      a8P 88 "8a,   ,a8" 88,   ,d88 Y8a     a8P    d8"          
+88      a8P 88 "8a,   ,a8" 88,   ,d88 Y8a     a8P    d8i"          
 88888888P"  88  `"YbbdP"'   "Y8888P"   "Y88888P"     88888888888 
 
  ```
@@ -182,7 +182,7 @@ Whether you want to [write your own component](#4-developing-packages) and just 
 
 Here are some general ideas:
 
-* Browse our [issue list][issue] (or [all BioJS repositories][issue_all]) for ideas
+* Browse our [issue list][issue] (or [all BioJS repositories][issues_all]) for ideas
 * Propose your own ideas
 * Ask on [gitter][gitter], our [mailing list][groups] or [irc][irc]
 
