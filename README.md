@@ -169,7 +169,7 @@ Just publish it on [npm](npmjs.org).
 
 ### 3.8. How can I report defective components?
 
-Either open a github issue on thei repository or use [io-ratings]https://github.com/biojs/io-ratings).
+Either open an issue in their repository or use [io-ratings](https://github.com/biojs/io-ratings).
 
 4. Support
 ----------
