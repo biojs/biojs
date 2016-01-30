@@ -21,6 +21,11 @@ BioJS 2.0
 
 TL;DR: you can browse the [registry][registry] at [biojs.io][registry].
 
+Guy Yachdav, Tatyana Goldberg, Sebastian Wilzbach, David Dao, Iris Shih, Saket Choudhary, Steve Crouch, Max Franz, Alexander García, Leyla J García, Björn A Grüning, Devasena Inupakutika, Ian Sillitoe, Anil S Thanki, Bruno Vieira, José M Villaveces, Maria V Schneider, Suzanna Lewis, Steve Pettifer, Burkhard Rost, and Manuel Corpas  
+__[Anatomy of BioJS, an open source community for the life sciences][BioJS-elife]__  
+eLife 2015;4:e07009
+[BioJS-elife]: http://elifesciences.org/content/4/e07009
+
 Contents
 ----------
 
