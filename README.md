@@ -16,7 +16,8 @@ BioJS 2.0
 
 [![Version](http://img.shields.io/badge/npm-v2.0.0_alpha-orange.svg?style=flat)](#) [![Build Status](http://img.shields.io/travis/biojs/edu.svg?style=flat)](https://travis-ci.org/biojs/edu)  [![License: Apache 2](http://img.shields.io/hexpm/l/plug.svg?style=flat)](https://github.com/biojs/biojs/blob/master/LICENSE) [![DOI](https://zenodo.org/badge/6143/biojs/biojs.png)](http://dx.doi.org/10.5281/zenodo.11893)
 
-[![Gitter](https://badges.gitter.im/BioJS.png)](https://gitter.im/biojs/biojs)  &nbsp; &nbsp; &nbsp;   [![IRC](https://img.shields.io/badge/irc-%23biojs-yellow.svg)](https://kiwiirc.com/client/irc.freenode.net/biojs)
+[![Slack](https://img.shields.io/badge/slack-join%20chat-E01563.svg)](http://biojs-slackin.herokuapp.com/)
+[![Gitter](https://badges.gitter.im/BioJS.png)](https://gitter.im/biojs/biojs)   [![IRC](https://img.shields.io/badge/irc-%23biojs-yellow.svg)](https://kiwiirc.com/client/irc.freenode.net/biojs)
 
 
 TL;DR: you can browse the [registry][registry] at [biojs.io][registry].
