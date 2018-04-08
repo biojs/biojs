@@ -188,9 +188,8 @@ Whether you want to [write your own component](#4-developing-packages) and just 
 
 Here are some general ideas:
 
-* Browse our [issue list][issue] (or [all BioJS repositories][issues_all]) for ideas
-* Propose your own ideas
-* Ask on [gitter][gitter], our [mailing list][groups] or [irc][irc]
+* Browse our [issue list](https://github.com/biojs/organisation/issues)
+* Ask on [gitter](https://gitter.im/biojs/biojs)
 
 ↝ [more information](./CONTRIBUTING.md)
 
