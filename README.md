@@ -85,7 +85,7 @@ A __tiny building block__ like a FASTA parser or a visualization piece. If it ob
 
 ## 2.2. How to search for a package
 
-[biojs.io][registry]
+[biojs.net][registry]
 
 (Find it on github: [Frontend repo][registryui], [backend repo][registry-workmen]).
 
@@ -231,7 +231,7 @@ Contents:
 [issues_all]: https://github.com/search?l=&o=desc&q=user%3Abiojs+state%3Aopen&ref=advsearch&s=created&type=Issues&utf8=%E2%9C%93 
 [publishit]: http://edu.biojs.net/101/publish_it
 [migration]: https://github.com/biojs/biojs/wiki/biojs1-biojs2-migration
-[registry]: http://biojs.io
+[registry]: http://biojs.net
 [registryui]: https://github.com/biojs/registry-ui
 [registry-workmen]: https://github.com/biojs/registry-workmen
 [sniper]: https://github.com/greenify/biojs-sniper
