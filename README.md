@@ -37,9 +37,6 @@ Contents
 * [Packages](#2-packages)  
   2.1. [What is a package?](#21-what-is-a-package)  
   2.2. [How to search for a package](#22-how-to-search-for-a-package)  
-  2.3. [What do I need to use a package?](#23-what-do-i-need-to-use-a-package)   
-  2.4. [How do I use a package?](#24-how-do-i-use-a-package)  
-  2.5. [How to build a BioJS package](#25-how-to-build-a-biojs-package)  
 * [Developing packages](#3-developing-packages)  
   3.1. [What do I need to develop?](#31-what-do-i-need-to-develop)  
   3.2. [How to create a package?](#32-how-to-create-a-package)  
@@ -48,7 +45,6 @@ Contents
   3.5  [I need the functionality X](#35-i-need-the-functionality-x)  
   3.6. [Gold standards](#36-gold-standards)    
   3.7. [How to publish a package?](#37-how-to-publish-a-package)   
-  3.8. [How can I report a package?](#38-how-can-I-report-defective-components)
 * [Support](#4-support)  
   4.1  [Get involved](#41-get-involved)  
   4.2. [Contact](#42-contact)   
@@ -85,38 +81,9 @@ A __tiny building block__ like a FASTA parser or a visualization piece. If it ob
 
 ## 2.2. How to search for a package
 
-[biojs.net][registry]
+Visit the [biojs.net][registry] registry to search for components. 
 
 (Find it on github: [Frontend repo][registryui], [backend repo][registry-workmen]).
-
-### 2.3. What do I need to use a package?
-
-A web browser. For convenience you can grab a recent CDN version of
-
-* [all parsers](https://github.com/biojs/biojs-meta-parser)
-* [all visualization components](https://github.com/biojs/biojs-meta-vis)
-
-Normally the author provides also provides you with a minimized version of his component, but you can always easily build it yourself by running "npm run build-browser".
-
-### 2.4. How do I use a package?
-
-In general the `README.md` of each project should explain you how to interact with it.
-For visualization components you can just copy the JSBin or Codepen example.
-
-You can also add it as a dependency of your project by using `npm install <package> --save`.
-
-### 2.5. How to build a BioJS package
-
-Clone the package an run
-
-```
-npm install # this downloads all the dependencies of a package
-npm test # optional
-npm run build-browser # this will generate a JS file usuable in every browser (normally in the build folder)
-```
-
-Working examples of the component can be found in the [`snippets`](https://github.com/greenify/biojs-sniper) folder of a package.
-
 
 3. Developing packages
 -----------------------
@@ -175,7 +142,7 @@ Just publish it on [npm](npmjs.org).
 
 ### 3.8. How can I report defective components?
 
-Either open an issue in their repository or use [io-ratings](https://github.com/biojs/io-ratings).
+We'd recommend opening an issue in their repository directly. 
 
 4. Support
 ----------
