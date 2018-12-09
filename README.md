@@ -232,8 +232,8 @@ Contents:
 [publishit]: http://edu.biojs.net/101/publish_it
 [migration]: https://github.com/biojs/biojs/wiki/biojs1-biojs2-migration
 [registry]: http://biojs.net
-[registryui]: https://github.com/biojs/registry-ui
-[registry-workmen]: https://github.com/biojs/registry-workmen
+[registryui]: https://github.com/biojs/biojs-frontend
+[registry-workmen]: https://github.com/biojs/biojs-backend
 [sniper]: https://github.com/greenify/biojs-sniper
 [wiki]: https://github.com/biojs/biojs/wiki
 [wishlist]: https://github.com/biojs/biojs/issues/new?title=%5BWish%5D&body=%3E+Try+to+be+as+detailed+as+possible.+Why+do+you+need+it%3F+What+data+does+it+use%3F+What+should+the+user+experience%3F%0A%0A%0A%3E+Complexity+%28approx.+estimate+in+dates%29
