@@ -20,7 +20,7 @@ BioJS 2.0
 [![Gitter](https://badges.gitter.im/BioJS.png)](https://gitter.im/biojs/biojs)   [![IRC](https://img.shields.io/badge/irc-%23biojs-yellow.svg)](https://kiwiirc.com/client/irc.freenode.net/biojs)
 
 
-**TL;DR:** you can browse the [registry][registry] at [biojs.io][registry].
+**TL;DR:** you can browse the [registry][registry] at [biojs.net][registry].
 
 *Guy Yachdav, Tatyana Goldberg, Sebastian Wilzbach, David Dao, Iris Shih, Saket Choudhary, Steve Crouch, Max Franz, Alexander García, Leyla J García, Björn A Grüning, Devasena Inupakutika, Ian Sillitoe, Anil S Thanki, Bruno Vieira, José M Villaveces, Maria V Schneider, Suzanna Lewis, Steve Pettifer, Burkhard Rost, and Manuel Corpas*  
 __[Anatomy of BioJS, an open source community for the life sciences][BioJS-elife]__  
